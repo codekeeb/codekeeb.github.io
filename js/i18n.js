@@ -17,7 +17,7 @@ const CK_I18N = {
     "hero.title1": "Sofle",
     "hero.title2": "RGB",
     "hero.sub": "Teclado split ergonómico, presoldado, inalámbrico y completamente hotswap. Diseñado para programar, escribir y durar. Abre la caja y escribe.",
-    "hero.buy": "Comprar en Etsy",
+    "hero.buy": "Comprar en Vinted",
     "hero.discover": "Descubrir el teclado",
     "hero.s1": "teclas",
     "hero.s2": "perfiles BT + USB-C",
@@ -87,7 +87,7 @@ const CK_I18N = {
     "models.title": "Una familia <em>que crece</em>.",
     "models.available": "Disponible",
     "models.soon": "En el taller",
-    "models.view": "Ver en Etsy",
+    "models.view": "Ver en Vinted",
     "models.ghostTitle": "Próximo modelo",
     "models.ghostText": "Nuevos formatos están tomando forma en el taller. Pronto, aquí.",
 
@@ -102,7 +102,7 @@ const CK_I18N = {
 
     "cta.title": "¿Listo para <em>escribir mejor</em>?",
     "cta.sub": "Sofle RGB v3.2 — presoldado, inalámbrico, tuyo.",
-    "cta.buy": "Comprar en Etsy",
+    "cta.buy": "Comprar en Vinted",
 
     "footer.tag": "Teclados split ergonómicos, hechos con mirilla.",
     "footer.explore": "Explorar",
@@ -122,7 +122,7 @@ const CK_I18N = {
     "hero.title1": "Sofle",
     "hero.title2": "RGB",
     "hero.sub": "An ergonomic split keyboard — presoldered, wireless and fully hotswap. Built to code, write and last. Open the box and type.",
-    "hero.buy": "Buy on Etsy",
+    "hero.buy": "Buy on Vinted",
     "hero.discover": "Discover the keyboard",
     "hero.s1": "keys",
     "hero.s2": "BT profiles + USB-C",
@@ -192,7 +192,7 @@ const CK_I18N = {
     "models.title": "A family <em>that grows</em>.",
     "models.available": "Available",
     "models.soon": "In the workshop",
-    "models.view": "View on Etsy",
+    "models.view": "View on Vinted",
     "models.ghostTitle": "Next model",
     "models.ghostText": "New layouts are taking shape in the workshop. Soon, right here.",
 
@@ -207,7 +207,7 @@ const CK_I18N = {
 
     "cta.title": "Ready to <em>type better</em>?",
     "cta.sub": "Sofle RGB v3.2 — presoldered, wireless, yours.",
-    "cta.buy": "Buy on Etsy",
+    "cta.buy": "Buy on Vinted",
 
     "footer.tag": "Ergonomic split keyboards, made with a crosshair.",
     "footer.explore": "Explore",
@@ -227,7 +227,7 @@ const CK_I18N = {
     "hero.title1": "Sofle",
     "hero.title2": "RGB",
     "hero.sub": "Clavier split ergonomique, présoudé, sans fil et entièrement hotswap. Conçu pour coder, écrire et durer. Ouvrez la boîte et tapez.",
-    "hero.buy": "Acheter sur Etsy",
+    "hero.buy": "Acheter sur Vinted",
     "hero.discover": "Découvrir le clavier",
     "hero.s1": "touches",
     "hero.s2": "profils BT + USB-C",
@@ -297,7 +297,7 @@ const CK_I18N = {
     "models.title": "Une famille <em>qui grandit</em>.",
     "models.available": "Disponible",
     "models.soon": "À l'atelier",
-    "models.view": "Voir sur Etsy",
+    "models.view": "Voir sur Vinted",
     "models.ghostTitle": "Prochain modèle",
     "models.ghostText": "De nouveaux formats prennent forme à l'atelier. Bientôt, ici même.",
 
@@ -312,7 +312,7 @@ const CK_I18N = {
 
     "cta.title": "Prêt à <em>mieux écrire</em> ?",
     "cta.sub": "Sofle RGB v3.2 — présoudé, sans fil, à vous.",
-    "cta.buy": "Acheter sur Etsy",
+    "cta.buy": "Acheter sur Vinted",
 
     "footer.tag": "Claviers split ergonomiques, faits au viseur.",
     "footer.explore": "Explorer",

@@ -36,7 +36,7 @@ web/
 ## Cómo escalar la web
 
 ### 1. Conectar la tienda
-En `js/data.js`, cambia `CK_SHOP_URL` por la URL real de Etsy.
+En `js/data.js`, cambia `CK_SHOP_URL` por la URL real de Vinted.
 Todos los botones de compra (`data-shop`) la usan automáticamente.
 
 ### 2. Añadir un modelo
@@ -78,7 +78,7 @@ sustitúyela en las tres carpetas (`es/`, `en/`, `fr/`) con el mismo nombre.
 
 ## Pendiente / TODO
 
-- [ ] Poner la URL real de Etsy en `js/data.js`
-- [ ] Confirmar el email de contacto del footer (`hola@codekeeb.com` es placeholder)
+- [x] Poner la URL real de Vinted en `js/data.js`
+- [x] Confirmar el email de contacto del footer (`codekeeb@gmail.com`)
 - [ ] Opcional: añadir el precio en los botones de compra (claves `hero.buy` / `cta.buy` de `js/i18n.js`)
 - [ ] Opcional: añadir Open Graph image dedicada (1200×630)
