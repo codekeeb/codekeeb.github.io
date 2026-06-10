@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codekeeb — Sofle RGB · Teclados split ergonómicos hechos a mano</title>
+  <meta name="description" content="Sofle RGB v3.2: teclado split ergonómico 60%, presoldado, inalámbrico (BT+5), hotswap total y firmware ZMK. Hecho a mano por Codekeeb.">
+  <meta property="og:title" content="Codekeeb — Sofle RGB">
+  <meta property="og:description" content="Teclado split ergonómico 60%, presoldado e inalámbrico. Hecho a mano.">
+  <meta property="og:image" content="assets/img/es/hero.jpg">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-lang="es">
+
+  <!-- Scroll progress -->
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <a class="nav__logo" href="#top" aria-label="Codekeeb">
+      CODE<span class="slash">/</span>KEEB
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="#caracteristicas" data-i18n="nav.features">Características</a>
+      <a href="#specs" data-i18n="nav.specs">Specs</a>
+      <a href="#sabores" data-i18n="nav.flavors">Sabores</a>
+      <a href="#modelos" data-i18n="nav.models">Modelos</a>
+    </nav>
+    <div class="nav__right">
+      <div class="lang" role="group" aria-label="Idioma">
+        <button class="lang__btn is-active" data-setlang="es">ES</button>
+        <button class="lang__btn" data-setlang="en">EN</button>
+        <button class="lang__btn" data-setlang="fr">FR</button>
+      </div>
+      <a class="btn btn--primary nav__cta" href="#" data-shop data-i18n="nav.buy">Comprar</a>
+      <button class="nav__burger" id="burger" aria-label="Menú"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="hero__aura" aria-hidden="true"></div>
+      <div class="hero__watermark" aria-hidden="true">SOFLE&nbsp;RGB&nbsp;SOFLE&nbsp;RGB</div>
+
+      <div class="hero__inner">
+        <div class="hero__copy">
+          <p class="kicker reveal" data-i18n="hero.kicker">Split · Ergonómico · 60% · ZMK</p>
+          <h1 class="hero__title reveal" style="--d:.08s">
+            <span data-i18n="hero.title1">Sofle</span>
+            <em class="grad-text" data-i18n="hero.title2">RGB</em>
+          </h1>
+          <p class="hero__sub reveal" style="--d:.16s" data-i18n="hero.sub">
+            Teclado split ergonómico, presoldado, inalámbrico y completamente
+            hotswap. Diseñado para programar, escribir y durar. Abre la caja y escribe.
+          </p>
+          <div class="hero__actions reveal" style="--d:.24s">
+            <a class="btn btn--primary" href="#" data-shop data-i18n="hero.buy">Comprar en Etsy</a>
+            <a class="btn btn--ghost" href="#caracteristicas" data-i18n="hero.discover">Descubrir el teclado</a>
+          </div>
+          <ul class="hero__stats reveal" style="--d:.32s">
+            <li><strong class="count" data-count="58">0</strong><span data-i18n="hero.s1">teclas</span></li>
+            <li><strong><span class="count" data-count="5">0</span>+1</strong><span data-i18n="hero.s2">perfiles BT + USB-C</span></li>
+            <li><strong class="count" data-count="1200">0</strong><span data-i18n="hero.s3">mAh por mitad</span></li>
+            <li><strong>ZMK</strong><span data-i18n="hero.s4">firmware libre</span></li>
+          </ul>
+        </div>
+
+        <figure class="hero__figure reveal" style="--d:.2s">
+          <div class="hero__card tilt" id="heroTilt">
+            <img id="heroImg" data-i18n-img="hero.jpg" src="assets/img/es/hero.jpg"
+                 alt="Sofle RGB — teclado split ergonómico" width="720" height="1080" fetchpriority="high">
+            <span class="cross cross--tl" aria-hidden="true"></span>
+            <span class="cross cross--br" aria-hidden="true"></span>
+          </div>
+          <figcaption class="mono hero__cap" data-i18n="hero.cap">v3.2 · presoldado · BT+5 · ZMK</figcaption>
+        </figure>
+      </div>
+
+      <a class="hero__scrollcue" href="#manifiesto" aria-label="Bajar">
+        <span class="mono" data-i18n="hero.scroll">scroll</span>
+        <span class="hero__line"></span>
+      </a>
+    </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track" id="marqueeTrack">
+        <span data-i18n="marquee">SPLIT ✦ ERGONÓMICO ✦ HOTSWAP ✦ INALÁMBRICO ✦ OPEN-SOURCE ✦ PRESOLDADO ✦ RGB ✦ OLED ✦&nbsp;</span>
+      </div>
+    </div>
+
+    <!-- ============ MANIFIESTO ============ -->
+    <section class="manifesto" id="manifiesto">
+      <span class="crosshair-icon reveal" aria-hidden="true">
+        <svg viewBox="0 0 512 512" fill="none" stroke="currentColor" stroke-width="26" stroke-linecap="round">
+          <path d="M256 28v160M256 324v160M28 256h160M324 256h160"/>
+          <rect x="178" y="178" width="156" height="156"/>
+          <path d="M92 188V104a12 12 0 0 1 12-12h84M324 92h84a12 12 0 0 1 12 12v84M420 324v84a12 12 0 0 1-12 12h-84M188 420h-84a12 12 0 0 1-12-12v-84"/>
+        </svg>
+      </span>
+      <p class="manifesto__label mono reveal" data-i18n="manifesto.label">Manifiesto</p>
+      <h2 class="manifesto__text reveal" style="--d:.1s" data-i18n-html="manifesto.text">
+        Creemos que un teclado no se compra: <em>se elige</em>.
+        Cada Sofle sale del taller presoldado, probado y afinado.
+        Sin soldador. Sin esperas. <em>Sin compromisos.</em>
+      </h2>
+    </section>
+
+    <!-- ============ FEATURES ============ -->
+    <section class="features" id="caracteristicas">
+      <header class="section-head">
+        <p class="kicker reveal" data-i18n="features.label">El teclado</p>
+        <h2 class="section-title reveal" style="--d:.08s" data-i18n-html="features.title">
+          Cada detalle, <em>bajo la mirilla</em>.
+        </h2>
+      </header>
+
+      <!-- 01 Keycaps + OLED -->
+      <article class="feature">
+        <figure class="feature__media reveal">
+          <img data-i18n-img="feature-keycaps.jpg" src="assets/img/es/feature-keycaps.jpg" loading="lazy"
+               alt="Keycaps perfil MA y pantallas OLED" width="720" height="1080">
+        </figure>
+        <div class="feature__body">
+          <p class="feature__index mono reveal">01</p>
+          <p class="kicker reveal" data-i18n="f1.kicker">Keycaps · OLED</p>
+          <h3 class="feature__title reveal" style="--d:.08s" data-i18n-html="f1.title">Perfil MA, sabor <em>Retro</em>.</h3>
+          <p class="feature__text reveal" style="--d:.14s" data-i18n="f1.text">
+            58 teclas con keycaps perfil MA en acabado retro y leyendas en EN, EN+IC o ES.
+            Dos pantallas OLED custom muestran en todo momento la capa activa, WPM,
+            batería y perfil Bluetooth.
+          </p>
+          <ul class="chips reveal" style="--d:.2s">
+            <li data-i18n="f1.c1">Perfil MA</li>
+            <li data-i18n="f1.c2">EN / EN+IC / ES</li>
+            <li data-i18n="f1.c3">OLED ×2 custom</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 02 Case -->
+      <article class="feature feature--flip">
+        <figure class="feature__media reveal">
+          <img data-i18n-img="feature-case.jpg" src="assets/img/es/feature-case.jpg" loading="lazy"
+               alt="Case custom con frame impreso en 3D y switches hotswap" width="720" height="1080">
+        </figure>
+        <div class="feature__body">
+          <p class="feature__index mono reveal">02</p>
+          <p class="kicker reveal" data-i18n="f2.kicker">Case custom · Hotswap</p>
+          <h3 class="feature__title reveal" style="--d:.08s" data-i18n-html="f2.title">Un case <em>custom</em>, abierto por diseño.</h3>
+          <p class="feature__text reveal" style="--d:.14s" data-i18n="f2.text">
+            Frame impreso en 3D en PLA blanco hueso con acrílico transparente.
+            Sockets hotswap Kailh compatibles MX — con switches MMD Holy Panda incluidos —
+            y dos encoders rotatorios pulsables, personalizables vía ZMK Studio.
+          </p>
+          <ul class="chips reveal" style="--d:.2s">
+            <li data-i18n="f2.c1">Acrílico + PLA</li>
+            <li data-i18n="f2.c2">Hotswap Kailh MX</li>
+            <li data-i18n="f2.c3">2× encoders</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 03 RGB -->
+      <article class="feature">
+        <figure class="feature__media reveal">
+          <img data-i18n-img="feature-rgb.jpg" src="assets/img/es/feature-rgb.jpg" loading="lazy"
+               alt="RGB per-key y underglow" width="720" height="1080">
+        </figure>
+        <div class="feature__body">
+          <p class="feature__index mono reveal">03</p>
+          <p class="kicker reveal" data-i18n="f3.kicker">RGB personalizable</p>
+          <h3 class="feature__title reveal" style="--d:.08s" data-i18n-html="f3.title">Luz <em>per-key</em> + underglow.</h3>
+          <p class="feature__text reveal" style="--d:.14s" data-i18n="f3.text">
+            Retroiluminación RGB direccionable en cada tecla y underglow perimetral.
+            Efectos, brillo y color se configuran desde el propio teclado o desde ZMK Studio.
+          </p>
+          <ul class="chips reveal" style="--d:.2s">
+            <li data-i18n="f3.c1">Per-key</li>
+            <li data-i18n="f3.c2">Underglow</li>
+            <li data-i18n="f3.c3">ZMK Studio</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 04 Wireless -->
+      <article class="feature feature--flip">
+        <figure class="feature__media reveal">
+          <img data-i18n-img="feature-bluetooth.jpg" src="assets/img/es/feature-bluetooth.jpg" loading="lazy"
+               alt="Conectividad Bluetooth" width="720" height="1080">
+        </figure>
+        <div class="feature__body">
+          <p class="feature__index mono reveal">04</p>
+          <p class="kicker reveal" data-i18n="f4.kicker">Conectividad</p>
+          <h3 class="feature__title reveal" style="--d:.08s" data-i18n-html="f4.title">Bluetooth <em>de verdad</em>.</h3>
+          <p class="feature__text reveal" style="--d:.14s" data-i18n="f4.text">
+            Hasta 5 perfiles Bluetooth para saltar entre ordenador, tablet y móvil
+            sin emparejar de nuevo. ¿Prefieres cable? USB-C con latencia cero.
+          </p>
+          <ul class="chips reveal" style="--d:.2s">
+            <li data-i18n="f4.c1">BT · 5 perfiles</li>
+            <li data-i18n="f4.c2">USB-C</li>
+            <li data-i18n="f4.c3">Latencia cero</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 05 Battery + MCU -->
+      <article class="feature">
+        <figure class="feature__media reveal">
+          <img data-i18n-img="feature-battery.jpg" src="assets/img/es/feature-battery.jpg" loading="lazy"
+               alt="Batería 1200 mAh Li-ion y MCU NRF52840" width="720" height="1080">
+        </figure>
+        <div class="feature__body">
+          <p class="feature__index mono reveal">05</p>
+          <p class="kicker reveal" data-i18n="f5.kicker">Batería · MCU</p>
+          <h3 class="feature__title reveal" style="--d:.08s" data-i18n-html="f5.title">1200 mAh. <em>Semanas</em> de uso.</h3>
+          <p class="feature__text reveal" style="--d:.14s" data-i18n="f5.text">
+            Batería Li-ion de 1200 mAh con conector JST intercambiable e interruptor
+            físico ON/OFF en cada mitad. Y el cerebro, un NRF52840 en socket:
+            sustituible y actualizable sin soldar.
+          </p>
+          <ul class="chips reveal" style="--d:.2s">
+            <li data-i18n="f5.c1">1200 mAh Li-ion</li>
+            <li data-i18n="f5.c2">JST intercambiable</li>
+            <li data-i18n="f5.c3">NRF52840 en socket</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ SPECS ============ -->
+    <section class="specs" id="specs">
+      <header class="section-head">
+        <p class="kicker reveal" data-i18n="specs.label">Ficha técnica</p>
+        <h2 class="section-title reveal" style="--d:.08s" data-i18n-html="specs.title">
+          Specs, <em>sin letra pequeña</em>.
+        </h2>
+      </header>
+      <dl class="specs__grid" id="specsGrid"><!-- JS --></dl>
+    </section>
+
+    <!-- ============ FLAVORS ============ -->
+    <section class="flavors" id="sabores">
+      <div class="flavors__inner">
+        <div class="flavors__copy">
+          <p class="kicker reveal" data-i18n="flavors.label">Sabores</p>
+          <h2 class="section-title reveal" style="--d:.08s" data-i18n-html="flavors.title">
+            Hoy, <em>Retro</em>.<br>Mañana, más.
+          </h2>
+          <p class="flavors__text reveal" style="--d:.14s" data-i18n="flavors.text">
+            Cada Sofle se sirve en un sabor: una combinación de keycaps, acentos y
+            carácter. El primero es Retro — crema, gris y un toque de verde salvia.
+            Los siguientes ya están en el taller.
+          </p>
+          <div class="flavors__cards reveal" style="--d:.2s" id="flavorCards"><!-- JS --></div>
+        </div>
+        <figure class="flavors__media reveal" style="--d:.1s">
+          <img src="assets/img/shared/keycaps-tray.jpg" loading="lazy"
+               alt="Keycaps sabor Retro" width="720" height="1080">
+          <span class="cross cross--tl" aria-hidden="true"></span>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============ MODELS ============ -->
+    <section class="models" id="modelos">
+      <header class="section-head">
+        <p class="kicker reveal" data-i18n="models.label">Modelos</p>
+        <h2 class="section-title reveal" style="--d:.08s" data-i18n-html="models.title">
+          Una familia <em>que crece</em>.
+        </h2>
+      </header>
+      <div class="models__grid" id="modelsGrid"><!-- JS desde data.js --></div>
+    </section>
+
+    <!-- ============ TRUST ============ -->
+    <section class="trust">
+      <ul class="trust__grid">
+        <li class="reveal">
+          <h3 data-i18n="t1.title">Presoldado y probado</h3>
+          <p data-i18n="t1.text">Listo nada más abrir la caja. Cero soldador.</p>
+        </li>
+        <li class="reveal" style="--d:.08s">
+          <h3 data-i18n="t2.title">Hotswap total</h3>
+          <p data-i18n="t2.text">Switches y MCU intercambiables sin herramientas.</p>
+        </li>
+        <li class="reveal" style="--d:.16s">
+          <h3 data-i18n="t3.title">ZMK open-source</h3>
+          <p data-i18n="t3.text">Firmware libre. Tu keymap, tuyo para siempre.</p>
+        </li>
+        <li class="reveal" style="--d:.24s">
+          <h3 data-i18n="t4.title">Series pequeñas</h3>
+          <p data-i18n="t4.text">Montado y revisado a mano, unidad a unidad.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section class="cta">
+      <div class="cta__aura" aria-hidden="true"></div>
+      <h2 class="cta__title reveal" data-i18n-html="cta.title">¿Listo para <em>escribir mejor</em>?</h2>
+      <p class="cta__sub reveal" style="--d:.08s" data-i18n="cta.sub">Sofle RGB v3.2 — presoldado, inalámbrico, tuyo.</p>
+      <a class="btn btn--primary btn--lg reveal" style="--d:.16s" href="#" data-shop data-i18n="cta.buy">Comprar en Etsy</a>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer" id="contacto">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <img src="assets/logo-dark.svg" alt="Code/Keeb" class="footer__logo" width="200" height="102">
+        <p class="footer__tag" data-i18n="footer.tag">Teclados split ergonómicos, hechos con mirilla.</p>
+      </div>
+      <nav class="footer__col">
+        <h4 class="mono" data-i18n="footer.explore">Explorar</h4>
+        <a href="#caracteristicas" data-i18n="nav.features">Características</a>
+        <a href="#specs" data-i18n="nav.specs">Specs</a>
+        <a href="#sabores" data-i18n="nav.flavors">Sabores</a>
+        <a href="#modelos" data-i18n="nav.models">Modelos</a>
+      </nav>
+      <nav class="footer__col">
+        <h4 class="mono" data-i18n="footer.shop">Tienda</h4>
+        <a href="#" data-shop>Etsy</a>
+        <a href="mailto:hola@codekeeb.com">hola@codekeeb.com</a>
+      </nav>
+      <div class="footer__col">
+        <h4 class="mono" data-i18n="footer.lang">Idioma</h4>
+        <div class="lang lang--footer">
+          <button class="lang__btn is-active" data-setlang="es">ES</button>
+          <button class="lang__btn" data-setlang="en">EN</button>
+          <button class="lang__btn" data-setlang="fr">FR</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="mono" data-i18n="footer.copy">© 2026 Codekeeb — Diseñado y montado a mano.</p>
+      <p class="mono">SOFLE RGB · V3.2</p>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
