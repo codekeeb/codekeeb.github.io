@@ -8,10 +8,16 @@
   --ink:#14161b;
   --muted:#6e7480;
   --hairline:rgba(20,22,27,.09);
-  --c-blue:#37b6ff;
-  --c-violet:#7a5cff;
-  --c-orange:#ff9d5c;
-  --grad:linear-gradient(135deg,var(--c-blue),var(--c-violet) 50%,var(--c-orange));
+  /* paleta oficial del logo — degradado izq→der */
+  --c-orange:#ff992a;
+  --c-magenta:#ff39c0;
+  --c-blue:#2a3dff;
+  --c-cyan:#1be8ff;
+  --grad:linear-gradient(90deg,#ff992a 0%,#ff39c0 38%,#2a3dff 72%,#1be8ff 100%);
+  /* versión a 135° para superficies donde conviene la diagonal (mismo orden de color) */
+  --grad-diag:linear-gradient(135deg,#ff992a 0%,#ff39c0 38%,#2a3dff 72%,#1be8ff 100%);
+  /* degradado RGB cíclico para botones dinámicos — vuelve al color inicial para un loop sin costura */
+  --grad-cycle:linear-gradient(90deg,#ff992a,#ff39c0,#2a3dff,#1be8ff,#2a3dff,#ff39c0,#ff992a);
   --font-sans:"Inter",system-ui,sans-serif;
   --font-serif:"Instrument Serif",Georgia,serif;
   --font-mono:"Space Mono",ui-monospace,monospace;
@@ -66,14 +72,20 @@ em{font-family:var(--font-serif);font-style:italic;font-weight:400}
   transition:transform .35s var(--ease),box-shadow .35s var(--ease),background .35s;
   position:relative;overflow:hidden;
 }
-.btn--primary{background:var(--ink);color:#fff}
+.btn--primary{color:#fff;isolation:isolate;background:var(--ink)}
+.btn--primary,.btn--primary:hover{color:#fff}
+/* fondo RGB cíclico: oculto en reposo, aparece y se anima solo al pasar el cursor */
 .btn--primary::before{
-  content:"";position:absolute;inset:0;background:var(--grad);opacity:0;transition:opacity .35s;
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:var(--grad-cycle);background-size:300% 100%;background-position:0% 50%;
+  opacity:0;transition:opacity .35s;
 }
-.btn--primary:hover{transform:translateY(-2px);box-shadow:0 16px 32px -14px rgba(20,22,27,.45)}
-.btn--primary:hover::before{opacity:1}
-.btn--primary span,.btn--primary{z-index:0}
-.btn--primary>*{position:relative}
+.btn--primary:hover{transform:translateY(-2px);box-shadow:0 18px 36px -14px rgba(122,60,255,.5)}
+.btn--primary:hover::before{opacity:1;animation:btnCycle 2.4s linear infinite}
+@keyframes btnCycle{from{background-position:0% 50%}to{background-position:-150% 50%}}
+@media (prefers-reduced-motion: reduce){
+  .btn--primary:hover::before{animation:none;background:var(--grad)}
+}
 .btn--ghost{border-color:var(--hairline);background:transparent;color:var(--ink)}
 .btn--ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
 .btn--lg{padding:1.05em 2.4em;font-size:1rem}
@@ -133,9 +145,10 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
 .hero__aura{
   position:absolute;inset:-20%;pointer-events:none;filter:blur(90px);opacity:.55;
   background:
-    radial-gradient(38% 30% at 18% 28%, rgba(55,182,255,.20), transparent 70%),
-    radial-gradient(34% 30% at 82% 22%, rgba(122,92,255,.16), transparent 70%),
-    radial-gradient(40% 34% at 70% 85%, rgba(255,157,92,.16), transparent 70%);
+    radial-gradient(40% 34% at 16% 82%, rgba(255,153,42,.20), transparent 70%),
+    radial-gradient(34% 30% at 40% 24%, rgba(255,57,192,.16), transparent 70%),
+    radial-gradient(34% 30% at 78% 40%, rgba(42,61,255,.16), transparent 70%),
+    radial-gradient(40% 34% at 88% 84%, rgba(27,232,255,.18), transparent 70%);
   animation:aura 18s ease-in-out infinite alternate;
 }
 @keyframes aura{
@@ -264,7 +277,7 @@ figure .cross{mix-blend-mode:multiply}
   padding:.65em 1.1em;border:1px solid var(--hairline);border-radius:999px;background:var(--surface);
   transition:border-color .3s,transform .3s;
 }
-.chips li:hover{border-color:var(--c-violet);transform:translateY(-2px)}
+.chips li:hover{border-color:var(--c-magenta);transform:translateY(-2px)}
 
 /* ---------- specs ---------- */
 .specs{padding:clamp(80px,12vh,150px) var(--pad);background:var(--surface);
@@ -361,8 +374,10 @@ figure .cross{mix-blend-mode:multiply}
 .cta__aura{
   position:absolute;inset:-30%;filter:blur(100px);opacity:.5;pointer-events:none;
   background:
-    radial-gradient(30% 40% at 30% 50%, rgba(55,182,255,.25), transparent 70%),
-    radial-gradient(30% 40% at 70% 50%, rgba(255,157,92,.22), transparent 70%);
+    radial-gradient(28% 40% at 22% 50%, rgba(255,153,42,.22), transparent 70%),
+    radial-gradient(26% 38% at 46% 46%, rgba(255,57,192,.18), transparent 70%),
+    radial-gradient(26% 38% at 66% 54%, rgba(42,61,255,.18), transparent 70%),
+    radial-gradient(28% 40% at 84% 50%, rgba(27,232,255,.22), transparent 70%);
   animation:aura 14s ease-in-out infinite alternate;
 }
 .cta__title{position:relative;font:600 clamp(2.4rem,6vw,4.6rem)/1.05 var(--font-sans);letter-spacing:-.04em}
