@@ -158,7 +158,7 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
   margin:18px 0 22px;line-height:0;
 }
 .hero__title-svg{
-  width:clamp(280px,40vw,460px);height:auto;display:block;
+  width:min(100%,clamp(340px,46vw,560px));height:auto;display:block;
 }
 .hero__sub{max-width:46ch;color:var(--muted);font-size:clamp(1rem,1.4vw,1.12rem)}
 .hero__actions{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
