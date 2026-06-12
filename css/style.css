@@ -262,10 +262,9 @@ figure .cross{mix-blend-mode:multiply}
              transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s;
 }
 .glance__box svg{
-  width:62%;height:62%;fill:none;stroke:currentColor;stroke-width:2.2;
+  width:54%;height:54%;fill:none;stroke:currentColor;stroke-width:1.75;
   stroke-linecap:round;stroke-linejoin:round;
 }
-.glance__box svg .dot{fill:currentColor;stroke:none}
 .glance__grid li:hover .glance__box{
   background:var(--ink);border-color:var(--ink);color:#fff;
   transform:translateY(-5px);box-shadow:0 20px 36px -22px rgba(20,22,27,.5);
