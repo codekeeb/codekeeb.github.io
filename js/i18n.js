@@ -31,6 +31,18 @@ const CK_I18N = {
     "manifesto.label": "Manifiesto",
     "manifesto.text": "Creemos que un teclado no se compra: <em>se elige</em>. Cada Sofle sale del taller presoldado, probado y afinado. Sin soldador. Sin esperas. <em>Sin compromisos.</em>",
 
+    "glance.label": "De un vistazo",
+    "g1": "Split ergonómico",
+    "g2": "Hotswap total",
+    "g3": "BT ×5 + USB-C",
+    "g4": "OLED ×2 custom",
+    "g5": "RGB per-key",
+    "g6": "Batería 1200 mAh",
+    "g7": "2× encoders",
+    "g8": "NRF52840 en socket",
+    "g9": "ZMK open-source",
+    "g10": "Presoldado",
+
     "features.label": "El teclado",
     "features.title": "Cada detalle, <em>bajo la mirilla</em>.",
 
@@ -136,6 +148,18 @@ const CK_I18N = {
     "manifesto.label": "Manifesto",
     "manifesto.text": "We believe a keyboard isn't bought: <em>it's chosen</em>. Every Sofle leaves the workshop presoldered, tested and tuned. No soldering iron. No waiting. <em>No compromises.</em>",
 
+    "glance.label": "At a glance",
+    "g1": "Ergonomic split",
+    "g2": "Fully hotswap",
+    "g3": "BT ×5 + USB-C",
+    "g4": "2× custom OLED",
+    "g5": "Per-key RGB",
+    "g6": "1200 mAh battery",
+    "g7": "2× encoders",
+    "g8": "Socketed NRF52840",
+    "g9": "ZMK open-source",
+    "g10": "Presoldered",
+
     "features.label": "The keyboard",
     "features.title": "Every detail, <em>under the crosshair</em>.",
 
@@ -240,6 +264,18 @@ const CK_I18N = {
 
     "manifesto.label": "Manifeste",
     "manifesto.text": "Un clavier ne s'achète pas : <em>il se choisit</em>. Chaque Sofle quitte l'atelier présoudé, testé et réglé. Sans fer à souder. Sans attente. <em>Sans compromis.</em>",
+
+    "glance.label": "En un coup d'œil",
+    "g1": "Split ergonomique",
+    "g2": "Hotswap intégral",
+    "g3": "BT ×5 + USB-C",
+    "g4": "OLED ×2 custom",
+    "g5": "RGB per-key",
+    "g6": "Batterie 1200 mAh",
+    "g7": "2× encodeurs",
+    "g8": "NRF52840 sur socket",
+    "g9": "ZMK open-source",
+    "g10": "Présoudé",
 
     "features.label": "Le clavier",
     "features.title": "Chaque détail, <em>dans le viseur</em>.",
