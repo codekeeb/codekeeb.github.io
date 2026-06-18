@@ -25,18 +25,21 @@ const CK_PRODUCTS = [
     },
     meta: ["58", "BT+5", "ZMK", "RGB", "OLED"],
     url: null // null → usa CK_SHOP_URL
+  },
+  {
+    id: "corne-v4-orange",
+    status: "available",
+    name: "Corne v4",
+    version: "Custom Orange",
+    img: "corne-hero.jpg",
+    desc: {
+      es: "Split ergonómico 40% · 42 teclas · case naranja, presoldado, inalámbrico y hotswap.",
+      en: "40% ergonomic split · 42 keys · orange case, presoldered, wireless and hotswap.",
+      fr: "Split ergonomique 40% · 42 touches · boîtier orange, présoudé, sans fil et hotswap."
+    },
+    meta: ["42", "BT+5", "ZMK", "RGB", "OLED"],
+    url: null // null → usa CK_SHOP_URL; pon aquí el enlace directo al listing si lo tienes
   }
-  // Ejemplo de próximo modelo (descomenta y completa cuando toque):
-  // {
-  //   id: "corne",
-  //   status: "soon",
-  //   name: "Corne",
-  //   version: "v3 choc",
-  //   img: "hero.jpg",
-  //   desc: { es: "…", en: "…", fr: "…" },
-  //   meta: ["42", "choc", "ZMK"],
-  //   url: null
-  // }
 ];
 
 const CK_FLAVORS = [
