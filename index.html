@@ -46,40 +46,20 @@
     <!-- ============ HERO ============ -->
     <section class="hero">
       <div class="hero__aura" aria-hidden="true"></div>
-      <div class="hero__watermark" aria-hidden="true">SOFLE&nbsp;RGB&nbsp;SOFLE&nbsp;RGB</div>
 
-      <div class="hero__inner">
-        <div class="hero__copy">
-          <p class="kicker reveal" data-i18n="hero.kicker">Split · Ergonómico · 60% · ZMK</p>
-          <h1 class="hero__title reveal" style="--d:.08s" aria-label="Sofle RGB v3.2 Retro">
-            <img src="assets/title-sofle.svg" alt="Sofle RGB" class="hero__title-svg"
-                 width="103" height="57" fetchpriority="high">
-          </h1>
-          <p class="hero__sub reveal" style="--d:.16s" data-i18n="hero.sub">
-            Teclado split ergonómico, presoldado, inalámbrico y completamente
-            hotswap. Diseñado para programar, escribir y durar. Abre la caja y escribe.
-          </p>
-          <div class="hero__actions reveal" style="--d:.24s">
-            <a class="btn btn--primary" href="#" data-shop data-i18n="hero.buy">Comprar en Etsy</a>
-            <a class="btn btn--ghost" href="#caracteristicas" data-i18n="hero.discover">Descubrir el teclado</a>
-          </div>
-          <ul class="hero__stats reveal" style="--d:.32s">
-            <li><strong class="count" data-count="58">0</strong><span data-i18n="hero.s1">teclas</span></li>
-            <li><strong><span class="count" data-count="5">0</span>+1</strong><span data-i18n="hero.s2">perfiles BT + USB-C</span></li>
-            <li><strong class="count" data-count="1200">0</strong><span data-i18n="hero.s3">mAh por mitad</span></li>
-            <li><strong>ZMK</strong><span data-i18n="hero.s4">firmware libre</span></li>
-          </ul>
+      <div class="carousel" id="carousel" tabindex="0" aria-roledescription="carrusel" aria-label="Modelos disponibles">
+        <div class="carousel__viewport">
+          <div class="carousel__track" id="carouselTrack"><!-- slides desde data.js --></div>
         </div>
 
-        <figure class="hero__figure reveal" style="--d:.2s">
-          <div class="hero__card tilt" id="heroTilt">
-            <img id="heroImg" data-i18n-img="hero.jpg" src="assets/img/es/hero.jpg"
-                 alt="Sofle RGB — teclado split ergonómico" width="720" height="1080" fetchpriority="high">
-            <span class="cross cross--tl" aria-hidden="true"></span>
-            <span class="cross cross--br" aria-hidden="true"></span>
-          </div>
-          <figcaption class="mono hero__cap" data-i18n="hero.cap">v3.2 · presoldado · BT+5 · ZMK</figcaption>
-        </figure>
+        <button class="carousel__arrow carousel__arrow--prev" id="carPrev" aria-label="Anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <button class="carousel__arrow carousel__arrow--next" id="carNext" aria-label="Siguiente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+
+        <div class="carousel__dots" id="carouselDots" role="tablist"><!-- puntos desde JS --></div>
       </div>
 
       <a class="hero__scrollcue" href="#manifiesto" aria-label="Bajar">

@@ -32,6 +32,7 @@
     $$("[data-setlang]").forEach(b =>
       b.classList.toggle("is-active", b.dataset.setlang === lang));
 
+    renderCarousel();
     renderSpecs();
     renderFlavors();
     renderModels();
@@ -58,6 +59,83 @@
       a.rel = "noopener";
     });
   }
+
+  /* ---------- carrusel del inicio (modelos disponibles) ---------- */
+  let carIndex = 0, carTimer = null, carSlides = [];
+
+  function renderCarousel() {
+    const track = $("#carouselTrack");
+    const dots = $("#carouselDots");
+    if (!track) return;
+
+    carSlides = CK_PRODUCTS.filter(p => p.status === "available");
+
+    track.innerHTML = carSlides.map((p, i) => {
+      const url = p.url || CK_SHOP_URL;
+      const title = p.titleImg
+        ? `<img src="assets/${p.titleImg}" alt="${p.name} ${p.version}" class="slide__title-svg" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>`
+        : `<span class="slide__title-text grad-text">${p.name}<em>${p.version}</em></span>`;
+      const stats = (p.stats || []).map(([v, lbl]) => `
+        <li><strong>${v}</strong><span>${lbl[lang] || lbl.es}</span></li>`).join("");
+      return `
+      <article class="slide" role="group" aria-roledescription="modelo" aria-label="${p.name} ${p.version}">
+        <div class="slide__copy">
+          <p class="kicker">${(p.kicker && (p.kicker[lang] || p.kicker.es)) || ""}</p>
+          <h1 class="slide__title" aria-label="${p.name} ${p.version}">${title}</h1>
+          <p class="slide__sub">${p.desc[lang] || p.desc.es}</p>
+          <div class="slide__actions">
+            <a class="btn btn--primary" href="${url}" target="_blank" rel="noopener">${t("hero.buy")}</a>
+            <a class="btn btn--ghost" href="#caracteristicas">${t("hero.discover")}</a>
+          </div>
+          <ul class="slide__stats">${stats}</ul>
+        </div>
+        <figure class="slide__figure">
+          <div class="slide__card">
+            <img src="assets/img/${lang}/${p.heroImg || p.img}" alt="${p.name}"
+                 ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>
+            <span class="cross cross--tl" aria-hidden="true"></span>
+            <span class="cross cross--br" aria-hidden="true"></span>
+          </div>
+          <figcaption class="mono slide__cap">${p.caption || ""}</figcaption>
+        </figure>
+      </article>`;
+    }).join("");
+
+    // puntos (solo si hay más de un modelo)
+    dots.innerHTML = carSlides.length > 1
+      ? carSlides.map((p, i) =>
+          `<button class="carousel__dot" role="tab" aria-label="${p.name} ${p.version}" data-go="${i}"></button>`).join("")
+      : "";
+
+    // ¿un solo modelo? ocultar flechas/puntos
+    $("#carousel").classList.toggle("is-single", carSlides.length <= 1);
+
+    if (carIndex >= carSlides.length) carIndex = 0;
+    goSlide(carIndex, false);
+  }
+
+  function goSlide(i, animate = true) {
+    if (!carSlides.length) return;
+    carIndex = (i + carSlides.length) % carSlides.length;
+    const track = $("#carouselTrack");
+    track.style.transition = animate ? "" : "none";
+    track.style.transform = `translateX(${-carIndex * 100}%)`;
+    if (!animate) requestAnimationFrame(() => { track.style.transition = ""; });
+
+    $$(".carousel__dot").forEach((d, di) => d.classList.toggle("is-active", di === carIndex));
+    $$(".slide", track).forEach((s, si) => s.classList.toggle("is-active", si === carIndex));
+    animateCounters($$(".slide", track)[carIndex]);
+  }
+
+  function carNext() { goSlide(carIndex + 1); }
+  function carPrev() { goSlide(carIndex - 1); }
+
+  function startAuto() {
+    if (reduceMotion || carSlides.length <= 1) return;
+    stopAuto();
+    carTimer = setInterval(carNext, 6000);
+  }
+  function stopAuto() { if (carTimer) { clearInterval(carTimer); carTimer = null; } }
 
   /* ---------- specs (desde i18n) ---------- */
   function renderSpecs() {
@@ -138,7 +216,6 @@
       if (e.isIntersecting) {
         e.target.classList.add("is-in");
         io.unobserve(e.target);
-        if (e.target.matches(".hero__stats")) animateCounters(e.target);
       }
     });
   }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
@@ -147,12 +224,15 @@
     $$(".reveal:not(.is-in)").forEach(el => io.observe(el));
   }
 
-  /* ---------- contadores ---------- */
+  /* ---------- contadores (anima los <strong> numéricos del slide activo) ---------- */
   function animateCounters(scope) {
-    $$(".count", scope).forEach(el => {
-      const target = +el.dataset.count;
+    if (!scope) return;
+    $$(".slide__stats strong", scope).forEach(el => {
+      const target = parseInt(el.dataset.count ?? el.textContent, 10);
+      if (!Number.isFinite(target)) return;          // "BT+5", "ZMK"… se dejan tal cual
+      el.dataset.count = target;
       if (reduceMotion) { el.textContent = target; return; }
-      const dur = 1400, t0 = performance.now();
+      const dur = 1100, t0 = performance.now();
       (function tick(now) {
         const p = Math.min((now - t0) / dur, 1);
         el.textContent = Math.round(target * (1 - Math.pow(1 - p, 4)));
@@ -188,21 +268,40 @@
     });
   }, { passive: true });
 
-  /* ---------- tilt del hero con el ratón ---------- */
-  const heroCard = $("#heroTilt");
-  if (heroCard && !reduceMotion && matchMedia("(pointer:fine)").matches) {
-    const hero = $(".hero");
-    hero.addEventListener("mousemove", e => {
-      const r = heroCard.getBoundingClientRect();
-      const x = (e.clientX - r.left - r.width / 2) / r.width;
-      const y = (e.clientY - r.top - r.height / 2) / r.height;
-      heroCard.style.setProperty("--ry", (x * 4).toFixed(2) + "deg");
-      heroCard.style.setProperty("--rx", (y * -4).toFixed(2) + "deg");
+  /* ---------- controles del carrusel ---------- */
+  const carousel = $("#carousel");
+  if (carousel) {
+    $("#carNext").addEventListener("click", () => { carNext(); startAuto(); });
+    $("#carPrev").addEventListener("click", () => { carPrev(); startAuto(); });
+    $("#carouselDots").addEventListener("click", e => {
+      const btn = e.target.closest("[data-go]");
+      if (btn) { goSlide(+btn.dataset.go); startAuto(); }
     });
-    hero.addEventListener("mouseleave", () => {
-      heroCard.style.setProperty("--ry", "0deg");
-      heroCard.style.setProperty("--rx", "0deg");
+
+    // pausa al pasar el ratón / al perder visibilidad
+    carousel.addEventListener("mouseenter", stopAuto);
+    carousel.addEventListener("mouseleave", startAuto);
+    document.addEventListener("visibilitychange", () =>
+      document.hidden ? stopAuto() : startAuto());
+
+    // teclado (flechas) cuando el carrusel está enfocado
+    carousel.addEventListener("keydown", e => {
+      if (e.key === "ArrowRight") { carNext(); startAuto(); }
+      else if (e.key === "ArrowLeft") { carPrev(); startAuto(); }
     });
+
+    // swipe táctil
+    let x0 = null;
+    const vp = $(".carousel__viewport");
+    vp.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; stopAuto(); }, { passive: true });
+    vp.addEventListener("touchend", e => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 45) (dx < 0 ? carNext() : carPrev());
+      x0 = null; startAuto();
+    }, { passive: true });
+
+    startAuto();
   }
 
   /* ---------- marquee: duplicar para bucle perfecto ---------- */
