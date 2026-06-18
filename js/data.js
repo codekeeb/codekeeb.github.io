@@ -1,14 +1,14 @@
 /* ============================================================
    CODEKEEB — datos de catálogo
    AQUÍ se escala la web:
-   - Cambia CK_SHOP_URL por tu URL real de Vinted.
+   - Cambia CK_SHOP_URL por tu URL real de Etsy.
    - Para añadir un modelo: añade un objeto a CK_PRODUCTS
      (status "available" o "soon") y sus imágenes.
    - Para añadir un sabor: añade un objeto a CK_FLAVORS
      con sus colores de muestra (swatches).
    ============================================================ */
 
-const CK_SHOP_URL = "https://www.vinted.es/items/9113329877-sofle-rgb-v32-listo-para-usar-eng-kr"; // URL de Vinted
+const CK_SHOP_URL = "https://www.etsy.com/shop/CodeKeeb"; // URL de Etsy
 
 const CK_PRODUCTS = [
   {
