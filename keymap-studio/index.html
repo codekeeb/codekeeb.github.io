@@ -750,6 +750,7 @@ function applyHist(from,to,msg){
   keymap=JSON.parse(from.pop());
   activeLayer=clamp(activeLayer,0,keymap.layers.length-1);selPos=-1;editingEnc=null;
   saveKeymap();renderLayer();renderDrawerLayers();updateHistBtns();osd(t(msg));
+  if(studio.connected)pushKeymapToDevice();
 }
 const undoKm=()=>applyHist(hist.undo,hist.redo,'undone');
 const redoKm=()=>applyHist(hist.redo,hist.undo,'redone');
@@ -1994,8 +1995,28 @@ function importJSON(file){
     if(!validKeymap(j)&&!(j.layers&&j.layers.every(l=>l.keys&&l.keys.length===60)))throw new Error('formato');
     snapshot();keymap={layers:j.layers};activeLayer=0;
     saveKeymap();renderLayer();renderDrawerLayers();osd(t('imported'));
+    if(studio.connected)pushKeymapToDevice();
   }catch(e){osd(t('badJson'));}};
   r.readAsText(file);
+}
+/* Envía por RPC cada binding del keymap en memoria al teclado conectado.
+   Necesario tras un import/undo/reset: esas acciones solo tocan el estado
+   local, y studioSave() (save_changes) persiste lo que ya está en la RAM
+   del firmware — sin este push, el flasheo seguiría guardando el keymap viejo. */
+async function pushKeymapToDevice(){
+  if(!studio.connected){osd(t('noSave'));return;}
+  if(!studio.lockState){osd(t('lockedWarn'));return;}
+  plog('inf','sincronizando keymap con el teclado…');
+  let ok=0,fail=0;
+  for(let li=0;li<keymap.layers.length;li++){
+    const L=keymap.layers[li];
+    for(let pos=0;pos<L.keys.length;pos++){
+      try{await studioSetBinding(li,pos,L.keys[pos]);ok++;}
+      catch(e){fail++;}
+    }
+  }
+  plog('inf',`sincronización completa: ${ok} OK, ${fail} error(es). Pulsa "Guardar (flash)" para persistir.`);
+  osd(fail?`Sincronizado con ${fail} error(es)`:'Sincronizado con el teclado ✓');
 }
 
 /* ============================================================
@@ -2086,7 +2107,8 @@ function init(){
   $('#btnStock').onclick=()=>{if(!confirm(t('confirmReset')))return;
     snapshot();keymap={layers:stockLayers()};saveKeymap();selPos=-1;editingEnc=null;
     renderLayer();renderLayerBar();renderDrawerLayers();setBadge();
-    osd(t('stockRestored'));plog('inf','keymap de fábrica (simulación) restaurado');};
+    osd(t('stockRestored'));plog('inf','keymap de fábrica (simulación) restaurado');
+    if(studio.connected)pushKeymapToDevice();};
   $('#btnAnim').onclick=cycleAnim;
   $('#btnAnim2').onclick=cycleAnim;
   $('#fxSel').onchange=e=>{rgb.fx=+e.target.value;saveRgb();syncRgbUI();};
@@ -2099,7 +2121,8 @@ function init(){
   $('#btnImportJson').onclick=()=>$('#fileJson').click();
   $('#fileJson').onchange=e=>{if(e.target.files[0])importJSON(e.target.files[0]);};
   $('#btnReset').onclick=()=>{if(!confirm(t('confirmReset')))return;
-    snapshot();keymap={layers:stockLayers()};saveKeymap();renderLayer();renderDrawerLayers();osd('Stock');};
+    snapshot();keymap={layers:stockLayers()};saveKeymap();renderLayer();renderDrawerLayers();osd('Stock');
+    if(studio.connected)pushKeymapToDevice();};
   $('#btnDesel').onclick=closePicker;
   $('#btnTrans').onclick=()=>dockAssign(TR);
   renderPickerCats('letras');openPicker();
