@@ -696,6 +696,9 @@ function bindingLegend(bd){
     case '&oledanim':return 'OLED';
     case '&mwheel':return ['WHL↑','WHL↓','WHL←','WHL→'][bd.p1]||'WHL';
     case '&dmac':return 'M'+bd.p1;
+    case '&mkp':return {1:'LCLK',2:'RCLK',4:'MCLK',8:'MB4',16:'MB5'}[bd.p1]||'MCLK';
+    case '&mmv':return 'MOVE';
+    case '&msc':return 'SCRL';
     case '&out':return 'OUT';
     case '&caps_word':return 'CAPSW';
     case '&reset':return 'RST';
@@ -722,6 +725,9 @@ function bindingDTS(bd){
        exported keymap wouldn't compile. */
     case '&mwheel':return '&mwheel '+(bd.p1>>>0);
     case '&dmac':return '&dmac '+(bd.p1>>>0);
+    case '&mkp':return '&mkp '+({1:'LCLK',2:'RCLK',4:'MCLK',8:'MB4',16:'MB5'}[bd.p1]||'LCLK');
+    case '&mmv':return '&mmv '+(bd.p1>>>0);
+    case '&msc':return '&msc '+(bd.p1>>>0);
     default:return bd.b;
   }
 }
@@ -735,6 +741,9 @@ function bindingDesc(bd){
     case '&rgbfx':return 'RGB FX '+(RGBFX_CMD_NAME[(bd.p1>>>16)&0xFF]||'');
     case '&mwheel':return 'Mouse wheel '+(['up','down','left','right'][bd.p1]||'');
     case '&dmac':return 'Macro '+bd.p1;
+    case '&mkp':return 'Mouse click';
+    case '&mmv':return 'Mouse move';
+    case '&msc':return 'Mouse scroll';
     default:return bd.b;
   }
 }
@@ -1609,7 +1618,7 @@ async function studioReadLoop(){
   finally{try{rd.releaseLock();}catch(e){}}
 }
 /* behavior_id real (o local) por nombre; ids locales estables si offline */
-const LOCAL_BEH_IDS={};let _lid=0;['&kp','&trans','&mo','&to','&tog','&sl','&bt','&rgbfx','&studio_unlock','&oledanim','&out','&caps_word','&reset','&bootloader','&ext_power','&none','&mwheel','&dmac'].forEach(n=>LOCAL_BEH_IDS[n]=_lid++);
+const LOCAL_BEH_IDS={};let _lid=0;['&kp','&trans','&mo','&to','&tog','&sl','&bt','&rgbfx','&studio_unlock','&oledanim','&out','&caps_word','&reset','&bootloader','&ext_power','&none','&mwheel','&dmac','&mkp','&mmv','&msc'].forEach(n=>LOCAL_BEH_IDS[n]=_lid++);
 /* El firmware reporta display_names tipo "key_press", "momentary_layer"...:
    mapeo a nuestros nombres '&' (normalizado: minúsculas, sin separadores) */
 const BEH_ALIASES={
@@ -1621,7 +1630,9 @@ const BEH_ALIASES={
  '&ext_power':['extpower'],'&caps_word':['capsword'],
  '&studio_unlock':['studiounlock'],'&oledanim':['oledanim','oledanimation'],
  '&mwheel':['mwheel','mousewheel','scrollwheel'],
- '&dmac':['dmac','dynamicmacro','macro']};
+ '&dmac':['dmac','dynamicmacro','macro'],
+ '&mkp':['mousekeypress','mkp'],'&mmv':['mousemove','mmv','inputtwoaxis'],
+ '&msc':['mousescroll','msc']};
 function behCanonical(displayName){
   const n=(displayName||'').toLowerCase().replace(/[^a-z0-9]/g,'');
   for(const [canon,aliases] of Object.entries(BEH_ALIASES))
@@ -1997,6 +2008,14 @@ pkAdd('media','OLED','&oledanim',()=>B('&oledanim'));
 /* CODEKEEB: macros editables (&dmac N). El contenido de cada ranura se
    escribe en el panel Studio; aquí solo se asigna la ranura a una tecla. */
 for(let i=0;i<12;i++)pkAdd('sistema','M'+i,'&dmac '+i+' (macro '+i+')',()=>B('&dmac',i));
+/* CODEKEEB: raton por teclado. &mkp usa bitmask (pointing.h): MB1=1,
+   MB2=2, MB3=4. &mmv/&msc codifican el vector en MOVE_X<<16|MOVE_Y. */
+[['LCLK','&mkp LCLK',1],['RCLK','&mkp RCLK',2],['MCLK','&mkp MCLK',4]]
+ .forEach(([l,d,v])=>pkAdd('media',l,d,()=>B('&mkp',v)));
+const MV=(x,y)=>((x&0xFFFF)<<16>>>0)+(y&0xFFFF);
+[['M↑','&mmv MOVE_UP',MV(0,-600)],['M↓','&mmv MOVE_DOWN',MV(0,600)],
+ ['M←','&mmv MOVE_LEFT',MV(-600,0)],['M→','&mmv MOVE_RIGHT',MV(600,0)]]
+ .forEach(([l,d,v])=>pkAdd('media',l,d,()=>B('&mmv',v)));
 [['K_UNDO','undo'],['K_CUT','cut'],['K_COPY','copy'],['K_PASTE','pst']]
  .forEach(([n,l])=>pkAdd('nav',l,'&kp '+n,()=>kp(n)));
 for(let i=0;i<8;i++){
