@@ -318,7 +318,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
     <span class="sub">KEYMAP STUDIO · SOFLE RGB</span></div>
   <span id="connBadge" class="local"><span class="pulse"></span><span id="connTxt">LOCAL</span></span>
   <span class="lockdot" id="lockDot" data-i18n-title="lockTitle" title="ZMK Studio lock"></span>
-  <span id="unsavedDot">● CAMBIOS SIN GUARDAR</span>
+  <span id="unsavedDot" data-i18n="unsavedDot">● CAMBIOS SIN GUARDAR</span>
   <div id="topActions">
     <button class="btn accent" id="btnConnect">🔌 <span data-i18n="connect">Conectar teclado</span></button>
     <button class="btn" id="btnSaveHdr" data-i18n-title="saveHdrTitle" title="Guardar keymap en la flash del teclado (ZMK Studio save_changes)" style="display:none">💾 <span data-i18n="saveKm">Guardar (flash)</span></button>
@@ -459,8 +459,8 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 <!-- OLED ×4 zoom -->
 <div id="oledZoom">
   <button class="btn ozClose" id="btnOledZoomX">✕</button>
-  <div class="ozPanel"><div class="oframe"><canvas id="oledZL" width="272" height="640"></canvas></div><span class="ot">OLED IZQUIERDA · CENTRAL</span></div>
-  <div class="ozPanel"><div class="oframe"><canvas id="oledZR" width="272" height="640"></canvas></div><span class="ot">OLED DERECHA · PERIFÉRICO</span></div>
+  <div class="ozPanel"><div class="oframe"><canvas id="oledZL" width="272" height="640"></canvas></div><span class="ot" data-i18n="ozLeft">OLED IZQUIERDA · CENTRAL</span></div>
+  <div class="ozPanel"><div class="oframe"><canvas id="oledZR" width="272" height="640"></canvas></div><span class="ot" data-i18n="ozRight">OLED DERECHA · PERIFÉRICO</span></div>
 </div>
 
 <!-- ======================= FOOTER ======================= -->
@@ -518,7 +518,20 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',ol
   serial:'nº de serie',stockOsd:'Keymap de fábrica',
   saveHdrTitle:'Guardar keymap en la flash del teclado (ZMK Studio save_changes)',
   helpBtnTitle:'Ayuda y atajos (F1)',undoTitle:'Deshacer (Ctrl+Z)',redoTitle:'Rehacer (Ctrl+Y)',
-  deselTitle:'Deseleccionar (Esc)',lockTitle:'Bloqueo ZMK Studio'},
+  deselTitle:'Deseleccionar (Esc)',lockTitle:'Bloqueo ZMK Studio',
+  unsavedDot:'● CAMBIOS SIN GUARDAR',ozLeft:'OLED IZQUIERDA · CENTRAL',ozRight:'OLED DERECHA · PERIFÉRICO',
+  logPort:'puerto',logPortOpen:'puerto abierto @12500 (USB CDC ACM, DTR on)',
+  logRetry:'reintento @115200',logAttempt:'intento device_info',logNoAnswer:'sin respuesta',
+  logDisconnected:'desconectado',
+  logUnlocked:'DESBLOQUEADO — cargando behaviors y keymap…',
+  logWaitingLocked:'en espera — teclado BLOQUEADO',
+  logSecured:'Handlers SECURED: pulsa la tecla física &studio_unlock para continuar',
+  logLockedEdit:'teclado BLOQUEADO: pulsa UNLOCK antes de editar',
+  logNoAlias:'behavior sin alias',
+  lockedTag:'BLOQUEADO (desbloquea con la tecla física &studio_unlock)',
+  hintNoRpc:'⚠ El puerto abre pero el teclado NO responde RPC. Causas típicas: (1) elegiste el puerto equivocado — algunos teclados exponen DOS puertos serie (consola y studio): prueba el otro. (2) tu firmware no tiene ZMK Studio: verifica abriendo https://zmk.studio — si la app oficial tampoco conecta, reflashea sofle_left con el build de tu repo que incluye el snippet studio-rpc-usb-uart. (3) otro programa tiene el puerto ocupado.',
+  hintTips:'Pistas: cable en la mitad IZQUIERDA · cierra ZMK Studio/terminales que ocupen el puerto · prueba el OTRO puerto si hay dos · verifica que https://zmk.studio oficial sí conecta.',
+  hintUsbUnlock:'ZMK Studio no permite desbloquear por USB: pulsa la tecla física &studio_unlock (capa Lower, fila Z, 2ª tecla). La app se actualizará al instante.'},
 en:{connect:'Connect keyboard',disconnect:'Disconnect',studio:'Studio Panel',oledzoom:'OLED ×4',
   rgbfx:'RGB effect',bri:'Brightness',hue:'Hue',spd:'Speed',rgbOn:'RGB: ON',rgbOff:'RGB: OFF',
   expKey:'Export .keymap',expJson:'Export JSON',impJson:'Import JSON',reset:'Reset stock',
@@ -547,7 +560,20 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',studio:'Studio Panel',ole
   serial:'serial',stockOsd:'Factory keymap',
   saveHdrTitle:'Save keymap to the keyboard flash (ZMK Studio save_changes)',
   helpBtnTitle:'Help and shortcuts (F1)',undoTitle:'Undo (Ctrl+Z)',redoTitle:'Redo (Ctrl+Y)',
-  deselTitle:'Deselect (Esc)',lockTitle:'ZMK Studio lock'}};
+  deselTitle:'Deselect (Esc)',lockTitle:'ZMK Studio lock',
+  unsavedDot:'● UNSAVED CHANGES',ozLeft:'LEFT OLED · CENTRAL',ozRight:'RIGHT OLED · PERIPHERAL',
+  logPort:'port',logPortOpen:'port open @12500 (USB CDC ACM, DTR on)',
+  logRetry:'retrying @115200',logAttempt:'device_info attempt',logNoAnswer:'no answer',
+  logDisconnected:'disconnected',
+  logUnlocked:'UNLOCKED — loading behaviors and keymap…',
+  logWaitingLocked:'waiting — keyboard LOCKED',
+  logSecured:'SECURED handlers: press the physical &studio_unlock key to continue',
+  logLockedEdit:'keyboard LOCKED: press UNLOCK before editing',
+  logNoAlias:'behavior with no alias',
+  lockedTag:'LOCKED (unlock with the physical &studio_unlock key)',
+  hintNoRpc:'⚠ The port opens but the keyboard does NOT answer RPC. Common causes: (1) wrong port — some keyboards expose TWO serial ports (console and studio): try the other one. (2) your firmware has no ZMK Studio: check by opening https://zmk.studio — if the official app cannot connect either, reflash sofle_left with the build from your repo that includes the studio-rpc-usb-uart snippet. (3) another program is holding the port.',
+  hintTips:'Hints: cable on the LEFT half · close ZMK Studio/terminals holding the port · try the OTHER port if there are two · check that the official https://zmk.studio does connect.',
+  hintUsbUnlock:'ZMK Studio does not allow unlocking over USB: press the physical &studio_unlock key (Lower layer, Z row, 2nd key). The app will update instantly.'}};
 const t=k=>(I18N[lang]&&I18N[lang][k])||I18N.es[k]||k;
 function applyI18n(){$$('[data-i18n]').forEach(e=>{const k=e.dataset.i18n;if(I18N[lang]&&I18N[lang][k])e.textContent=I18N[lang][k];});
   $$('[data-i18n-ph]').forEach(e=>{const k=e.dataset.i18nPh;if(I18N[lang]&&I18N[lang][k])e.placeholder=I18N[lang][k];});
@@ -1470,7 +1496,7 @@ function setBadge(){
   const b=$('#connBadge');
   if(studio.connected){b.className='online';$('#connTxt').textContent=t('connected')+' · '+studio.deviceName;}
   else{b.className='local';$('#connTxt').textContent=t('local');}
-  $('#drawerMode').textContent=studio.connected?'CONECTADO':'SIMULACIÓN';
+  $('#drawerMode').textContent=studio.connected?t('connected'):t('local');
   $('#lockDot').classList.toggle('unlocked',!!studio.lockState||unlocked);
   $('#lockStateTxt').textContent=(studio.connected?(studio.lockState?'UNLOCKED':'LOCKED'):(unlocked?'UNLOCKED (sim)':'LOCKED (sim)'));
   $('#unsavedDot').style.display=studio.unsaved?'inline':'none';
@@ -1507,7 +1533,7 @@ function handleFrame(payload){
       plog('inf','notify lock_state='+msg.data.lock_state_changed);
       if(studio.connected&&studio.lockState&&studio.behaviors.size===0){
         showLockOverlay(false);
-        plog('inf','DESBLOQUEADO — cargando behaviors y keymap…');
+        plog('inf',t('logUnlocked'));
         studioFetchSecured();
       }
       showLockOverlay(studio.connected&&!studio.lockState);
@@ -1558,10 +1584,10 @@ async function studioConnect(){
   try{
     const port=await navigator.serial.requestPort();
     const inf=port.getInfo();
-    plog('inf',`puerto: usb ${inf.usbVendorId?'0x'+inf.usbVendorId.toString(16).padStart(4,'0'):'?'}:`+
+    plog('inf',`${t('logPort')}: usb ${inf.usbVendorId?'0x'+inf.usbVendorId.toString(16).padStart(4,'0'):'?'}:`+
       `${inf.usbProductId?'0x'+inf.usbProductId.toString(16).padStart(4,'0'):'?'}`);
     try{await port.open({baudRate:12500});}
-    catch(e1){plog('err','open @12500: '+e1.message+' — reintento @115200');
+    catch(e1){plog('err','open @12500: '+e1.message+' — '+t('logRetry'));
       await port.open({baudRate:115200});}
     /* Zephyr USB CDC ACM no transmite hasta que el host afirma DTR */
     try{await port.setSignals({dataTerminalReady:true,requestToSend:false});}
@@ -1569,7 +1595,7 @@ async function studioConnect(){
     await new Promise(r=>setTimeout(r,200));
     studio.port=port;studio.writer=port.writable.getWriter();
     studioReadLoop();
-    plog('inf','puerto abierto @12500 (USB CDC ACM, DTR on)');
+    plog('inf',t('logPortOpen'));
     /* checklist visible de diagnóstico */
     const steps=$('#connSteps');steps.innerHTML='';
     const step=(ok,label,detail)=>{steps.innerHTML+=
@@ -1579,18 +1605,17 @@ async function studioConnect(){
        (con reintentos: el firmware puede tardar en contestar el primer frame) */
     step(null,'device_info');
     let di=null,lastErr=null;
-    for(let t=0;t<4&&!di;t++){
+    /* OJO: el contador NO puede llamarse t -- sombrearia la funcion t()
+       de i18n dentro del bucle y romperia las traducciones de aqui. */
+    for(let tryN=0;tryN<4&&!di;tryN++){
       try{di=await studioRequest(reqCoreGetDeviceInfo,2500);}
-      catch(e){lastErr=e;plog('err','device_info intento '+(t+1)+'/4: '+e.message);
+      catch(e){lastErr=e;plog('err',t('logAttempt')+' '+(tryN+1)+'/4: '+e.message);
         await new Promise(r=>setTimeout(r,300));}
     }
     if(!di){
-      step(false,'device_info','sin respuesta');
-      plog('inf','⚠ El puerto abre pero el teclado NO responde RPC. Causas típicas: '+
-        '(1) elegiste el puerto equivocado — algunos teclados exponen DOS puertos serie (consola y studio): prueba el otro. '+
-        '(2) tu firmware no tiene ZMK Studio: verifica abriendo https://zmk.studio — si la app oficial tampoco conecta, reflashea sofle_left con el build de tu repo que incluye el snippet studio-rpc-usb-uart. '+
-        '(3) otro programa tiene el puerto ocupado.');
-      throw lastErr||new Error('sin respuesta del teclado');
+      step(false,'device_info',t('logNoAnswer'));
+      plog('inf',t('hintNoRpc'));
+      throw lastErr||new Error(t('logNoAnswer'));
     }
     studio.deviceName=(di.data.device_info&&di.data.device_info.name)||'Sofle';
     step(true,'device_info',studio.deviceName);
@@ -1598,7 +1623,7 @@ async function studioConnect(){
     const ls=await studioRequest(reqCoreGetLockState);
     studio.lockState=ls.data.lock_state?1:0;
     studio.connected=true;setBadge();
-    step(true,'lock_state',studio.lockState?'UNLOCKED':'LOCKED (desbloquea con la tecla física &studio_unlock)');
+    step(true,'lock_state',studio.lockState?'UNLOCKED':t('lockedTag'));
     plog('inf','device: '+studio.deviceName+' · lock='+studio.lockState);
     try{
       const la=await studioRequest(reqBehaviorsListAll);
@@ -1609,15 +1634,15 @@ async function studioConnect(){
        Si está bloqueado, esperamos a la notificación lock_state_changed. */
     if(studio.lockState)await studioFetchSecured(step);
     else{
-      step(null,'keymap/behaviors','en espera — teclado BLOQUEADO');
-      plog('inf','Handlers SECURED: pulsa &studio_unlock físico para continuar');
+      step(null,'keymap/behaviors',t('logWaitingLocked'));
+      plog('inf',t('logSecured'));
       showLockOverlay(true);
     }
     oledState.output='usb';oledState.charging=true;
-    $('#btnConnect').innerHTML='🔌 '+(lang==='es'?'Desconectar':'Disconnect');
+    $('#btnConnect').innerHTML='🔌 '+t('disconnect');
   }catch(e){
     plog('err',t('connFail')+': '+e.message);osd(t('connFail'));
-    plog('inf','Pistas: cable en la mitad IZQUIERDA · cierra ZMK Studio/terminales que ocupen el puerto · prueba el OTRO puerto si hay dos · verifica que https://zmk.studio oficial sí conecta.');
+    plog('inf',t('hintTips'));
     await studioDisconnect();
   }
 }
@@ -1633,7 +1658,7 @@ async function studioFetchSecured(step){
           const canon=behCanonical(raw);
           if(canon)studio.behaviors.set(canon,det.data.details.id);
           else{studio.behaviors.set(raw,det.data.details.id);
-               plog('inf','behavior sin alias: "'+raw+'" (id '+det.data.details.id+')');}
+               plog('inf',t('logNoAlias')+': "'+raw+'" (id '+det.data.details.id+')');}
         }
       }catch(e){plog('err','details '+bid+': '+e.message);}
     }
@@ -1685,11 +1710,11 @@ async function studioDisconnect(){
   showLockOverlay(false);
   oledState.output='bt';oledState.charging=false;
   $('#btnConnect').innerHTML='🔌 '+t('connect');
-  setBadge();plog('inf','desconectado');
+  setBadge();plog('inf',t('logDisconnected'));
 }
 async function studioSetBinding(layer,pos,bd){
   if(studio.connected&&!studio.lockState){
-    plog('err','teclado BLOQUEADO: pulsa UNLOCK antes de editar');osd(t('lockedWarn'));return;
+    plog('err',t('logLockedEdit'));osd(t('lockedWarn'));return;
   }
   const wire={behavior_id:behId(bd.b),p1:bd.p1>>>0,p2:bd.p2>>>0};
   try{
@@ -1710,7 +1735,7 @@ async function studioSetBinding(layer,pos,bd){
    (encoder) CW/CCW slot instead of a regular key position. */
 async function studioSetSensorBinding(layer,sensorIdx,cw,bd){
   if(studio.connected&&!studio.lockState){
-    plog('err','teclado BLOQUEADO: pulsa UNLOCK antes de editar');osd(t('lockedWarn'));return;
+    plog('err',t('logLockedEdit'));osd(t('lockedWarn'));return;
   }
   const wire={behavior_id:behId(bd.b),p1:bd.p1>>>0,p2:bd.p2>>>0};
   try{
@@ -2052,7 +2077,7 @@ async function studioUnlock(){
        física &studio_unlock. El firmware notifica lock_state_changed y la
        app se actualiza sola. */
     if(studio.lockState){osd(t('alreadyUnlocked'));return;}
-    plog('inf','ZMK Studio no permite desbloquear por USB: pulsa la tecla física &studio_unlock (capa Lower, fila Z, 2ª tecla). La app se actualizará al instante.');
+    plog('inf',t('hintUsbUnlock'));
     osd(t('pressUnlockKey'));
   }else{unlocked=!unlocked;setBadge();osd(unlocked?'UNLOCK (sim)':'LOCK (sim)');}
 }
