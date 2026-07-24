@@ -396,6 +396,20 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
         Cicla crystal → cat → head → spaceman → pokemon, como &oledanim (Lower + encoder derecho).</p>
     </div>
     <div class="dsec">
+      <h3 data-i18n="secMacros">Macros (&dmac)</h3>
+      <p style="font-size:10px;color:var(--faint);margin:0 0 8px;line-height:1.5" data-i18n="macroHint">
+        Escribe el texto que quieras (ñ, á, →, tu email…). Se guarda en el teclado y puedes asignar la macro a cualquier tecla desde el panel de abajo.</p>
+      <div id="macroList"></div>
+      <label style="display:block;font-size:10px;color:var(--faint);margin-top:10px" data-i18n="unicodeMode">Método Unicode (según tu sistema)</label>
+      <select id="ucMode" class="btn small" style="width:100%;margin-top:4px">
+        <option value="0" data-i18n="ucLinux">Linux (Ctrl+Shift+U)</option>
+        <option value="1" data-i18n="ucWin">Windows + WinCompose (AltGr+U)</option>
+        <option value="2" data-i18n="ucMac">macOS (Unicode Hex Input)</option>
+      </select>
+      <p style="font-size:10px;color:var(--faint);margin-top:6px;line-height:1.5" data-i18n="ucHint">
+        Solo afecta a caracteres que no existen en tu distribución de teclado. Las letras normales se escriben igual en todos los sistemas.</p>
+    </div>
+    <div class="dsec">
       <h3 data-i18n="secFile">Archivo</h3>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn small" id="btnExportKeymap" data-i18n="expKey">Export .keymap</button>
@@ -520,6 +534,15 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',ol
   helpBtnTitle:'Ayuda y atajos (F1)',undoTitle:'Deshacer (Ctrl+Z)',redoTitle:'Rehacer (Ctrl+Y)',
   deselTitle:'Deseleccionar (Esc)',lockTitle:'Bloqueo ZMK Studio',
   unsavedDot:'● CAMBIOS SIN GUARDAR',ozLeft:'OLED IZQUIERDA · CENTRAL',ozRight:'OLED DERECHA · PERIFÉRICO',
+  secMacros:'Macros (&dmac)',
+  macroHint:'Escribe el texto que quieras (ñ, á, →, tu email…). Se guarda en el teclado y puedes asignar la macro a cualquier tecla desde el panel de abajo.',
+  unicodeMode:'Método Unicode (según tu sistema)',
+  ucLinux:'Linux (Ctrl+Shift+U)',ucWin:'Windows + WinCompose (AltGr+U)',ucMac:'macOS (Unicode Hex Input)',
+  ucHint:'Solo afecta a caracteres que no existen en tu distribución de teclado. Las letras normales se escriben igual en todos los sistemas.',
+  macroPh:'texto de la macro…',macroSaved:'Macro %n guardada ✓',macroErrSlot:'ranura inválida',
+  macroErrLong:'demasiado larga (máx %m pasos)',macroErrNo:'el firmware no soporta macros',
+  macroNeedConn:'conecta el teclado para guardar macros',macroEmpty:'(vacía)',
+  macroTooLong:'No cabe: %s pasos, el máximo es %m',ucSaved:'Método Unicode guardado ✓',
   logPort:'puerto',logPortOpen:'puerto abierto @12500 (USB CDC ACM, DTR on)',
   logRetry:'reintento @115200',logAttempt:'intento device_info',logNoAnswer:'sin respuesta',
   logDisconnected:'desconectado',
@@ -562,6 +585,15 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',studio:'Studio Panel',ole
   helpBtnTitle:'Help and shortcuts (F1)',undoTitle:'Undo (Ctrl+Z)',redoTitle:'Redo (Ctrl+Y)',
   deselTitle:'Deselect (Esc)',lockTitle:'ZMK Studio lock',
   unsavedDot:'● UNSAVED CHANGES',ozLeft:'LEFT OLED · CENTRAL',ozRight:'RIGHT OLED · PERIPHERAL',
+  secMacros:'Macros (&dmac)',
+  macroHint:'Type whatever you want (ñ, á, →, your email…). It is stored on the keyboard and you can bind the macro to any key from the panel below.',
+  unicodeMode:'Unicode method (depends on your OS)',
+  ucLinux:'Linux (Ctrl+Shift+U)',ucWin:'Windows + WinCompose (AltGr+U)',ucMac:'macOS (Unicode Hex Input)',
+  ucHint:'Only affects characters that do not exist on your keyboard layout. Normal letters type the same on every system.',
+  macroPh:'macro text…',macroSaved:'Macro %n saved ✓',macroErrSlot:'invalid slot',
+  macroErrLong:'too long (max %m steps)',macroErrNo:'firmware does not support macros',
+  macroNeedConn:'connect the keyboard to save macros',macroEmpty:'(empty)',
+  macroTooLong:'Does not fit: %s steps, the maximum is %m',ucSaved:'Unicode method saved ✓',
   logPort:'port',logPortOpen:'port open @12500 (USB CDC ACM, DTR on)',
   logRetry:'retrying @115200',logAttempt:'device_info attempt',logNoAnswer:'no answer',
   logDisconnected:'disconnected',
@@ -663,6 +695,7 @@ function bindingLegend(bd){
     case '&studio_unlock':return 'UNLK';
     case '&oledanim':return 'OLED';
     case '&mwheel':return ['WHL↑','WHL↓','WHL←','WHL→'][bd.p1]||'WHL';
+    case '&dmac':return 'M'+bd.p1;
     case '&out':return 'OUT';
     case '&caps_word':return 'CAPSW';
     case '&reset':return 'RST';
@@ -688,6 +721,7 @@ function bindingDTS(bd){
     /* &mwheel takes one cell (0=up 1=down 2=left 3=right); without it the
        exported keymap wouldn't compile. */
     case '&mwheel':return '&mwheel '+(bd.p1>>>0);
+    case '&dmac':return '&dmac '+(bd.p1>>>0);
     default:return bd.b;
   }
 }
@@ -700,6 +734,7 @@ function bindingDesc(bd){
     case '&bt':return 'Bluetooth '+(BT_CMD_NAME[bd.p1&0xFF]||'')+(bd.p1===3?' '+(bd.p2+1):'');
     case '&rgbfx':return 'RGB FX '+(RGBFX_CMD_NAME[(bd.p1>>>16)&0xFF]||'');
     case '&mwheel':return 'Mouse wheel '+(['up','down','left','right'][bd.p1]||'');
+    case '&dmac':return 'Macro '+bd.p1;
     default:return bd.b;
   }
 }
@@ -1387,6 +1422,24 @@ function parseKeymapResponse(buf){
     return{get_sensor_bindings:list};
   }
   const ssb=first(fs,100);if(ssb)return{set_sensor_binding:ssb.val};
+  /* CODEKEEB PATCH: macros editables (campos 101/102/103 del fork). */
+  const gm=first(fs,101);if(gm){
+    const d=PBR(gm.bytes);
+    const list=all(d,1).map(x=>{
+      const mm=PBR(x.bytes);
+      const slot=first(mm,1)?first(mm,1).val:0;
+      const steps=all(mm,2).map(sx=>{
+        const st=PBR(sx.bytes);
+        return{type:first(st,1)?first(st,1).val:0,value:first(st,2)?first(st,2).val:0};
+      });
+      return{slot,steps};
+    });
+    return{get_macros:{macros:list,
+      unicode_mode:first(d,2)?first(d,2).val:0,
+      max_steps:first(d,3)?first(d,3).val:24}};
+  }
+  const sm=first(fs,102);if(sm)return{set_macro:sm.val};
+  const sum=first(fs,103);if(sum)return{set_unicode_mode:sum.val};
   return{};
 }
 function parseCoreResponse(buf){
@@ -1556,7 +1609,7 @@ async function studioReadLoop(){
   finally{try{rd.releaseLock();}catch(e){}}
 }
 /* behavior_id real (o local) por nombre; ids locales estables si offline */
-const LOCAL_BEH_IDS={};let _lid=0;['&kp','&trans','&mo','&to','&tog','&sl','&bt','&rgbfx','&studio_unlock','&oledanim','&out','&caps_word','&reset','&bootloader','&ext_power','&none','&mwheel'].forEach(n=>LOCAL_BEH_IDS[n]=_lid++);
+const LOCAL_BEH_IDS={};let _lid=0;['&kp','&trans','&mo','&to','&tog','&sl','&bt','&rgbfx','&studio_unlock','&oledanim','&out','&caps_word','&reset','&bootloader','&ext_power','&none','&mwheel','&dmac'].forEach(n=>LOCAL_BEH_IDS[n]=_lid++);
 /* El firmware reporta display_names tipo "key_press", "momentary_layer"...:
    mapeo a nuestros nombres '&' (normalizado: minúsculas, sin separadores) */
 const BEH_ALIASES={
@@ -1567,7 +1620,8 @@ const BEH_ALIASES={
  '&out':['outputs','out'],'&reset':['reset','sysreset'],'&bootloader':['bootloader'],
  '&ext_power':['extpower'],'&caps_word':['capsword'],
  '&studio_unlock':['studiounlock'],'&oledanim':['oledanim','oledanimation'],
- '&mwheel':['mwheel','mousewheel','scrollwheel']};
+ '&mwheel':['mwheel','mousewheel','scrollwheel'],
+ '&dmac':['dmac','dynamicmacro','macro']};
 function behCanonical(displayName){
   const n=(displayName||'').toLowerCase().replace(/[^a-z0-9]/g,'');
   for(const [canon,aliases] of Object.entries(BEH_ALIASES))
@@ -1670,6 +1724,9 @@ async function studioFetchSecured(step){
     await studioFetchKeymap();
     step(true,'keymap',keymap.layers.length+' capas');
   }catch(e){step(false,'keymap',e.message);plog('err','fetch keymap: '+e.message);}
+  /* CODEKEEB: contenido de las macros. Silencioso si el firmware es
+     antiguo y no conoce get_macros. */
+  await studioFetchMacros();
 }
 function showLockOverlay(show){
   let ov=$('#lockOverlay');
@@ -1751,6 +1808,145 @@ async function studioSetSensorBinding(layer,sensorIdx,cw,bd){
     }
   }catch(e){plog('err','set_sensor_binding: '+e.message);}
 }
+
+/* ============================================================
+   CODEKEEB: macros editables en caliente (&dmac)
+   Campos 101/102/103 del fork codekeeb/zmk-studio-messages.
+   ============================================================ */
+const DMAC_STEP_TAP=0, DMAC_STEP_UNICODE=1, DMAC_STEP_WAIT=2;
+let macros=[];              /* [{slot, steps:[{type,value}], text}] */
+let macroMax=24;            /* lo dice el firmware en get_macros */
+let ucMode=0;
+
+/* Caracteres que SÍ son una tecla normal: se teclean directos, que es
+   mucho más rápido y fiable que la secuencia Unicode del sistema.
+   Lo demás (ñ, á, →, emoji…) va por codepoint. Ojo: esto asume la
+   distribución US/ES estándar para las teclas base; si un carácter no
+   sale bien en un layout raro, el usuario siempre puede forzar Unicode. */
+const PLAIN_KEYS={};
+(function(){
+  'abcdefghijklmnopqrstuvwxyz'.split('').forEach((c,i)=>{PLAIN_KEYS[c]=0x070004+i;});
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach((c,i)=>{PLAIN_KEYS[c]=LS(0x070004+i);});
+  '1234567890'.split('').forEach((c,i)=>{PLAIN_KEYS[c]=0x07001E+i;});
+  const simple={' ':0x07002C,'\n':0x070028,'\t':0x07002B,'-':0x07002D,'=':0x07002E,
+    '[':0x07002F,']':0x070030,'\\':0x070031,';':0x070033,"'":0x070034,
+    '`':0x070035,',':0x070036,'.':0x070037,'/':0x070038};
+  Object.assign(PLAIN_KEYS,simple);
+  const shifted={'_':0x07002D,'+':0x07002E,'{':0x07002F,'}':0x070030,'|':0x070031,
+    ':':0x070033,'"':0x070034,'~':0x070035,'<':0x070036,'>':0x070037,'?':0x070038,
+    '!':0x07001E,'@':0x07001F,'#':0x070020,'$':0x070021,'%':0x070022,'^':0x070023,
+    '&':0x070024,'*':0x070025,'(':0x070026,')':0x070027};
+  Object.entries(shifted).forEach(([c,u])=>{PLAIN_KEYS[c]=LS(u);});
+})();
+
+/* Texto -> pasos. Usa codePointAt para no partir emojis ni pares
+   surrogados por la mitad. */
+function textToSteps(txt){
+  const steps=[];
+  for(const ch of (txt||'')){
+    if(PLAIN_KEYS[ch]!==undefined) steps.push({type:DMAC_STEP_TAP,value:PLAIN_KEYS[ch]>>>0});
+    else steps.push({type:DMAC_STEP_UNICODE,value:ch.codePointAt(0)});
+  }
+  return steps;
+}
+/* Pasos -> texto, para volver a mostrar lo que hay en el teclado. */
+function stepsToText(steps){
+  const rev={};Object.entries(PLAIN_KEYS).forEach(([c,u])=>{if(rev[u>>>0]===undefined)rev[u>>>0]=c;});
+  return (steps||[]).map(s=>{
+    if(s.type===DMAC_STEP_UNICODE)return String.fromCodePoint(s.value);
+    if(s.type===DMAC_STEP_TAP)return rev[s.value>>>0]!==undefined?rev[s.value>>>0]:'';
+    return '';
+  }).join('');
+}
+
+/* Blob empaquetado: 5 bytes por paso (1 tipo + 4 valor little-endian).
+   El firmware NO puede usar un campo repeated aquí -- ZMK llama a
+   pb_decode() sin punto para instalar el callback que nanopb exige, y
+   llegaría vacío en silencio. */
+function packSteps(steps){
+  const b=new Uint8Array(steps.length*5);
+  steps.forEach((s,i)=>{
+    const o=i*5;b[o]=s.type&0xFF;
+    b[o+1]=s.value&0xFF;b[o+2]=(s.value>>>8)&0xFF;
+    b[o+3]=(s.value>>>16)&0xFF;b[o+4]=(s.value>>>24)&0xFF;
+  });
+  return b;
+}
+function reqKeymapGetMacros(id){return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bool(101,true)));}
+function reqKeymapSetMacro(id,slot,steps){
+  const chg=PBW.cat(PBW.uint(1,slot),PBW.bytes(2,Array.from(packSteps(steps))));
+  return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(102,chg)));
+}
+function reqKeymapSetUnicodeMode(id,mode){
+  const chg=PBW.uint(1,mode);
+  return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(103,chg)));
+}
+
+async function studioFetchMacros(){
+  if(!studio.connected)return;
+  try{
+    const r=await studioRequest(reqKeymapGetMacros);
+    const g=r.data&&r.data.get_macros;
+    if(!g)return;
+    macros=g.macros||[];macroMax=g.max_steps||24;ucMode=g.unicode_mode||0;
+    macros.forEach(m=>m.text=stepsToText(m.steps));
+    renderMacros();
+    plog('inf',`macros: ${macros.length} ranuras, máx ${macroMax} pasos`);
+  }catch(e){/* firmware sin soporte de macros: la sección queda local */}
+}
+async function studioSetMacro(slot,steps){
+  if(!studio.connected||!studio.lockState){osd(t('macroNeedConn'));return false;}
+  try{
+    const r=await studioRequest(rid=>reqKeymapSetMacro(rid,slot,steps));
+    const code=r.data?r.data.set_macro:undefined;
+    if(code===0||code===undefined){
+      plog('inf',`set_macro ${slot}: OK (${steps.length} pasos)`);
+      studio.unsaved=true;setBadge();return true;
+    }
+    const why=[t('macroSaved'),t('macroErrSlot'),t('macroErrLong').replace('%m',macroMax),t('macroErrNo')][code]||('err '+code);
+    plog('err',`set_macro ${slot}: ${why}`);osd('Error: '+why);return false;
+  }catch(e){plog('err','set_macro: '+e.message);return false;}
+}
+async function studioSetUnicodeMode(mode){
+  if(!studio.connected||!studio.lockState){osd(t('macroNeedConn'));return;}
+  try{
+    const r=await studioRequest(rid=>reqKeymapSetUnicodeMode(rid,mode));
+    const code=r.data?r.data.set_unicode_mode:undefined;
+    if(code===0||code===undefined){ucMode=mode;plog('inf','set_unicode_mode: OK');osd(t('ucSaved'));}
+    else plog('err','set_unicode_mode: err '+code);
+  }catch(e){plog('err','set_unicode_mode: '+e.message);}
+}
+
+function renderMacros(){
+  const box=$('#macroList');if(!box)return;
+  box.innerHTML='';
+  const n=macros.length||12;
+  for(let i=0;i<n;i++){
+    const m=macros[i]||{slot:i,steps:[],text:''};
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;gap:5px;align-items:center;margin-bottom:5px';
+    const lbl=document.createElement('span');
+    lbl.textContent=i;
+    lbl.style.cssText='font:700 10px var(--mono);color:var(--faint);width:16px;flex:none;text-align:right';
+    const inp=document.createElement('input');
+    inp.type='text';inp.value=m.text||'';inp.placeholder=t('macroPh');
+    inp.style.cssText='flex:1;min-width:0;font:400 11px var(--mono);padding:5px 7px;'+
+      'border:1px solid var(--hairline2);border-radius:7px;background:var(--surface);color:var(--ink)';
+    const save=()=>{
+      const steps=textToSteps(inp.value);
+      if(steps.length>macroMax){
+        osd(t('macroTooLong').replace('%s',steps.length).replace('%m',macroMax));return;
+      }
+      macros[i]={slot:i,steps,text:inp.value};
+      studioSetMacro(i,steps).then(ok=>{if(ok)osd(t('macroSaved').replace('%n',i));});
+    };
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}});
+    inp.addEventListener('change',save);
+    row.append(lbl,inp);box.appendChild(row);
+  }
+  const sel=$('#ucMode');if(sel)sel.value=String(ucMode);
+}
+
 async function studioLayerOp(op,fn){
   if(!studio.connected)return;
   try{await studioRequest(fn);plog('inf',op+' ok');await studioFetchKeymap();}
@@ -1798,6 +1994,9 @@ pkAdd('media','OLED','&oledanim',()=>B('&oledanim'));
 [['WHL↑','&mwheel 0 (scroll up)',0],['WHL↓','&mwheel 1 (scroll down)',1],
  ['WHL←','&mwheel 2 (scroll left)',2],['WHL→','&mwheel 3 (scroll right)',3]]
  .forEach(([l,d,p])=>pkAdd('media',l,d,()=>B('&mwheel',p)));
+/* CODEKEEB: macros editables (&dmac N). El contenido de cada ranura se
+   escribe en el panel Studio; aquí solo se asigna la ranura a una tecla. */
+for(let i=0;i<12;i++)pkAdd('sistema','M'+i,'&dmac '+i+' (macro '+i+')',()=>B('&dmac',i));
 [['K_UNDO','undo'],['K_CUT','cut'],['K_COPY','copy'],['K_PASTE','pst']]
  .forEach(([n,l])=>pkAdd('nav',l,'&kp '+n,()=>kp(n)));
 for(let i=0;i<8;i++){
@@ -2153,6 +2352,14 @@ function exportKeymap(){
             #binding-cells = <1>;
         };
 
+        // Macros editables en caliente. El CONTENIDO de cada ranura vive
+        // en la flash del teclado (se escribe desde el editor), aqui solo
+        // se declara el behavior.
+        dmac: dmac {
+            compatible = "zmk,behavior-dynamic-macro";
+            #binding-cells = <1>;
+        };
+
         // Un sensor-rotate-dynamic por capa+encoder: el par cw/ccw es
         // editable en vivo desde ZMK Studio y se guarda en flash.
 ${encBehaviors}
@@ -2295,6 +2502,12 @@ function init(){
   $('#btnSaveKm').onclick=studioSave;
   const sh=$('#btnSaveHdr');if(sh)sh.onclick=studioSave;
   $('#btnDiscard').onclick=studioDiscardKm;
+  /* CODEKEEB: macros. renderMacros pinta las 12 ranuras aunque no haya
+     teclado (modo simulación); al conectar se rellenan con lo que haya
+     realmente en la flash. */
+  renderMacros();
+  const ucSel=$('#ucMode');
+  if(ucSel)ucSel.onchange=()=>studioSetUnicodeMode(+ucSel.value);
   $('#btnStock').onclick=()=>{if(!confirm(t('confirmReset')))return;
     snapshot();keymap={layers:stockLayers()};saveKeymap();selPos=-1;editingEnc=null;
     renderLayer();renderLayerBar();renderDrawerLayers();setBadge();
