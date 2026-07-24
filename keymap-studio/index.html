@@ -11,7 +11,11 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://codekeeb.github.io/keymap-studio/">
 <meta name="twitter:card" content="summary">
-<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%230d0e11"/><rect x="8" y="18" width="20" height="20" rx="5" fill="%23e0762e"/><rect x="34" y="18" width="20" height="20" rx="5" fill="%23c04a8b"/><rect x="14" y="42" width="36" height="10" rx="5" fill="%234a7fc0"/></svg>'>
+<!-- Mismo favicon que codekeeb.github.io (assets/favicon.svg). La ruta
+     relativa "../assets/" funciona publicado en /keymap-studio/; el data:
+     URI de debajo queda como respaldo al abrir el HTML suelto en local. -->
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="alternate icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%230d0e11"/><rect x="8" y="18" width="20" height="20" rx="5" fill="%23e0762e"/><rect x="34" y="18" width="20" height="20" rx="5" fill="%23c04a8b"/><rect x="14" y="42" width="36" height="10" rx="5" fill="%234a7fc0"/></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -250,6 +254,12 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #ctx button:disabled:hover{background:none}
 #ctx .k{margin-left:auto;color:var(--muted);font-family:var(--font-mono);font-size:.6rem}
 #ctx hr{border:none;border-top:1px solid var(--hairline);margin:4px 8px}
+#encCtx{position:fixed;z-index:95;background:var(--surface);border:1px solid var(--hairline);border-radius:14px;
+  padding:5px;display:none;min-width:200px;box-shadow:0 24px 50px -20px rgba(20,22,27,.35);font-size:12.5px}
+#encCtx.open{display:block}
+#encCtx button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:none;color:var(--ink);
+  padding:9px 12px;border-radius:9px;cursor:pointer;font-size:12.5px}
+#encCtx button:hover{background:var(--bg)}
 
 /* ---------- modal ayuda ---------- */
 #helpBk{position:fixed;inset:0;background:rgba(20,22,27,.35);backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center}
@@ -429,6 +439,14 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   <button id="ctxTrans">▽ <span data-i18n="ctxTrans">Transparente</span></button>
 </div>
 
+<!-- menú contextual de encoder: elegir qué parte editar -->
+<div id="encCtx">
+  <button id="encCtxCw">↻ <span data-i18n="encCtxCw">Editar giro horario (CW)</span></button>
+  <button id="encCtxCcw">↺ <span data-i18n="encCtxCcw">Editar giro antihorario (CCW)</span></button>
+  <hr>
+  <button id="encCtxPress">✎ <span data-i18n="encCtxPress">Editar click (press)</span></button>
+</div>
+
 <!-- modal ayuda -->
 <div id="helpBk">
   <div id="help">
@@ -488,6 +506,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',ol
   removeLayer:'Eliminar',moveL:'←',moveR:'→',restoreL:'Restaurar',pressKey:'Pulsa una tecla para editar…',
   local:'SIMULACIÓN',connected:'CONECTADO',
   ctxEdit:'Editar…',ctxCopy:'Copiar',ctxPaste:'Pegar',ctxTrans:'Transparente',helpTitle:'Ayuda · atajos',
+  encCtxCw:'Editar giro horario (CW)',encCtxCcw:'Editar giro antihorario (CCW)',encCtxPress:'Editar click (press)',
   copied:'Tecla copiada',pasted:'Tecla pegada',nothingCopy:'Nada que pegar',undone:'Deshecho',redone:'Rehecho',
   confirmReset:'¿Restaurar el keymap de fábrica? Se perderán los cambios locales.',
   oledLbl:'OLED',animBtnTitle:'Cambiar animación del OLED derecho (&oledanim)',
@@ -516,6 +535,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',studio:'Studio Panel',ole
   removeLayer:'Remove',moveL:'←',moveR:'→',restoreL:'Restore',pressKey:'Press a key to edit…',
   local:'SIMULATION',connected:'CONNECTED',
   ctxEdit:'Edit…',ctxCopy:'Copy',ctxPaste:'Paste',ctxTrans:'Transparent',helpTitle:'Help · shortcuts',
+  encCtxCw:'Edit clockwise turn (CW)',encCtxCcw:'Edit counter-clockwise turn (CCW)',encCtxPress:'Edit click (press)',
   copied:'Key copied',pasted:'Key pasted',nothingCopy:'Nothing to paste',undone:'Undone',redone:'Redone',
   confirmReset:'Restore the factory keymap? Local changes will be lost.',
   oledLbl:'OLED',animBtnTitle:'Change the right OLED animation (&oledanim)',
@@ -616,6 +636,7 @@ function bindingLegend(bd){
       return m[n]||('FX'+cmd);}
     case '&studio_unlock':return 'UNLK';
     case '&oledanim':return 'OLED';
+    case '&mwheel':return ['WHL↑','WHL↓','WHL←','WHL→'][bd.p1]||'WHL';
     case '&out':return 'OUT';
     case '&caps_word':return 'CAPSW';
     case '&reset':return 'RST';
@@ -638,6 +659,9 @@ function bindingDTS(bd){
       const n=RGBFX_CMD_NAME[cmd]||'TOGGLE';
       if(cmd===RGBFX_CMD.SELECT)return `&rgbfx RGBFX_SELECT(${zone}, ${param})`;
       return `&rgbfx RGBFX_${n}(${zone})`;}
+    /* &mwheel takes one cell (0=up 1=down 2=left 3=right); without it the
+       exported keymap wouldn't compile. */
+    case '&mwheel':return '&mwheel '+(bd.p1>>>0);
     default:return bd.b;
   }
 }
@@ -649,6 +673,7 @@ function bindingDesc(bd){
     case '&trans':return 'Transparent';
     case '&bt':return 'Bluetooth '+(BT_CMD_NAME[bd.p1&0xFF]||'')+(bd.p1===3?' '+(bd.p2+1):'');
     case '&rgbfx':return 'RGB FX '+(RGBFX_CMD_NAME[(bd.p1>>>16)&0xFF]||'');
+    case '&mwheel':return 'Mouse wheel '+(['up','down','left','right'][bd.p1]||'');
     default:return bd.b;
   }
 }
@@ -672,7 +697,7 @@ function stockLayers(){return [
   kp('LSHFT'),kp('A'),kp('S'),kp('D'),kp('F'),kp('G'), kp('H'),kp('J'),kp('K'),kp('L'),kp('SEMI'),kp('SQT'),
   kp('LCTRL'),kp('Z'),kp('X'),kp('C'),kp('V'),kp('B'), kp('C_MUTE'),kp('C_PLAY'), kp('N'),kp('M'),kp('COMMA'),kp('DOT'),kp('FSLH'),kp('RSHFT'),
   kp('LGUI'),kp('LALT'),kp('LCTRL'),B('&mo',1),kp('RET'), kp('SPACE'),B('&mo',2),kp('RCTRL'),kp('RALT'),kp('RGUI')],
- enc:[{cw:kp('C_VOL_UP'),ccw:kp('C_VOL_DN'),label:'VOL'},{cw:kp('PG_UP'),ccw:kp('PG_DN'),label:'PGUP/DN×20'}]},
+ enc:[{cw:kp('C_VOL_UP'),ccw:kp('C_VOL_DN'),label:'VOL'},{cw:kp('UP'),ccw:kp('DOWN'),label:'SCROLL'}]},
 {name:'Lower',keys:[
   TR(),kp('F1'),kp('F2'),kp('F3'),kp('F4'),kp('F5'), kp('F6'),kp('F7'),kp('F8'),kp('F9'),kp('F10'),kp('DEL'),
   kp('GRAVE'),kp('F11'),kp('F12'),B('&kp',(0x40<<24)|0x070008),B('&rgbfx',rgbfxParam(RGBFX_CMD.TOGGLE)),B('&rgbfx',rgbfxParam(RGBFX_CMD.NEXT)),
@@ -842,6 +867,7 @@ function buildEnc(side,stage){
     const dy=e.clientY-sy;sy=e.clientY;acc+=dy;
     if(Math.abs(acc)>8){rotateEnc(side,acc>0?1:-1,true);acc=0;}});
   el.addEventListener('click',()=>onEncClick(side));
+  el.addEventListener('contextmenu',e=>onEncCtx(e,side));
   stage.appendChild(el);encEls.push(el);
 }
 function applyKnob(side){encEls[side].style.setProperty('--rot',knobRot[side]+'deg');
@@ -1247,10 +1273,29 @@ function reqCoreGetLockState(id){return PBW.cat(PBW.uint(1,id),PBW.bytes(3,PBW.b
 function reqCoreSetLock(id,lock){return PBW.cat(PBW.uint(1,id),PBW.bytes(3,PBW.bool(3,lock)));}
 function reqKeymapGet(id){return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bool(1,true)));}
 function reqKeymapSetBinding(id,layer,pos,b){ /* b:{behavior_id,p1,p2} */
+  /* behavior_id is sint32 (zigzag) in the proto -- confirmed by decoding
+     the firmware's own get_keymap bytes: `08 08` decodes to 4 = &kp. Do
+     NOT "fix" this to PBW.uint: that halves the id on the wire and the
+     firmware then resolves a bogus/negative local id (INVALID_BEHAVIOR). */
   const binding=PBW.cat(PBW.sint(1,b.behavior_id),PBW.uint(2,b.p1),PBW.uint(3,b.p2));
   const chg=PBW.cat(PBW.uint(1,layer),PBW.uint(2,pos),PBW.bytes(3,binding));
   return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(2,chg)));
 }
+/* CODEKEEB PATCH: set_sensor_binding, field 100 of zmk.keymap.Request
+   (codekeeb/zmk-studio-messages fork -- see config/west.yml in the
+   firmware repos). SetSensorBindingRequest: layer_id=1, sensor_index=2,
+   clockwise=3 (bool), binding=4 (BehaviorBinding submessage). */
+function reqKeymapSetSensorBinding(id,layerId,sensorIdx,cw,b){ /* b:{behavior_id,p1,p2} */
+  /* behavior_id is sint32 (zigzag), same as reqKeymapSetBinding above. */
+  const binding=PBW.cat(PBW.sint(1,b.behavior_id),PBW.uint(2,b.p1),PBW.uint(3,b.p2));
+  const chg=PBW.cat(PBW.uint(1,layerId),PBW.uint(2,sensorIdx),PBW.bool(3,cw),PBW.bytes(4,binding));
+  return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(100,chg)));
+}
+/* CODEKEEB PATCH: get_sensor_bindings, field 99 (bool request) of
+   zmk.keymap.Request. Not called yet from the UI (the app trusts its
+   own local state after a successful set_sensor_binding), but kept
+   available for a future "read back from device on connect" flow. */
+function reqKeymapGetSensorBindings(id){return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bool(99,true)));}
 function reqKeymapMoveLayer(id,from,to){return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(8,PBW.cat(PBW.uint(1,from),PBW.uint(2,to)))));}
 function reqKeymapAddLayer(id){return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(9,[])));}
 function reqKeymapRemoveLayer(id,idx){return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(10,PBW.uint(1,idx))));}
@@ -1302,6 +1347,20 @@ function parseKeymapResponse(buf){
     return{remove_layer:first(d,1)?{ok:true}:{err:first(d,2)?first(d,2).val:1}};}
   const rs=first(fs,11);if(rs){const d=PBR(rs.bytes);const ok=first(d,1);
     return{restore_layer:ok?{layer:parseLayer(ok.bytes)}:{err:first(d,2)?first(d,2).val:1}};}
+  /* CODEKEEB PATCH: fields 99/100 (codekeeb/zmk-studio-messages fork). */
+  const gsb=first(fs,99);if(gsb){
+    const d=PBR(gsb.bytes);
+    const list=all(d,1).map(x=>{
+      const sb=PBR(x.bytes);
+      const layer_id=first(sb,1)?first(sb,1).val:0;
+      const sensor_index=first(sb,2)?first(sb,2).val:0;
+      const cw=first(sb,3)?parseBinding(first(sb,3).bytes):null;
+      const ccw=first(sb,4)?parseBinding(first(sb,4).bytes):null;
+      return{layer_id,sensor_index,cw,ccw};
+    });
+    return{get_sensor_bindings:list};
+  }
+  const ssb=first(fs,100);if(ssb)return{set_sensor_binding:ssb.val};
   return{};
 }
 function parseCoreResponse(buf){
@@ -1471,7 +1530,7 @@ async function studioReadLoop(){
   finally{try{rd.releaseLock();}catch(e){}}
 }
 /* behavior_id real (o local) por nombre; ids locales estables si offline */
-const LOCAL_BEH_IDS={};let _lid=0;['&kp','&trans','&mo','&to','&tog','&sl','&bt','&rgbfx','&studio_unlock','&oledanim','&out','&caps_word','&reset','&bootloader','&ext_power','&none'].forEach(n=>LOCAL_BEH_IDS[n]=_lid++);
+const LOCAL_BEH_IDS={};let _lid=0;['&kp','&trans','&mo','&to','&tog','&sl','&bt','&rgbfx','&studio_unlock','&oledanim','&out','&caps_word','&reset','&bootloader','&ext_power','&none','&mwheel'].forEach(n=>LOCAL_BEH_IDS[n]=_lid++);
 /* El firmware reporta display_names tipo "key_press", "momentary_layer"...:
    mapeo a nuestros nombres '&' (normalizado: minúsculas, sin separadores) */
 const BEH_ALIASES={
@@ -1481,7 +1540,8 @@ const BEH_ALIASES={
  '&bt':['bluetooth','bt'],'&rgbfx':['rgbunderglow','rgbfx','rgb'],
  '&out':['outputs','out'],'&reset':['reset','sysreset'],'&bootloader':['bootloader'],
  '&ext_power':['extpower'],'&caps_word':['capsword'],
- '&studio_unlock':['studiounlock'],'&oledanim':['oledanim','oledanimation']};
+ '&studio_unlock':['studiounlock'],'&oledanim':['oledanim','oledanimation'],
+ '&mwheel':['mwheel','mousewheel','scrollwheel']};
 function behCanonical(displayName){
   const n=(displayName||'').toLowerCase().replace(/[^a-z0-9]/g,'');
   for(const [canon,aliases] of Object.entries(BEH_ALIASES))
@@ -1645,6 +1705,27 @@ async function studioSetBinding(layer,pos,bd){
     }
   }catch(e){plog('err','set_layer_binding: '+e.message);}
 }
+/* CODEKEEB PATCH: set_sensor_binding (codekeeb/zmk-studio-messages fork,
+   field 100). Mirrors studioSetBinding above but targets a sensor
+   (encoder) CW/CCW slot instead of a regular key position. */
+async function studioSetSensorBinding(layer,sensorIdx,cw,bd){
+  if(studio.connected&&!studio.lockState){
+    plog('err','teclado BLOQUEADO: pulsa UNLOCK antes de editar');osd(t('lockedWarn'));return;
+  }
+  const wire={behavior_id:behId(bd.b),p1:bd.p1>>>0,p2:bd.p2>>>0};
+  try{
+    const r=await studioRequest(rid=>reqKeymapSetSensorBinding(rid,layer,sensorIdx,cw,wire));
+    const code=r.data?r.data.set_sensor_binding:undefined;
+    if(code===0||code===undefined){
+      plog('inf',`set_sensor_binding L${layer} sensor${sensorIdx} ${cw?'CW':'CCW'} OK`);
+      studio.unsaved=true;setBadge();
+    }else{
+      const why=['OK','posición inválida','behavior inválido','parámetros inválidos','no soportado'][code]||('err '+code);
+      plog('err',`set_sensor_binding L${layer} sensor${sensorIdx} ${cw?'CW':'CCW'}: ${why}`);
+      osd('Error: '+why);
+    }
+  }catch(e){plog('err','set_sensor_binding: '+e.message);}
+}
 async function studioLayerOp(op,fn){
   if(!studio.connected)return;
   try{await studioRequest(fn);plog('inf',op+' ok');await studioFetchKeymap();}
@@ -1686,6 +1767,12 @@ pkAdd('numeros','k0','&kp KP_N0',()=>kp('KP_N0'));
 [['C_VOL_UP','vol+'],['C_VOL_DN','vol-'],['C_MUTE','mute'],['C_PLAY','play'],['C_PP','⏯'],
  ['C_NEXT','next'],['C_PREV','prev'],['C_STOP','stop']]
  .forEach(([n,l])=>pkAdd('media',l,'&kp '+n,()=>kp(n)));
+pkAdd('media','OLED','&oledanim',()=>B('&oledanim'));
+/* CODEKEEB: rueda de raton discreta (&mwheel). param1: 0=arriba, 1=abajo,
+   2=izquierda, 3=derecha -- ver src/behaviors/behavior_mouse_wheel.c. */
+[['WHL↑','&mwheel 0 (scroll up)',0],['WHL↓','&mwheel 1 (scroll down)',1],
+ ['WHL←','&mwheel 2 (scroll left)',2],['WHL→','&mwheel 3 (scroll right)',3]]
+ .forEach(([l,d,p])=>pkAdd('media',l,d,()=>B('&mwheel',p)));
 [['K_UNDO','undo'],['K_CUT','cut'],['K_COPY','copy'],['K_PASTE','pst']]
  .forEach(([n,l])=>pkAdd('nav',l,'&kp '+n,()=>kp(n)));
 for(let i=0;i<8;i++){
@@ -1709,9 +1796,10 @@ pkAdd('sistema','CAPSW','&caps_word',()=>B('&caps_word'));
 pkAdd('sistema','RST','&reset',()=>B('&reset'));
 pkAdd('sistema','BOOT','&bootloader',()=>B('&bootloader'));
 pkAdd('sistema','EXT','&ext_power EP_TOG',()=>B('&ext_power',2));
+const ENC_PART_LABEL={press:'press',cw:'giro horario (CW)',ccw:'giro antihorario (CCW)'};
 function openPicker(){
   $('#pickerPos').textContent=editingEnc!==null
-    ?`encoder ${editingEnc?'R':'L'} press (pos ${editingEnc?43:42})`
+    ?`encoder ${editingEnc.side?'R':'L'} · ${ENC_PART_LABEL[editingEnc.part]} (pos ${editingEnc.side?43:42})`
     :(selPos>=0?`posición ZMK ${selPos}`:t('pressKey'));
   renderPickerGrid($('#pickerSearch').value);
 }
@@ -1751,13 +1839,25 @@ function renderPickerGrid(q,cat){
   if(typeof fitStage==='function')fitStage();
 }
 function currentBinding(){
-  if(editingEnc!==null)return keymap.layers[activeLayer].enc[editingEnc].press||TR();
+  if(editingEnc!==null){
+    const enc=keymap.layers[activeLayer].enc[editingEnc.side];
+    return (editingEnc.part==='press'?enc.press:enc[editingEnc.part])||TR();
+  }
   if(selPos<0)return null;return keymap.layers[activeLayer].keys[selPos];
 }
 function assignBinding(bd){
   snapshot();
   if(editingEnc!==null){
-    keymap.layers[activeLayer].enc[editingEnc].press=bd;
+    const enc=keymap.layers[activeLayer].enc[editingEnc.side];
+    if(editingEnc.part==='press')enc.press=bd;else enc[editingEnc.part]=bd;
+    /* CODEKEEB PATCH: actually send the change over Studio RPC. Press is a
+       real key-matrix position (42=left, 43=right per the encoder's own
+       tooltip above), so it reuses the existing set_layer_binding call;
+       CW/CCW go through the new set_sensor_binding (fork RPC, field 100). */
+    if(studio.connected&&studio.lockState){
+      if(editingEnc.part==='press')studioSetBinding(activeLayer,editingEnc.side?43:42,bd);
+      else studioSetSensorBinding(activeLayer,editingEnc.side,editingEnc.part==='cw',bd);
+    }
     oledState.mods.c^=0;editingEnc=null;
   }else if(selPos>=0){
     keymap.layers[activeLayer].keys[selPos]=bd;
@@ -1775,8 +1875,26 @@ function onKeyClick(pos){
   openPicker();renderLayer();
 }
 function onEncClick(side){
-  editingEnc=side;selPos=-1;
+  editingEnc={side,part:'press'};selPos=-1;
   encEls[side].classList.add('hit');setTimeout(()=>encEls[side].classList.remove('hit'),150);
+  fxEvent(side?43:42);openPicker();renderLayer();
+}
+/* click derecho en el encoder: elegir qué parte editar (press/giro
+   horario/giro antihorario) en vez de asumir siempre el press. */
+function onEncCtx(e,side){
+  e.preventDefault();
+  encCtxSide=side;
+  closeCtx();
+  const m=$('#encCtx');
+  m.classList.add('open');
+  m.style.left=Math.min(innerWidth-205,e.clientX)+'px';
+  m.style.top=Math.min(innerHeight-160,e.clientY)+'px';
+}
+function closeEncCtx(){$('#encCtx').classList.remove('open');encCtxSide=-1;}
+function editEncPart(part){
+  const side=encCtxSide;closeEncCtx();
+  if(side<0)return;
+  editingEnc={side,part};selPos=-1;
   fxEvent(side?43:42);openPicker();renderLayer();
 }
 function rotateEnc(side,dir,manual){
@@ -1838,6 +1956,7 @@ function hideTip(){$('#tip').style.display='none';}
    Menú contextual + ayuda
    ============================================================ */
 let ctxPos=-1;
+let encCtxSide=-1;
 function openCtx(e,pos){
   ctxPos=pos;selPos=pos;editingEnc=null;renderLayer();hideTip();
   const c=$('#ctx');c.classList.add('open');
@@ -1971,27 +2090,28 @@ function exportKeymap(){
     row(l.keys.slice(36,50).map(bindingDTS),'r3: 36-42 izq / 43-49 dcha (42/43 = encoders)'),
     row(l.keys.slice(50,60).map(bindingDTS),'thumbs: 50-54 izq / 55-59 dcha'),
   ].join('\n');
-  // Sensores: respeta los behaviors custom del firmware (rgbenc_m/h/b/s, fast_pg_encoder)
-  const encDTS=e=>{
-    const cmd=b=>b&&b.b==='&rgbfx'?((b.p1>>>16)&0xFF):null;
-    const cw=cmd(e.cw),cc=cmd(e.ccw);
-    if(cw!==null&&cc!==null){
-      const pair=new Set([cw,cc]);
-      const C=RGBFX_CMD;
-      if(pair.has(C.NEXT)&&pair.has(C.PREVIOUS))return '&rgbenc_m';
-      if(pair.has(C.HUE_UP)&&pair.has(C.HUE_DOWN))return '&rgbenc_h';
-      if(pair.has(C.BRIGHTEN)&&pair.has(C.DIM))return '&rgbenc_b';
-      if(pair.has(C.SPD_UP)&&pair.has(C.SPD_DOWN))return '&rgbenc_s';
-      return `&inc_dec_kp ${bindingDTS(e.cw).slice(4)} ${bindingDTS(e.ccw).slice(4)}`;
-    }
-    if(e.cw&&e.cw.b==='&kp'&&e.ccw&&e.ccw.b==='&kp'){
-      const n1=kpName(e.cw.p1>>>0),n2=kpName(e.ccw.p1>>>0);
-      if((n1==='PG_UP'&&n2==='PG_DN')||(n1==='PG_DN'&&n2==='PG_UP'))return '&fast_pg_encoder';
-      return `&inc_dec_kp ${n1} ${n2}`;
-    }
-    return `&inc_dec_kp ${bindingDTS(e.cw).slice(4)} ${bindingDTS(e.ccw).slice(4)}`;
+  // Sensores: respeta los behaviors custom del firmware (rgbenc_m/h/b/s).
+  // El scroll (encoder derecho, capa base) usa &inc_dec_kp UP DOWN en
+  // ambos firmwares -- NO existe ningún &fast_pg_encoder ni PG_UP/PG_DN
+  // especial, esa macro de 20 páginas por muesca se eliminó de los dos
+  // repos (era demasiado brusca y nunca hizo scroll real).
+  /* CODEKEEB: los encoders usan zmk,behavior-sensor-rotate-dynamic (una
+     instancia por capa+encoder, editable en vivo desde Studio), asi que
+     cada capa declara sus propios enc_lN/enc_rN con el par cw/ccw dentro.
+     El viejo &inc_dec_kp / &rgbenc_* ya no existe en el firmware. */
+  const encNode=(l,i,side)=>{
+    const e=l.enc[side];
+    const name=`enc_${side?'r':'l'}${i}`;
+    return `        ${name}: ${name} {
+            compatible = "zmk,behavior-sensor-rotate-dynamic";
+            #sensor-binding-cells = <0>;
+            sensor-index = <${side}>;
+            layer-id = <${i}>;
+            bindings = <${bindingDTS(e.cw)}>, <${bindingDTS(e.ccw)}>;
+        };`;
   };
-  const sensor=l=>`      sensor-bindings = <${encDTS(l.enc[0])} ${encDTS(l.enc[1])}>;`;
+  const encBehaviors=L.map((l,i)=>[encNode(l,i,0),encNode(l,i,1)].join('\n')).join('\n\n');
+  const sensor=(l,i)=>`      sensor-bindings = <&enc_l${i} &enc_r${i}>;`;
   const txt=`// Sofle Choc RGB — exportado desde CODE/KEEB Keymap Studio
 // Posiciones ZMK 0-59 (fila-major intercalado). Incluye 42/43 = press de encoders.
 #include <behaviors.dtsi>
@@ -2001,6 +2121,20 @@ function exportKeymap(){
 #include <dt-bindings/zmk/outputs.h>
 
 / {
+    behaviors {
+        // Rueda de raton discreta: 0=arriba 1=abajo 2=izq 3=der.
+        mwheel: mwheel {
+            compatible = "zmk,behavior-mouse-wheel";
+            #binding-cells = <1>;
+        };
+
+        // Un sensor-rotate-dynamic por capa+encoder: el par cw/ccw es
+        // editable en vivo desde ZMK Studio y se guarda en flash.
+${encBehaviors}
+    };
+};
+
+/ {
   keymap {
     compatible = "zmk,keymap";
 ${L.map((l,i)=>`    layer_${i} { // ${l.name}
@@ -2008,7 +2142,7 @@ ${L.map((l,i)=>`    layer_${i} { // ${l.name}
       bindings = <
 ${rows(l)}
       >;
-${sensor(l)}
+${sensor(l,i)}
     };`).join('\n')}
   };
 };
@@ -2108,12 +2242,16 @@ function init(){
   $('#ctxCopy').onclick=()=>{closeCtx();copyBind(ctxPos);};
   $('#ctxPaste').onclick=()=>{closeCtx();pasteBind(ctxPos);};
   $('#ctxTrans').onclick=()=>{closeCtx();selPos=ctxPos;editingEnc=null;assignBinding(TR());};
-  document.addEventListener('click',e=>{if(!$('#ctx').contains(e.target))closeCtx();});
-  addEventListener('scroll',closeCtx,true);
+  $('#encCtxCw').onclick=()=>editEncPart('cw');
+  $('#encCtxCcw').onclick=()=>editEncPart('ccw');
+  $('#encCtxPress').onclick=()=>editEncPart('press');
+  document.addEventListener('click',e=>{if(!$('#ctx').contains(e.target))closeCtx();
+    if(!$('#encCtx').contains(e.target))closeEncCtx();});
+  addEventListener('scroll',()=>{closeCtx();closeEncCtx();},true);
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'){
       $('#oledZoom').classList.remove('open');$('#helpBk').classList.remove('open');
-      closeCtx();closePicker();return;
+      closeCtx();closeEncCtx();closePicker();return;
     }
     const tag=e.target&&e.target.tagName;
     if(tag==='INPUT'||tag==='TEXTAREA')return;
