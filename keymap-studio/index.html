@@ -860,7 +860,20 @@ function geoMap(){
 }
 const GEO=geoMap();
 const ENC_GEO=[{x:551,y:287},{x:9,y:287}];    /* caja 110×110 del artifact */
-const OLED_GEO=[{x:565,y:22},{x:60,y:25}];   /* vertical: borde superior alineado con las teclas 5 (izq) y 6 (dcha) */
+/* OLEDs verticales. Coordenadas YA FINALES (locales a cada mitad), sin
+   los ajustes que placeOleds aplicaba antes:
+   - Borde superior a y=29, el mismo que el borde superior de la tecla 5
+     (izq) y la 6 (dcha): ambas son fila 0 y su OFF de columna vale 29.
+   - Separación idéntica en las dos mitades (OLED_GAP): la izquierda
+     arranca a 29px del borde derecho de la tecla 5 (450+86=536) y la
+     derecha termina 29px antes del borde izquierdo de la tecla 6 (134),
+     o sea 134-29-84=21. Antes eran 29 y 18, y la derecha se veía
+     visiblemente más pegada al teclado. */
+/* OJO con los nombres: OLED_W/OLED_H (más abajo) son los PÍXELES del
+   panel nice!oled (68×160). Estas son las medidas del dibujo en pantalla,
+   que es otra cosa. */
+const OLED_BOX_W=84,OLED_BOX_H=198,OLED_GAP=29,OLED_TOP=29;
+const OLED_GEO=[{x:536+OLED_GAP,y:OLED_TOP},{x:134-OLED_GAP-OLED_BOX_W,y:OLED_TOP}];
 
 /* ---------------- estado ---------------- */
 const VALID_BEH=/^&[a-z][a-z_0-9]{0,19}$/;
@@ -964,9 +977,12 @@ function applyKnob(side){encEls[side].style.setProperty('--rot',knobRot[side]+'d
   encEls[side].querySelector('.mark').style.transform=`rotate(${knobRot[side]}deg)`;}
 function placeOleds(halves){
   [['#oledL',0],['#oledR',1]].forEach(([sel,s])=>{
+    /* OLED_GEO ya trae la posición final: el desfase -28/-14 que había
+       aquí era justo lo que descuadraba la mitad derecha y subía las dos
+       pantallas por encima de la primera fila de teclas. */
     const g=OLED_GEO[s];const el=$(sel);
-    el.style.left=(s?g.x-28:g.x)+'px';el.style.top=Math.max(2,g.y-14)+'px';
-    el.style.width='84px';el.style.height='198px';
+    el.style.left=g.x+'px';el.style.top=g.y+'px';
+    el.style.width=OLED_BOX_W+'px';el.style.height=OLED_BOX_H+'px';
     halves[s].appendChild(el);
   });
 }
