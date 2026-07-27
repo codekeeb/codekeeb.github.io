@@ -64,9 +64,9 @@ button{font-family:var(--font-sans)}
 .btn.accent{color:#fff;border-color:transparent;background:var(--ink)}
 .btn.accent:hover{transform:translateY(-1px);box-shadow:0 10px 22px -12px rgba(20,22,27,.5);background:#23262e}
 .btn.on{border-color:var(--ink);background:var(--ink);color:#fff}
-#fxToggle.on{border-color:transparent;color:var(--ink);font-weight:700;
-  background:linear-gradient(90deg,rgba(255,153,42,.22),rgba(255,57,192,.20),rgba(42,61,255,.16),rgba(27,232,255,.20))}
-#fxToggle.on:hover{background:linear-gradient(90deg,rgba(255,153,42,.32),rgba(255,57,192,.30),rgba(42,61,255,.24),rgba(27,232,255,.30))}
+/* El estado encendido de #fxToggle lo define ahora .pill.on (más abajo),
+   que comparte diseño con la pastilla del OLED. Solo queda el hover. */
+#fxToggle.on:hover{background:linear-gradient(90deg,rgba(255,153,42,.36),rgba(255,57,192,.34),rgba(42,61,255,.28),rgba(27,232,255,.34))}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
 select{background:var(--surface);color:var(--ink);border:1px solid var(--hairline2);border-radius:999px;
   padding:.45em .9em;font-family:var(--font-mono);font-size:.74rem;cursor:pointer}
@@ -177,6 +177,12 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   transition:border-color .25s,color .25s,transform .25s var(--ease)}
 .ltab:hover{border-color:var(--ink);color:var(--ink);transform:translateY(-1px)}
 .ltab.on{border-color:transparent;color:#fff;background:var(--ink)}
+/* La capa activa se pinta con el color de SU tecla en el teclado: naranja
+   para Lower (.key.mo) y fucsia para Raise (.key.mo2). Mismo gradiente. */
+.ltab.on.lay1{background:linear-gradient(180deg,#ff992a,#e07514 60%,#b35708);
+  box-shadow:0 4px 14px -6px rgba(255,153,42,.85)}
+.ltab.on.lay2{background:linear-gradient(180deg,#ff39c0,#d61e9e 60%,#a4157a);
+  box-shadow:0 4px 14px -6px rgba(255,57,192,.85)}
 #legend{position:relative;z-index:3;display:flex;gap:16px;justify-content:center;padding:2px 10px 0;
   font-family:var(--font-mono);font-size:.62rem;letter-spacing:.06em;color:var(--muted);flex-wrap:wrap;text-transform:uppercase}
 #legend span i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
@@ -220,31 +226,32 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #drawer .dhead h2{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.16em;color:var(--ink);text-transform:uppercase}
 #drawer .dhead .x{margin-left:auto}
 #drawer .dbody{flex:1;overflow-y:auto;padding:16px 18px}
-/* Panel RGB flotante a la derecha del teclado, en el hueco que quedaba
-   libre. Absolute para que NO reste ancho al escenario: el teclado sigue
-   pudiendo ocupar toda la franja. */
-#rgbPanel{position:absolute;top:14px;right:clamp(8px,1.5vw,28px);z-index:6;width:210px;
-  background:var(--surface);border:1px solid var(--hairline);border-radius:14px;
-  padding:12px 13px 14px;box-shadow:0 10px 30px -18px rgba(20,22,27,.3)}
-#rgbPanel h3{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.16em;color:var(--muted);
-  text-transform:uppercase;margin-bottom:9px}
-#rgbPanel #fxToggle{width:100%}
-@media (max-width:1100px){
-  /* Sin sitio a los lados: vuelve al flujo, centrado sobre el teclado. */
-  #rgbPanel{position:static;width:min(100%,420px);margin:0 auto 6px}
-}
+/* OLED y RGB, mismo diseño: etiqueta a la izquierda + pastilla. Van
+   apilados arriba a la derecha, y los ajustes de RGB se despliegan justo
+   debajo cuando está encendido. */
+#ctlStack{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:186px}
+.ctlRow{display:flex;align-items:center;gap:9px;justify-content:flex-end;width:100%}
+.pill{background:var(--surface);border:1px solid var(--hairline2);color:var(--ink);
+  border-radius:999px;padding:.34em 1.05em;font-family:var(--font-mono);font-size:.68rem;
+  font-weight:700;letter-spacing:.06em;cursor:pointer;white-space:nowrap;min-width:104px;
+  text-align:center;transition:border-color .2s,background .2s,color .2s,transform .2s var(--ease)}
+.pill:hover{border-color:var(--ink);transform:translateY(-1px)}
+/* RGB encendido: la pastilla se pinta con el degradado de la marca. */
+.pill.on{border-color:transparent;color:var(--ink);font-weight:700;
+  background:linear-gradient(90deg,rgba(255,153,42,.28),rgba(255,57,192,.26),rgba(42,61,255,.2),rgba(27,232,255,.26))}
 
-/* Controles RGB. No reutilizo .tgroup/.sliderRow de la barra superior
-   porque fijan width:66px en los sliders, lo que dejaba los controles
-   diminutos aqui. Ocultos mientras el RGB esta apagado. */
-#rgbCtl{display:none;margin-top:9px}
+/* Ajustes RGB: se despliegan bajo la pastilla cuando está encendido.
+   No reutilizo .tgroup/.sliderRow de la barra porque fijan width:66px en
+   los sliders y los dejaban diminutos. */
+#rgbCtl{display:none;width:100%;max-width:250px;margin-top:3px;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:12px;padding:9px 11px 10px}
 #rgbCtl.on{display:block}
-#rgbCtl select{width:100%;margin-bottom:9px}
-#rgbCtl .drow{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:11px;color:var(--muted)}
-#rgbCtl .drow span{flex:none;min-width:58px}
+#rgbCtl select{width:100%;margin-bottom:8px}
+#rgbCtl .drow{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:10.5px;color:var(--muted)}
+#rgbCtl .drow span{flex:none;min-width:52px}
 #rgbCtl .drow input[type=range]{flex:1;width:auto;min-width:0}
-#rgbCtl .drow b{flex:none;min-width:36px;text-align:right;color:var(--ink);
-  font-family:var(--font-mono);font-size:.7rem;font-weight:600}
+#rgbCtl .drow b{flex:none;min-width:34px;text-align:right;color:var(--ink);
+  font-family:var(--font-mono);font-size:.68rem;font-weight:600}
 .dsec{margin-bottom:22px}
 .dsec h3{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-bottom:9px}
 .layerRow{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--hairline);border-radius:12px;
@@ -377,9 +384,26 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
     <button class="btn small" id="btnUndo" data-i18n-title="undoTitle" title="Deshacer (Ctrl+Z)" disabled>↩</button>
     <button class="btn small" id="btnRedo" data-i18n-title="redoTitle" title="Rehacer (Ctrl+Y)" disabled>↪</button>
   </div>
-  <div class="tgroup" style="margin-left:auto">
-    <span class="tlabel" data-i18n="oledLbl">OLED</span>
-    <button class="btn small" id="btnAnim2" data-i18n-title="animBtnTitle" title="Cambiar animación del OLED derecho (&oledanim)">▶ <span id="animName2" class="animName">CRYSTAL</span></button>
+  <!-- OLED y RGB comparten diseño: etiqueta + pastilla. La de RGB abre
+       sus ajustes debajo cuando está encendido. -->
+  <div id="ctlStack">
+    <div class="ctlRow">
+      <span class="tlabel" data-i18n="oledLbl">OLED</span>
+      <button class="pill" id="btnAnim2" data-i18n-title="animBtnTitle" title="Cambiar animación del OLED derecho (&oledanim)">▶ <span id="animName2" class="animName">CRYSTAL</span></button>
+    </div>
+    <div class="ctlRow">
+      <span class="tlabel" data-i18n="rgbLbl">RGB</span>
+      <button class="pill" id="fxToggle" data-i18n="rgbOn">ON</button>
+    </div>
+    <div id="rgbCtl">
+      <select id="fxSel"></select>
+      <div class="drow"><span data-i18n="bri">Brillo</span>
+        <input type="range" id="rgBri" min="1" max="5" step="1" value="5"><b id="rgBriV">5/5</b></div>
+      <div class="drow"><span data-i18n="hue">Matiz</span>
+        <input type="range" id="rgHue" min="0" max="359" step="20" value="0"><b id="rgHueV">0°</b></div>
+      <div class="drow"><span data-i18n="spd">Velocidad</span>
+        <input type="range" id="rgSpd" min="0" max="4" step="1" value="2"><b id="rgSpdV">2</b></div>
+    </div>
     <input type="file" id="fileJson" class="hiddenInput" accept="application/json">
   </div>
 </div>
@@ -387,22 +411,6 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 <!-- ======================= ESCENARIO / TECLADO ======================= -->
 
 <div id="stageWrap">
-<!-- Panel RGB fijo, a la derecha del teclado. Estaba dentro del
-     <aside id="drawer">, que solo se abre con "Panel Studio", asi que no
-     se veia nunca desde la pagina. -->
-<div id="rgbPanel">
-  <h3 data-i18n="rgbfx">Efecto RGB</h3>
-  <button class="btn small" id="fxToggle" data-i18n="rgbOn">RGB: ON</button>
-  <div id="rgbCtl">
-    <select id="fxSel"></select>
-    <div class="drow"><span data-i18n="bri">Brillo</span>
-      <input type="range" id="rgBri" min="1" max="5" step="1" value="5"><b id="rgBriV">5/5</b></div>
-    <div class="drow"><span data-i18n="hue">Matiz</span>
-      <input type="range" id="rgHue" min="0" max="359" step="20" value="0"><b id="rgHueV">0°</b></div>
-    <div class="drow"><span data-i18n="spd">Velocidad</span>
-      <input type="range" id="rgSpd" min="0" max="4" step="1" value="2"><b id="rgSpdV">2</b></div>
-  </div>
-</div>
   <div id="stage">
     <canvas id="glow"></canvas>
     <div id="keys"></div>
@@ -556,7 +564,7 @@ const store={
 let lang=store.get('ck.lang')||'es';
 const I18N={
 es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',oledzoom:'OLED ×4',
-  rgbfx:'Efecto RGB',bri:'Brillo',hue:'Matiz',spd:'Velocidad',rgbOn:'RGB: ON',rgbOff:'RGB: OFF',
+  rgbfx:'Efecto RGB',bri:'Brillo',hue:'Matiz',spd:'Velocidad',rgbOn:'ON',rgbOff:'OFF',rgbLbl:'RGB',
   expKey:'Export .keymap',expJson:'Export JSON',impJson:'Import JSON',reset:'Reset stock',
   assign:'Asignar tecla',search:'Buscar keycode o behavior…',unlock:'UNLOCK (set_lock)',
   lockHint:'En LOCAL el desbloqueo es simulado. Conectado, envía set_lock real al firmware (o usa la tecla &studio_unlock de Lower).',
@@ -610,7 +618,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',ol
   hintTips:'Pistas: cable en la mitad IZQUIERDA · cierra ZMK Studio/terminales que ocupen el puerto · prueba el OTRO puerto si hay dos · verifica que https://zmk.studio oficial sí conecta.',
   hintUsbUnlock:'ZMK Studio no permite desbloquear por USB: pulsa la tecla física &studio_unlock (capa Lower, fila Z, 2ª tecla). La app se actualizará al instante.'},
 en:{connect:'Connect keyboard',disconnect:'Disconnect',studio:'Studio Panel',oledzoom:'OLED ×4',
-  rgbfx:'RGB effect',bri:'Brightness',hue:'Hue',spd:'Speed',rgbOn:'RGB: ON',rgbOff:'RGB: OFF',
+  rgbfx:'RGB effect',bri:'Brightness',hue:'Hue',spd:'Speed',rgbOn:'ON',rgbOff:'OFF',rgbLbl:'RGB',
   expKey:'Export .keymap',expJson:'Export JSON',impJson:'Import JSON',reset:'Reset stock',
   assign:'Assign key',search:'Search keycode or behavior…',unlock:'UNLOCK (set_lock)',
   lockHint:'In LOCAL the unlock is simulated. When connected it sends a real set_lock to the firmware (or use the &studio_unlock key on Lower).',
@@ -1060,7 +1068,10 @@ function renderLayer(){
 function renderLayerBar(){
   const bar=$('#layerBar');bar.innerHTML='';
   keymap.layers.forEach((l,i)=>{
-    const b=document.createElement('button');b.className='ltab'+(i===activeLayer?' on':'');
+    /* lay1/lay2 tiñen la pestaña activa con el color de su tecla en el
+       teclado (Lower naranja, Raise fucsia). */
+    const b=document.createElement('button');
+    b.className='ltab'+(i===activeLayer?' on':'')+(i===1?' lay1':i===2?' lay2':'');
     b.textContent=l.name;b.onclick=()=>{activeLayer=i;selPos=-1;renderLayer();};
     bar.appendChild(b);
   });
