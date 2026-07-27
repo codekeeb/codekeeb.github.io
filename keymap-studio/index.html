@@ -194,8 +194,13 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   transition:border-color .2s,color .2s,background .2s}
 .pcat:hover{border-color:var(--ink);color:var(--ink)}
 .pcat.on{border-color:var(--ink);background:var(--ink);color:#fff}
+/* Altura acotada + scroll propio: si el grid crece libremente, cada
+   categoría deja el dock de una altura distinta y el teclado se reescala
+   al cambiar de pestaña (muy visible en móvil). Con un alto estable el
+   escenario deja de saltar. */
 #pickerGrid{padding:10px 16px 12px;display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;align-content:start}
+  grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;align-content:start;
+  height:196px;overflow-y:auto;overscroll-behavior:contain}
 .pk{background:var(--bg);border:1px solid var(--hairline2);border-radius:9px;padding:0 4px;text-align:center;cursor:pointer;
   display:flex;flex-direction:column;justify-content:center;height:42px;
   transition:transform .18s var(--ease),border-color .18s,box-shadow .18s,background .18s}
@@ -303,10 +308,16 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   .sliderRow input{width:64px}
   #drawer{width:100vw;right:-100vw}
 }
+@media (max-width:900px){
+  /* En pantallas cortas el dock no puede quedarse con media pantalla:
+     menos alto y scroll dentro, dejando sitio al teclado. */
+  #pickerGrid{height:150px}
+}
 @media (max-width:520px){
   #toolbar{gap:8px 12px}
   .tgroup{flex-wrap:nowrap}
   .sliderRow input{width:48px}
+  #pickerGrid{height:132px}
 }
 
 </style>
@@ -534,6 +545,9 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',ol
   helpBtnTitle:'Ayuda y atajos (F1)',undoTitle:'Deshacer (Ctrl+Z)',redoTitle:'Rehacer (Ctrl+Y)',
   deselTitle:'Deseleccionar (Esc)',lockTitle:'Bloqueo ZMK Studio',
   unsavedDot:'● CAMBIOS SIN GUARDAR',ozLeft:'OLED IZQUIERDA · CENTRAL',ozRight:'OLED DERECHA · PERIFÉRICO',
+  cat_letras:'letras',cat_numeros:'números',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
+  cat_simbolos:'símbolos',cat_media:'multimedia',cat_capas:'capas',cat_bluetooth:'bluetooth',
+  cat_rgb:'rgb',cat_sistema:'sistema',cat_todo:'todo',
   secMacros:'Macros (&dmac)',
   macroHint:'Escribe el texto que quieras (ñ, á, →, tu email…). Se guarda en el teclado y puedes asignar la macro a cualquier tecla desde el panel de abajo.',
   unicodeMode:'Método Unicode (según tu sistema)',
@@ -585,6 +599,9 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',studio:'Studio Panel',ole
   helpBtnTitle:'Help and shortcuts (F1)',undoTitle:'Undo (Ctrl+Z)',redoTitle:'Redo (Ctrl+Y)',
   deselTitle:'Deselect (Esc)',lockTitle:'ZMK Studio lock',
   unsavedDot:'● UNSAVED CHANGES',ozLeft:'LEFT OLED · CENTRAL',ozRight:'RIGHT OLED · PERIPHERAL',
+  cat_letras:'letters',cat_numeros:'numbers',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
+  cat_simbolos:'symbols',cat_media:'media',cat_capas:'layers',cat_bluetooth:'bluetooth',
+  cat_rgb:'rgb',cat_sistema:'system',cat_todo:'all',
   secMacros:'Macros (&dmac)',
   macroHint:'Type whatever you want (ñ, á, →, your email…). It is stored on the keyboard and you can bind the macro to any key from the panel below.',
   unicodeMode:'Unicode method (depends on your OS)',
@@ -930,13 +947,15 @@ function buildEnc(side,stage){
   el.style.left=(g.x+7)+'px';el.style.top=(g.y+7)+'px';
   el.style.width='96px';el.style.height='96px';
   el.innerHTML='<div class="knob"></div><div class="mark"></div><span class="ename"></span>';
-  el.title='Encoder EC11 · click = posición '+(side?43:42)+' · arrastra = girar';
-  let sy=0,acc=0;
-  el.addEventListener('pointerdown',e=>{sy=e.clientY;acc=0;el.setPointerCapture(e.pointerId);});
+  el.title='Encoder EC11 · click = editar (giros y press) · arrastra = girar';
+  let sy=0,acc=0,dragged=false;
+  el.addEventListener('pointerdown',e=>{sy=e.clientY;acc=0;dragged=false;el.setPointerCapture(e.pointerId);});
   el.addEventListener('pointermove',e=>{if(e.buttons!==1)return;
     const dy=e.clientY-sy;sy=e.clientY;acc+=dy;
-    if(Math.abs(acc)>8){rotateEnc(side,acc>0?1:-1,true);acc=0;}});
-  el.addEventListener('click',()=>onEncClick(side));
+    if(Math.abs(acc)>8){rotateEnc(side,acc>0?1:-1,true);acc=0;dragged=true;}});
+  /* Tras arrastrar para girar, el navegador dispara igualmente un click:
+     sin esto saldría el menú cada vez que simulas una rotación. */
+  el.addEventListener('click',e=>{if(dragged){dragged=false;return;}onEncClick(side,e);});
   el.addEventListener('contextmenu',e=>onEncCtx(e,side));
   stage.appendChild(el);encEls.push(el);
 }
@@ -2059,7 +2078,10 @@ function dockAssign(mk){
 function renderPickerCats(cur){
   const c=$('#pickerCats');c.innerHTML='';
   PICKER_CATS.forEach(k=>{
-    const b=document.createElement('button');b.className='pcat'+(k===cur?' on':'');b.textContent=k;
+    /* k es el id interno (siempre en castellano, lo usan pkAdd y el
+       filtrado); lo que se pinta es su etiqueta traducida. */
+    const b=document.createElement('button');b.className='pcat'+(k===cur?' on':'');
+    b.textContent=t('cat_'+k);
     b.onclick=()=>{renderPickerCats(k);renderPickerGrid($('#pickerSearch').value,k);};
     c.appendChild(b);
   });
@@ -2117,13 +2139,16 @@ function onKeyClick(pos){
   if(el){el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),120);}
   openPicker();renderLayer();
 }
-function onEncClick(side){
-  editingEnc={side,part:'press'};selPos=-1;
+/* Click (izquierdo o derecho) en el encoder: siempre el menú de partes.
+   Antes el izquierdo asumía el press directamente, lo que escondía por
+   completo la edición de los dos giros -- solo se descubría si acertabas
+   a probar el click derecho. */
+function onEncClick(side,e){
   encEls[side].classList.add('hit');setTimeout(()=>encEls[side].classList.remove('hit'),150);
-  fxEvent(side?43:42);openPicker();renderLayer();
+  onEncCtx(e,side);
 }
-/* click derecho en el encoder: elegir qué parte editar (press/giro
-   horario/giro antihorario) en vez de asumir siempre el press. */
+/* Menú del encoder: elegir qué parte editar (press / giro horario / giro
+   antihorario) en vez de asumir siempre el press. */
 function onEncCtx(e,side){
   e.preventDefault();
   encCtxSide=side;
@@ -2497,7 +2522,9 @@ function init(){
   $('#encCtxCcw').onclick=()=>editEncPart('ccw');
   $('#encCtxPress').onclick=()=>editEncPart('press');
   document.addEventListener('click',e=>{if(!$('#ctx').contains(e.target))closeCtx();
-    if(!$('#encCtx').contains(e.target))closeEncCtx();});
+    /* El click sobre el propio encoder es el que ABRE este menú y burbujea
+       hasta aquí: sin excluirlo se cerraría en el mismo click. */
+    if(!$('#encCtx').contains(e.target)&&!e.target.closest('.enc'))closeEncCtx();});
   addEventListener('scroll',()=>{closeCtx();closeEncCtx();},true);
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'){
@@ -2515,7 +2542,12 @@ function init(){
       const i=+e.key-1;if(i<keymap.layers.length){e.preventDefault();activeLayer=i;selPos=-1;renderLayer();renderDrawerLayers();}}
     else if(e.key==='F1'||(e.key==='?'&&!e.ctrlKey&&!e.metaKey)){e.preventDefault();openHelp();}
   });
-  $('#btnLang').onclick=()=>{lang=lang==='es'?'en':'es';store.set('ck.lang',lang);applyI18n();syncRgbUI();renderLayerBar();};
+  /* Las categorías del picker y las macros se generan por JS, así que
+     applyI18n() (que solo recorre data-i18n) no las alcanza: hay que
+     repintarlas a mano al cambiar de idioma. */
+  $('#btnLang').onclick=()=>{lang=lang==='es'?'en':'es';store.set('ck.lang',lang);
+    applyI18n();syncRgbUI();renderLayerBar();
+    renderPickerCats($('#pickerCats').dataset.cur||'todo');renderMacros();};
   $('#btnUnlock').onclick=studioUnlock;
   $('#btnAddLayer').onclick=addLayer;
   $('#btnSaveKm').onclick=studioSave;
