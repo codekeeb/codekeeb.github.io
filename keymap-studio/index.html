@@ -343,17 +343,10 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 </header>
 
 <!-- ======================= TOOLBAR RGB + ACCIONES ======================= -->
+<!-- Los controles RGB viven ahora en el panel Studio, bajo la seccion
+     OLED: en la barra ocupaban una franja entera y comian altura al
+     teclado. Aqui solo queda lo que se usa mientras editas. -->
 <div id="toolbar">
-  <div class="tgroup"><span class="tlabel" data-i18n="rgbfx">Efecto RGB</span>
-    <select id="fxSel"></select>
-    <button class="btn small" id="fxToggle" data-i18n="rgbOn">RGB: ON</button>
-  </div>
-  <div class="tgroup sliderRow"><span class="tlabel" data-i18n="bri">Brillo</span>
-    <input type="range" id="rgBri" min="1" max="5" step="1" value="5"><b id="rgBriV">5/5</b></div>
-  <div class="tgroup sliderRow"><span class="tlabel" data-i18n="hue">Matiz</span>
-    <input type="range" id="rgHue" min="0" max="359" step="20" value="0"><b id="rgHueV">0°</b></div>
-  <div class="tgroup sliderRow"><span class="tlabel" data-i18n="spd">Velocidad</span>
-    <input type="range" id="rgSpd" min="0" max="4" step="1" value="2"><b id="rgSpdV">2</b></div>
   <div class="tgroup">
     <button class="btn small" id="btnUndo" data-i18n-title="undoTitle" title="Deshacer (Ctrl+Z)" disabled>↩</button>
     <button class="btn small" id="btnRedo" data-i18n-title="redoTitle" title="Rehacer (Ctrl+Y)" disabled>↪</button>
@@ -407,6 +400,19 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
       <button class="btn small" id="btnAnim">▶ <span id="animName">CRYSTAL</span></button>
       <p style="font-size:10px;color:var(--faint);margin-top:8px;line-height:1.5" data-i18n="animHint">
         Cicla crystal → cat → head → spaceman → pokemon, como &oledanim (Lower + encoder derecho).</p>
+    </div>
+    <div class="dsec">
+      <h3 data-i18n="rgbfx">Efecto RGB</h3>
+      <div class="tgroup" style="flex-wrap:wrap">
+        <select id="fxSel" style="flex:1;min-width:0"></select>
+        <button class="btn small" id="fxToggle" data-i18n="rgbOn">RGB: ON</button>
+      </div>
+      <div class="tgroup sliderRow" style="margin-top:8px"><span class="tlabel" data-i18n="bri">Brillo</span>
+        <input type="range" id="rgBri" min="1" max="5" step="1" value="5" style="flex:1"><b id="rgBriV">5/5</b></div>
+      <div class="tgroup sliderRow" style="margin-top:6px"><span class="tlabel" data-i18n="hue">Matiz</span>
+        <input type="range" id="rgHue" min="0" max="359" step="20" value="0" style="flex:1"><b id="rgHueV">0°</b></div>
+      <div class="tgroup sliderRow" style="margin-top:6px"><span class="tlabel" data-i18n="spd">Velocidad</span>
+        <input type="range" id="rgSpd" min="0" max="4" step="1" value="2" style="flex:1"><b id="rgSpdV">2</b></div>
     </div>
     <div class="dsec">
       <h3 data-i18n="secMacros">Macros (&dmac)</h3>
@@ -2514,11 +2520,16 @@ function loop(now){
   drawRgb(fxFrame());
 }
 function fitStage(){
-  const availW=Math.min(innerWidth-24,1400);
+  /* Antes esto tenía dos topes que dejaban el teclado pequeño en
+     pantallas grandes: el ancho se limitaba a 1400px y la escala a 1
+     (o sea, nunca crecía por encima del tamaño de diseño). Ahora usa
+     todo el ancho disponible y puede ampliarse, con un tope prudente
+     para que no se desmadre en monitores muy anchos. */
+  const availW=innerWidth-24;
   const chrome=['#top','#toolbar','#layerBar','#legend','#dock','#foot']
-    .reduce((a,s)=>{const e=$(s);return a+(e?e.offsetHeight:0);},0)+30;
+    .reduce((a,s)=>{const e=$(s);return a+(e?e.offsetHeight:0);},0)+24;
   const availH=Math.max(340,innerHeight-chrome);
-  const sc=Math.min(1,availW/STAGE_W,availH/STAGE_H);
+  const sc=Math.min(1.45,availW/STAGE_W,availH/STAGE_H);
   $('#stage').style.transform=`scale(${sc})`;
   $('#stageWrap').style.height=(STAGE_H*sc+10)+'px';
 }
