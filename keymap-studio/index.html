@@ -88,7 +88,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 
 /* ---------- header ---------- */
 #top{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;
-  padding:9px clamp(16px,3vw,40px);background:rgba(247,247,244,.82);
+  padding:6px clamp(16px,3vw,40px);background:rgba(247,247,244,.82);
   backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);
   box-shadow:0 1px 0 var(--hairline);flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px;white-space:nowrap}
@@ -112,7 +112,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 
 /* ---------- toolbar ---------- */
 #toolbar{position:relative;z-index:4;display:flex;gap:14px;align-items:center;
-  padding:8px clamp(14px,2.5vw,36px);flex-wrap:wrap;font-size:12px}
+  padding:5px clamp(14px,2.5vw,36px);flex-wrap:wrap;font-size:12px}
 .tgroup{display:flex;gap:7px;align-items:center}
 .sliderRow{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px}
 .sliderRow input{width:66px}
@@ -121,7 +121,8 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .animName{display:inline-block;min-width:5.2em;text-align:left}
 
 /* ---------- escenario: teclado como producto sobre lienzo ---------- */
-#stageWrap{position:relative;z-index:2;display:flex;justify-content:center;padding:8px clamp(10px,2vw,32px) 4px}
+/* Poco padding vertical: el teclado es el protagonista. */
+#stageWrap{position:relative;z-index:2;display:flex;justify-content:center;padding:2px clamp(6px,1.2vw,20px) 2px}
 #stage{position:relative;width:1520px;height:770px;flex:none;transform-origin:top center}
 #glow{display:none}
 #keys{position:absolute;inset:0;z-index:1}
@@ -170,18 +171,18 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .oledStage .otag{position:absolute;bottom:-16px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:7.5px;color:#8b9098;letter-spacing:.12em}
 
 /* ---------- capas (fila estilo Vial) ---------- */
-#layerBar{position:relative;z-index:3;display:flex;gap:8px;justify-content:center;align-items:center;padding:8px 10px 2px;flex-wrap:wrap}
+#layerBar{position:relative;z-index:3;display:flex;gap:8px;justify-content:center;align-items:center;padding:5px 10px 2px;flex-wrap:wrap}
 .ltab{background:var(--surface);border:1px solid var(--hairline2);color:var(--muted);border-radius:999px;padding:.5em 1.35em;
   font-size:.76rem;font-weight:600;letter-spacing:.08em;cursor:pointer;text-transform:uppercase;font-family:var(--font-mono);
   transition:border-color .25s,color .25s,transform .25s var(--ease)}
 .ltab:hover{border-color:var(--ink);color:var(--ink);transform:translateY(-1px)}
 .ltab.on{border-color:transparent;color:#fff;background:var(--ink)}
-#legend{position:relative;z-index:3;display:flex;gap:16px;justify-content:center;padding:4px 10px 0;
+#legend{position:relative;z-index:3;display:flex;gap:16px;justify-content:center;padding:2px 10px 0;
   font-family:var(--font-mono);font-size:.62rem;letter-spacing:.06em;color:var(--muted);flex-wrap:wrap;text-transform:uppercase}
 #legend span i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 
 /* ---------- dock de keycodes (estilo Vial) ---------- */
-#dock{position:relative;z-index:5;max-width:1400px;margin:12px auto 6px;padding:0 clamp(10px,2vw,24px)}
+#dock{position:relative;z-index:5;max-width:1400px;margin:6px auto 4px;padding:0 clamp(10px,2vw,24px)}
 #dockCard{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-md);
   box-shadow:0 24px 48px -32px rgba(20,22,27,.25);overflow:hidden}
 .dockHead{display:flex;align-items:center;gap:12px;padding:8px 16px;border-bottom:1px solid var(--hairline);flex-wrap:wrap}
@@ -200,11 +201,11 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
    categoría deja el dock de una altura distinta y el teclado se reescala
    al cambiar de pestaña (muy visible en móvil). Con un alto estable el
    escenario deja de saltar. */
-#pickerGrid{padding:10px 16px 12px;display:grid;
+#pickerGrid{padding:7px 16px 9px;display:grid;
   grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;align-content:start;
-  height:196px;overflow-y:auto;overscroll-behavior:contain}
+  height:124px;overflow-y:auto;overscroll-behavior:contain}
 .pk{background:var(--bg);border:1px solid var(--hairline2);border-radius:9px;padding:0 4px;text-align:center;cursor:pointer;
-  display:flex;flex-direction:column;justify-content:center;height:42px;
+  display:flex;flex-direction:column;justify-content:center;height:38px;
   transition:transform .18s var(--ease),border-color .18s,box-shadow .18s,background .18s}
 .pk:hover{border-color:var(--ink);background:var(--surface);transform:translateY(-2px);box-shadow:0 8px 16px -8px rgba(20,22,27,.25)}
 .pk .l{font-family:var(--font-mono);font-size:.72rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -219,6 +220,17 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #drawer .dhead h2{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.16em;color:var(--ink);text-transform:uppercase}
 #drawer .dhead .x{margin-left:auto}
 #drawer .dbody{flex:1;overflow-y:auto;padding:16px 18px}
+/* Controles RGB dentro del panel. No reutilizo .tgroup/.sliderRow de la
+   barra superior porque fijan width:66px en los sliders, lo que dejaba
+   los controles diminutos aqui. Ocultos mientras el RGB esta apagado. */
+#rgbCtl{display:none;margin-top:9px}
+#rgbCtl.on{display:block}
+#rgbCtl select{width:100%;margin-bottom:9px}
+#rgbCtl .drow{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:11px;color:var(--muted)}
+#rgbCtl .drow span{flex:none;min-width:58px}
+#rgbCtl .drow input[type=range]{flex:1;width:auto;min-width:0}
+#rgbCtl .drow b{flex:none;min-width:36px;text-align:right;color:var(--ink);
+  font-family:var(--font-mono);font-size:.7rem;font-weight:600}
 .dsec{margin-bottom:22px}
 .dsec h3{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-bottom:9px}
 .layerRow{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--hairline);border-radius:12px;
@@ -295,7 +307,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .ozClose{position:absolute;top:18px;right:24px}
 
 /* ---------- footer ---------- */
-#foot{position:relative;z-index:3;display:flex;gap:14px;align-items:center;justify-content:center;padding:12px 10px 16px;
+#foot{position:relative;z-index:3;display:flex;gap:14px;align-items:center;justify-content:center;padding:7px 10px 9px;
   color:var(--muted);font-family:var(--font-mono);font-size:.62rem;letter-spacing:.08em;flex-wrap:wrap;text-transform:uppercase}
 #foot a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--hairline2)}
 #foot a:hover{color:var(--ink)}
@@ -313,13 +325,13 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 @media (max-width:900px){
   /* En pantallas cortas el dock no puede quedarse con media pantalla:
      menos alto y scroll dentro, dejando sitio al teclado. */
-  #pickerGrid{height:150px}
+  #pickerGrid{height:112px}
 }
 @media (max-width:520px){
   #toolbar{gap:8px 12px}
   .tgroup{flex-wrap:nowrap}
   .sliderRow input{width:48px}
-  #pickerGrid{height:132px}
+  #pickerGrid{height:100px}
 }
 
 </style>
@@ -403,16 +415,18 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
     </div>
     <div class="dsec">
       <h3 data-i18n="rgbfx">Efecto RGB</h3>
-      <div class="tgroup" style="flex-wrap:wrap">
-        <select id="fxSel" style="flex:1;min-width:0"></select>
-        <button class="btn small" id="fxToggle" data-i18n="rgbOn">RGB: ON</button>
+      <!-- El toggle siempre visible; los ajustes solo cuando el RGB
+           está encendido (si no, no hay nada que ajustar). -->
+      <button class="btn small" id="fxToggle" data-i18n="rgbOn" style="width:100%">RGB: ON</button>
+      <div id="rgbCtl">
+        <select id="fxSel"></select>
+        <div class="drow"><span data-i18n="bri">Brillo</span>
+          <input type="range" id="rgBri" min="1" max="5" step="1" value="5"><b id="rgBriV">5/5</b></div>
+        <div class="drow"><span data-i18n="hue">Matiz</span>
+          <input type="range" id="rgHue" min="0" max="359" step="20" value="0"><b id="rgHueV">0°</b></div>
+        <div class="drow"><span data-i18n="spd">Velocidad</span>
+          <input type="range" id="rgSpd" min="0" max="4" step="1" value="2"><b id="rgSpdV">2</b></div>
       </div>
-      <div class="tgroup sliderRow" style="margin-top:8px"><span class="tlabel" data-i18n="bri">Brillo</span>
-        <input type="range" id="rgBri" min="1" max="5" step="1" value="5" style="flex:1"><b id="rgBriV">5/5</b></div>
-      <div class="tgroup sliderRow" style="margin-top:6px"><span class="tlabel" data-i18n="hue">Matiz</span>
-        <input type="range" id="rgHue" min="0" max="359" step="20" value="0" style="flex:1"><b id="rgHueV">0°</b></div>
-      <div class="tgroup sliderRow" style="margin-top:6px"><span class="tlabel" data-i18n="spd">Velocidad</span>
-        <input type="range" id="rgSpd" min="0" max="4" step="1" value="2" style="flex:1"><b id="rgSpdV">2</b></div>
     </div>
     <div class="dsec">
       <h3 data-i18n="secMacros">Macros (&dmac)</h3>
@@ -2499,6 +2513,9 @@ function syncRgbUI(){
   $('#rgBri').value=rgb.bri;$('#rgBriV').textContent=rgb.bri+'/5';
   $('#rgHue').value=rgb.hue;$('#rgHueV').textContent=rgb.hue+'°';
   $('#rgSpd').value=rgb.spd;$('#rgSpdV').textContent=rgb.spd;
+  /* Los ajustes (efecto, brillo, matiz, velocidad) solo tienen sentido
+     con el RGB encendido. */
+  $('#rgbCtl').classList.toggle('on',rgb.on);
 }
 function buildFxSel(){
   const s=$('#fxSel');s.innerHTML='';
@@ -2525,11 +2542,13 @@ function fitStage(){
      (o sea, nunca crecía por encima del tamaño de diseño). Ahora usa
      todo el ancho disponible y puede ampliarse, con un tope prudente
      para que no se desmadre en monitores muy anchos. */
-  const availW=innerWidth-24;
+  const availW=innerWidth-16;
   const chrome=['#top','#toolbar','#layerBar','#legend','#dock','#foot']
-    .reduce((a,s)=>{const e=$(s);return a+(e?e.offsetHeight:0);},0)+24;
+    .reduce((a,s)=>{const e=$(s);return a+(e?e.offsetHeight:0);},0)+12;
   const availH=Math.max(340,innerHeight-chrome);
-  const sc=Math.min(1.45,availW/STAGE_W,availH/STAGE_H);
+  /* Tope alto a propósito: en un 32" el limitante es la altura, no el
+     ancho, así que 1.45 dejaba el teclado pequeño de más. */
+  const sc=Math.min(2.2,availW/STAGE_W,availH/STAGE_H);
   $('#stage').style.transform=`scale(${sc})`;
   $('#stageWrap').style.height=(STAGE_H*sc+10)+'px';
 }
