@@ -123,7 +123,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 /* ---------- escenario: teclado como producto sobre lienzo ---------- */
 /* Poco padding vertical: el teclado es el protagonista. */
 #stageWrap{position:relative;z-index:2;display:flex;justify-content:center;padding:2px clamp(6px,1.2vw,20px) 2px}
-#stage{position:relative;width:1520px;height:770px;flex:none;transform-origin:top center}
+#stage{position:relative;width:1520px;height:666px;flex:none;transform-origin:top center}
 #glow{display:none}
 #keys{position:absolute;inset:0;z-index:1}
 
@@ -220,9 +220,23 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #drawer .dhead h2{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.16em;color:var(--ink);text-transform:uppercase}
 #drawer .dhead .x{margin-left:auto}
 #drawer .dbody{flex:1;overflow-y:auto;padding:16px 18px}
-/* Controles RGB dentro del panel. No reutilizo .tgroup/.sliderRow de la
-   barra superior porque fijan width:66px en los sliders, lo que dejaba
-   los controles diminutos aqui. Ocultos mientras el RGB esta apagado. */
+/* Panel RGB flotante a la derecha del teclado, en el hueco que quedaba
+   libre. Absolute para que NO reste ancho al escenario: el teclado sigue
+   pudiendo ocupar toda la franja. */
+#rgbPanel{position:absolute;top:14px;right:clamp(8px,1.5vw,28px);z-index:6;width:210px;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:14px;
+  padding:12px 13px 14px;box-shadow:0 10px 30px -18px rgba(20,22,27,.3)}
+#rgbPanel h3{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.16em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:9px}
+#rgbPanel #fxToggle{width:100%}
+@media (max-width:1100px){
+  /* Sin sitio a los lados: vuelve al flujo, centrado sobre el teclado. */
+  #rgbPanel{position:static;width:min(100%,420px);margin:0 auto 6px}
+}
+
+/* Controles RGB. No reutilizo .tgroup/.sliderRow de la barra superior
+   porque fijan width:66px en los sliders, lo que dejaba los controles
+   diminutos aqui. Ocultos mientras el RGB esta apagado. */
 #rgbCtl{display:none;margin-top:9px}
 #rgbCtl.on{display:block}
 #rgbCtl select{width:100%;margin-bottom:9px}
@@ -371,7 +385,24 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 </div>
 
 <!-- ======================= ESCENARIO / TECLADO ======================= -->
+
 <div id="stageWrap">
+<!-- Panel RGB fijo, a la derecha del teclado. Estaba dentro del
+     <aside id="drawer">, que solo se abre con "Panel Studio", asi que no
+     se veia nunca desde la pagina. -->
+<div id="rgbPanel">
+  <h3 data-i18n="rgbfx">Efecto RGB</h3>
+  <button class="btn small" id="fxToggle" data-i18n="rgbOn">RGB: ON</button>
+  <div id="rgbCtl">
+    <select id="fxSel"></select>
+    <div class="drow"><span data-i18n="bri">Brillo</span>
+      <input type="range" id="rgBri" min="1" max="5" step="1" value="5"><b id="rgBriV">5/5</b></div>
+    <div class="drow"><span data-i18n="hue">Matiz</span>
+      <input type="range" id="rgHue" min="0" max="359" step="20" value="0"><b id="rgHueV">0°</b></div>
+    <div class="drow"><span data-i18n="spd">Velocidad</span>
+      <input type="range" id="rgSpd" min="0" max="4" step="1" value="2"><b id="rgSpdV">2</b></div>
+  </div>
+</div>
   <div id="stage">
     <canvas id="glow"></canvas>
     <div id="keys"></div>
@@ -413,20 +444,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
       <p style="font-size:10px;color:var(--faint);margin-top:8px;line-height:1.5" data-i18n="animHint">
         Cicla crystal → cat → head → spaceman → pokemon, como &oledanim (Lower + encoder derecho).</p>
     </div>
-    <div class="dsec">
-      <h3 data-i18n="rgbfx">Efecto RGB</h3>
-      <!-- El toggle siempre visible; los ajustes solo cuando el RGB
-           está encendido (si no, no hay nada que ajustar). -->
-      <button class="btn small" id="fxToggle" data-i18n="rgbOn" style="width:100%">RGB: ON</button>
-      <div id="rgbCtl">
-        <select id="fxSel"></select>
-        <div class="drow"><span data-i18n="bri">Brillo</span>
-          <input type="range" id="rgBri" min="1" max="5" step="1" value="5"><b id="rgBriV">5/5</b></div>
-        <div class="drow"><span data-i18n="hue">Matiz</span>
-          <input type="range" id="rgHue" min="0" max="359" step="20" value="0"><b id="rgHueV">0°</b></div>
-        <div class="drow"><span data-i18n="spd">Velocidad</span>
-          <input type="range" id="rgSpd" min="0" max="4" step="1" value="2"><b id="rgSpdV">2</b></div>
-      </div>
+    
     </div>
     <div class="dsec">
       <h3 data-i18n="secMacros">Macros (&dmac)</h3>
@@ -861,9 +879,11 @@ kpName=function(p1){const mods=(p1>>>24)&0xFF,page=(p1>>>16)&0xFF,id=p1&0xFFFF;
    altura de la fila 4 y OLED vertical encima de cada encoder.
    Espacio de tablero 1520×810 px (pitch 90, tecla 86).
    ============================================================ */
-const STAGE_W=1520,STAGE_H=770;
+const STAGE_W=1520,STAGE_H=666;
 const KEY=86,PT=90;
-const HALF=[{x:80,y:150,rot:7,w:661,h:528},{x:770,y:150,rot:-7,w:670,h:528}];
+/* y=24 (antes 150): el escenario tenia 150px muertos arriba y 70 abajo,
+   que la escala contaba como si fueran teclado y lo empequenecian. */
+const HALF=[{x:80,y:24,rot:7,w:661,h:528},{x:770,y:24,rot:-7,w:670,h:528}];
 const OFFL=[43,43,14,0,14,29],OFFR=[29,14,0,14,43,43];
 function geoMap(){
   const M=new Array(60).fill(null);
@@ -2542,13 +2562,13 @@ function fitStage(){
      (o sea, nunca crecía por encima del tamaño de diseño). Ahora usa
      todo el ancho disponible y puede ampliarse, con un tope prudente
      para que no se desmadre en monitores muy anchos. */
-  const availW=innerWidth-16;
+  const availW=innerWidth-8;
   const chrome=['#top','#toolbar','#layerBar','#legend','#dock','#foot']
     .reduce((a,s)=>{const e=$(s);return a+(e?e.offsetHeight:0);},0)+12;
   const availH=Math.max(340,innerHeight-chrome);
   /* Tope alto a propósito: en un 32" el limitante es la altura, no el
      ancho, así que 1.45 dejaba el teclado pequeño de más. */
-  const sc=Math.min(2.2,availW/STAGE_W,availH/STAGE_H);
+  const sc=Math.min(2.6,availW/STAGE_W,availH/STAGE_H);
   $('#stage').style.transform=`scale(${sc})`;
   $('#stageWrap').style.height=(STAGE_H*sc+10)+'px';
 }
