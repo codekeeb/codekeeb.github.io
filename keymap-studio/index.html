@@ -875,11 +875,14 @@ const ENC_GEO=[{x:551,y:287},{x:9,y:287}];    /* caja 110×110 del artifact */
    panel nice!oled (68×160). Estas son las medidas del dibujo en pantalla,
    que es otra cosa. */
 /* 90x212 (antes 84x198), manteniendo la proporción real del panel
-   (68x160). El ancho lo limita la mitad izquierda: con OLED_GAP=29 la
-   pantalla arranca en x=565 y la mitad mide 661, así que 90 es lo máximo
-   que cabe dejando algo de aire en el borde. En vertical sobra sitio
-   (29+212=241, y el encoder no empieza hasta y=287). */
-const OLED_BOX_W=90,OLED_BOX_H=212,OLED_GAP=29,OLED_TOP=29;
+   (68x160). En vertical sobra sitio: 29+212=241 y el encoder no empieza
+   hasta y=287.
+   OLED_GAP es la distancia a la tecla contigua (5 en la izq, 6 en la
+   dcha), igual en ambas mitades. Bajarlo acerca cada pantalla a SU
+   teclado y por tanto SEPARA las dos pantallas entre sí: con 20 quedan a
+   68px una de otra (con 29 estaban a 50) y además dejan más aire hasta
+   el borde de su mitad (15 y 24px, antes 6 y 15, que iba muy justo). */
+const OLED_BOX_W=90,OLED_BOX_H=212,OLED_GAP=20,OLED_TOP=29;
 const OLED_GEO=[{x:536+OLED_GAP,y:OLED_TOP},{x:134-OLED_GAP-OLED_BOX_W,y:OLED_TOP}];
 
 /* ---------------- estado ---------------- */
