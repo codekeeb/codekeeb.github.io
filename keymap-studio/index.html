@@ -135,8 +135,10 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .key:hover{border-color:#4a4f58;transform:translateY(-1px)}
 .key.hit{transform:translateY(1px);box-shadow:0 1px 0 #0a0b0d,inset 0 1px 0 rgba(255,255,255,.03);border-color:var(--c-orange)}
 .key.sel{border-color:var(--c-magenta);box-shadow:0 0 0 1.5px var(--c-magenta),0 0 14px rgba(255,57,192,.5),0 2px 0 #0a0b0d}
+/* Leyenda central: 17px. Las .sub de las esquinas se quedan pequeñas a
+   propósito, si no se juntan con esta en las teclas de leyenda larga. */
 .key .cap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);
-  font-size:13.5px;font-weight:700;color:#e8eaee;letter-spacing:.02em;pointer-events:none;text-align:center;line-height:1.15;padding:2px}
+  font-size:17px;font-weight:700;color:#e8eaee;letter-spacing:.02em;pointer-events:none;text-align:center;line-height:1.15;padding:2px}
 .key .cap .sub{position:absolute;font-size:9.5px;font-weight:400;letter-spacing:0;white-space:nowrap}
 .key .cap .sub.tr{top:6%;right:9%;color:#6fc3e8}
 .key .cap .sub.br{bottom:6%;right:9%;color:#ffb063}
@@ -872,7 +874,12 @@ const ENC_GEO=[{x:551,y:287},{x:9,y:287}];    /* caja 110×110 del artifact */
 /* OJO con los nombres: OLED_W/OLED_H (más abajo) son los PÍXELES del
    panel nice!oled (68×160). Estas son las medidas del dibujo en pantalla,
    que es otra cosa. */
-const OLED_BOX_W=84,OLED_BOX_H=198,OLED_GAP=29,OLED_TOP=29;
+/* 90x212 (antes 84x198), manteniendo la proporción real del panel
+   (68x160). El ancho lo limita la mitad izquierda: con OLED_GAP=29 la
+   pantalla arranca en x=565 y la mitad mide 661, así que 90 es lo máximo
+   que cabe dejando algo de aire en el borde. En vertical sobra sitio
+   (29+212=241, y el encoder no empieza hasta y=287). */
+const OLED_BOX_W=90,OLED_BOX_H=212,OLED_GAP=29,OLED_TOP=29;
 const OLED_GEO=[{x:536+OLED_GAP,y:OLED_TOP},{x:134-OLED_GAP-OLED_BOX_W,y:OLED_TOP}];
 
 /* ---------------- estado ---------------- */
