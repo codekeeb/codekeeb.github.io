@@ -113,7 +113,9 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .iconlink svg{width:14px;height:14px;fill:currentColor}
 
 /* ---------- toolbar ---------- */
-#toolbar{position:relative;z-index:4;display:flex;gap:14px;align-items:center;
+/* z-index 6 (no 4): el desplegable de RGB cuelga de aquí y tiene que
+   quedar por encima del dock, que va a 5. */
+#toolbar{position:relative;z-index:6;display:flex;gap:14px;align-items:center;
   padding:5px clamp(14px,2.5vw,36px);flex-wrap:wrap;font-size:12px}
 .tgroup{display:flex;gap:7px;align-items:center}
 .sliderRow{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px}
@@ -231,7 +233,10 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 /* OLED y RGB, mismo diseño: etiqueta a la izquierda + pastilla. Van
    apilados arriba a la derecha, y los ajustes de RGB se despliegan justo
    debajo cuando está encendido. */
-#ctlStack{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:186px}
+/* position:relative para anclar el desplegable de RGB, que va absolute
+   para no empujar el teclado hacia abajo al abrirse. */
+#ctlStack{position:relative;margin-left:auto;display:flex;flex-direction:column;
+  align-items:flex-end;gap:5px;min-width:186px}
 .ctlRow{display:flex;align-items:center;gap:9px;justify-content:flex-end;width:100%}
 .pill{background:var(--surface);border:1px solid var(--hairline2);color:var(--ink);
   border-radius:999px;padding:.34em 1.05em;font-family:var(--font-mono);font-size:.68rem;
@@ -243,10 +248,13 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   background:linear-gradient(90deg,rgba(255,153,42,.28),rgba(255,57,192,.26),rgba(42,61,255,.2),rgba(27,232,255,.26))}
 
 /* Ajustes RGB: se despliegan bajo la pastilla cuando está encendido.
-   No reutilizo .tgroup/.sliderRow de la barra porque fijan width:66px en
-   los sliders y los dejaban diminutos. */
-#rgbCtl{display:none;width:100%;max-width:250px;margin-top:3px;
-  background:var(--surface);border:1px solid var(--hairline);border-radius:12px;padding:9px 11px 10px}
+   ABSOLUTE a propósito: en el flujo normal estiraba la barra y empujaba
+   todo el teclado hacia abajo al abrirlo. Así flota sobre la interfaz sin
+   moverla. No reutilizo .tgroup/.sliderRow de la barra porque fijan
+   width:66px en los sliders y los dejaban diminutos. */
+#rgbCtl{display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:20;
+  width:250px;background:var(--surface);border:1px solid var(--hairline);border-radius:12px;
+  padding:9px 11px 10px;box-shadow:0 14px 34px -18px rgba(20,22,27,.42)}
 #rgbCtl.on{display:block}
 #rgbCtl select{width:100%;margin-bottom:8px}
 #rgbCtl .drow{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:10.5px;color:var(--muted)}
