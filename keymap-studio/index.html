@@ -223,10 +223,14 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .pk.cur{border-color:var(--c-magenta);box-shadow:0 0 0 1px var(--c-magenta);background:#fff5fc}
 
 /* ---------- drawer Studio ---------- */
-#drawer{position:fixed;top:0;right:-420px;width:420px;height:100%;background:var(--surface);border-left:1px solid var(--hairline);
-  z-index:40;transition:right .35s var(--ease);display:flex;flex-direction:column;box-shadow:-24px 0 60px -30px rgba(20,22,27,.25)}
-#drawer.open{right:0}
-#drawer .dhead{display:flex;align-items:center;gap:10px;padding:18px;border-bottom:1px solid var(--hairline)}
+/* 460px (antes 420): con las macros y los ajustes dentro, 420 quedaba
+   estrecho. Se posiciona con translateX para no depender del ancho. */
+#drawer{position:fixed;top:0;right:0;width:min(460px,92vw);height:100%;background:var(--surface);
+  border-left:1px solid var(--hairline);transform:translateX(100%);
+  z-index:40;transition:transform .35s var(--ease);display:flex;flex-direction:column;
+  box-shadow:-24px 0 60px -30px rgba(20,22,27,.25)}
+#drawer.open{transform:translateX(0)}
+#drawer .dhead{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hairline)}
 #drawer .dhead h2{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.16em;color:var(--ink);text-transform:uppercase}
 #drawer .dhead .x{margin-left:auto}
 #drawer .dbody{flex:1;overflow-y:auto;padding:16px 18px}
@@ -262,7 +266,24 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #rgbCtl .drow input[type=range]{flex:1;width:auto;min-width:0}
 #rgbCtl .drow b{flex:none;min-width:34px;text-align:right;color:var(--ink);
   font-family:var(--font-mono);font-size:.68rem;font-weight:600}
-.dsec{margin-bottom:22px}
+/* Secciones del panel como acordeon: seis abiertas a la vez obligaban a
+   mucho scroll y aplastaban Bloqueo/Capas/OLED. Ahora cada una se pliega
+   y solo Bloqueo y Capas arrancan abiertas. */
+.dsec{margin-bottom:6px;border-bottom:1px solid var(--hairline)}
+.dsec:last-of-type{border-bottom:none}
+.dsec > summary{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.16em;
+  color:var(--muted);text-transform:uppercase;cursor:pointer;list-style:none;
+  padding:10px 0;display:flex;align-items:center;gap:7px;user-select:none;
+  transition:color .18s}
+.dsec > summary::-webkit-details-marker{display:none}
+.dsec > summary::before{content:"›";display:inline-block;font-size:1.05rem;line-height:0;
+  color:var(--faint);transition:transform .22s var(--ease)}
+.dsec[open] > summary{color:var(--ink)}
+.dsec[open] > summary::before{transform:rotate(90deg)}
+.dsec > summary:hover{color:var(--ink)}
+/* El contenido necesita algo de aire bajo el titulo. */
+.dsec > summary + *{margin-top:2px}
+.dsec > *:last-child{margin-bottom:12px}
 .dsec h3{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-bottom:9px}
 .layerRow{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--hairline);border-radius:12px;
   padding:9px 12px;margin-bottom:6px;font-size:12px;transition:border-color .2s}
@@ -351,7 +372,8 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   #toolbar{padding:8px 14px;gap:8px 14px}
   #toolbar .tgroup[style]{margin-left:0!important}
   .sliderRow input{width:64px}
-  #drawer{width:100vw;right:-100vw}
+  /* El desplazamiento ya lo hace transform, solo cambia el ancho. */
+  #drawer{width:100vw}
 }
 @media (max-width:900px){
   /* En pantallas cortas el dock no puede quedarse con media pantalla:
@@ -437,17 +459,17 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   <div class="dhead"><h2>ZMK Studio</h2><span id="drawerMode" style="font-size:10px;color:var(--faint)">LOCAL</span>
     <button class="btn small x" id="btnDrawerX">✕</button></div>
   <div class="dbody">
-    <div class="dsec">
-      <h3 data-i18n="secLock">Bloqueo</h3>
+    <details class="dsec" open>
+      <summary data-i18n="secLock">Bloqueo</summary>
       <div style="display:flex;gap:8px;align-items:center">
         <button class="btn accent" id="btnUnlock" data-i18n="unlock">UNLOCK (set_lock)</button>
         <span id="lockStateTxt" style="font-size:11px;color:var(--dim)">LOCKED</span>
       </div>
       <p style="font-size:10px;color:var(--faint);margin-top:8px;line-height:1.5" data-i18n="lockHint">
         En LOCAL el desbloqueo es simulado. Conectado, envía set_lock real al firmware (o usa la tecla &studio_unlock de Lower).</p>
-    </div>
-    <div class="dsec">
-      <h3 data-i18n="secLayers">Capas</h3>
+    </details>
+    <details class="dsec" open>
+      <summary data-i18n="secLayers">Capas</summary>
       <div id="layerList"></div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
         <button class="btn small" id="btnAddLayer" data-i18n="addLayer">+ Añadir</button>
@@ -455,20 +477,21 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
         <button class="btn small" id="btnDiscard" data-i18n="discard">Descartar</button>
         <button class="btn small" id="btnStock" data-i18n="stock">↺ Keymap de fábrica</button>
       </div>
-    </div>
-    <div class="dsec">
-      <h3 data-i18n="secAnim">Animación OLED derecha (&oledanim)</h3>
+    </details>
+    <details class="dsec">
+      <summary data-i18n="secAnim">Animación OLED derecha (&oledanim)</summary>
       <button class="btn small" id="btnAnim">▶ <span id="animName">CRYSTAL</span></button>
       <p style="font-size:10px;color:var(--faint);margin-top:8px;line-height:1.5" data-i18n="animHint">
         Cicla crystal → cat → head → spaceman → pokemon, como &oledanim (Lower + encoder derecho).</p>
     </div>
     
-    </div>
-    <div class="dsec">
-      <h3 data-i18n="secMacros">Macros (&dmac)</h3>
+    </details>
+    <details class="dsec">
+      <summary data-i18n="secMacros">Macros (&dmac)</summary>
       <p style="font-size:10px;color:var(--faint);margin:0 0 8px;line-height:1.5" data-i18n="macroHint">
         Escribe el texto que quieras (ñ, á, →, tu email…). Se guarda en el teclado y puedes asignar la macro a cualquier tecla desde el panel de abajo.</p>
-      <div id="macroList"></div>
+      <!-- Scroll propio: 12 ranuras seguidas hacian larguisimo el panel. -->
+      <div id="macroList" style="max-height:216px;overflow-y:auto;overscroll-behavior:contain"></div>
       <label style="display:block;font-size:10px;color:var(--faint);margin-top:10px" data-i18n="unicodeMode">Método Unicode (según tu sistema)</label>
       <select id="ucMode" class="btn small" style="width:100%;margin-top:4px">
         <option value="0" data-i18n="ucLinux">Linux (Ctrl+Shift+U)</option>
@@ -477,9 +500,9 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
       </select>
       <p style="font-size:10px;color:var(--faint);margin-top:6px;line-height:1.5" data-i18n="ucHint">
         Solo afecta a caracteres que no existen en tu distribución de teclado. Las letras normales se escriben igual en todos los sistemas.</p>
-    </div>
-    <div class="dsec">
-      <h3 data-i18n="secFile">Archivo</h3>
+    </details>
+    <details class="dsec">
+      <summary data-i18n="secFile">Archivo</summary>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn small" id="btnExportKeymap" data-i18n="expKey">Export .keymap</button>
         <button class="btn small" id="btnExportJson" data-i18n="expJson">Export JSON</button>
@@ -487,12 +510,12 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
         <button class="btn small danger" id="btnReset" data-i18n="reset">Reset stock</button>
         <button class="btn small" id="btnOled" data-i18n="oledzoom">OLED ×4</button>
       </div>
-    </div>
-    <div class="dsec">
-      <h3 data-i18n="secInfo">Dispositivo</h3>
+    </details>
+    <details class="dsec">
+      <summary data-i18n="secInfo">Dispositivo</summary>
       <div id="devInfo" style="font-size:11px;color:var(--dim);line-height:1.7">—</div>
       <div id="connSteps" style="font-size:11px;line-height:1.8;margin-top:6px"></div>
-    </div>
+    </details>
   </div>
   <details id="proto" open><summary data-i18n="console">Consola de protocolo</summary><div id="protoLog"></div></details>
 </aside>
