@@ -28,10 +28,32 @@ web/
 └── assets/
     ├── img/es|en|fr/   # fotos de producto por idioma (mismo nombre de archivo)
     ├── img/shared/     # fotos sin texto (válidas para todos los idiomas)
-    ├── logo-dark.svg   # logo para fondos claros (barra en degradado)
-    ├── logo-light.svg  # logo para fondos oscuros
-    └── favicon.svg     # mirilla de la marca
+    ├── brand/          # ★ logos y monogramas oficiales (ver abajo)
+    ├── favicon.ico     # monograma C/K multi-resolución (16-256 px)
+    ├── favicon-32|192|512.png
+    └── apple-touch-icon.png
 ```
+
+## Identidad de marca
+
+Los originales viven en `Imagen corporativa Codekeeb/`. En `assets/brand/` están las
+versiones optimizadas para web (recortadas al contenido y escaladas), con `@2x` para retina:
+
+| Archivo | Uso |
+|---|---|
+| `logo-horizontal-dark.png` | logo horizontal sobre fondo claro — barra de navegación |
+| `logo-horizontal-light.png` | logo horizontal sobre fondo oscuro |
+| `logo-stacked-dark.png` | logo vertical sobre fondo claro — footer |
+| `logo-stacked-light.png` | logo vertical sobre fondo oscuro |
+| `monogram-dark.png` / `monogram-light.png` | monograma C/K (favicons, avatares, redes) |
+| `og-card.png` | tarjeta 1200×630 de marca para compartir |
+
+**dark** = tipografía gris oscuro, para fondos claros. **light** = tipografía blanca, para
+fondos oscuros. Todas conservan el halo de degradado del original, así que en CSS se
+escalan ~35 % más grandes de lo que mide la palabra en sí.
+
+Para regenerarlas desde los originales, recorta por el bounding box del canal alfa
+(los archivos fuente son lienzos de 2000×2000 con el logo centrado).
 
 ## Cómo escalar la web
 

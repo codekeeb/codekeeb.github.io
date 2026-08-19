@@ -108,7 +108,10 @@ em{font-family:var(--font-serif);font-style:italic;font-weight:400}
   display:flex;align-items:center;
 }
 .nav__logo img{
-  height:clamp(22px,2.4vw,28px);width:auto;display:block;
+  /* artwork carries a soft glow margin (~28% of height), so scale up to
+     keep the wordmark itself at the intended optical size */
+  height:clamp(32px,3.4vw,40px);width:auto;display:block;
+  margin:-6px 0;
   transition:transform .4s var(--ease);
 }
 .nav__logo:hover img{transform:scale(1.03)}
@@ -446,7 +449,7 @@ figure .cross{mix-blend-mode:multiply}
   grid-template-columns:1.4fr .7fr .8fr .7fr;gap:clamp(28px,5vw,70px);
   padding-bottom:clamp(40px,7vh,70px);
 }
-.footer__logo{width:clamp(150px,16vw,200px);height:auto}
+.footer__logo{width:clamp(165px,17vw,220px);height:auto;margin-left:-10px}
 .footer__tag{color:var(--muted);font-size:.9rem;margin-top:18px;max-width:30ch}
 .footer__col{display:flex;flex-direction:column;gap:12px}
 .footer__col h4{margin-bottom:6px}
