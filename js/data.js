@@ -143,9 +143,9 @@ const CK_PRODUCTS = [
     featured: true,
     name: "Totem",
     version: "38 teclas",
-    img: null,                 // PENDIENTE: no hay foto propia del Totem
-    heroImg: null,
-    gallery: [],
+    img: "totem.jpg",
+    heroImg: "totem.jpg",
+    gallery: ["totem.jpg", "totem-2.jpg"],
     titleImg: null,
     priceFrom: 26.00,
     priceFull: 152.75,
