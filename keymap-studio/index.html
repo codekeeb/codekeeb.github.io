@@ -235,8 +235,11 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 /* Tecla muerta: se marca distinto porque no es un caracter suelto,
    es un acento que espera a la siguiente letra. */
 .pk.dead{border-color:var(--c-blue);background:linear-gradient(180deg,#f5f9ff,var(--bg))}
-.pk.dead .l{color:var(--c-blue)}
-.pk.dead .d{color:var(--c-blue);opacity:.7}
+.pk.dead .l{color:var(--c-blue);font-size:1.18rem;line-height:1}
+/* La muestra (a e i) va con la fuente de texto y algo mas grande: la
+   mono a .46rem no dibujaba bien los acentos y se veian cortados. */
+.pk.dead .d{font-family:var(--font-sans);font-size:.62rem;color:var(--c-blue);
+  opacity:.85;letter-spacing:.06em;margin-top:0}
 
 /* ---------- drawer Studio ---------- */
 /* 460px (antes 420): con las macros y los ajustes dentro, 420 quedaba
@@ -646,6 +649,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',ol
   cat_simbolos:'símbolos',cat_media:'multimedia',cat_capas:'capas',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'sistema',cat_todo:'todo',cat_unicode:'unicode',
   uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
+  uniDeadTip:'Pulsa %a y luego la vocal: %s',
   uniAssigned:'%c asignado (macro %n)',uniNoSlot:'No quedan ranuras de macro libres (12). Vacia una en el panel Studio > Macros.',uniFail:'No se pudo guardar la macro en el teclado',
   secMacros:'Macros (&dmac)',
   macroHint:'Escribe el texto que quieras (ñ, á, →, tu email…). Se guarda en el teclado y puedes asignar la macro a cualquier tecla desde el panel de abajo.',
@@ -702,6 +706,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',studio:'Studio Panel',ole
   cat_simbolos:'symbols',cat_media:'media',cat_capas:'layers',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'system',cat_todo:'all',cat_unicode:'unicode',
   uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
+  uniDeadTip:'Press %a then the vowel: %s',
   uniAssigned:'%c assigned (macro %n)',uniNoSlot:'No free macro slots left (12). Clear one in Studio > Macros.',uniFail:'Could not save the macro to the keyboard',
   secMacros:'Macros (&dmac)',
   macroHint:'Type whatever you want (ñ, á, →, your email…). It is stored on the keyboard and you can bind the macro to any key from the panel below.',
@@ -813,7 +818,15 @@ function bindingLegend(bd){
     case '&studio_unlock':return 'UNLK';
     case '&oledanim':return 'OLED';
     case '&mwheel':return ['WHL↑','WHL↓','WHL←','WHL→'][bd.p1]||'WHL';
-    case '&dmac':return 'M'+bd.p1;
+    /* CODEKEEB: si la ranura tiene contenido corto (tipico de la pestana
+       unicode: un solo caracter) se pinta el caracter, que es lo que el
+       usuario espera ver en la tecla. Si es texto largo se cae a M<n>,
+       que si cabe en el keycap. */
+    case '&dmac':{
+      const m=(typeof macros!=='undefined')&&macros[bd.p1];
+      const txt=m&&m.text||'';
+      return ([...txt].length>0&&[...txt].length<=2)?txt:('M'+bd.p1);
+    }
     case '&mkp':return {1:'LCLK',2:'RCLK',4:'MCLK',8:'MB4',16:'MB5'}[bd.p1]||'MCLK';
     case '&mmv':return 'MOVE';
     case '&msc':return 'SCRL';
@@ -2149,16 +2162,19 @@ async function studioLayerOp(op,fn){
    Las posiciones son las del teclado fisico ISO/ANSI segun el
    layout indicado en 'need'. */
 const DEAD_KEYS=[
-  {legend:'´', usage:()=>kpu(U_SQT),        desc:"' (dead acute)",
-   need:{es:'layout ES/FR',en:'ES/FR layout'}, ex:'´+a = á'},
-  {legend:'¨', usage:()=>kpu(LS(U_SQT)),    desc:'Shift+´ (dead diaeresis)',
-   need:{es:'layout ES',en:'ES layout'},        ex:'¨+u = ü'},
-  {legend:'`', usage:()=>kpu(U_LBKT),       desc:'[ (dead grave)',
-   need:{es:'layout ES',en:'ES layout'},        ex:'`+a = à'},
-  {legend:'^', usage:()=>kpu(LS(U_LBKT)),   desc:'Shift+[ (dead circumflex)',
-   need:{es:'layout ES/FR',en:'ES/FR layout'},  ex:'^+a = â'},
-  {legend:'˜', usage:()=>kpu(RA(U_RBKT)),   desc:'AltGr+] (dead tilde)',
-   need:{es:'layout ES',en:'ES layout'},        ex:'˜+n = ñ'}
+  /* legend: el acento, grande.  sample: que sale al pulsarlo despues,
+     que es lo unico que la gente necesita leer en la baldosa.
+     key/need: el detalle tecnico, va al tooltip. */
+  {legend:'´', sample:'áéí', usage:()=>kpu(U_SQT),      key:"'",
+   need:{es:'layout ES/FR',en:'ES/FR layout'}},
+  {legend:'¨', sample:'üöä', usage:()=>kpu(LS(U_SQT)),  key:"Shift+'",
+   need:{es:'layout ES',en:'ES layout'}},
+  {legend:'`', sample:'àèù', usage:()=>kpu(U_LBKT),     key:'[',
+   need:{es:'layout ES',en:'ES layout'}},
+  {legend:'^', sample:'âêô', usage:()=>kpu(LS(U_LBKT)), key:'Shift+[',
+   need:{es:'layout ES/FR',en:'ES/FR layout'}},
+  {legend:'~', sample:'ñãõ', usage:()=>kpu(RA(U_RBKT)), key:'AltGr+]',
+   need:{es:'layout ES',en:'ES layout'}}
 ];
 const UNI_GROUPS=[
   {id:'es',name:{es:'Español',en:'Spanish'},chars:'á é í ó ú ü ñ Á É Í Ó Ú Ü Ñ ¿ ¡ º ª'},
@@ -2240,7 +2256,7 @@ for(let i=0;i<12;i++)pkAdd('sistema','M'+i,'&dmac '+i+' (macro '+i+')',()=>B('&d
 /* Las teclas muertas van las primeras de la pestana: es lo que
    deberia usar la mayoria, y no gastan ranura de macro. */
 DEAD_KEYS.forEach(k=>{
-  PK.push({cat:'unicode', legend:k.legend, desc:k.desc,
+  PK.push({cat:'unicode', legend:k.legend, desc:k.sample,
            dead:k, uniGroup:'dead', mk:k.usage});
 });
 UNI_GROUPS.forEach(g=>{
@@ -2355,8 +2371,13 @@ function renderPickerGrid(q,cat){
      grupo ("frances", "flechas"...), que es como la gente la usa.
      Sin tildes a ambos lados: casi nadie escribe "frances" con acento
      en un buscador. */
-  const uniQ=p=>(p.uni||p.dead)&&(noAcc(uniGroupName(p.uniGroup)).includes(noAcc(q))||
-    (p.dead&&(noAcc(p.dead.ex).includes(noAcc(q))||noAcc(t('uniDead')).includes(noAcc(q)))));
+  /* El nombre de grupo solo se busca con 2+ letras: con una sola, "a"
+     esta dentro de "Espanol", "Frances", "Aleman"... y saldria medio
+     catalogo cuando lo que se busca es el caracter "a". */
+  const qn=noAcc(q), byGroup=qn.length>=2;
+  const uniQ=p=>(p.uni||p.dead)&&(
+    (byGroup&&noAcc(uniGroupName(p.uniGroup)).includes(qn))||
+    (p.dead&&(p.dead.sample.includes(q)||(byGroup&&noAcc(t('uniDead')).includes(qn)))));
   let lastGroup=null;
   PK.filter(p=>(cat==='todo'||p.cat===cat)&&
       (!q||p.legend.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)||uniQ(p)))
@@ -2371,7 +2392,8 @@ function renderPickerGrid(q,cat){
       const el=document.createElement('div');
       el.className='pk'+(p.uni?' uni':'')+(p.dead?' uni dead':'');
       /* La tecla muerta necesita explicarse: que hace y que layout pide. */
-      el.title=p.dead?(p.dead.ex+'  ·  '+p.desc+'  ·  '+t('uniNeeds')+' '+
+      el.title=p.dead?(t('uniDeadTip').replace('%a',p.legend).replace('%s',p.dead.sample)+
+                       '  ·  '+p.dead.key+'  ·  '+t('uniNeeds')+' '+
                        (p.dead.need[lang]||p.dead.need.en))
               :p.uni?(p.desc+' · '+uniGroupName(p.uniGroup)):p.desc;
       const bd=p.mk();
