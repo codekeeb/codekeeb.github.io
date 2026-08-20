@@ -488,3 +488,73 @@ figure .cross{mix-blend-mode:multiply}
   .hero__scrollcue{display:none}
   .footer__top{grid-template-columns:1fr}
 }
+
+/* ============================================================
+   CATÁLOGO REAL — precios, variantes y confianza
+   Añadido al pasar de 2 modelos de muestra a los 5 anuncios
+   publicados. Los precios los cobra Etsy; aquí solo se muestran.
+   ============================================================ */
+
+/* ---------- precio ---------- */
+.price{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+.price__lbl{font:600 .62rem var(--font-mono);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted)}
+.price strong{font-size:1.32rem;font-weight:700;letter-spacing:-.01em}
+.price s{color:var(--muted);font-size:.86rem}
+.price__off{font:700 .62rem var(--font-mono);letter-spacing:.06em;font-style:normal;
+  color:#0d7a43;background:#effaf3;border:1px solid rgba(13,122,67,.25);
+  border-radius:999px;padding:2px 7px}
+
+/* En el slide el precio va sobre fondo claro y con más aire. */
+.slide__copy .price{margin:4px 0 18px}
+.slide__copy .price strong{font-size:1.5rem}
+
+/* ---------- variantes del anuncio ---------- */
+.model-card__opts{list-style:none;margin:10px 0 0;padding:0;display:flex;
+  flex-direction:column;gap:3px}
+.model-card__opts li{font:400 .74rem var(--font-mono);color:var(--muted);
+  padding-left:12px;position:relative}
+.model-card__opts li::before{content:"·";position:absolute;left:2px;color:var(--muted)}
+/* Agotado: tachado en vez de oculto -- si desaparece, preguntan igual. */
+.model-card__opts li.is-sold{text-decoration:line-through;opacity:.5}
+
+/* ---------- señales de la tarjeta ---------- */
+.model-card__off{position:absolute;top:10px;right:10px;z-index:2;
+  font:700 .62rem var(--font-mono);letter-spacing:.04em;color:#fff;
+  background:#c02a52;border-radius:999px;padding:3px 9px}
+.model-card__stock{display:inline-block;margin-top:10px;
+  font:600 .64rem var(--font-mono);letter-spacing:.06em;color:#c02a52}
+.model-card__rating{display:inline-flex;align-items:center;gap:5px;margin-top:2px;
+  font-size:.78rem;color:#e0a020;letter-spacing:.06em}
+.model-card__rating em{font-style:normal;color:var(--muted);font-size:.72rem}
+
+/* Hueco cuando un modelo aún no tiene foto propia: mejor esto que una
+   imagen rota o la foto de otro teclado. */
+.model-card__nophoto{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#ececE6,#f7f7f4);color:var(--muted)}
+.model-card__nophoto span{font:700 .8rem var(--font-mono);letter-spacing:.16em;
+  text-transform:uppercase;opacity:.55}
+
+.price-note{margin-top:26px;text-align:center;font-size:.62rem;color:var(--muted);
+  letter-spacing:.04em}
+
+/* ---------- confianza en el vendedor ---------- */
+.seller{padding:clamp(50px,7vh,80px) var(--pad) 0}
+.seller__grid{list-style:none;margin:0;padding:0;display:grid;gap:18px;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.seller__grid li{background:var(--surface);border:1px solid var(--hairline);
+  border-radius:16px;padding:20px 18px}
+.seller__grid h3{font-size:.94rem;margin-bottom:6px}
+.seller__grid p{font-size:.84rem;color:var(--muted);line-height:1.55}
+
+@media (max-width:700px){
+  .price strong{font-size:1.18rem}
+  .slide__copy .price strong{font-size:1.3rem}
+  .seller{padding-top:40px}
+}
+
+/* El grid ya iguala la altura por fila; esto ancla el boton abajo para
+   que quede a la misma altura aunque una tarjeta tenga mas variantes. */
+.model-card__body{display:flex;flex-direction:column}
+.model-card__cta{margin-top:auto}
+.model-card__meta{margin-top:12px}

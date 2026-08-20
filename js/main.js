@@ -35,7 +35,7 @@
     renderCarousel();
     renderSpecs();
     renderFlavors();
-    renderModels();
+    renderModels(); renderPriceNote();
     observeNew();
   }
 
@@ -63,12 +63,38 @@
   /* ---------- carrusel del inicio (modelos disponibles) ---------- */
   let carIndex = 0, carTimer = null, carSlides = [];
 
+/* Las fotos de producto viven en assets/img/products/ (no por idioma:
+   son el mismo teclado en las tres webs). Hay version -sm para movil. */
+function prodImg(file){ return "assets/img/products/" + file; }
+function prodSrcset(file){
+  const sm = file.replace(/\.jpg$/, "-sm.jpg");
+  return prodImg(sm) + " 640w, " + prodImg(file) + " 1200w";
+}
+/* Precio formateado en euros, con el separador del idioma activo. */
+function fmtPrice(v){
+  if (v === null || v === undefined) return "";
+  return new Intl.NumberFormat(lang === "en" ? "en-IE" : lang === "fr" ? "fr-FR" : "es-ES",
+    { style: "currency", currency: "EUR", minimumFractionDigits: 2 }).format(v);
+}
+/* Bloque de precio: "desde X" + tachado del original si hay descuento. */
+function priceBlock(p){
+  if (p.priceFrom === undefined || p.priceFrom === null) return "";
+  const from = fmtPrice(p.priceFrom);
+  const orig = p.priceOriginal && p.discountPct
+    ? `<s>${fmtPrice(p.priceOriginal)}</s><em class="price__off">-${p.discountPct}%</em>` : "";
+  return `<p class="price"><span class="price__lbl">${t("price.from")}</span>
+    <strong>${from}</strong>${orig}</p>`;
+}
+
   function renderCarousel() {
     const track = $("#carouselTrack");
     const dots = $("#carouselDots");
     if (!track) return;
 
-    carSlides = CK_PRODUCTS.filter(p => p.status === "available");
+    /* Al carrusel solo van los destacados: con 5 modelos, pasarlos
+       todos era justo lo que lo hacia parecer un pase de diapositivas.
+       El resto vive en la reja de "Modelos", que se escanea de un vistazo. */
+    carSlides = CK_PRODUCTS.filter(p => p.status === "available" && p.featured && p.heroImg);
 
     track.innerHTML = carSlides.map((p, i) => {
       const url = p.url || CK_SHOP_URL;
@@ -83,15 +109,18 @@
           <p class="kicker">${(p.kicker && (p.kicker[lang] || p.kicker.es)) || ""}</p>
           <h1 class="slide__title" aria-label="${p.name} ${p.version}">${title}</h1>
           <p class="slide__sub">${p.desc[lang] || p.desc.es}</p>
+          ${priceBlock(p)}
           <div class="slide__actions">
             <a class="btn btn--primary" href="${url}" target="_blank" rel="noopener">${t("hero.buy")}</a>
-            <a class="btn btn--ghost" href="#caracteristicas">${t("hero.discover")}</a>
+            <a class="btn btn--ghost" href="#modelos">${t("hero.discover")}</a>
           </div>
           <ul class="slide__stats">${stats}</ul>
         </div>
         <figure class="slide__figure">
           <div class="slide__card">
-            <img src="assets/img/${lang}/${p.heroImg || p.img}" alt="${p.name}"
+            <img src="${prodImg(p.heroImg || p.img)}"
+                 srcset="${prodSrcset(p.heroImg || p.img)}" sizes="(max-width:900px) 92vw, 46vw"
+                 alt="${p.name} ${p.version}"
                  ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>
             <span class="cross cross--tl" aria-hidden="true"></span>
             <span class="cross cross--br" aria-hidden="true"></span>
@@ -177,20 +206,52 @@
     const cards = CK_PRODUCTS.map((p, i) => {
       const soon = p.status === "soon";
       const url = p.url || CK_SHOP_URL;
+
+      /* Foto: si un modelo aun no tiene la suya, se pinta un hueco con
+         el nombre en vez de una imagen rota o una foto de otro teclado. */
+      const media = p.img
+        ? `<img src="${prodImg(p.img)}" srcset="${prodSrcset(p.img)}"
+                sizes="(max-width:700px) 92vw, 30vw"
+                alt="${p.name} ${p.version}" loading="lazy">`
+        : `<div class="model-card__nophoto"><span>${p.name}</span></div>`;
+
+      /* Variantes reales del anuncio. Las agotadas salen tachadas: si
+         desaparecen, el cliente pregunta por ellas igualmente. */
+      const opts = (p.buildOptions || []).map(o => {
+        const label = o.name[lang] || o.name.es;
+        const price = o.price ? ` · ${fmtPrice(o.price)}${o.priceTo ? "–" + fmtPrice(o.priceTo) : ""}` : "";
+        return `<li${o.sold ? ' class="is-sold"' : ""}>${label}${o.sold ? "" : price}</li>`;
+      }).join("");
+
+      /* Ultimas unidades: solo cuando es verdad y es bajo. */
+      const low = (p.stock !== null && p.stock !== undefined && p.stock <= 2)
+        ? `<span class="model-card__stock">${p.stock === 1
+              ? t("models.lastUnit")
+              : t("models.lastUnits").replace("%n", p.stock)}</span>` : "";
+
+      const stars = p.rating
+        ? `<span class="model-card__rating" title="${p.reviews} ${t("models.reviews")}">
+             ${"★".repeat(Math.round(p.rating))} <em>${p.rating.toFixed(1)}</em></span>` : "";
+
       return `
       <article class="model-card reveal" style="--d:${i * 0.08}s">
         <div class="model-card__media">
           <span class="model-card__badge${soon ? " is-soon" : ""}">
             ${soon ? t("models.soon") : t("models.available")}
           </span>
-          <img src="assets/img/${lang}/${p.img}" alt="${p.name}" loading="lazy">
+          ${p.discountPct ? `<span class="model-card__off">-${p.discountPct}%</span>` : ""}
+          ${media}
         </div>
         <div class="model-card__body">
           <h3>${p.name} <em>${p.version}</em></h3>
+          ${stars}
           <p class="model-card__desc">${p.desc[lang] || p.desc.es}</p>
+          ${priceBlock(p)}
+          ${opts ? `<ul class="model-card__opts">${opts}</ul>` : ""}
           <div class="model-card__meta">
             ${p.meta.map(m => `<span>${m}</span>`).join("")}
           </div>
+          ${low}
           ${soon ? "" : `<a class="btn btn--primary model-card__cta" href="${url}" target="_blank" rel="noopener">${t("models.view")}</a>`}
         </div>
       </article>`;
@@ -208,6 +269,17 @@
         <p>${t("models.ghostText")}</p>
       </article>`);
     grid.innerHTML = cards.join("");
+  }
+
+  /* ---------- nota de precios ---------- */
+  function renderPriceNote(){
+    const el = $("#priceNote");
+    if (!el || typeof CK_PRICES_UPDATED === "undefined") return;
+    const d = new Date(CK_PRICES_UPDATED + "T00:00:00");
+    const fmt = new Intl.DateTimeFormat(
+      lang === "en" ? "en-GB" : lang === "fr" ? "fr-FR" : "es-ES",
+      { day: "numeric", month: "long", year: "numeric" }).format(d);
+    el.textContent = t("price.note").replace("%d", fmt);
   }
 
   /* ---------- reveal on scroll ---------- */
