@@ -140,10 +140,13 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .key:hover{border-color:#4a4f58;transform:translateY(-1px)}
 .key.hit{transform:translateY(1px);box-shadow:0 1px 0 #0a0b0d,inset 0 1px 0 rgba(255,255,255,.03);border-color:var(--c-orange)}
 .key.sel{border-color:var(--c-magenta);box-shadow:0 0 0 1.5px var(--c-magenta),0 0 14px rgba(255,57,192,.5),0 2px 0 #0a0b0d}
-/* Leyenda central: 17px. Las .sub de las esquinas se quedan pequeñas a
-   propósito, si no se juntan con esta en las teclas de leyenda larga. */
+/* Leyenda central: 20px. Las .sub de las esquinas se quedan pequeñas a
+   propósito, si no se juntan con esta en las teclas de leyenda larga.
+   line-height 1.35: con 1.15 la caja de texto recortaba por arriba los
+   diacriticos de las mayusculas acentuadas (la virgulilla de la Ñ). */
 .key .cap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);
-  font-size:17px;font-weight:700;color:#e8eaee;letter-spacing:.02em;pointer-events:none;text-align:center;line-height:1.15;padding:2px}
+  font-size:20px;font-weight:700;color:#e8eaee;letter-spacing:.02em;pointer-events:none;text-align:center;line-height:1.5;padding:2px;
+  overflow:visible}
 .key .cap .sub{position:absolute;font-size:9.5px;font-weight:400;letter-spacing:0;white-space:nowrap}
 .key .cap .sub.tr{top:6%;right:9%;color:#6fc3e8}
 .key .cap .sub.br{bottom:6%;right:9%;color:#ffb063}
@@ -224,7 +227,10 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 /* CODEKEEB: pestana Unicode. El glifo manda, asi que se pinta mas
    grande y con la fuente de texto (la mono no cubre bien acentos y
    flechas). El codepoint se muestra debajo, pequeno. */
-.pk.uni .l{font-family:var(--font-sans);font-size:1.02rem;line-height:1.1}
+.pk.uni .l{font-family:var(--font-sans);font-size:1.02rem;line-height:1.6;overflow:visible}
+/* Las mayusculas acentuadas (N, U, A...) necesitan mas hueco arriba
+   que la altura de mayuscula normal; con line-height justo la
+   virgulilla y la dieresis se cortaban por arriba. */
 .pk.uni .d{display:block;font-family:var(--font-mono);font-size:.46rem;color:var(--faint);
   letter-spacing:.02em;margin-top:1px}
 .pkGroup{grid-column:1/-1;display:flex;align-items:center;gap:8px;
@@ -235,7 +241,9 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 /* Tecla muerta: se marca distinto porque no es un caracter suelto,
    es un acento que espera a la siguiente letra. */
 .pk.dead{border-color:var(--c-blue);background:linear-gradient(180deg,#f5f9ff,var(--bg))}
-.pk.dead .l{color:var(--c-blue);font-size:1.18rem;line-height:1}
+.pk.dead .l{color:var(--c-blue);font-size:1.18rem;line-height:1.5;overflow:visible}
+/* line-height 1 recortaba por arriba justo lo que hay que ver aqui:
+   el acento (^ ~ ') vive en la parte alta de la caja de texto. */
 /* La muestra (a e i) va con la fuente de texto y algo mas grande: la
    mono a .46rem no dibujaba bien los acentos y se veian cortados. */
 .pk.dead .d{font-family:var(--font-sans);font-size:.62rem;color:var(--c-blue);
