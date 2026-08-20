@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- El titulo y la descripcion los rellena JS con el modelo cargado.
+       Esta pagina sirve a los 5 modelos via ?id=<id de CK_PRODUCTS>. -->
+  <title>Codekeeb</title>
+  <meta name="description" content="">
+  <meta property="og:type" content="product">
+  <meta property="og:site_name" content="Codekeeb">
+  <meta property="og:title" content="">
+  <meta property="og:description" content="">
+  <meta property="og:image" content="">
+  <meta name="twitter:image" content="">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#f7f7f4">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=3">
+</head>
+<body data-lang="es">
+
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+  <header class="nav" id="nav">
+    <a class="nav__logo" href="./" aria-label="Codekeeb">
+      <img src="assets/brand/logo-horizontal-dark.png"
+           srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
+           alt="Codekeeb" width="160" height="56">
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="./#modelos" data-i18n="nav.models">Modelos</a>
+      <a href="./#caracteristicas" data-i18n="nav.features">Características</a>
+      <a href="keymap-studio/">Keymap Studio</a>
+    </nav>
+    <div class="nav__right">
+      <div class="lang" role="group" aria-label="Idioma">
+        <button class="lang__btn is-active" data-setlang="es">ES</button>
+        <button class="lang__btn" data-setlang="en">EN</button>
+        <button class="lang__btn" data-setlang="fr">FR</button>
+      </div>
+      <a class="btn btn--primary nav__cta" href="#" id="navBuy" target="_blank" rel="noopener" data-i18n="hero.buy">Comprar</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Aviso si el ?id= no existe: mejor esto que una pagina en blanco. -->
+    <section class="pdp-missing" id="pdpMissing" hidden>
+      <h1 data-i18n="pdp.notFound">Modelo no encontrado</h1>
+      <a class="btn btn--primary" href="./#modelos" data-i18n="pdp.backToModels">Ver todos los modelos</a>
+    </section>
+
+    <article class="pdp" id="pdp" hidden>
+      <nav class="pdp__crumbs mono">
+        <a href="./" data-i18n="pdp.home">Inicio</a> ·
+        <a href="./#modelos" data-i18n="nav.models">Modelos</a> ·
+        <span id="pdpCrumb"></span>
+      </nav>
+
+      <div class="pdp__top">
+        <!-- galeria -->
+        <div class="pdp__media">
+          <div class="pdp__stage">
+            <img id="pdpImg" src="" alt="" fetchpriority="high">
+            <span class="pdp__off" id="pdpOff" hidden></span>
+          </div>
+          <div class="pdp__thumbs" id="pdpThumbs"></div>
+        </div>
+
+        <!-- compra -->
+        <div class="pdp__buy">
+          <p class="kicker" id="pdpKicker"></p>
+          <h1 class="pdp__title" id="pdpTitle"></h1>
+          <p class="pdp__rating" id="pdpRating" hidden></p>
+          <p class="pdp__desc" id="pdpDesc"></p>
+
+          <div class="pdp__price" id="pdpPrice"></div>
+
+          <div class="pdp__opts">
+            <h2 class="pdp__optsTitle mono" data-i18n="pdp.options">Opciones de compra</h2>
+            <ul id="pdpOpts"></ul>
+          </div>
+
+          <p class="pdp__stock" id="pdpStock" hidden></p>
+
+          <a class="btn btn--primary pdp__cta" id="pdpCta" href="#" target="_blank" rel="noopener"
+             data-i18n="models.view">Ver en Etsy</a>
+          <p class="pdp__note mono" id="pdpNote"></p>
+
+          <ul class="pdp__assur">
+            <li data-i18n="trust.shipping">Envío desde España</li>
+            <li data-i18n="trust.warranty">Garantía y soporte</li>
+            <li data-i18n="trust.custom">Personalizable</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- lo que lo hace distinto -->
+      <section class="pdp__block" id="pdpHighlightsBlock">
+        <h2 class="section-title" data-i18n="pdp.highlights">Lo que lo hace distinto</h2>
+        <ul class="pdp__highlights" id="pdpHighlights"></ul>
+      </section>
+
+      <!-- ficha tecnica -->
+      <section class="pdp__block" id="pdpSpecsBlock">
+        <h2 class="section-title" data-i18n="specs.label">Ficha técnica</h2>
+        <dl class="pdp__specs" id="pdpSpecs"></dl>
+      </section>
+
+      <!-- otros modelos -->
+      <section class="pdp__block">
+        <h2 class="section-title" data-i18n="pdp.others">Otros modelos</h2>
+        <div class="models__grid" id="pdpOthers"></div>
+      </section>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <img src="assets/brand/logo-stacked-dark.png"
+             srcset="assets/brand/logo-stacked-dark.png 1x, assets/brand/logo-stacked-dark@2x.png 2x"
+             alt="Codekeeb" class="footer__logo" width="200" height="106">
+      </div>
+      <nav class="footer__col">
+        <h4 class="mono" data-i18n="footer.explore">Explorar</h4>
+        <a href="./#modelos" data-i18n="nav.models">Modelos</a>
+        <a href="keymap-studio/">Keymap Studio</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js?v=3"></script>
+  <script src="js/data.js?v=3"></script>
+  <script src="js/product.js?v=3"></script>
+</body>
+</html>

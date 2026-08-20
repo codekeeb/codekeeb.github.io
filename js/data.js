@@ -41,7 +41,7 @@ const CK_PRODUCTS = [
     img: "sofle-carbon.jpg",
     heroImg: "sofle-carbon.jpg",
     gallery: ["sofle-carbon.jpg", "sofle-carbon-2.jpg"],
-    titleImg: "title-sofle.svg",
+    titleImg: null,   // el SVG rotulado dice "RETRO": solo vale para ese
     priceFrom: 200.85,
     priceFull: 230.75,
     priceOriginal: 309.00,
@@ -58,6 +58,18 @@ const CK_PRODUCTS = [
       en: ["5.3 mm profile, electronics embedded into the case", "Custom RGB engine: 10 modes, gradients flowing across both halves", "Dual OLED on custom firmware: battery, layer, WPM and Bongo Cat", "300 mAh · up to 4 days per charge with RGB off"],
       fr: ["Profil de 5,3 mm, électronique intégrée au boîtier", "Moteur RGB maison : 10 modes, dégradés continus entre les moitiés", "Double OLED firmware maison : batterie, calque, WPM et Bongo Cat", "300 mAh · jusqu'à 4 jours par charge sans RGB"]
     },
+    specs: [
+      [{es:"Teclas",en:"Keys",fr:"Touches"}, "58"],
+      [{es:"Perfil",en:"Profile",fr:"Profil"}, "5,3 mm"],
+      [{es:"Switches",en:"Switches",fr:"Switches"}, {es:"Choc low profile, hotswap",en:"Choc low profile, hotswap",fr:"Choc low profile, hotswap"}],
+      [{es:"Conexión",en:"Connectivity",fr:"Connexion"}, {es:"Bluetooth (5 perfiles) + USB-C",en:"Bluetooth (5 profiles) + USB-C",fr:"Bluetooth (5 profils) + USB-C"}],
+      [{es:"Batería",en:"Battery",fr:"Batterie"}, {es:"300 mAh · hasta 4 días sin RGB",en:"300 mAh · up to 4 days with RGB off",fr:"300 mAh · jusqu'à 4 jours sans RGB"}],
+      [{es:"Pantallas",en:"Displays",fr:"Écrans"}, {es:"OLED dual, firmware propio",en:"Dual OLED, custom firmware",fr:"Double OLED, firmware maison"}],
+      [{es:"Iluminación",en:"Lighting",fr:"Éclairage"}, {es:"RGB per-key + underglow, 10 modos",en:"Per-key RGB + underglow, 10 modes",fr:"RGB par touche + underglow, 10 modes"}],
+      [{es:"Encoders",en:"Encoders",fr:"Encodeurs"}, {es:"2 rotatorios clicables",en:"2 clickable rotary",fr:"2 rotatifs cliquables"}],
+      [{es:"Case",en:"Case",fr:"Boîtier"}, {es:"Fibra de carbono texturizada, impreso a medida",en:"Carbon fiber textured, printed in house",fr:"Fibre de carbone texturée, imprimé maison"}],
+      [{es:"Firmware",en:"Firmware",fr:"Firmware"}, "ZMK + ZMK Studio"]
+    ],
     buildOptions: [
       { name: { es: "Teclado completo", en: "Full Keyboard", fr: "Clavier complet" }, price: 230.75 },
       { name: { es: "Barebones", en: "Barebones", fr: "Barebones" }, price: 200.85 }
@@ -82,7 +94,7 @@ const CK_PRODUCTS = [
     img: "sofle-retro.jpg",
     heroImg: "sofle-retro.jpg",
     gallery: ["sofle-retro.jpg", "sofle-retro-2.jpg"],
-    titleImg: null,
+    titleImg: "title-sofle.svg",   // el rotulo dice SOFLE RGB v3.2 RETRO
     priceFrom: 200.85,
     priceOriginal: 309.00,
     discountPct: 35,
@@ -98,6 +110,15 @@ const CK_PRODUCTS = [
       en: ["Four keycap sets to choose from (Kea Grey, Kea Play, KeaColor)", "Choc hotswap: swap any low profile switch by hand", "Per key RGB plus underglow across both halves", "Two clickable rotary encoders"],
       fr: ["Quatre jeux de keycaps au choix (Kea Grey, Kea Play, KeaColor)", "Hotswap Choc : changez n'importe quel switch low profile à la main", "RGB par touche et underglow sur les deux moitiés", "Deux encodeurs rotatifs cliquables"]
     },
+    specs: [
+      [{es:"Teclas",en:"Keys",fr:"Touches"}, "58"],
+      [{es:"Switches",en:"Switches",fr:"Switches"}, {es:"Choc low profile, hotswap",en:"Choc low profile, hotswap",fr:"Choc low profile, hotswap"}],
+      [{es:"Conexión",en:"Connectivity",fr:"Connexion"}, {es:"Bluetooth (5 perfiles) + USB-C",en:"Bluetooth (5 profiles) + USB-C",fr:"Bluetooth (5 profils) + USB-C"}],
+      [{es:"Keycaps",en:"Keycaps",fr:"Keycaps"}, {es:"Kea Grey · Kea Play · KeaColor · MTNU",en:"Kea Grey · Kea Play · KeaColor · MTNU",fr:"Kea Grey · Kea Play · KeaColor · MTNU"}],
+      [{es:"Iluminación",en:"Lighting",fr:"Éclairage"}, {es:"RGB per-key + underglow",en:"Per-key RGB + underglow",fr:"RGB par touche + underglow"}],
+      [{es:"Encoders",en:"Encoders",fr:"Encodeurs"}, {es:"2 rotatorios clicables",en:"2 clickable rotary",fr:"2 rotatifs cliquables"}],
+      [{es:"Firmware",en:"Firmware",fr:"Firmware"}, "ZMK + ZMK Studio"]
+    ],
     buildOptions: [
       { name: { es: "Barebones", en: "Barebones", fr: "Barebones" }, price: 200.85 },
       { name: { es: "Completo · MTNU", en: "Full · MTNU", fr: "Complet · MTNU" }, sold: true },
@@ -119,7 +140,7 @@ const CK_PRODUCTS = [
     id: "totem",
     listingId: "4551478025",
     status: "available",
-    featured: false,
+    featured: true,
     name: "Totem",
     version: "38 teclas",
     img: null,                 // PENDIENTE: no hay foto propia del Totem
@@ -142,6 +163,14 @@ const CK_PRODUCTS = [
       en: ["38 keys: the most compact layout in the catalogue", "Wireless or wired, your choice", "Choc Red hotswap", "Customisable on request"],
       fr: ["38 touches : le layout le plus compact du catalogue", "Sans fil ou filaire, au choix", "Hotswap Choc Red", "Personnalisable sur demande"]
     },
+    specs: [
+      [{es:"Teclas",en:"Keys",fr:"Touches"}, "38"],
+      [{es:"Switches",en:"Switches",fr:"Switches"}, {es:"Choc Red, hotswap",en:"Choc Red, hotswap",fr:"Choc Red, hotswap"}],
+      [{es:"Conexión",en:"Connectivity",fr:"Connexion"}, {es:"Inalámbrico o cableado",en:"Wireless or wired",fr:"Sans fil ou filaire"}],
+      [{es:"Case",en:"Case",fr:"Boîtier"}, {es:"ZMK Bluetooth",en:"ZMK Bluetooth",fr:"ZMK Bluetooth"}],
+      [{es:"Firmware",en:"Firmware",fr:"Firmware"}, "ZMK"],
+      [{es:"Personalización",en:"Customisation",fr:"Personnalisation"}, {es:"Bajo pedido",en:"On request",fr:"Sur demande"}]
+    ],
     buildOptions: [
       { name: { es: "Teclado completo", en: "Full Keyboard", fr: "Clavier complet" }, price: 152.75, priceTo: 187.85 },
       { name: { es: "Barebones", en: "Barebones", fr: "Barebones" }, price: 120.25, priceTo: 155.35 },
@@ -162,7 +191,7 @@ const CK_PRODUCTS = [
     id: "corne-v4",
     listingId: "4524082170",
     status: "available",
-    featured: false,
+    featured: true,
     name: "Corne RGB",
     version: "v4 MX",
     img: "corne-v4.jpg",
@@ -185,6 +214,14 @@ const CK_PRODUCTS = [
       en: ["Custom printed orange case", "QMK + VIA: remap from your browser", "MX hotswap switches", "TRRS wired, no batteries to charge"],
       fr: ["Boîtier orange imprimé sur mesure", "QMK + VIA : remappage depuis le navigateur", "Switches MX hotswap", "Câblé TRRS, aucune batterie à charger"]
     },
+    specs: [
+      [{es:"Teclas",en:"Keys",fr:"Touches"}, "42"],
+      [{es:"Switches",en:"Switches",fr:"Switches"}, {es:"MX, hotswap",en:"MX, hotswap",fr:"MX, hotswap"}],
+      [{es:"Conexión",en:"Connectivity",fr:"Connexion"}, {es:"Cableado TRRS",en:"TRRS wired",fr:"Câblé TRRS"}],
+      [{es:"Iluminación",en:"Lighting",fr:"Éclairage"}, {es:"RGB per-key",en:"Per-key RGB",fr:"RGB par touche"}],
+      [{es:"Case",en:"Case",fr:"Boîtier"}, {es:"Naranja, impreso a medida",en:"Orange, printed in house",fr:"Orange, imprimé maison"}],
+      [{es:"Firmware",en:"Firmware",fr:"Firmware"}, "QMK + VIA"]
+    ],
     buildOptions: [
       { name: { es: "Teclado completo", en: "Full Keyboard", fr: "Clavier complet" }, price: 261.00 },
       { name: { es: "PCB soldada", en: "Soldered PCB", fr: "PCB soudée" }, price: 44.10 }
@@ -203,7 +240,7 @@ const CK_PRODUCTS = [
     id: "corne-v3",
     listingId: "4526929358",
     status: "available",
-    featured: false,
+    featured: true,
     name: "Corne RGB",
     version: "v3 MX",
     img: "corne-v3.jpg",
@@ -227,6 +264,13 @@ const CK_PRODUCTS = [
       en: ["USB-C wired between halves", "QMK + Vial: live remapping", "Per key RGB", "The shop's first model, with a 5 star review"],
       fr: ["Câblé en USB-C entre les moitiés", "QMK + Vial : remappage à chaud", "RGB par touche", "Le premier modèle de la boutique, noté 5 étoiles"]
     },
+    specs: [
+      [{es:"Teclas",en:"Keys",fr:"Touches"}, "42"],
+      [{es:"Switches",en:"Switches",fr:"Switches"}, {es:"MX, hotswap",en:"MX, hotswap",fr:"MX, hotswap"}],
+      [{es:"Conexión",en:"Connectivity",fr:"Connexion"}, {es:"Cableado USB-C entre mitades",en:"USB-C wired between halves",fr:"Câblé USB-C entre moitiés"}],
+      [{es:"Iluminación",en:"Lighting",fr:"Éclairage"}, {es:"RGB per-key",en:"Per-key RGB",fr:"RGB par touche"}],
+      [{es:"Firmware",en:"Firmware",fr:"Firmware"}, "QMK + Vial"]
+    ],
     buildOptions: [
       { name: { es: "Teclado completo", en: "Full Keyboard", fr: "Clavier complet" }, sold: true },
       { name: { es: "Barebones", en: "Barebones", fr: "Barebones" }, price: 171.00 },

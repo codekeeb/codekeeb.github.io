@@ -112,7 +112,7 @@ function priceBlock(p){
           ${priceBlock(p)}
           <div class="slide__actions">
             <a class="btn btn--primary" href="${url}" target="_blank" rel="noopener">${t("hero.buy")}</a>
-            <a class="btn btn--ghost" href="#modelos">${t("hero.discover")}</a>
+            <a class="btn btn--ghost" href="modelo.html?id=${p.id}">${t("hero.discover")}</a>
           </div>
           <ul class="slide__stats">${stats}</ul>
         </div>
@@ -233,8 +233,12 @@ function priceBlock(p){
         ? `<span class="model-card__rating" title="${p.reviews} ${t("models.reviews")}">
              ${"★".repeat(Math.round(p.rating))} <em>${p.rating.toFixed(1)}</em></span>` : "";
 
+      /* La tarjeta entera lleva a su pagina; el boton va directo a Etsy
+         para quien ya lo tiene decidido. */
       return `
       <article class="model-card reveal" style="--d:${i * 0.08}s">
+        <a class="model-card__link" href="modelo.html?id=${p.id}"
+           aria-label="${p.name} ${p.version}"></a>
         <div class="model-card__media">
           <span class="model-card__badge${soon ? " is-soon" : ""}">
             ${soon ? t("models.soon") : t("models.available")}
@@ -252,7 +256,10 @@ function priceBlock(p){
             ${p.meta.map(m => `<span>${m}</span>`).join("")}
           </div>
           ${low}
-          ${soon ? "" : `<a class="btn btn--primary model-card__cta" href="${url}" target="_blank" rel="noopener">${t("models.view")}</a>`}
+          ${soon ? "" : `<div class="model-card__ctas">
+            <a class="btn btn--primary model-card__cta" href="modelo.html?id=${p.id}">${t("models.details")}</a>
+            <a class="btn btn--ghost model-card__cta2" href="${url}" target="_blank" rel="noopener">${t("models.view")}</a>
+          </div>`}
         </div>
       </article>`;
     });
