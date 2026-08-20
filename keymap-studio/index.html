@@ -396,6 +396,20 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 @media (max-width:900px){
   #top{padding:10px 14px;gap:10px}
   .brand .logo{height:32px} .brand .sub{display:none}
+
+  /* CODEKEEB: en movil la cabecera se partia en dos filas y se comia
+     200px de alto antes de ver el teclado. Se fuerza una sola linea y
+     se esconde lo que no es imprescindible: el badge de conexion (su
+     estado ya se ve en el punto del candado y en el propio boton), el
+     aviso de cambios sin guardar y el enlace a GitHub. */
+  #top{flex-wrap:nowrap;overflow:hidden}
+  #topActions{flex-wrap:nowrap;gap:6px;min-width:0}
+  #connBadge,#unsavedDot,#top .iconlink{display:none}
+  #topActions .btn{padding:5px 9px;font-size:.66rem;white-space:nowrap}
+  /* "Conectar teclado" no cabe: se usa la version corta del data-short,
+     que se actualiza junto al texto largo al cambiar de idioma. */
+  #btnConnect span{display:none}
+  #btnConnect::after{content:attr(data-short)}
   #toolbar{padding:8px 14px;gap:8px 14px}
   #toolbar .tgroup[style]{margin-left:0!important}
   .sliderRow input{width:64px}
@@ -425,7 +439,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   <span class="lockdot" id="lockDot" data-i18n-title="lockTitle" title="ZMK Studio lock"></span>
   <span id="unsavedDot" data-i18n="unsavedDot">● CAMBIOS SIN GUARDAR</span>
   <div id="topActions">
-    <button class="btn accent" id="btnConnect">🔌 <span data-i18n="connect">Conectar teclado</span></button>
+    <button class="btn accent" id="btnConnect" data-short="Conectar" data-short-i18n="connectShort"><span data-i18n="connect">Conectar teclado</span></button>
     <button class="btn" id="btnSaveHdr" data-i18n-title="saveHdrTitle" title="Guardar keymap en la flash del teclado (ZMK Studio save_changes)" style="display:none">💾 <span data-i18n="saveKm">Guardar (flash)</span></button>
     <button class="btn" id="btnStudio" data-i18n="studio">Panel Studio</button>
     <button class="btn" id="btnHelp" data-i18n-title="helpBtnTitle" title="Ayuda y atajos (F1)">?</button>
@@ -453,6 +467,8 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
     <div class="ctlRow">
       <span class="tlabel" data-i18n="rgbLbl">RGB</span>
       <button class="pill" id="fxToggle" data-i18n="rgbOn">ON</button>
+      <button class="pill" id="fxMore" data-i18n-title="rgbMoreTitle"
+              title="Ajustes de RGB" aria-expanded="false">▾</button>
     </div>
     <div id="rgbCtl">
       <select id="fxSel"></select>
@@ -623,7 +639,7 @@ const store={
 /* ---------------- i18n ---------------- */
 let lang=store.get('ck.lang')||'es';
 const I18N={
-es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',oledzoom:'OLED ×4',
+es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',disconnectShort:'Desconectar',studio:'Panel Studio',oledzoom:'OLED ×4',
   rgbfx:'Efecto RGB',bri:'Brillo',hue:'Matiz',spd:'Velocidad',rgbOn:'ON',rgbOff:'OFF',rgbLbl:'RGB',
   expKey:'Export .keymap',expJson:'Export JSON',impJson:'Import JSON',reset:'Reset stock',
   assign:'Asignar tecla',search:'Buscar keycode o behavior…',unlock:'UNLOCK (set_lock)',
@@ -656,6 +672,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',ol
   cat_letras:'letras',cat_numeros:'números',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
   cat_simbolos:'símbolos',cat_media:'multimedia',cat_capas:'capas',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'sistema',cat_todo:'todo',cat_unicode:'unicode',
+  rgbMoreTitle:'Ajustes de RGB (efecto, brillo, matiz, velocidad)',
   uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
   uniDeadTip:'Pulsa %a y luego la vocal: %s',
   uniAssigned:'%c asignado (macro %n)',uniNoSlot:'No quedan ranuras de macro libres (12). Vacia una en el panel Studio > Macros.',uniFail:'No se pudo guardar la macro en el teclado',
@@ -680,7 +697,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',ol
   hintNoRpc:'⚠ El puerto abre pero el teclado NO responde RPC. Causas típicas: (1) elegiste el puerto equivocado — algunos teclados exponen DOS puertos serie (consola y studio): prueba el otro. (2) tu firmware no tiene ZMK Studio: verifica abriendo https://zmk.studio — si la app oficial tampoco conecta, reflashea sofle_left con el build de tu repo que incluye el snippet studio-rpc-usb-uart. (3) otro programa tiene el puerto ocupado.',
   hintTips:'Pistas: cable en la mitad IZQUIERDA · cierra ZMK Studio/terminales que ocupen el puerto · prueba el OTRO puerto si hay dos · verifica que https://zmk.studio oficial sí conecta.',
   hintUsbUnlock:'ZMK Studio no permite desbloquear por USB: pulsa la tecla física &studio_unlock (capa Lower, fila Z, 2ª tecla). La app se actualizará al instante.'},
-en:{connect:'Connect keyboard',disconnect:'Disconnect',studio:'Studio Panel',oledzoom:'OLED ×4',
+en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',disconnectShort:'Disconnect',studio:'Studio Panel',oledzoom:'OLED ×4',
   rgbfx:'RGB effect',bri:'Brightness',hue:'Hue',spd:'Speed',rgbOn:'ON',rgbOff:'OFF',rgbLbl:'RGB',
   expKey:'Export .keymap',expJson:'Export JSON',impJson:'Import JSON',reset:'Reset stock',
   assign:'Assign key',search:'Search keycode or behavior…',unlock:'UNLOCK (set_lock)',
@@ -713,6 +730,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',studio:'Studio Panel',ole
   cat_letras:'letters',cat_numeros:'numbers',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
   cat_simbolos:'symbols',cat_media:'media',cat_capas:'layers',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'system',cat_todo:'all',cat_unicode:'unicode',
+  rgbMoreTitle:'RGB settings (effect, brightness, hue, speed)',
   uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
   uniDeadTip:'Press %a then the vowel: %s',
   uniAssigned:'%c assigned (macro %n)',uniNoSlot:'No free macro slots left (12). Clear one in Studio > Macros.',uniFail:'Could not save the macro to the keyboard',
@@ -741,6 +759,11 @@ const t=k=>(I18N[lang]&&I18N[lang][k])||I18N.es[k]||k;
 function applyI18n(){$$('[data-i18n]').forEach(e=>{const k=e.dataset.i18n;if(I18N[lang]&&I18N[lang][k])e.textContent=I18N[lang][k];});
   $$('[data-i18n-ph]').forEach(e=>{const k=e.dataset.i18nPh;if(I18N[lang]&&I18N[lang][k])e.placeholder=I18N[lang][k];});
   $$('[data-i18n-title]').forEach(e=>{const k=e.dataset.i18nTitle;if(I18N[lang]&&I18N[lang][k])e.title=I18N[lang][k];});
+  /* Etiqueta corta para movil (data-short). Va aparte de data-i18n
+     porque el texto largo sigue estando en el span, para pantallas
+     anchas y para los lectores de pantalla. */
+  $$('[data-short-i18n]').forEach(e=>{const k=e.dataset.shortI18n;
+    if(I18N[lang]&&I18N[lang][k])e.dataset.short=I18N[lang][k];});
   $('#btnLang').textContent=lang==='es'?'EN':'ES';document.documentElement.lang=lang;}
 
 /* ============================================================
@@ -1875,7 +1898,9 @@ async function studioConnect(){
       showLockOverlay(true);
     }
     oledState.output='usb';oledState.charging=true;
-    $('#btnConnect').innerHTML='🔌 '+t('disconnect');
+    $('#btnConnect').innerHTML='<span data-i18n="disconnect">'+t('disconnect')+'</span>';
+    $('#btnConnect').dataset.shortI18n='disconnectShort';
+    $('#btnConnect').dataset.short=t('disconnectShort');
   }catch(e){
     plog('err',t('connFail')+': '+e.message);osd(t('connFail'));
     plog('inf',t('hintTips'));
@@ -1948,7 +1973,9 @@ async function studioDisconnect(){
   studio.port=null;studio.writer=null;studio.reader=null;
   showLockOverlay(false);
   oledState.output='bt';oledState.charging=false;
-  $('#btnConnect').innerHTML='🔌 '+t('connect');
+  $('#btnConnect').innerHTML='<span data-i18n="connect">'+t('connect')+'</span>';
+  $('#btnConnect').dataset.shortI18n='connectShort';
+  $('#btnConnect').dataset.short=t('connectShort');
   setBadge();plog('inf',t('logDisconnected'));
 }
 async function studioSetBinding(layer,pos,bd){
@@ -2825,8 +2852,11 @@ function syncRgbUI(){
   $('#rgHue').value=rgb.hue;$('#rgHueV').textContent=rgb.hue+'°';
   $('#rgSpd').value=rgb.spd;$('#rgSpdV').textContent=rgb.spd;
   /* Los ajustes (efecto, brillo, matiz, velocidad) solo tienen sentido
-     con el RGB encendido. */
-  $('#rgbCtl').classList.toggle('on',rgb.on);
+     con el RGB encendido; si se apaga, se cierra el panel. Pero NO se
+     abre solo al encender: es un panel absolute y en movil aterriza
+     justo encima del teclado, que es lo que hay que ver. Se abre desde
+     su boton. */
+  if(!rgb.on)$('#rgbCtl').classList.remove('on');
 }
 function buildFxSel(){
   const s=$('#fxSel');s.innerHTML='';
@@ -2853,7 +2883,11 @@ function fitStage(){
      (o sea, nunca crecía por encima del tamaño de diseño). Ahora usa
      todo el ancho disponible y puede ampliarse, con un tope prudente
      para que no se desmadre en monitores muy anchos. */
-  const availW=innerWidth-8;
+  /* clientWidth, no innerWidth: en movil innerWidth es el ancho del
+     viewport visual (cambia con el zoom/pinch) y sale mayor que el
+     layout real, asi que el teclado se escalaba mas ancho que la
+     pantalla y aparecia scroll horizontal. */
+  const availW=(document.documentElement.clientWidth||innerWidth)-8;
   const chrome=['#top','#toolbar','#layerBar','#legend','#dock','#foot']
     .reduce((a,s)=>{const e=$(s);return a+(e?e.offsetHeight:0);},0)+12;
   const availH=Math.max(340,innerHeight-chrome);
@@ -2939,6 +2973,15 @@ function init(){
   $('#btnAnim2').onclick=cycleAnim;
   $('#fxSel').onchange=e=>{rgb.fx=+e.target.value;saveRgb();syncRgbUI();};
   $('#fxToggle').onclick=()=>rgbCmd(RGBFX_CMD.TOGGLE);
+  /* Abre/cierra los ajustes de RGB a mano. Antes se abrian solos al
+     encender el RGB y en movil tapaban el teclado nada mas cargar. */
+  $('#fxMore').onclick=()=>{
+    const panel=$('#rgbCtl');
+    if(!rgb.on&&!panel.classList.contains('on')){rgbCmd(RGBFX_CMD.TOGGLE);}
+    const open=panel.classList.toggle('on');
+    $('#fxMore').setAttribute('aria-expanded',open?'true':'false');
+    $('#fxMore').textContent=open?'▴':'▾';
+  };
   $('#rgBri').oninput=e=>{rgb.bri=+e.target.value;saveRgb();syncRgbUI();};
   $('#rgHue').oninput=e=>{rgb.hue=+e.target.value;saveRgb();syncRgbUI();};
   $('#rgSpd').oninput=e=>{rgb.spd=+e.target.value;saveRgb();syncRgbUI();};
