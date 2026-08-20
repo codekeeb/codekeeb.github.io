@@ -232,6 +232,11 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   color:var(--faint);margin:5px 0 1px}
 .pkGroup::after{content:"";flex:1;height:1px;background:var(--hairline2)}
 .pkGroup:first-child{margin-top:0}
+/* Tecla muerta: se marca distinto porque no es un caracter suelto,
+   es un acento que espera a la siguiente letra. */
+.pk.dead{border-color:var(--c-blue);background:linear-gradient(180deg,#f5f9ff,var(--bg))}
+.pk.dead .l{color:var(--c-blue)}
+.pk.dead .d{color:var(--c-blue);opacity:.7}
 
 /* ---------- drawer Studio ---------- */
 /* 460px (antes 420): con las macros y los ajustes dentro, 420 quedaba
@@ -640,6 +645,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',studio:'Panel Studio',ol
   cat_letras:'letras',cat_numeros:'números',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
   cat_simbolos:'símbolos',cat_media:'multimedia',cat_capas:'capas',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'sistema',cat_todo:'todo',cat_unicode:'unicode',
+  uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
   uniAssigned:'%c asignado (macro %n)',uniNoSlot:'No quedan ranuras de macro libres (12). Vacia una en el panel Studio > Macros.',uniFail:'No se pudo guardar la macro en el teclado',
   secMacros:'Macros (&dmac)',
   macroHint:'Escribe el texto que quieras (ñ, á, →, tu email…). Se guarda en el teclado y puedes asignar la macro a cualquier tecla desde el panel de abajo.',
@@ -695,6 +701,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',studio:'Studio Panel',ole
   cat_letras:'letters',cat_numeros:'numbers',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
   cat_simbolos:'symbols',cat_media:'media',cat_capas:'layers',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'system',cat_todo:'all',cat_unicode:'unicode',
+  uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
   uniAssigned:'%c assigned (macro %n)',uniNoSlot:'No free macro slots left (12). Clear one in Studio > Macros.',uniFail:'Could not save the macro to the keyboard',
   secMacros:'Macros (&dmac)',
   macroHint:'Type whatever you want (ñ, á, →, your email…). It is stored on the keyboard and you can bind the macro to any key from the panel below.',
@@ -862,7 +869,7 @@ const B=(b,p1=0,p2=0)=>({b,p1,p2});
 const kp=name=>{const u=NAME2USAGE[name];return B('&kp',(u.page<<16)|u.id,0);};
 const kpu=usage=>B('&kp',usage,0);           /* usage cruda (shifted keycodes) */
 const LS=u=>(0x02<<24)|u, RA=u=>(0x40<<24)|u;
-const U_N5=0x070022,U_N9=0x070026,U_N0=0x070027,U_LBKT=0x07002F,U_RBKT=0x070030,U_BSLH=0x070031,U_E=0x070008;
+const U_N5=0x070022,U_N9=0x070026,U_N0=0x070027,U_LBKT=0x07002F,U_RBKT=0x070030,U_BSLH=0x070031,U_E=0x070008,U_SQT=0x070034;   /* ' -- posicion de la tecla muerta de acento en ES/FR */
 const TR=()=>B('&trans');
 
 /* ============================================================
@@ -2124,6 +2131,35 @@ async function studioLayerOp(op,fn){
    reutiliza en vez de gastar otra; si no queda ninguna libre se
    avisa en vez de pisar una macro del usuario en silencio.
    ============================================================ */
+/* ============================================================
+   CODEKEEB: teclas muertas (dead keys)
+   ------------------------------------------------------------
+   Asi se escribe de verdad en espanol, frances, aleman... : una
+   tecla para el acento y luego la vocal. Una sola tecla sirve para
+   todas las vocales, en vez de gastar una ranura de macro por cada
+   letra acentuada.
+
+   OJO, esto NO es Unicode: la tecla muerta es una POSICION del
+   layout del sistema operativo, no un codepoint. &kp manda el
+   usage HID de esa posicion y quien compone la letra es el SO. Por
+   eso hace falta tener el layout del idioma puesto en el sistema
+   (espanol, frances...); con un layout US estas posiciones dan otra
+   cosa. A cambio no gasta ranuras y funciona en cualquier programa.
+
+   Las posiciones son las del teclado fisico ISO/ANSI segun el
+   layout indicado en 'need'. */
+const DEAD_KEYS=[
+  {legend:'´', usage:()=>kpu(U_SQT),        desc:"' (dead acute)",
+   need:{es:'layout ES/FR',en:'ES/FR layout'}, ex:'´+a = á'},
+  {legend:'¨', usage:()=>kpu(LS(U_SQT)),    desc:'Shift+´ (dead diaeresis)',
+   need:{es:'layout ES',en:'ES layout'},        ex:'¨+u = ü'},
+  {legend:'`', usage:()=>kpu(U_LBKT),       desc:'[ (dead grave)',
+   need:{es:'layout ES',en:'ES layout'},        ex:'`+a = à'},
+  {legend:'^', usage:()=>kpu(LS(U_LBKT)),   desc:'Shift+[ (dead circumflex)',
+   need:{es:'layout ES/FR',en:'ES/FR layout'},  ex:'^+a = â'},
+  {legend:'˜', usage:()=>kpu(RA(U_RBKT)),   desc:'AltGr+] (dead tilde)',
+   need:{es:'layout ES',en:'ES layout'},        ex:'˜+n = ñ'}
+];
 const UNI_GROUPS=[
   {id:'es',name:{es:'Español',en:'Spanish'},chars:'á é í ó ú ü ñ Á É Í Ó Ú Ü Ñ ¿ ¡ º ª'},
   {id:'fr',name:{es:'Francés',en:'French'},chars:'à â æ ç è é ê ë î ï ô œ ù û ÿ À Â Æ Ç È É Ê Ë Î Ï Ô Œ Ù Û Ÿ « »'},
@@ -2201,6 +2237,12 @@ pkAdd('media','OLED','&oledanim',()=>B('&oledanim'));
    escribe en el panel Studio; aquí solo se asigna la ranura a una tecla. */
 for(let i=0;i<12;i++)pkAdd('sistema','M'+i,'&dmac '+i+' (macro '+i+')',()=>B('&dmac',i));
 /* Un solo PK por caracter: el legend es el propio caracter. */
+/* Las teclas muertas van las primeras de la pestana: es lo que
+   deberia usar la mayoria, y no gastan ranura de macro. */
+DEAD_KEYS.forEach(k=>{
+  PK.push({cat:'unicode', legend:k.legend, desc:k.desc,
+           dead:k, uniGroup:'dead', mk:k.usage});
+});
 UNI_GROUPS.forEach(g=>{
   g.chars.split(' ').filter(Boolean).forEach(ch=>{
     const cp=ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0');
@@ -2287,6 +2329,7 @@ function dockAssign(mk){
 /* Quita diacriticos para comparar en el buscador. */
 const noAcc=x=>(x||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 function uniGroupName(id){
+  if(id==='dead')return t('uniDead');
   const g=UNI_GROUPS.find(x=>x.id===id);
   if(!g)return id;
   return g.name[lang]||g.name.en||g.name.es;
@@ -2312,24 +2355,29 @@ function renderPickerGrid(q,cat){
      grupo ("frances", "flechas"...), que es como la gente la usa.
      Sin tildes a ambos lados: casi nadie escribe "frances" con acento
      en un buscador. */
-  const uniQ=p=>p.uni&&noAcc(uniGroupName(p.uniGroup)).includes(noAcc(q));
+  const uniQ=p=>(p.uni||p.dead)&&(noAcc(uniGroupName(p.uniGroup)).includes(noAcc(q))||
+    (p.dead&&(noAcc(p.dead.ex).includes(noAcc(q))||noAcc(t('uniDead')).includes(noAcc(q)))));
   let lastGroup=null;
   PK.filter(p=>(cat==='todo'||p.cat===cat)&&
       (!q||p.legend.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)||uniQ(p)))
     .forEach(p=>{
       /* Cabecera de grupo al cambiar de idioma/familia. */
-      if(p.uni&&p.uniGroup!==lastGroup){
+      if((p.uni||p.dead)&&p.uniGroup!==lastGroup){
         lastGroup=p.uniGroup;
         const h=document.createElement('div');h.className='pkGroup';
         h.textContent=uniGroupName(p.uniGroup);
         g.appendChild(h);
       }
-      const el=document.createElement('div');el.className='pk'+(p.uni?' uni':'');
-      el.title=p.uni?(p.desc+' · '+uniGroupName(p.uniGroup)):p.desc;
+      const el=document.createElement('div');
+      el.className='pk'+(p.uni?' uni':'')+(p.dead?' uni dead':'');
+      /* La tecla muerta necesita explicarse: que hace y que layout pide. */
+      el.title=p.dead?(p.dead.ex+'  ·  '+p.desc+'  ·  '+t('uniNeeds')+' '+
+                       (p.dead.need[lang]||p.dead.need.en))
+              :p.uni?(p.desc+' · '+uniGroupName(p.uniGroup)):p.desc;
       const bd=p.mk();
       if(cur&&cur.b===bd.b&&cur.p1===bd.p1&&cur.p2===bd.p2)el.classList.add('cur');
       el.innerHTML=`<span class="l">${p.legend}</span><span class="d">${p.desc}</span>`;
-      el.onclick=()=>{if(p.uni)uniAssign(p.uni);else dockAssign(p.mk);};
+      el.onclick=()=>{if(p.uni&&!p.dead)uniAssign(p.uni);else dockAssign(p.mk);};
       g.appendChild(el);
     });
   if(typeof fitStage==='function')fitStage();
