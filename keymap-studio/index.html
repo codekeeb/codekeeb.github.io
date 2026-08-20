@@ -1024,6 +1024,7 @@ let oledState={output:'bt',profile:0,levelL:87,levelR:82,charging:false,anim:'cr
 const ANIMS=['crystal','cat','head','spaceman','pokemon'];
 function saveKeymap(){store.set('ck.keymap.v2',JSON.stringify(keymap));}
 function saveRgb(){store.set('ck.rgb',JSON.stringify(rgb));}
+function saveMacros(){store.set('ck.macros',JSON.stringify(macros));}
 
 /* ---------------- historial (undo/redo) + portapapeles ---------------- */
 const hist={undo:[],redo:[]};
@@ -1995,7 +1996,11 @@ async function studioSetSensorBinding(layer,sensorIdx,cw,bd){
    Campos 101/102/103 del fork codekeeb/zmk-studio-messages.
    ============================================================ */
 const DMAC_STEP_TAP=0, DMAC_STEP_UNICODE=1, DMAC_STEP_WAIT=2;
-let macros=[];              /* [{slot, steps:[{type,value}], text}] */
+/* Se restauran de localStorage: el keymap guarda "&dmac 0", pero sin el
+   contenido de la ranura la tecla no sabe que pinta y caeria otra vez a
+   M0. Cuando hay teclado conectado, lo que diga el firmware manda y
+   sobrescribe esto (ver studioFetchKeymap). */
+let macros=(()=>{try{const j=JSON.parse(store.get('ck.macros'));return Array.isArray(j)?j:[];}catch(e){return [];}})();
 let macroMax=24;            /* lo dice el firmware en get_macros */
 let macroSlots=12;          /* numero de ranuras. OJO: no vale macros.length,
                                el array se llena en salteado y encoge. */
@@ -2072,6 +2077,7 @@ async function studioFetchMacros(){
     const g=r.data&&r.data.get_macros;
     if(!g)return;
     macros=g.macros||[];macroMax=g.max_steps||24;ucMode=g.unicode_mode||0;
+    saveMacros();
     if(macros.length)macroSlots=macros.length;
     macros.forEach(m=>m.text=stepsToText(m.steps));
     renderMacros();
@@ -2121,7 +2127,7 @@ function renderMacros(){
       if(steps.length>macroMax){
         osd(t('macroTooLong').replace('%s',steps.length).replace('%m',macroMax));return;
       }
-      macros[i]={slot:i,steps,text:inp.value};
+      macros[i]={slot:i,steps,text:inp.value};saveMacros();
       studioSetMacro(i,steps).then(ok=>{if(ok)osd(t('macroSaved').replace('%n',i));});
     };
     inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}});
@@ -2329,7 +2335,7 @@ async function uniAssign(ch){
   const already=macros[slot]&&macros[slot].text===ch;
   if(!already){
     const steps=textToSteps(ch);
-    macros[slot]={slot,steps,text:ch};
+    macros[slot]={slot,steps,text:ch};saveMacros();
     renderMacros();
     if(studio.connected&&studio.lockState){
       const ok=await studioSetMacro(slot,steps);
@@ -2734,13 +2740,24 @@ ${sensor(l,i)}
 `;
   download('sofle.keymap',txt);osd(t('exported')+': sofle.keymap');
 }
-function exportJSON(){download('sofle-keymap.json',JSON.stringify({layers:keymap.layers},null,1));osd(t('exported')+': JSON');}
+/* Se exportan tambien las macros: sin ellas un keymap compartido llega
+   con "&dmac 0" y nadie sabe que caracter era. */
+function exportJSON(){download('sofle-keymap.json',
+  JSON.stringify({layers:keymap.layers,macros:macros.filter(m=>m&&m.text)},null,1));
+  osd(t('exported')+': JSON');}
 function importJSON(file){
   const r=new FileReader();
   r.onload=()=>{try{
     const j=JSON.parse(r.result);
     if(!validKeymap(j)&&!(j.layers&&j.layers.every(l=>l.keys&&l.keys.length===60)))throw new Error('formato');
     snapshot();keymap={layers:j.layers};activeLayer=0;
+    /* Los .json antiguos no traen macros: en ese caso se dejan las que
+       ya haya, que es mejor que borrarlas sin avisar. */
+    if(Array.isArray(j.macros)){
+      macros=[];
+      j.macros.forEach(m=>{if(m&&typeof m.slot==='number')macros[m.slot]=m;});
+      saveMacros();renderMacros();
+    }
     saveKeymap();renderLayer();renderDrawerLayers();osd(t('imported'));
     if(studio.connected)pushKeymapToDevice();
   }catch(e){osd(t('badJson'));}};
@@ -2895,7 +2912,8 @@ function init(){
   $('#btnImportJson').onclick=()=>$('#fileJson').click();
   $('#fileJson').onchange=e=>{if(e.target.files[0])importJSON(e.target.files[0]);};
   $('#btnReset').onclick=()=>{if(!confirm(t('confirmReset')))return;
-    snapshot();keymap={layers:stockLayers()};saveKeymap();renderLayer();renderDrawerLayers();osd(t('stockOsd'));
+    snapshot();keymap={layers:stockLayers()};macros=[];saveMacros();renderMacros();
+    saveKeymap();renderLayer();renderDrawerLayers();osd(t('stockOsd'));
     if(studio.connected)pushKeymapToDevice();};
   $('#btnDesel').onclick=closePicker;
   $('#btnTrans').onclick=()=>dockAssign(TR);
