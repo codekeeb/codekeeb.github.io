@@ -238,6 +238,12 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   color:var(--faint);margin:5px 0 1px}
 .pkGroup::after{content:"";flex:1;height:1px;background:var(--hairline2)}
 .pkGroup:first-child{margin-top:0}
+/* Barra de distribucion en la pestana de simbolos. */
+.symBar{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  margin:0 0 5px;font:600 .58rem var(--font-mono);letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint)}
+.symBar select{font:600 .62rem var(--font-mono);padding:3px 7px;border-radius:7px;
+  border:1px solid var(--hairline2);background:var(--surface);color:var(--ink);cursor:pointer}
 /* Tecla muerta: se marca distinto porque no es un caracter suelto,
    es un acento que espera a la siguiente letra. */
 .pk.dead{border-color:var(--c-blue);background:linear-gradient(180deg,#f5f9ff,var(--bg))}
@@ -672,6 +678,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   cat_letras:'letras',cat_numeros:'números',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
   cat_simbolos:'símbolos',cat_media:'multimedia',cat_capas:'capas',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'sistema',cat_todo:'todo',cat_unicode:'unicode',
+  symLayoutLbl:'Distribucion del sistema:',symLayoutSaved:'Distribucion guardada',
   rgbMoreTitle:'Ajustes de RGB (efecto, brillo, matiz, velocidad)',
   uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
   uniDeadTip:'Pulsa %a y luego la vocal: %s',
@@ -730,6 +737,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   cat_letras:'letters',cat_numeros:'numbers',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
   cat_simbolos:'symbols',cat_media:'media',cat_capas:'layers',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'system',cat_todo:'all',cat_unicode:'unicode',
+  symLayoutLbl:'System layout:',symLayoutSaved:'Layout saved',
   rgbMoreTitle:'RGB settings (effect, brightness, hue, speed)',
   uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
   uniDeadTip:'Press %a then the vowel: %s',
@@ -829,7 +837,13 @@ function kpName(p1){
 function bindingLegend(bd){
   if(!bd)return '';
   switch(bd.b){
-    case '&kp':return kpLegend(bd.p1>>>0);
+    case '&kp':{
+      /* CODEKEEB: si la combinacion es uno de los simbolos de la
+         distribucion elegida, se pinta el simbolo. Si no, RA(N2) se
+         veria como "alt(2)" en la tecla y no dice nada. */
+      const sym=symLegendFor(bd.p1>>>0);
+      return sym!==null?sym:kpLegend(bd.p1>>>0);
+    }
     case '&trans':return '▽';
     case '&mo':return 'MO('+bd.p1+')';
     case '&to':return 'TO('+bd.p1+')';
@@ -2265,18 +2279,94 @@ for(let i=13;i<=24;i++)pkAdd('fn','F'+i,'&kp F'+i,()=>kp('F'+i));
  .forEach(([n,l])=>pkAdd('nav',l,'&kp '+n,()=>kp(n)));
 [['LCTRL','ctrl'],['LSHFT','⇧'],['LALT','alt'],['LGUI','⌘'],['RCTRL','rct'],['RSHFT','r⇧'],['RALT','⎇'],['RGUI','r⌘']]
  .forEach(([n,l])=>pkAdd('mods',l,'&kp '+n,()=>kp(n)));
-[['MINUS','-'],['EQUAL','='],['LBKT','['],['RBKT',']'],['BSLH','\\'],['SEMI',';'],['SQT',"'"],['GRAVE','`'],
- ['COMMA',','],['DOT','.'],['FSLH','/']]
- .forEach(([n,l])=>pkAdd('simbolos',l,'&kp '+n,()=>kp(n)));
-[['{','LS(LBKT)',()=>kpu(LS(U_LBKT))],['}','LS(RBKT)',()=>kpu(LS(U_RBKT))],['|','LS(BSLH)',()=>kpu(LS(U_BSLH))],
- ['%','LS(N5)',()=>kpu(LS(U_N5))],['(','LS(N9)',()=>kpu(LS(U_N9))],[')','LS(N0)',()=>kpu(LS(U_N0))],
- ['_','LS(MINUS)',()=>kpu(LS(0x07002D))],['+','LS(EQUAL)',()=>kpu(LS(0x07002E))],[':','LS(SEMI)',()=>kpu(LS(0x070033))],
- ['"','LS(SQT)',()=>kpu(LS(0x070034))],['~','LS(GRAVE)',()=>kpu(LS(0x070035))],['!','LS(N1)',()=>kpu(LS(0x07001E))],
- ['@','LS(N2)',()=>kpu(LS(0x07001F))],['#','LS(N3)',()=>kpu(LS(0x070020))],['$','LS(N4)',()=>kpu(LS(0x070021))],
- ['^','LS(N6)',()=>kpu(LS(0x070023))],['&','LS(N7)',()=>kpu(LS(0x070024))],['*','LS(N8)',()=>kpu(LS(0x070025))],
- ['<','LS(COMMA)',()=>kpu(LS(0x070036))],['>','LS(DOT)',()=>kpu(LS(0x070037))],['?','LS(FSLH)',()=>kpu(LS(0x070038))],
- ['€','RA(E)',()=>kpu(RA(U_E))]]
- .forEach(([l,d,mk])=>pkAdd('simbolos',l,'&kp '+d,mk));
+/* ============================================================
+   CODEKEEB: simbolos segun la distribucion del sistema
+   ------------------------------------------------------------
+   &kp manda una POSICION de tecla, no un caracter. Quien decide que
+   sale es la distribucion del sistema operativo. Con el mapa US, en un
+   sistema espanol LS(N2) no da "@" sino comillas -- y como ese fallan
+   14 de los 21 simbolos.
+
+   Aqui se declara, por distribucion, con que combinacion sale cada
+   simbolo. Los nombres (N2, LBKT...) siguen siendo los del mapa US
+   porque es lo que viaja por HID; lo que cambia es que combinacion
+   se manda.
+   ============================================================ */
+const U_MINUS=0x07002D,U_EQUAL=0x07002E,U_SEMI=0x070033,U_GRAVE=0x070035,
+      U_COMMA=0x070036,U_DOT=0x070037,U_FSLH=0x070038,U_N1=0x07001E,
+      U_N2=0x07001F,U_N3=0x070020,U_N4=0x070021,U_N6=0x070023,
+      U_N7=0x070024,U_N8=0x070025,U_NUBS=0x070064;
+
+const SYM_LAYOUTS={
+  us:{name:{es:'US / internacional',en:'US / international'},syms:[
+    /* Sin modificador. */
+    ['-','MINUS',()=>kp('MINUS')],['=','EQUAL',()=>kp('EQUAL')],
+    ['[','LBKT',()=>kp('LBKT')],[']','RBKT',()=>kp('RBKT')],
+    ['\\','BSLH',()=>kp('BSLH')],[';','SEMI',()=>kp('SEMI')],
+    ["'",'SQT',()=>kp('SQT')],['`','GRAVE',()=>kp('GRAVE')],
+    [',','COMMA',()=>kp('COMMA')],['.','DOT',()=>kp('DOT')],
+    ['/','FSLH',()=>kp('FSLH')],
+    ['{','LS(LBKT)',()=>kpu(LS(U_LBKT))],['}','LS(RBKT)',()=>kpu(LS(U_RBKT))],
+    ['|','LS(BSLH)',()=>kpu(LS(U_BSLH))],['%','LS(N5)',()=>kpu(LS(U_N5))],
+    ['(','LS(N9)',()=>kpu(LS(U_N9))],[')','LS(N0)',()=>kpu(LS(U_N0))],
+    ['_','LS(MINUS)',()=>kpu(LS(U_MINUS))],['+','LS(EQUAL)',()=>kpu(LS(U_EQUAL))],
+    [':','LS(SEMI)',()=>kpu(LS(U_SEMI))],['"','LS(SQT)',()=>kpu(LS(U_SQT))],
+    ['~','LS(GRAVE)',()=>kpu(LS(U_GRAVE))],['!','LS(N1)',()=>kpu(LS(U_N1))],
+    ['@','LS(N2)',()=>kpu(LS(U_N2))],['#','LS(N3)',()=>kpu(LS(U_N3))],
+    ['$','LS(N4)',()=>kpu(LS(U_N4))],['^','LS(N6)',()=>kpu(LS(U_N6))],
+    ['&','LS(N7)',()=>kpu(LS(U_N7))],['*','LS(N8)',()=>kpu(LS(U_N8))],
+    ['<','LS(COMMA)',()=>kpu(LS(U_COMMA))],['>','LS(DOT)',()=>kpu(LS(U_DOT))],
+    ['?','LS(FSLH)',()=>kpu(LS(U_FSLH))],['€','RA(E)',()=>kpu(RA(U_E))]]},
+
+  /* ES ISO: @ # ~ y llaves/corchetes salen con AltGr, y ? " : cambian
+     de tecla respecto a US. */
+  es:{name:{es:'Espanol (ES)',en:'Spanish (ES)'},syms:[
+    /* Sin modificador. Ojo: la posicion que en US da ';' en ES da n
+       con virgulilla, y la de la comilla da el acento agudo. */
+    ['-','FSLH',()=>kp('FSLH')],[',','COMMA',()=>kp('COMMA')],
+    ['.','DOT',()=>kp('DOT')],
+    ['@','RA(N2)',()=>kpu(RA(U_N2))],['#','RA(N3)',()=>kpu(RA(U_N3))],
+    ['~','RA(N4)',()=>kpu(RA(U_N4))],['€','RA(E)',()=>kpu(RA(U_E))],
+    ['|','RA(N1)',()=>kpu(RA(U_N1))],['[','RA(LBKT)',()=>kpu(RA(U_LBKT))],
+    [']','RA(RBKT)',()=>kpu(RA(U_RBKT))],['{','RA(SQT)',()=>kpu(RA(U_SQT))],
+    ['}','RA(BSLH)',()=>kpu(RA(U_BSLH))],['!','LS(N1)',()=>kpu(LS(U_N1))],
+    ['"','LS(N2)',()=>kpu(LS(U_N2))],['$','LS(N4)',()=>kpu(LS(U_N4))],
+    ['%','LS(N5)',()=>kpu(LS(U_N5))],['&','LS(N6)',()=>kpu(LS(U_N6))],
+    ['/','LS(N7)',()=>kpu(LS(U_N7))],['(','LS(N8)',()=>kpu(LS(U_N8))],
+    [')','LS(N9)',()=>kpu(LS(U_N9))],['=','LS(N0)',()=>kpu(LS(U_N0))],
+    ['?','LS(SQT)',()=>kpu(LS(U_SQT))],['¿','LS(EQUAL)',()=>kpu(LS(U_EQUAL))],
+    [';','LS(COMMA)',()=>kpu(LS(U_COMMA))],[':','LS(DOT)',()=>kpu(LS(U_DOT))],
+    ['_','LS(FSLH)',()=>kpu(LS(U_FSLH))],['<','NUBS',()=>kpu(U_NUBS)],
+    ['>','LS(NUBS)',()=>kpu(LS(U_NUBS))],['*','LS(RBKT)',()=>kpu(LS(U_RBKT))],
+    ['+','RBKT',()=>kpu(U_RBKT)],['´','SQT',()=>kpu(U_SQT)],
+    ['ç','BSLH',()=>kpu(U_BSLH)],['ñ','SEMI',()=>kpu(U_SEMI)]]}
+};
+let symLayout=store.get('ck.symLayout')||'us';
+/* usage -> simbolo, segun la distribucion activa. Se cachea porque
+   bindingLegend se llama para las 58 teclas en cada render. */
+let _symCache=null,_symCacheFor=null;
+function symLegendFor(usage){
+  if(_symCacheFor!==symLayout){
+    _symCache={};
+    const L=SYM_LAYOUTS[symLayout]||SYM_LAYOUTS.us;
+    L.syms.forEach(([l,,mk])=>{try{const b=mk();if(_symCache[b.p1>>>0]===undefined)_symCache[b.p1>>>0]=l;}catch(e){}});
+    _symCacheFor=symLayout;
+  }
+  const v=_symCache[usage>>>0];
+  return v===undefined?null:v;
+}
+
+/* Los simbolos de la pestana se regeneran al cambiar de distribucion,
+   asi que viven en su propia funcion en vez de anadirse una sola vez. */
+function rebuildSymbolPK(){
+  _symCacheFor=null;
+  for(let i=PK.length-1;i>=0;i--)if(PK[i].symLayout)PK.splice(i,1);
+  const L=SYM_LAYOUTS[symLayout]||SYM_LAYOUTS.us;
+  L.syms.forEach(([l,d,mk])=>{
+    PK.push({cat:'simbolos',legend:l,desc:'&kp '+d,mk,symLayout:true});
+  });
+}
+rebuildSymbolPK();
 for(let i=1;i<=9;i++)pkAdd('numeros','k'+i,'&kp KP_N'+i,()=>kp('KP_N'+i));
 pkAdd('numeros','k0','&kp KP_N0',()=>kp('KP_N0'));
 [['KP_PLUS','kp+'],['KP_MINUS','kp-'],['KP_MULTIPLY','kp*'],['KP_SLASH','kp/']]
@@ -2446,6 +2536,22 @@ function renderPickerGrid(q,cat){
   const uniQ=p=>(p.uni||p.dead)&&(
     (byGroup&&noAcc(uniGroupName(p.uniGroup)).includes(qn))||
     (p.dead&&(p.dead.sample.includes(q)||(byGroup&&noAcc(t('uniDead')).includes(qn)))));
+  /* CODEKEEB: aviso + selector de distribucion, solo en simbolos. Es
+     donde importa: la misma tecla da un caracter u otro segun el mapa
+     del sistema. */
+  if(cat==='simbolos'){
+    const bar=document.createElement('div');bar.className='symBar';
+    const lab=document.createElement('span');lab.textContent=t('symLayoutLbl');
+    const sel=document.createElement('select');sel.id='symLayoutSel';
+    Object.entries(SYM_LAYOUTS).forEach(([k,v])=>{
+      const o=document.createElement('option');o.value=k;
+      o.textContent=v.name[lang]||v.name.en;
+      if(k===symLayout)o.selected=true;sel.appendChild(o);});
+    sel.onchange=()=>{symLayout=sel.value;store.set('ck.symLayout',symLayout);
+      rebuildSymbolPK();renderPickerGrid($('#pickerSearch').value,'simbolos');
+      osd(t('symLayoutSaved'));};
+    bar.append(lab,sel);g.appendChild(bar);
+  }
   let lastGroup=null;
   PK.filter(p=>(cat==='todo'||p.cat===cat)&&
       (!q||p.legend.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)||uniQ(p)))
