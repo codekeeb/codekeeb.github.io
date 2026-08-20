@@ -52,6 +52,11 @@ versiones optimizadas para web (recortadas al contenido y escaladas), con `@2x` 
 fondos oscuros. Todas conservan el halo de degradado del original, así que en CSS se
 escalan ~35 % más grandes de lo que mide la palabra en sí.
 
+El favicon cambia solo según el tema del navegador: `favicon.svg` lleva las dos
+versiones y las conmuta con `prefers-color-scheme`, y los PNG equivalentes
+(`favicon-*.png` claro / `favicon-*-light.png` oscuro) hacen de respaldo con `media`.
+Los logos de la página son siempre BOW, porque el fondo del sitio es claro fijo.
+
 Para regenerarlas desde los originales, recorta por el bounding box del canal alfa
 (los archivos fuente son lienzos de 2000×2000 con el logo centrado).
 
