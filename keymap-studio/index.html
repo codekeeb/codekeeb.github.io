@@ -2314,6 +2314,33 @@ pkAdd('sistema','RST','&reset',()=>B('&reset'));
 pkAdd('sistema','BOOT','&bootloader',()=>B('&bootloader'));
 pkAdd('sistema','EXT','&ext_power EP_TOG',()=>B('&ext_power',2));
 const ENC_PART_LABEL={press:'press',cw:'giro horario (CW)',ccw:'giro antihorario (CCW)'};
+/* CODEKEEB: al seleccionar una tecla, saltar a la pestana donde vive lo
+   que tiene asignado, para no tener que buscarla a mano.
+
+   Se compara contra el binding que genera cada entrada del picker. Ojo
+   con &dmac: su mk() reserva ranura, asi que se compara solo por slot.
+   Si no hay coincidencia (o la tecla esta vacia) se deja la pestana
+   como estaba: cambiarla a 'todo' seria mas molesto que util. */
+function catForBinding(bd){
+  if(!bd||bd.b==='&trans'||bd.b==='&none')return null;
+  if(bd.b==='&dmac'){
+    const m=(typeof macros!=='undefined')&&macros[bd.p1];
+    /* Una ranura con un solo caracter viene de la pestana unicode; el
+       resto de macros se editan desde sistema. */
+    return (m&&m.text&&[...m.text].length<=2)?'unicode':'sistema';
+  }
+  /* Gana la primera coincidencia, que es la pestana "normal". Las teclas
+     muertas comparten binding con simbolos (´ es &kp SQT, igual que ');
+     ahi mandan simbolos: es la misma tecla fisica y el apostrofo es el
+     uso comun -- la tecla muerta es una lectura del mismo binding, no
+     otra cosa. Y no se puede distinguir mirando el keymap. */
+  const hit=PK.find(p=>{
+    if(p.uni&&!p.dead)return false;      /* su mk() gastaria ranura */
+    try{const x=p.mk();return x.b===bd.b&&x.p1===bd.p1&&x.p2===bd.p2;}
+    catch(e){return false;}
+  });
+  return hit?hit.cat:null;
+}
 function openPicker(){
   $('#pickerPos').textContent=editingEnc!==null
     ?`encoder ${editingEnc.side?'R':'L'} · ${ENC_PART_LABEL[editingEnc.part]} (pos ${editingEnc.side?43:42})`
@@ -2452,6 +2479,10 @@ function onKeyClick(pos){
   fxEvent(pos);typeBump();
   const el=keyEls[pos];
   if(el){el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),120);}
+  /* Saltar a la pestana de lo que ya tiene la tecla. Si hay una busqueda
+     escrita se respeta: el usuario esta filtrando a proposito. */
+  const cat=catForBinding(keymap.layers[activeLayer].keys[pos]);
+  if(cat&&!$('#pickerSearch').value)renderPickerCats(cat);
   openPicker();renderLayer();
 }
 /* Click (izquierdo o derecho) en el encoder: siempre el menú de partes.
@@ -2850,7 +2881,11 @@ function init(){
   $('#helpBk').addEventListener('click',e=>{if(e.target.id==='helpBk')e.target.classList.remove('open');});
   $('#btnUndo').onclick=undoKm;
   $('#btnRedo').onclick=redoKm;
-  $('#ctxEdit').onclick=()=>{closeCtx();selPos=ctxPos;openPicker();};
+  /* Mismo salto de pestana que el click normal, por coherencia. */
+  $('#ctxEdit').onclick=()=>{closeCtx();selPos=ctxPos;editingEnc=null;
+    const c=catForBinding(keymap.layers[activeLayer].keys[ctxPos]);
+    if(c&&!$('#pickerSearch').value)renderPickerCats(c);
+    openPicker();};
   $('#ctxCopy').onclick=()=>{closeCtx();copyBind(ctxPos);};
   $('#ctxPaste').onclick=()=>{closeCtx();pasteBind(ctxPos);};
   $('#ctxTrans').onclick=()=>{closeCtx();selPos=ctxPos;editingEnc=null;assignBinding(TR());};
