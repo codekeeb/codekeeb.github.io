@@ -29,6 +29,11 @@ const CK_PRICES_UPDATED = "2026-08-14";
   - specs: fichas de la sección de producto.
   - url: enlace DIRECTO al anuncio. Nunca null: mandar a la tienda
     genérica perdía la venta.
+  - title: cómo se rotula el nombre, en 3 niveles como el logotipo:
+      model  → negro        (el modelo: Sofle, Corne, Totem)
+      trait  → gris oscuro  (lo característico: versión, acabado)
+      accent → degradado    (solo cuando lleva RGB)
+    Si falta, se cae a name + version en negro.
 */
 const CK_PRODUCTS = [
   {
@@ -36,6 +41,7 @@ const CK_PRODUCTS = [
     listingId: "4538841345",
     status: "available",
     featured: true,
+    title: { model: "Sofle", trait: "Choc · Space Black", accent: "RGB" },
     name: "Sofle Choc",
     version: "Space Black",
     img: "sofle-carbon.jpg",
@@ -89,6 +95,7 @@ const CK_PRODUCTS = [
     listingId: "4542645510",
     status: "available",
     featured: true,
+    title: { model: "Sofle", trait: "Choc · Retro", accent: "RGB" },
     name: "Sofle Choc",
     version: "Retro",
     img: "sofle-retro.jpg",
@@ -141,6 +148,7 @@ const CK_PRODUCTS = [
     listingId: "4551478025",
     status: "available",
     featured: true,
+    title: { model: "Totem", trait: "38 teclas" },
     name: "Totem",
     version: "38 teclas",
     img: "totem.jpg",
@@ -192,6 +200,7 @@ const CK_PRODUCTS = [
     listingId: "4524082170",
     status: "available",
     featured: true,
+    title: { model: "Corne", trait: "v4 MX", accent: "RGB" },
     name: "Corne RGB",
     version: "v4 MX",
     img: "corne-v4.jpg",
@@ -241,11 +250,12 @@ const CK_PRODUCTS = [
     listingId: "4526929358",
     status: "available",
     featured: true,
+    title: { model: "Corne", trait: "v3 MX", accent: "RGB" },
     name: "Corne RGB",
     version: "v3 MX",
     img: "corne-v3.jpg",
     heroImg: "corne-v3.jpg",
-    gallery: ["corne-v3.jpg"],
+    gallery: ["corne-v3.jpg", "corne-v3-2.jpg"],
     titleImg: null,
     priceFrom: 40.50,
     priceOriginal: 45.00,

@@ -26,6 +26,17 @@
   const product = (typeof CK_PRODUCTS !== "undefined")
     ? CK_PRODUCTS.find(p => p.id === params.get("id")) : null;
 
+  /* Mismo rotulado en 3 niveles que en la home (ver main.js). */
+  function titleHTML(p){
+    const T = p.title;
+    if (!T) return `<span class="kbtitle"><b>${p.name}</b><em>${p.version}</em></span>`;
+    return `<span class="kbtitle">` +
+      `<b>${T.model}</b>` +
+      (T.trait  ? `<em>${T.trait}</em>` : "") +
+      (T.accent ? `<i class="grad-text">${T.accent}</i>` : "") +
+      `</span>`;
+  }
+
   function render() {
     document.documentElement.lang = lang;
     document.body.dataset.lang = lang;
@@ -59,7 +70,7 @@
     /* --- cabecera --- */
     $("#pdpCrumb").textContent = name;
     $("#pdpKicker").textContent = L(product.kicker) || "";
-    $("#pdpTitle").innerHTML = product.name + ' <em>' + product.version + "</em>";
+    $("#pdpTitle").innerHTML = titleHTML(product);
     $("#pdpDesc").textContent = desc;
 
     const rating = $("#pdpRating");
@@ -150,7 +161,7 @@
       return `<a class="model-card" href="modelo.html?id=${p.id}">
         <div class="model-card__media">${media}</div>
         <div class="model-card__body">
-          <h3>${p.name} <em>${p.version}</em></h3>
+          <h3>${titleHTML(p)}</h3>
           <p class="price"><span class="price__lbl">${t("price.from")}</span>
              <strong>${fmt(p.priceFrom)}</strong></p>
         </div></a>`;

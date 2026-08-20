@@ -65,6 +65,18 @@
 
 /* Las fotos de producto viven en assets/img/products/ (no por idioma:
    son el mismo teclado en las tres webs). Hay version -sm para movil. */
+/* Rotulacion del nombre en 3 niveles, como el logotipo:
+   modelo en negro, lo caracteristico en gris, y el RGB en degradado.
+   Sin `title` en data.js se cae a name+version, todo en negro. */
+function titleHTML(p){
+  const T = p.title;
+  if (!T) return `<span class="kbtitle"><b>${p.name}</b><em>${p.version}</em></span>`;
+  return `<span class="kbtitle">` +
+    `<b>${T.model}</b>` +
+    (T.trait  ? `<em>${T.trait}</em>` : "") +
+    (T.accent ? `<i class="grad-text">${T.accent}</i>` : "") +
+    `</span>`;
+}
 function prodImg(file){ return "assets/img/products/" + file; }
 function prodSrcset(file){
   const sm = file.replace(/\.jpg$/, "-sm.jpg");
@@ -100,7 +112,7 @@ function priceBlock(p){
       const url = p.url || CK_SHOP_URL;
       const title = p.titleImg
         ? `<img src="assets/${p.titleImg}" alt="${p.name} ${p.version}" class="slide__title-svg" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>`
-        : `<span class="slide__title-text grad-text">${p.name}<em>${p.version}</em></span>`;
+        : `<span class="slide__title-text">${titleHTML(p)}</span>`;
       const stats = (p.stats || []).map(([v, lbl]) => `
         <li><strong>${v}</strong><span>${lbl[lang] || lbl.es}</span></li>`).join("");
       return `
@@ -247,7 +259,7 @@ function priceBlock(p){
           ${media}
         </div>
         <div class="model-card__body">
-          <h3>${p.name} <em>${p.version}</em></h3>
+          <h3>${titleHTML(p)}</h3>
           ${stars}
           <p class="model-card__desc">${p.desc[lang] || p.desc.es}</p>
           ${priceBlock(p)}
