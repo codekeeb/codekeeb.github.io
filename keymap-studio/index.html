@@ -2334,11 +2334,15 @@ const SYM_LAYOUTS={
     ['%','LS(N5)',()=>kpu(LS(U_N5))],['&','LS(N6)',()=>kpu(LS(U_N6))],
     ['/','LS(N7)',()=>kpu(LS(U_N7))],['(','LS(N8)',()=>kpu(LS(U_N8))],
     [')','LS(N9)',()=>kpu(LS(U_N9))],['=','LS(N0)',()=>kpu(LS(U_N0))],
-    ['?','LS(SQT)',()=>kpu(LS(U_SQT))],['¿','LS(EQUAL)',()=>kpu(LS(U_EQUAL))],
+    /* OJO: en ES el '?' esta en MINUS (la tecla que en US lleva el
+       guion), NO en SQT: ahi esta la dieresis, que ademas es tecla
+       muerta y se quedaba esperando a la vocal. */
+    ['?','LS(MINUS)',()=>kpu(LS(U_MINUS))],['¿','LS(EQUAL)',()=>kpu(LS(U_EQUAL))],
     [';','LS(COMMA)',()=>kpu(LS(U_COMMA))],[':','LS(DOT)',()=>kpu(LS(U_DOT))],
     ['_','LS(FSLH)',()=>kpu(LS(U_FSLH))],['<','NUBS',()=>kpu(U_NUBS)],
     ['>','LS(NUBS)',()=>kpu(LS(U_NUBS))],['*','LS(RBKT)',()=>kpu(LS(U_RBKT))],
-    ['+','RBKT',()=>kpu(U_RBKT)],['´','SQT',()=>kpu(U_SQT)],
+    ['+','RBKT',()=>kpu(U_RBKT)],
+    ['´','SQT',()=>kpu(U_SQT)],
     ['ç','BSLH',()=>kpu(U_BSLH)],['ñ','SEMI',()=>kpu(U_SEMI)]]}
 };
 let symLayout=store.get('ck.symLayout')||'us';
