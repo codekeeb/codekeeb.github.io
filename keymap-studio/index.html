@@ -266,9 +266,6 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #drawer .dhead{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hairline)}
 #drawer .dhead h2{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.16em;color:var(--ink);text-transform:uppercase}
 #drawer .dhead .x{margin-left:auto}
-.usbNote{margin:14px 18px 0;padding:10px 12px;border-radius:9px;font-size:10.5px;line-height:1.55;
-  color:#8a5a00;background:#fff6e5;border:1px solid rgba(200,140,0,.3)}
-.usbNote a{color:#8a5a00;font-weight:700}
 #drawer .dbody{flex:1;overflow-y:auto;padding:16px 18px}
 /* OLED y RGB, mismo diseño: etiqueta a la izquierda + pastilla. Van
    apilados arriba a la derecha, y los ajustes de RGB se despliegan justo
@@ -449,7 +446,6 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   <span id="unsavedDot" data-i18n="unsavedDot">● CAMBIOS SIN GUARDAR</span>
   <div id="topActions">
     <button class="btn accent" id="btnConnect" data-short="Conectar" data-short-i18n="connectShort"><span data-i18n="connect">Conectar teclado</span></button>
-    <button class="btn" id="btnConnectBle" data-i18n-title="bleTitle" title="Conectar por Bluetooth">BT</button>
     <button class="btn" id="btnSaveHdr" data-i18n-title="saveHdrTitle" title="Guardar keymap en la flash del teclado (ZMK Studio save_changes)" style="display:none">💾 <span data-i18n="saveKm">Guardar (flash)</span></button>
     <button class="btn" id="btnStudio" data-i18n="studio">Panel Studio</button>
     <button class="btn" id="btnHelp" data-i18n-title="helpBtnTitle" title="Ayuda y atajos (F1)">?</button>
@@ -512,9 +508,6 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   <div class="dhead"><h2>ZMK Studio</h2><span id="drawerMode" style="font-size:10px;color:var(--faint)">LOCAL</span>
     <button class="btn small x" id="btnDrawerX">✕</button></div>
   <div class="dbody">
-    <!-- Aviso permanente: la causa n1 de "no conecta" es intentarlo por
-         Bluetooth. El navegador solo puede hablar por USB. -->
-    <p class="usbNote" data-i18n-html="usbOnlyNote"></p>
     <details class="dsec" open>
       <summary data-i18n="secLock">Bloqueo</summary>
       <div style="display:flex;gap:8px;align-items:center">
@@ -677,15 +670,6 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   alreadyUnlocked:'Ya está desbloqueado',pressUnlockKey:'Pulsa &studio_unlock en el teclado (Lower, fila Z)',
   savedFlash:'Guardado en flash ✓',saveErr:'Error al guardar (code %c)',
   syncing:'Sincronizando con el teclado…',syncedOk:'Sincronizado con el teclado ✓',syncedErr:'Sincronizado con %n error(es)',
-  usbOnlyNote:'<b>USB</b> con el boton principal, o <b>BT</b> para Bluetooth (Chrome/Edge y Android; <b>iPhone no lo permite</b>). Por Bluetooth el teclado debe estar emparejado y con firmware que incluya el transporte BLE de ZMK Studio.',
-  bleTitle:'Conectar por Bluetooth (Chrome/Edge y Android; no disponible en iPhone)',
-  needBle:'Este navegador no tiene Web Bluetooth',
-  bleFail:'No se pudo conectar por Bluetooth',
-  logBleScan:'Buscando teclados ZMK por Bluetooth...',
-  logBleOk:'Conectado por Bluetooth',
-  logBleNone:'No se eligio ningun dispositivo',
-  logBleLost:'Bluetooth desconectado',
-  logUsbOnly:'Conecta el teclado por CABLE USB. ZMK Studio no funciona por Bluetooth en Windows/macOS: el dialogo solo lista puertos serie.',
   serial:'nº de serie',stockOsd:'Keymap de fábrica',
   saveHdrTitle:'Guardar keymap en la flash del teclado (ZMK Studio save_changes)',
   helpBtnTitle:'Ayuda y atajos (F1)',undoTitle:'Deshacer (Ctrl+Z)',redoTitle:'Rehacer (Ctrl+Y)',
@@ -746,15 +730,6 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   alreadyUnlocked:'Already unlocked',pressUnlockKey:'Press &studio_unlock on the keyboard (Lower, Z row)',
   savedFlash:'Saved to flash ✓',saveErr:'Save error (code %c)',
   syncing:'Syncing with keyboard…',syncedOk:'Synced with keyboard ✓',syncedErr:'Synced with %n error(s)',
-  usbOnlyNote:'<b>USB</b> with the main button, or <b>BT</b> for Bluetooth (Chrome/Edge and Android; <b>iPhone cannot</b>). Over Bluetooth the keyboard must be paired and running firmware with the ZMK Studio BLE transport.',
-  bleTitle:'Connect over Bluetooth (Chrome/Edge and Android; not available on iPhone)',
-  needBle:'This browser has no Web Bluetooth',
-  bleFail:'Could not connect over Bluetooth',
-  logBleScan:'Scanning for ZMK keyboards over Bluetooth...',
-  logBleOk:'Connected over Bluetooth',
-  logBleNone:'No device selected',
-  logBleLost:'Bluetooth disconnected',
-  logUsbOnly:'Connect the keyboard over USB CABLE. ZMK Studio does not work over Bluetooth on Windows/macOS: the dialog only lists serial ports.',
   serial:'serial',stockOsd:'Factory keymap',
   saveHdrTitle:'Save keymap to the keyboard flash (ZMK Studio save_changes)',
   helpBtnTitle:'Help and shortcuts (F1)',undoTitle:'Undo (Ctrl+Z)',redoTitle:'Redo (Ctrl+Y)',
@@ -792,9 +767,6 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   hintUsbUnlock:'ZMK Studio does not allow unlocking over USB: press the physical &studio_unlock key (Lower layer, Z row, 2nd key). The app will update instantly.'}};
 const t=k=>(I18N[lang]&&I18N[lang][k])||I18N.es[k]||k;
 function applyI18n(){$$('[data-i18n]').forEach(e=>{const k=e.dataset.i18n;if(I18N[lang]&&I18N[lang][k])e.textContent=I18N[lang][k];});
-  /* Textos con marcado (negritas, enlaces): van por innerHTML. El
-     contenido sale de I18N, no de entrada del usuario. */
-  $$('[data-i18n-html]').forEach(e=>{const k=e.dataset.i18nHtml;if(I18N[lang]&&I18N[lang][k])e.innerHTML=I18N[lang][k];});
   $$('[data-i18n-ph]').forEach(e=>{const k=e.dataset.i18nPh;if(I18N[lang]&&I18N[lang][k])e.placeholder=I18N[lang][k];});
   $$('[data-i18n-title]').forEach(e=>{const k=e.dataset.i18nTitle;if(I18N[lang]&&I18N[lang][k])e.title=I18N[lang][k];});
   /* Etiqueta corta para movil (data-short). Va aparte de data-i18n
@@ -1781,7 +1753,6 @@ if(typeof module!=='undefined')module.exports={PBW,PBR,zigDec,frame,deframer,dec
    ============================================================ */
 const studio={
   port:null,reader:null,writer:null,connected:false,deviceName:'',
-  transport:'usb',device:null,chrc:null,bleChunk:20,  /* 'usb' | 'ble' */
   reqId:0,pending:new Map(),behaviors:new Map(), /* '&kp' -> behavior_id real */
   lockState:0,unsaved:false,deframe:deframer(),
 };
@@ -1805,16 +1776,6 @@ function setBadge(){
 async function studioSend(payload){
   const f=frame(payload);
   plog('tx',hexLog(f));
-  if(studio.transport==='ble'){
-    /* GATT no admite escrituras arbitrariamente largas: se trocea al
-       MTU negociado (por defecto 20 bytes utiles en BLE clasico). El
-       firmware reensambla con el mismo framing que por serie. */
-    const CH=studio.bleChunk||20;
-    for(let i=0;i<f.length;i+=CH){
-      await studio.chrc.writeValueWithoutResponse(f.slice(i,i+CH));
-    }
-    return;
-  }
   await studio.writer.write(f);
 }
 function studioRequest(builder,timeout=4000){
@@ -1891,119 +1852,10 @@ function behCanonical(displayName){
 function behId(name){if(studio.behaviors.has(name))return studio.behaviors.get(name);return LOCAL_BEH_IDS[name]??0;}
 function behName(id){for(const[n,i]of studio.behaviors)if(i===id)return n;
   for(const[n,i]of Object.entries(LOCAL_BEH_IDS))if(i===id&&studio.behaviors.size===0)return n;return '&'+id;}
-/* Secuencia posterior a abrir el canal, comun a USB y BLE: la
-   negociacion RPC no depende del transporte. */
-async function studioAfterConnect(){
-  const steps=$('#connSteps');steps.innerHTML='';
-  const step=(ok,label,detail)=>{steps.innerHTML+=
-    `<div style="color:${ok===null?'var(--dim)':ok?'#7dc98a':'#e06c5c'}">`+
-    `${ok===null?'…':ok?'✓':'✗'} ${label}${detail?` <span style="color:var(--faint)">${detail}</span>`:''}</div>`;};
-  /* secuencia oficial: device_info -> lock_state -> behaviors -> keymap
-     (con reintentos: el firmware puede tardar en contestar el primer frame) */
-  step(null,'device_info');
-  let di=null,lastErr=null;
-  /* OJO: el contador NO puede llamarse t -- sombrearia la funcion t()
-     de i18n dentro del bucle y romperia las traducciones de aqui. */
-  for(let tryN=0;tryN<4&&!di;tryN++){
-    try{di=await studioRequest(reqCoreGetDeviceInfo,2500);}
-    catch(e){lastErr=e;plog('err',t('logAttempt')+' '+(tryN+1)+'/4: '+e.message);
-      await new Promise(r=>setTimeout(r,300));}
-  }
-  if(!di){
-    step(false,'device_info',t('logNoAnswer'));
-    plog('inf',t('hintNoRpc'));
-    throw lastErr||new Error(t('logNoAnswer'));
-  }
-  studio.deviceName=(di.data.device_info&&di.data.device_info.name)||'Sofle';
-  step(true,'device_info',studio.deviceName);
-  $('#devInfo').innerHTML=`<b>${studio.deviceName}</b><br>${t('serial')}: ${di.data.device_info.serial||'—'}`;
-  const ls=await studioRequest(reqCoreGetLockState);
-  studio.lockState=ls.data.lock_state?1:0;
-  studio.connected=true;setBadge();
-  step(true,'lock_state',studio.lockState?'UNLOCKED':t('lockedTag'));
-  plog('inf','device: '+studio.deviceName+' · lock='+studio.lockState);
-  try{
-    const la=await studioRequest(reqBehaviorsListAll);
-    studio.behIds=la.data.list_all||[];
-    step(true,'list_behaviors',studio.behIds.length+' ids');
-  }catch(e){step(false,'list_behaviors',e.message);plog('err','list_behaviors: '+e.message);}
-  /* behaviors/details + keymap son handlers SECURED: solo con teclado UNLOCKED.
-     Si está bloqueado, esperamos a la notificación lock_state_changed. */
-  if(studio.lockState)await studioFetchSecured(step);
-  else{
-    step(null,'keymap/behaviors',t('logWaitingLocked'));
-    plog('inf',t('logSecured'));
-    showLockOverlay(true);
-  }
-  oledState.output='usb';oledState.charging=true;
-  $('#btnConnect').innerHTML='<span data-i18n="disconnect">'+t('disconnect')+'</span>';
-  $('#btnConnect').dataset.shortI18n='disconnectShort';
-  $('#btnConnect').dataset.short=t('disconnectShort');
-}
-
-/* ============================================================
-   CODEKEEB: conexion por Bluetooth (Web Bluetooth / GATT)
-   ------------------------------------------------------------
-   ZMK expone el mismo RPC de Studio sobre un servicio GATT
-   (app/src/studio/gatt_rpc_transport.c). El protocolo y el framing
-   son identicos a los del puerto serie: solo cambia el canal.
-
-   UUIDs de ZMK (app/src/studio/uuid.h):
-     servicio       00000000-0196-6107-c967-c5cfb1c2482a
-     caracteristica 00000001-0196-6107-c967-c5cfb1c2482a
-
-   OJO: Web Bluetooth no existe en iOS -- ni en Safari ni en Chrome ni
-   en Brave, porque Apple obliga a todos a usar WebKit. Funciona en
-   Chrome/Edge de escritorio y en Chrome de Android.
-   ============================================================ */
-const ZMK_BLE_SERVICE='00000000-0196-6107-c967-c5cfb1c2482a';
-const ZMK_BLE_CHRC   ='00000001-0196-6107-c967-c5cfb1c2482a';
-
-async function studioConnectBLE(){
-  if(studio.connected){await studioDisconnect();return;}
-  if(!('bluetooth'in navigator)){osd(t('needBle'));plog('err','Web Bluetooth no disponible');return;}
-  $('#drawer').classList.add('open');
-  try{
-    plog('inf',t('logBleScan'));
-    const dev=await navigator.bluetooth.requestDevice({
-      filters:[{services:[ZMK_BLE_SERVICE]}],
-      optionalServices:[ZMK_BLE_SERVICE]
-    });
-    studio.device=dev;
-    dev.addEventListener('gattserverdisconnected',()=>{
-      plog('err',t('logBleLost'));studioDisconnect();
-    });
-    const server=await dev.gatt.connect();
-    const svc=await server.getPrimaryService(ZMK_BLE_SERVICE);
-    const chrc=await svc.getCharacteristic(ZMK_BLE_CHRC);
-    studio.chrc=chrc; studio.transport='ble';
-    /* Las respuestas llegan por notificacion, no leyendo un stream. */
-    await chrc.startNotifications();
-    chrc.addEventListener('characteristicvaluechanged',ev=>{
-      const v=new Uint8Array(ev.target.value.buffer);
-      studio.deframe.push(v,handleFrame);
-    });
-    studio.deviceName=dev.name||'ZMK (BLE)';
-    studio.connected=true;
-    plog('inf',t('logBleOk')+': '+studio.deviceName);
-    await studioAfterConnect();
-  }catch(e){
-    /* Cancelar el dialogo no es un fallo que merezca ruido. */
-    if(e && e.name==='NotFoundError'){plog('inf',t('logBleNone'));}
-    else{plog('err','BLE: '+(e&&e.message||e));osd(t('bleFail'));}
-    studio.transport='usb';
-  }
-}
 async function studioConnect(){
   if(studio.connected){await studioDisconnect();return;}
   if(!('serial'in navigator)){osd(t('needSerial'));plog('err','Web Serial no disponible');return;}
   $('#drawer').classList.add('open');   /* panel visible para ver el checklist */
-  /* ZMK Studio NO habla por Bluetooth desde el navegador: en Windows y
-     macOS solo hay USB (BLE esta limitado al web-app de Linux y a las
-     apps nativas). El dialogo que abre requestPort() lista puertos
-     serie, asi que un teclado emparejado por BT no aparece ahi -- y sin
-     este aviso parece que el teclado falla. */
-  plog('inf',t('logUsbOnly'));
   try{
     const port=await navigator.serial.requestPort();
     const inf=port.getInfo();
@@ -2020,7 +1872,51 @@ async function studioConnect(){
     studioReadLoop();
     plog('inf',t('logPortOpen'));
     /* checklist visible de diagnóstico */
-    await studioAfterConnect();
+    const steps=$('#connSteps');steps.innerHTML='';
+    const step=(ok,label,detail)=>{steps.innerHTML+=
+      `<div style="color:${ok===null?'var(--dim)':ok?'#7dc98a':'#e06c5c'}">`+
+      `${ok===null?'…':ok?'✓':'✗'} ${label}${detail?` <span style="color:var(--faint)">${detail}</span>`:''}</div>`;};
+    /* secuencia oficial: device_info -> lock_state -> behaviors -> keymap
+       (con reintentos: el firmware puede tardar en contestar el primer frame) */
+    step(null,'device_info');
+    let di=null,lastErr=null;
+    /* OJO: el contador NO puede llamarse t -- sombrearia la funcion t()
+       de i18n dentro del bucle y romperia las traducciones de aqui. */
+    for(let tryN=0;tryN<4&&!di;tryN++){
+      try{di=await studioRequest(reqCoreGetDeviceInfo,2500);}
+      catch(e){lastErr=e;plog('err',t('logAttempt')+' '+(tryN+1)+'/4: '+e.message);
+        await new Promise(r=>setTimeout(r,300));}
+    }
+    if(!di){
+      step(false,'device_info',t('logNoAnswer'));
+      plog('inf',t('hintNoRpc'));
+      throw lastErr||new Error(t('logNoAnswer'));
+    }
+    studio.deviceName=(di.data.device_info&&di.data.device_info.name)||'Sofle';
+    step(true,'device_info',studio.deviceName);
+    $('#devInfo').innerHTML=`<b>${studio.deviceName}</b><br>${t('serial')}: ${di.data.device_info.serial||'—'}`;
+    const ls=await studioRequest(reqCoreGetLockState);
+    studio.lockState=ls.data.lock_state?1:0;
+    studio.connected=true;setBadge();
+    step(true,'lock_state',studio.lockState?'UNLOCKED':t('lockedTag'));
+    plog('inf','device: '+studio.deviceName+' · lock='+studio.lockState);
+    try{
+      const la=await studioRequest(reqBehaviorsListAll);
+      studio.behIds=la.data.list_all||[];
+      step(true,'list_behaviors',studio.behIds.length+' ids');
+    }catch(e){step(false,'list_behaviors',e.message);plog('err','list_behaviors: '+e.message);}
+    /* behaviors/details + keymap son handlers SECURED: solo con teclado UNLOCKED.
+       Si está bloqueado, esperamos a la notificación lock_state_changed. */
+    if(studio.lockState)await studioFetchSecured(step);
+    else{
+      step(null,'keymap/behaviors',t('logWaitingLocked'));
+      plog('inf',t('logSecured'));
+      showLockOverlay(true);
+    }
+    oledState.output='usb';oledState.charging=true;
+    $('#btnConnect').innerHTML='<span data-i18n="disconnect">'+t('disconnect')+'</span>';
+    $('#btnConnect').dataset.shortI18n='disconnectShort';
+    $('#btnConnect').dataset.short=t('disconnectShort');
   }catch(e){
     plog('err',t('connFail')+': '+e.message);osd(t('connFail'));
     plog('inf',t('hintTips'));
@@ -2091,12 +1987,6 @@ async function studioFetchKeymap(){
   if(cu){studio.unsaved=!!cu.data.set_ok===false?false:studio.unsaved;}
 }
 async function studioDisconnect(){
-  /* BLE: soltar notificaciones y cerrar GATT antes del camino comun. */
-  if(studio.transport==='ble'){
-    try{if(studio.chrc)await studio.chrc.stopNotifications();}catch(e){}
-    try{if(studio.device&&studio.device.gatt.connected)studio.device.gatt.disconnect();}catch(e){}
-    studio.chrc=null;studio.device=null;studio.transport='usb';
-  }
   studio.connected=false;studio.behaviors.clear();
   try{if(studio.reader)await studio.reader.cancel();}catch(e){}
   try{if(studio.writer){studio.writer.releaseLock();}}catch(e){}
@@ -3165,13 +3055,6 @@ function init(){
   applyI18n();buildFxSel();buildKeyboard();renderLayer();syncRgbUI();setBadge();renderDrawerLayers();
   fitStage();addEventListener('resize',fitStage);
   $('#btnConnect').onclick=studioConnect;
-  /* Boton aparte: Web Bluetooth y Web Serial abren dialogos distintos
-     y no se puede adivinar cual quiere el usuario. */
-  const bbtn=$('#btnConnectBle');
-  if(bbtn){
-    if(!('bluetooth'in navigator))bbtn.style.display='none';
-    else bbtn.onclick=studioConnectBLE;
-  }
   $('#btnStudio').onclick=()=>$('#drawer').classList.toggle('open');
   $('#btnDrawerX').onclick=()=>$('#drawer').classList.remove('open');
   $('#btnOled').onclick=()=>$('#oledZoom').classList.add('open');
