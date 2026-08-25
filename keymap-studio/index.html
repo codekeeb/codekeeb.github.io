@@ -1140,6 +1140,9 @@ kpName=function(p1){const mods=(p1>>>24)&0xFF,page=(p1>>>16)&0xFF,id=p1&0xFFFF;
               izquierda->derecha, verificado contra los .dtsi
               oficiales de cada shield.
    ============================================================ */
+/* Unidades del dibujo: PT es el paso entre teclas, KEY su tamano.
+   Van antes de BOARDS porque algunas definiciones las usan. */
+const KEY=86,PT=90;
 const BOARDS={
   sofle:{
     name:'Sofle RGB', keys:60, cols:6, rows:4,
@@ -1152,17 +1155,32 @@ const BOARDS={
   },
   corne:{
     name:'Corne', keys:42, cols:6, rows:3,
-    off:{l:[31,31,14,0,14,22],r:[22,14,0,14,31,31]},
-    half:[{x:150,y:70,rot:7,w:600,h:440},{x:770,y:70,rot:-7,w:600,h:440}],
+    off:{l:[30,16,0,0,16,30]},   /* simetrico: su inverso es el mismo */
+    half:[{x:111,y:90,rot:7,w:560,h:420},{x:873,y:90,rot:-7,w:560,h:420}],
     enc:null, oled:true,           /* el Corne mantiene las pantallas */
     geo:'grid3'
   },
   totem:{
     name:'Totem', keys:38, cols:5, rows:3,
-    off:{l:[45,31,0,11,27],r:[27,11,0,31,45]},
-    half:[{x:200,y:70,rot:7,w:520,h:440},{x:800,y:70,rot:-7,w:520,h:440}],
+    /* Stagger por columna, de indice (izq) a menique (der). La derecha
+       lo lee invertido para que las mitades sean espejo. */
+    off:{l:[34,22,0,22,34]},   /* simetrico: su inverso es el mismo */
+    half:[{x:56,y:80,rot:7,w:660,h:440},{x:820,y:80,rot:-7,w:660,h:440}],
     enc:null, oled:false,          /* el Totem no lleva pantallas */
-    geo:'grid3'
+    geo:'grid3',
+    /* El primer pulgar (LGUI) no va en el arco: queda suelto a la
+       izquierda de la columna exterior, en paralelo y a media altura
+       entre la A y la Z. Los otros 3 forman el arco. */
+    outer:[1,PT/2],
+    /* alt en paralelo con la fila de arriba (rot 0), MO(1) con la
+       rotacion suave que antes tenia spc, y spc de 1.25u girada como
+       la 1.25u del Sofle, proyectando hacia el centro. */
+    /* Bases: col2=270 (C), col3=360 (V), col4=450 (B).
+       alt centrado entre C y V (315, en paralelo), MO(1) con rotacion
+       suave, y spc de 1.25u muy girada como la del Sofle. */
+    thumbArc:[[0,45,4],[-15,62,16],[-52,86,34,108]],
+    thumbShift:0,
+    thumbGap:16          /* pegados a la fila de arriba */
   }
 };
 let boardId=store.get('ck.board')||'sofle';
@@ -1171,7 +1189,6 @@ const board=()=>BOARDS[boardId];
 const NKEYS=()=>board().keys;
 
 const STAGE_W=1520,STAGE_H=666;
-const KEY=86,PT=90;
 /* y=24 (antes 150): el escenario tenia 150px muertos arriba y 70 abajo,
    que la escala contaba como si fueran teclado y lo empequenecian. */
 let HALF=board().half;   /* tenting +-7 grados en todos los modelos */
@@ -1202,23 +1219,47 @@ function geoSofle(){
    matrix_transform: fila a fila, mitad izquierda y luego derecha. */
 function geoGrid3(B){
   const M=new Array(B.keys).fill(null);
-  const C=B.cols, R=B.rows, per=C*R;      /* teclas de rejilla por mitad */
+  const C=B.cols, R=B.rows, per=C*R;
   const thumbs=(B.keys-per*2)/2;
-  const GAPX=134;
+  /* Cada mitad se dibuja en SU contenedor, que luego rota. Por eso las
+     coordenadas son LOCALES a la mitad: la derecha es el reflejo de la
+     izquierda dentro de su propia caja, no una traslacion global.
+     Asi las dos mitades salen simetricas de verdad. */
+  const gridW=(C-1)*PT;                     /* del centro de la col 0 a la ultima */
+  const outer=B.outer?PT:0;                 /* tecla suelta a la izquierda */
+  const W=gridW+KEY+outer;                  /* ancho util de una mitad */
+  /* x local en la derecha = reflejo del x local en la izquierda. */
+  const esp=x=>W-KEY-x-outer+outer;         /* refleja dentro de la caja */
+  const offL=B.off.l;                       /* perfil simetrico: su inverso es igual */
   for(let r=0;r<R;r++)for(let c=0;c<C;c++){
-    /* Cada fila lleva primero la mitad izquierda y luego la derecha. */
-    M[r*C*2+c]      ={half:0,x:c*PT,       y:B.off.l[c]+r*PT,rot:0};
-    M[r*C*2+C+c]    ={half:1,x:GAPX+c*PT,  y:B.off.r[c]+r*PT,rot:0};
+    const x=outer+c*PT, y=offL[c]+r*PT;
+    M[r*C*2+c]   ={half:0,x,y,rot:0};
+    M[r*C*2+C+c] ={half:1,x:esp(x),y,rot:0};
   }
-  /* Pulgares: abanico suave, centrados bajo las columnas interiores. */
-  const baseY=B.off.l[C-1]+R*PT+6;
-  const ANG=[[-10,0],[0,0],[12,6],[24,14]];   /* rot, y extra */
-  for(let i=0;i<thumbs;i++){
-    const [rot,dy]=ANG[Math.min(i,ANG.length-1)];
-    const xi=(C-thumbs+i)*PT + 24;
-    M[per*2+i]={half:0,x:xi,y:baseY+dy,rot:rot};
-    const xd=GAPX+(thumbs-1-i)*PT + 24;
-    M[per*2+thumbs+i]={half:1,x:xd,y:baseY+dy,rot:-rot};
+  /* Pulgares en arco, pegados a la fila de arriba. */
+  const ultima=offL[C-1]+(R-1)*PT;
+  const baseY=ultima+PT-(B.thumbGap!==undefined?B.thumbGap:30);
+  /* [rot, dx, dy, w]: w opcional para teclas de 1.25u, como la del
+     Sofle (w:108, muy girada, proyectando bajo la pantalla). */
+  const TH=B.thumbArc||[[0,0,0],[-12,10,4],[-24,22,16]];
+  const salta=B.outer?1:0, nArc=thumbs-salta;
+  for(let i=0;i<nArc;i++){
+    const [rot,dx,dy,w]=TH[Math.min(i,TH.length-1)];
+    const x=outer+(C-nArc+i)*PT+dx+(B.thumbShift||0);
+    const anchoL=w?{w}:{};
+    /* Al reflejar una tecla ancha hay que descontar SU ancho, no el
+       de una normal, o la derecha se desplaza. */
+    const xd=W-(w||KEY)-x-0;
+    M[per*2+salta+i]       =Object.assign({half:0,x,    y:baseY+dy,rot},anchoL);
+    M[per*2+thumbs+salta+i]=Object.assign({half:1,x:xd, y:baseY+dy,rot:-rot},anchoL);
+  }
+  /* Tecla suelta a la izquierda de la columna exterior (LGUI del Totem),
+     en paralelo y a media altura entre las filas 1 y 2. */
+  if(B.outer){
+    const [dyRow,extra]=B.outer;
+    const y=offL[0]+dyRow*PT+(extra||0);
+    M[per*2]       ={half:0,x:0,      y,rot:0};
+    M[per*2+thumbs]={half:1,x:esp(0), y,rot:0};
   }
   return M;
 }
@@ -1251,8 +1292,15 @@ const OLED_BOX_W=90,OLED_BOX_H=212,OLED_GAP=20,OLED_TOP=29;
 function oledGeo(){
   const B=board();
   if(!B.oled)return [];
-  const derecha=B.cols*PT+44;              /* borde derecho de la mitad izq */
-  return [{x:derecha+OLED_GAP,y:OLED_TOP},{x:134-OLED_GAP-OLED_BOX_W,y:OLED_TOP}];
+  if(B.geo==='sofle')                      /* el Sofle conserva su sitio */
+    return [{x:536+OLED_GAP,y:OLED_TOP},{x:134-OLED_GAP-OLED_BOX_W,y:OLED_TOP}];
+  /* En los demas se calcula desde el ancho real de la mitad, y en
+     posiciones especulares: cada pantalla pegada a SU teclado, las dos
+     a la misma altura y a la misma distancia. */
+  const outer=B.outer?PT:0;
+  const W=(B.cols-1)*PT+KEY+outer;         /* ancho util de una mitad */
+  const gap=B.oledGap!==undefined?B.oledGap:OLED_GAP;
+  return [{x:W+gap,y:OLED_TOP},{x:-gap-OLED_BOX_W,y:OLED_TOP}];
 }
 let OLED_GEO=oledGeo();
 
@@ -1328,7 +1376,7 @@ function buildKeyboard(){
     d.style.cssText=`position:absolute;left:${h.x}px;top:${h.y}px;width:${h.w}px;height:${h.h}px;transform:rotate(${h.rot}deg);`;
     stage.appendChild(d);return d;
   });
-  for(let i=0;i<60;i++){
+  for(let i=0;i<NKEYS();i++){
     const g=GEO[i];
     if(!g){keyEls.push(null);continue;}
     const el=document.createElement('div');
@@ -1372,6 +1420,12 @@ function applyKnob(side){encEls[side].style.setProperty('--rot',knobRot[side]+'d
 function placeOleds(halves){
   /* El Corne tambien lleva pantallas; el Totem no. */
   const hay=board().oled;
+  /* En el Sofle las pantallas viven DENTRO de cada mitad y giran con
+     ella. En los demas eso las descuadraba: al rotar +-7 grados dos
+     posiciones locales simetricas acaban a distinta altura y pisandose.
+     Alli se colocan sobre el escenario, sin rotar, a la misma altura y
+     cada una pegada a su mitad. */
+  if(hay&&board().geo!=='sofle')return placeOledsFlat();
   [['#oledL',0],['#oledR',1]].forEach(([sel,s])=>{
     const el0=$(sel);
     if(!hay){if(el0)el0.style.display='none';return;}
@@ -1384,6 +1438,38 @@ function placeOleds(halves){
     el.style.left=g.x+'px';el.style.top=g.y+'px';
     el.style.width=OLED_BOX_W+'px';el.style.height=OLED_BOX_H+'px';
     halves[s].appendChild(el);
+  });
+}
+/* Pantallas fuera de las mitades: misma altura, pegadas al teclado.
+   Se calcula en coordenadas del ESCENARIO (sin escalar): el stage lleva
+   un transform de escala y medir en pixeles de pantalla daba posiciones
+   cruzadas. */
+function placeOledsFlat(){
+  const B=board(), st=$('#stage');
+  const G=GEO, half=HALF;
+  if(!G||!half)return;
+  /* Borde interior de cada mitad, en coordenadas del escenario. */
+  let izqMax=-1e9, derMin=1e9, top=1e9;
+  G.forEach(g=>{
+    if(!g)return;
+    const h=half[g.half], w=g.w||KEY;
+    const x0=h.x+g.x, x1=x0+w, y0=h.y+g.y;
+    if(g.half===0) izqMax=Math.max(izqMax,x1);
+    else           derMin=Math.min(derMin,x0);
+    top=Math.min(top,y0);
+  });
+  const gap=B.oledGap!==undefined?B.oledGap:18;
+  /* Si no caben las dos, se reparte el hueco disponible. */
+  const libre=derMin-izqMax;
+  const ancho=Math.min(OLED_BOX_W,(libre-gap*3)/2);
+  [['#oledL',izqMax+gap],['#oledR',derMin-gap-ancho]].forEach(([sel,x])=>{
+    const el=$(sel);if(!el)return;
+    el.style.display='';
+    st.appendChild(el);
+    el.style.left=Math.round(x)+'px';el.style.top=Math.round(top)+'px';
+    el.style.width=Math.round(ancho)+'px';
+    el.style.height=Math.round(ancho*OLED_BOX_H/OLED_BOX_W)+'px';
+    el.style.transform='none';
   });
 }
 function renderLayer(){
