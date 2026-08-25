@@ -96,6 +96,13 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .brand:hover{opacity:.75}
 .brand .logo{height:38px;width:auto;display:block;margin:-6px 0}
 .brand .sub{font-family:var(--font-mono);font-weight:400;font-size:.62rem;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+/* Selector de modelo: al lado del logo, con el mismo aire que .sub. */
+#boardSel{font-family:var(--font-mono);font-size:.62rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
+  background:var(--surface);border:1px solid var(--hairline2);
+  border-radius:999px;padding:4px 10px;cursor:pointer;margin-left:2px}
+#boardSel:hover{border-color:var(--ink)}
+@media (max-width:720px){#boardSel{font-size:.58rem;padding:3px 8px;letter-spacing:.06em}}
 #connBadge{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;border:1px solid var(--hairline2);
   font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase}
 #connBadge.local{color:var(--muted);background:var(--surface)}
@@ -482,7 +489,9 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 <!-- ======================= HEADER ======================= -->
 <header id="top">
   <a class="brand" href="https://codekeeb.github.io/" title="CODE/KEEB"><img class="logo" src="/assets/brand/logo-horizontal-dark.png" srcset="/assets/brand/logo-horizontal-dark.png 1x, /assets/brand/logo-horizontal-dark@2x.png 2x" alt="Codekeeb">
-    <span class="sub">KEYMAP STUDIO · SOFLE RGB</span></a>
+    <span class="sub">KEYMAP STUDIO</span></a>
+  <!-- El modelo ya no forma parte del enlace a la web: es un selector. -->
+  <select id="boardSel" data-i18n-title="boardTitle" title="Modelo de teclado"></select>
   <span id="connBadge" class="local"><span class="pulse"></span><span id="connTxt">LOCAL</span></span>
   <span class="lockdot" id="lockDot" data-i18n-title="lockTitle" title="ZMK Studio lock"></span>
   <span id="unsavedDot" data-i18n="unsavedDot">● CAMBIOS SIN GUARDAR</span>
@@ -725,6 +734,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   rgbMoreTitle:'Ajustes de RGB (efecto, brillo, matiz, velocidad)',
   ucNeedsKb:'Guardado. Se aplicara al conectar el teclado',
   modsClear:'Quitar modificadores',modsHint:'Mantener %s al pulsar la tecla',
+  boardTitle:'Modelo de teclado',
   macroMigrated:'%n tecla(s) unicode actualizadas: Mayús ya da mayúscula',
   uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
   deadNeedsEs:'Cada tecla dice en su tooltip el layout que necesita: <b>US-International</b> (Windows en ingles) o <b>ES</b>. Si no usas ninguno de esos, las vocales acentuadas de abajo van por Unicode y funcionan en cualquier layout.',
@@ -788,6 +798,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   rgbMoreTitle:'RGB settings (effect, brightness, hue, speed)',
   ucNeedsKb:'Saved. It will be applied when the keyboard connects',
   modsClear:'Clear modifiers',modsHint:'Hold %s with the key',
+  boardTitle:'Keyboard model',
   macroMigrated:'%n unicode key(s) updated: Shift now gives uppercase',
   uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
   deadNeedsEs:'Each key names the layout it needs in its tooltip: <b>US-International</b> (Windows in English) or <b>ES</b>. On any other layout, the accented vowels below go through Unicode and work anywhere.',
@@ -987,7 +998,70 @@ const TR=()=>B('&trans');
    36-41 izq r3, 42 encL, 43 encR, 44-49 dcha r3, 50-54 thumbs izq,
    55-59 thumbs dcha.
    ============================================================ */
-function stockLayers(){return [
+/* Keymap de fabrica por modelo. El del Sofle es el del firmware real
+   (config/sofle.keymap); Corne y Totem llevan una base equivalente
+   adaptada a su numero de teclas. */
+/* Shift + codigo HID. Los U_* se declaran mas abajo y estos keymaps
+   corren al arrancar, asi que aqui se usa el codigo directo. */
+const SH=id=>B('&kp',((0x02<<24)|0x070000|id)>>>0);
+function stockLayers(){
+  if(boardId==='corne')return stockCorne();
+  if(boardId==='totem')return stockTotem();
+  return stockSofle();
+}
+/* Corne 42 = 3 filas x 6 columnas x 2 + 3 pulgares por mitad. */
+function stockCorne(){
+  const F=(a)=>a.map(x=>typeof x==='string'?kp(x):x);
+  return [
+  {name:'CODE',keys:F([
+    'TAB','Q','W','E','R','T',      'Y','U','I','O','P','BSPC',
+    'LCTRL','A','S','D','F','G',    'H','J','K','L','SEMI','SQT',
+    'LSHFT','Z','X','C','V','B',    'N','M','COMMA','DOT','FSLH','RSHFT',
+    'LGUI',B('&mo',1),'SPACE',      'RET',B('&mo',2),'RALT']),
+   enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]},
+  {name:'Lower',keys:F([
+    'TAB','N1','N2','N3','N4','N5', 'N6','N7','N8','N9','N0','BSPC',
+    'LCTRL','F1','F2','F3','F4','F5','LEFT','DOWN','UP','RIGHT',TR(),TR(),
+    'LSHFT','F6','F7','F8','F9','F10',TR(),TR(),TR(),TR(),TR(),TR(),
+    'LGUI',B('&mo',1),'SPACE',      'RET',B('&mo',2),'RALT']),
+   enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]},
+  {name:'Raise',keys:F([
+    'TAB',SH(0x1E),SH(0x1F),SH(0x20),SH(0x21),SH(0x22),
+    SH(0x23),SH(0x24),SH(0x25),SH(0x26),SH(0x27),'BSPC',
+    'LCTRL','MINUS',SH(0x2E),'EQUAL','LBKT','RBKT',
+    SH(0x2F),SH(0x30),SH(0x31),'BSLH','GRAVE',SH(0x35),
+    'LSHFT',B('&bt',BT_CMD.CLR),B('&bt',BT_CMD.SEL,0),B('&bt',BT_CMD.SEL,1),B('&bt',BT_CMD.SEL,2),B('&studio_unlock'),
+    TR(),TR(),TR(),TR(),TR(),TR(),
+    'LGUI',B('&mo',1),'SPACE',      'RET',B('&mo',2),'RALT']),
+   enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]}];
+}
+/* Totem 38 = 3 filas x 5 columnas x 2 + 4 pulgares por mitad. */
+function stockTotem(){
+  const F=(a)=>a.map(x=>typeof x==='string'?kp(x):x);
+  return [
+  {name:'CODE',keys:F([
+    'Q','W','E','R','T',            'Y','U','I','O','P',
+    'A','S','D','F','G',            'H','J','K','L','SEMI',
+    'Z','X','C','V','B',            'N','M','COMMA','DOT','FSLH',
+    'LGUI','LSHFT',B('&mo',1),'SPACE',  'RET',B('&mo',2),'RCTRL','RALT']),
+   enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]},
+  {name:'Lower',keys:F([
+    'N1','N2','N3','N4','N5',       'N6','N7','N8','N9','N0',
+    'F1','F2','F3','F4','F5',       'LEFT','DOWN','UP','RIGHT','BSPC',
+    'F6','F7','F8','F9','F10',      TR(),TR(),TR(),TR(),TR(),
+    'LGUI','LSHFT',B('&mo',1),'SPACE',  'RET',B('&mo',2),'RCTRL','RALT']),
+   enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]},
+  {name:'Raise',keys:F([
+    SH(0x1E),SH(0x1F),SH(0x20),SH(0x21),SH(0x22),
+    SH(0x23),SH(0x24),SH(0x25),SH(0x26),SH(0x27),
+    'MINUS',SH(0x2E),'EQUAL','LBKT','RBKT',
+    SH(0x2F),SH(0x30),SH(0x31),'BSLH','GRAVE',
+    B('&bt',BT_CMD.CLR),B('&bt',BT_CMD.SEL,0),B('&bt',BT_CMD.SEL,1),B('&bt',BT_CMD.SEL,2),B('&studio_unlock'),
+    TR(),TR(),TR(),TR(),TR(),
+    'LGUI','LSHFT',B('&mo',1),'SPACE',  'RET',B('&mo',2),'RCTRL','RALT']),
+   enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]}];
+}
+function stockSofle(){return [
 {name:'CODE',keys:[
   kp('ESC'),kp('N1'),kp('N2'),kp('N3'),kp('N4'),kp('N5'), kp('N6'),kp('N7'),kp('N8'),kp('N9'),kp('N0'),kp('DEL'),
   kp('TAB'),kp('Q'),kp('W'),kp('E'),kp('R'),kp('T'), kp('Y'),kp('U'),kp('I'),kp('O'),kp('P'),kp('BSPC'),
@@ -1000,7 +1074,7 @@ function stockLayers(){return [
   kp('GRAVE'),kp('F11'),kp('F12'),B('&kp',(0x40<<24)|0x070008),B('&rgbfx',rgbfxParam(RGBFX_CMD.TOGGLE)),B('&rgbfx',rgbfxParam(RGBFX_CMD.NEXT)),
   TR(),TR(),kp('UP'),TR(),TR(),kp('BSPC'),
   TR(),TR(),kp('LBKT'),kp('RBKT'),B('&rgbfx',rgbfxParam(RGBFX_CMD.HUE_DOWN)),B('&rgbfx',rgbfxParam(RGBFX_CMD.HUE_UP)),
-  TR(),kp('LEFT'),kp('DOWN'),kp('RIGHT'),TR(),kpu(LS(U_BSLH)),
+  TR(),kp('LEFT'),kp('DOWN'),kp('RIGHT'),TR(),SH(0x31),
   TR(),B('&studio_unlock'),TR(),TR(),B('&rgbfx',rgbfxParam(RGBFX_CMD.DIM)),B('&rgbfx',rgbfxParam(RGBFX_CMD.BRIGHTEN)),
   B('&rgbfx',rgbfxParam(RGBFX_CMD.TOGGLE)),B('&oledanim'),
   TR(),TR(),TR(),TR(),kp('BSLH'),TR(),
@@ -1009,8 +1083,8 @@ function stockLayers(){return [
       {cw:B('&rgbfx',rgbfxParam(RGBFX_CMD.HUE_UP)),ccw:B('&rgbfx',rgbfxParam(RGBFX_CMD.HUE_DOWN)),label:'RGB hue'}]},
 {name:'Raise',keys:[
   B('&bt',BT_CMD.CLR),B('&bt',BT_CMD.SEL,0),B('&bt',BT_CMD.SEL,1),B('&bt',BT_CMD.SEL,2),B('&bt',BT_CMD.SEL,3),B('&bt',BT_CMD.SEL,4),
-  TR(),kpu(U_LBKT),kpu(U_RBKT),kpu(LS(U_N9)),kpu(LS(U_N0)),kp('DEL'),
-  TR(),TR(),TR(),TR(),TR(),TR(), kp('PG_UP'),kp('KP_N7'),kp('KP_N8'),kp('KP_N9'),kpu(LS(U_N5)),kp('BSPC'),
+  TR(),kpu(U_LBKT),kpu(U_RBKT),SH(0x26),SH(0x27),kp('DEL'),
+  TR(),TR(),TR(),TR(),TR(),TR(), kp('PG_UP'),kp('KP_N7'),kp('KP_N8'),kp('KP_N9'),SH(0x22),kp('BSPC'),
   TR(),TR(),TR(),TR(),TR(),TR(), kp('PG_DN'),kp('KP_N4'),kp('KP_N5'),kp('KP_N6'),kp('KP_PLUS'),kp('KP_MULTIPLY'),
   TR(),kp('K_UNDO'),kp('K_CUT'),kp('K_COPY'),kp('K_PASTE'),TR(), TR(),B('&rgbfx',rgbfxParam(RGBFX_CMD.TOGGLE)),
   TR(),kp('KP_N1'),kp('KP_N2'),kp('KP_N3'),kp('KP_MINUS'),kp('KP_SLASH'),
@@ -1052,14 +1126,65 @@ kpName=function(p1){const mods=(p1>>>24)&0xFF,page=(p1>>>16)&0xFF,id=p1&0xFFFF;
    altura de la fila 4 y OLED vertical encima de cada encoder.
    Espacio de tablero 1520×810 px (pitch 90, tecla 86).
    ============================================================ */
+/* ============================================================
+   TECLADOS. Cada modelo declara SU geometria; el resto del
+   editor la consume desde aqui (nada de constantes sueltas).
+   Todos comparten el tenting +-7 grados del Sofle, que es la
+   inclinacion que ya estaba aplicada y da el aspecto CODEKEEB.
+   ------------------------------------------------------------
+   cols/rows  rejilla ortolineal por mitad
+   off        stagger por columna, en px, de indice a menique
+   thumbs     pulgares por mitad, con su rotacion
+   enc        encoders (Sofle); oled: pantallas (Sofle y Corne)
+   ord        orden de las posiciones ZMK, fila a fila e
+              izquierda->derecha, verificado contra los .dtsi
+              oficiales de cada shield.
+   ============================================================ */
+const BOARDS={
+  sofle:{
+    name:'Sofle RGB', keys:60, cols:6, rows:4,
+    off:{l:[43,43,14,0,14,29],r:[29,14,0,14,43,43]},
+    half:[{x:80,y:24,rot:7,w:661,h:528},{x:770,y:24,rot:-7,w:670,h:528}],
+    enc:[{x:551,y:287},{x:9,y:287}], oled:true,
+    /* 60 = 58 teclas + 2 clicks de encoder. Las rotaciones van en
+       'sensors', por eso no ocupan posicion. */
+    geo:'sofle'
+  },
+  corne:{
+    name:'Corne', keys:42, cols:6, rows:3,
+    off:{l:[31,31,14,0,14,22],r:[22,14,0,14,31,31]},
+    half:[{x:150,y:70,rot:7,w:600,h:440},{x:770,y:70,rot:-7,w:600,h:440}],
+    enc:null, oled:true,           /* el Corne mantiene las pantallas */
+    geo:'grid3'
+  },
+  totem:{
+    name:'Totem', keys:38, cols:5, rows:3,
+    off:{l:[45,31,0,11,27],r:[27,11,0,31,45]},
+    half:[{x:200,y:70,rot:7,w:520,h:440},{x:800,y:70,rot:-7,w:520,h:440}],
+    enc:null, oled:false,          /* el Totem no lleva pantallas */
+    geo:'grid3'
+  }
+};
+let boardId=store.get('ck.board')||'sofle';
+if(!BOARDS[boardId])boardId='sofle';
+const board=()=>BOARDS[boardId];
+const NKEYS=()=>board().keys;
+
 const STAGE_W=1520,STAGE_H=666;
 const KEY=86,PT=90;
 /* y=24 (antes 150): el escenario tenia 150px muertos arriba y 70 abajo,
    que la escala contaba como si fueran teclado y lo empequenecian. */
-const HALF=[{x:80,y:24,rot:7,w:661,h:528},{x:770,y:24,rot:-7,w:670,h:528}];
+let HALF=board().half;   /* tenting +-7 grados en todos los modelos */
 const OFFL=[43,43,14,0,14,29],OFFR=[29,14,0,14,43,43];
 function geoMap(){
+  const B=board();
+  if(B.geo==='sofle')return geoSofle();
+  return geoGrid3(B);
+}
+/* Sofle: 4x6 + fila de pulgares con las dos teclas grandes giradas. */
+function geoSofle(){
   const M=new Array(60).fill(null);
+  const OFFL=BOARDS.sofle.off.l, OFFR=BOARDS.sofle.off.r;
   for(let r=0;r<4;r++)for(let c=0;c<6;c++){
     M[r*12+c]={half:0,x:c*PT,y:OFFL[c]+r*PT,rot:0};
     const iR=r<3?r*12+6+c:44+c;
@@ -1073,8 +1198,33 @@ function geoMap(){
   M[56]={half:1,x:124,y:414,rot:-15};         /* MO(2) */
   return M;
 }
-const GEO=geoMap();
-const ENC_GEO=[{x:551,y:287},{x:9,y:287}];    /* caja 110×110 del artifact */
+/* Corne y Totem: 3 filas + pulgares en abanico. El orden es el de sus
+   matrix_transform: fila a fila, mitad izquierda y luego derecha. */
+function geoGrid3(B){
+  const M=new Array(B.keys).fill(null);
+  const C=B.cols, R=B.rows, per=C*R;      /* teclas de rejilla por mitad */
+  const thumbs=(B.keys-per*2)/2;
+  const GAPX=134;
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){
+    /* Cada fila lleva primero la mitad izquierda y luego la derecha. */
+    M[r*C*2+c]      ={half:0,x:c*PT,       y:B.off.l[c]+r*PT,rot:0};
+    M[r*C*2+C+c]    ={half:1,x:GAPX+c*PT,  y:B.off.r[c]+r*PT,rot:0};
+  }
+  /* Pulgares: abanico suave, centrados bajo las columnas interiores. */
+  const baseY=B.off.l[C-1]+R*PT+6;
+  const ANG=[[-10,0],[0,0],[12,6],[24,14]];   /* rot, y extra */
+  for(let i=0;i<thumbs;i++){
+    const [rot,dy]=ANG[Math.min(i,ANG.length-1)];
+    const xi=(C-thumbs+i)*PT + 24;
+    M[per*2+i]={half:0,x:xi,y:baseY+dy,rot:rot};
+    const xd=GAPX+(thumbs-1-i)*PT + 24;
+    M[per*2+thumbs+i]={half:1,x:xd,y:baseY+dy,rot:-rot};
+  }
+  return M;
+}
+/* GEO/HALF dejan de ser fijos: se rehacen al cambiar de teclado. */
+let GEO=geoMap();
+let ENC_GEO=board().enc||[];    /* caja 110×110 del artifact; vacio si el modelo no lleva */
 /* OLEDs verticales. Coordenadas YA FINALES (locales a cada mitad), sin
    los ajustes que placeOleds aplicaba antes:
    - Borde superior a y=29, el mismo que el borde superior de la tecla 5
@@ -1096,24 +1246,40 @@ const ENC_GEO=[{x:551,y:287},{x:9,y:287}];    /* caja 110×110 del artifact */
    68px una de otra (con 29 estaban a 50) y además dejan más aire hasta
    el borde de su mitad (15 y 24px, antes 6 y 15, que iba muy justo). */
 const OLED_BOX_W=90,OLED_BOX_H=212,OLED_GAP=20,OLED_TOP=29;
-const OLED_GEO=[{x:536+OLED_GAP,y:OLED_TOP},{x:134-OLED_GAP-OLED_BOX_W,y:OLED_TOP}];
+/* El Corne tambien lleva pantallas, asi que esto se calcula desde el
+   ancho real de la rejilla del teclado activo en vez de fijarlo. */
+function oledGeo(){
+  const B=board();
+  if(!B.oled)return [];
+  const derecha=B.cols*PT+44;              /* borde derecho de la mitad izq */
+  return [{x:derecha+OLED_GAP,y:OLED_TOP},{x:134-OLED_GAP-OLED_BOX_W,y:OLED_TOP}];
+}
+let OLED_GEO=oledGeo();
 
 /* ---------------- estado ---------------- */
 const VALID_BEH=/^&[a-z][a-z_0-9]{0,19}$/;
 const validBind=b=>b&&VALID_BEH.test(b.b)&&Number.isFinite(b.p1)&&Number.isFinite(b.p2)&&b.p1<0x100000000&&b.p2<0x100000000;
 function validKeymap(j){return j&&j.layers&&j.layers.length===3&&
-  j.layers.every(l=>l.name!==undefined&&l.keys&&l.keys.length===60&&l.enc&&l.enc.length===2&&
+  j.layers.every(l=>l.name!==undefined&&l.keys&&l.keys.length===NKEYS()&&l.enc&&l.enc.length===2&&
   l.keys.every(validBind)&&l.enc.every(e=>validBind(e.cw)&&validBind(e.ccw)&&(!e.press||validBind(e.press))));}
-let keymap=(()=>{
-  try{const j=JSON.parse(store.get('ck.keymap.v2'));if(validKeymap(j))return j;}catch(e){}
-  try{const j=JSON.parse(store.get('ck.keymap'));if(validKeymap(j)){store.set('ck.keymap.v2',JSON.stringify(j));return j;}}catch(e){}
-  return{layers:stockLayers()};})();
+/* Una clave por modelo: cada teclado conserva SU keymap. La clave
+   antigua (sin sufijo) es la del Sofle, para no perder lo que ya
+   hubiera guardado quien viene de la version anterior. */
+const kmKey=id=>id==='sofle'?'ck.keymap.v2':('ck.keymap.v2.'+id);
+function loadKeymap(){
+  try{const j=JSON.parse(store.get(kmKey(boardId)));if(validKeymap(j))return j;}catch(e){}
+  if(boardId==='sofle'){
+    try{const j=JSON.parse(store.get('ck.keymap'));if(validKeymap(j)){store.set(kmKey('sofle'),JSON.stringify(j));return j;}}catch(e){}
+  }
+  return{layers:stockLayers()};
+}
+let keymap=loadKeymap();
 let activeLayer=0, selPos=-1, editingEnc=null;
 let rgb=Object.assign({on:true,fx:8,bri:5,hue:0,spd:2},JSON.parse(store.get('ck.rgb')||'{}'));
 let unlocked=false;      // studio lock (simulado en LOCAL)
 let oledState={output:'bt',profile:0,levelL:87,levelR:82,charging:false,anim:'crystal',mods:{c:0,s:0,a:0,g:0}};
 const ANIMS=['crystal','cat','head','spaceman','pokemon'];
-function saveKeymap(){store.set('ck.keymap.v2',JSON.stringify(keymap));}
+function saveKeymap(){store.set(kmKey(boardId),JSON.stringify(keymap));}
 function saveRgb(){store.set('ck.rgb',JSON.stringify(rgb));}
 function saveMacros(){store.set('ck.macros',JSON.stringify(macros));}
 
@@ -1151,7 +1317,11 @@ function keyClass(bd){
   return '';
 }
 function buildKeyboard(){
-  const stage=$('#keys');stage.innerHTML='';keyEls.length=0;encEls.length=0;
+  const stage=$('#keys');
+  /* placeOleds mete las pantallas DENTRO de las mitades, y el vaciado de
+     abajo las destruiria al cambiar de teclado. Se rescatan primero. */
+  ['#oledL','#oledR'].forEach(sel=>{const e=$(sel);if(e)$('#stage').appendChild(e);});
+  stage.innerHTML='';keyEls.length=0;encEls.length=0;
   const halves=HALF.map(h=>{
     const d=document.createElement('div');
     d.className='half';
@@ -1174,12 +1344,12 @@ function buildKeyboard(){
     el.addEventListener('mouseleave',hideTip);
     halves[g.half].appendChild(el);keyEls.push(el);
   }
-  buildEnc(0,halves[0]);buildEnc(1,halves[1]);
+  if(board().enc){buildEnc(0,halves[0]);buildEnc(1,halves[1]);}
   placeOleds(halves);
 }
 const knobRot=[0,0];
 function buildEnc(side,stage){
-  const g=ENC_GEO[side];
+  const g=ENC_GEO[side];if(!g)return;
   const el=document.createElement('div');el.className='enc';
   el.style.left=(g.x+7)+'px';el.style.top=(g.y+7)+'px';
   el.style.width='96px';el.style.height='96px';
@@ -1200,11 +1370,17 @@ function applyKnob(side){encEls[side].style.setProperty('--rot',knobRot[side]+'d
   encEls[side].querySelector('.knob').style.transform=`rotate(${knobRot[side]}deg)`;
   encEls[side].querySelector('.mark').style.transform=`rotate(${knobRot[side]}deg)`;}
 function placeOleds(halves){
+  /* El Corne tambien lleva pantallas; el Totem no. */
+  const hay=board().oled;
   [['#oledL',0],['#oledR',1]].forEach(([sel,s])=>{
+    const el0=$(sel);
+    if(!hay){if(el0)el0.style.display='none';return;}
+    if(el0)el0.style.display='';
     /* OLED_GEO ya trae la posición final: el desfase -28/-14 que había
        aquí era justo lo que descuadraba la mitad derecha y subía las dos
        pantallas por encima de la primera fila de teclas. */
-    const g=OLED_GEO[s];const el=$(sel);
+    const g=OLED_GEO[s];const el=el0;
+    if(!g)return;
     el.style.left=g.x+'px';el.style.top=g.y+'px';
     el.style.width=OLED_BOX_W+'px';el.style.height=OLED_BOX_H+'px';
     halves[s].appendChild(el);
@@ -1212,7 +1388,7 @@ function placeOleds(halves){
 }
 function renderLayer(){
   const L=keymap.layers[activeLayer];
-  for(let i=0;i<60;i++){
+  for(let i=0;i<NKEYS();i++){
     const el=keyEls[i];if(!el)continue;
     const bd=L.keys[i];
     const cap=el.querySelector('.cap');
@@ -1531,10 +1707,10 @@ function fxFrame(){
 const BASE_SH={
   def:'0 3px 0 #0a0b0d,0 4px 10px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06)',
   mod:'0 3px 0 #0a0b0d,0 4px 10px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06)'};
-const lastLedCol=new Array(60).fill('');
+let lastLedCol=new Array(NKEYS()).fill('');
 function drawRgb(cols){
   const bri=rgb.on?rgb.bri/5:0;
-  for(let pos=0;pos<60;pos++){
+  for(let pos=0;pos<NKEYS();pos++){
     const el=keyEls[pos];if(!el)continue;
     const half=posHalf(pos);
     const dark=el.classList.contains('mod')||el.classList.contains('mo')||el.classList.contains('lay')||el.classList.contains('sys');
@@ -2027,7 +2203,7 @@ async function studioFetchKeymap(){
   if(!g||!g.layers)return;
   keymap.layers=g.layers.map((l,i)=>({
     name:l.name||('L'+i),
-    keys:Array.from({length:60},(_,p)=>{
+    keys:Array.from({length:NKEYS()},(_,p)=>{
       const bd=l.bindings[p];
       return bd?{b:behName(bd.behavior_id),p1:bd.p1,p2:bd.p2}:B('&trans');
     }),
@@ -2347,7 +2523,7 @@ const DEAD_KEYS=[
    need:{es:'layout ES',en:'ES layout'}},
   {legend:'`', sample:'àèù', usage:()=>kpu(U_LBKT),     key:'[',
    need:{es:'layout ES',en:'ES layout'}},
-  {legend:'^', sample:'âêô', usage:()=>kpu(LS(U_LBKT)), key:'Shift+[',
+  {legend:'^', sample:'âêô', usage:()=>SH(0x2F), key:'Shift+[',
    need:{es:'layout ES/FR',en:'ES/FR layout'}},
   {legend:'~', sample:'ñãõ', usage:()=>kpu(RA(U_RBKT)), key:'AltGr+]',
    need:{es:'layout ES',en:'ES layout'}}
@@ -2611,7 +2787,7 @@ function openPicker(){
   renderPickerGrid($('#pickerSearch').value);
 }
 function closePicker(){selPos=-1;editingEnc=null;renderLayer();openPicker();}
-function nextPos(p){for(let i=p+1;i<60;i++)if(keyEls[i])return i;return -1;}
+function nextPos(p){for(let i=p+1;i<NKEYS();i++)if(keyEls[i])return i;return -1;}
 /* CODEKEEB: asignar un caracter Unicode a la tecla seleccionada.
    A diferencia del resto del picker, aqui hay que grabar antes la
    ranura de macro: la tecla apuntara a &dmac N, y esa N debe contener
@@ -3032,7 +3208,7 @@ function moveLayer(i,d){
 function addLayer(){
   if(studio.connected){studioLayerOp('add_layer',rid=>reqKeymapAddLayer(rid));return;}
   snapshot();
-  keymap.layers.push({name:'L'+keymap.layers.length,keys:Array.from({length:60},()=>TR()),
+  keymap.layers.push({name:'L'+keymap.layers.length,keys:Array.from({length:NKEYS()},()=>TR()),
     enc:[{cw:TR(),ccw:TR(),label:''},{cw:TR(),ccw:TR(),label:''}]});
   saveKeymap();renderLayer();renderDrawerLayers();
 }
@@ -3087,13 +3263,20 @@ function download(name,text){
 function exportKeymap(){
   const L=keymap.layers;
   const row=(arr,label)=>'      /* '+label+' */\n      '+arr.join(' ');
-  const rows=l=>[
-    row(l.keys.slice(0,12).map(bindingDTS),'r0: 0-5 izq / 6-11 dcha'),
-    row(l.keys.slice(12,24).map(bindingDTS),'r1: 12-17 / 18-23'),
-    row(l.keys.slice(24,36).map(bindingDTS),'r2: 24-29 / 30-35'),
-    row(l.keys.slice(36,50).map(bindingDTS),'r3: 36-42 izq / 43-49 dcha (42/43 = encoders)'),
-    row(l.keys.slice(50,60).map(bindingDTS),'thumbs: 50-54 izq / 55-59 dcha'),
-  ].join('\n');
+  /* El troceado depende del modelo: el Sofle tiene 4 filas de 12 (con
+     los 2 clicks de encoder en la r3) y 10 pulgares; Corne y Totem
+     tienen 3 filas y sus pulgares. */
+  const cuts=()=>{
+    const B=board();
+    if(B.geo==='sofle')return [[0,12,'r0: 0-5 izq / 6-11 dcha'],[12,24,'r1: 12-17 / 18-23'],
+      [24,36,'r2: 24-29 / 30-35'],[36,50,'r3: 36-42 izq / 43-49 dcha (42/43 = encoders)'],
+      [50,60,'thumbs: 50-54 izq / 55-59 dcha']];
+    const per=B.cols*2, out=[];
+    for(let r=0;r<B.rows;r++)out.push([r*per,(r+1)*per,'r'+r+': '+B.cols+' izq / '+B.cols+' dcha']);
+    out.push([B.rows*per,B.keys,'thumbs']);
+    return out;
+  };
+  const rows=l=>cuts().map(([a,b,lab])=>row(l.keys.slice(a,b).map(bindingDTS),lab)).join(String.fromCharCode(10));
   // Sensores: respeta los behaviors custom del firmware (rgbenc_m/h/b/s).
   // El scroll (encoder derecho, capa base) usa &inc_dec_kp UP DOWN en
   // ambos firmwares -- NO existe ningún &fast_pg_encoder ni PG_UP/PG_DN
@@ -3170,7 +3353,7 @@ function importJSON(file){
   const r=new FileReader();
   r.onload=()=>{try{
     const j=JSON.parse(r.result);
-    if(!validKeymap(j)&&!(j.layers&&j.layers.every(l=>l.keys&&l.keys.length===60)))throw new Error('formato');
+    if(!validKeymap(j)&&!(j.layers&&j.layers.every(l=>l.keys&&l.keys.length===NKEYS())))throw new Error('formato');
     snapshot();keymap={layers:j.layers};activeLayer=0;
     /* Los .json antiguos no traen macros: en ese caso se dejan las que
        ya haya, que es mejor que borrarlas sin avisar. */
@@ -3264,6 +3447,36 @@ function fitStage(){
 /* ============================================================
    Init
    ============================================================ */
+/* ---------------- selector de modelo ---------------- */
+function renderBoardSel(){
+  const sel=$('#boardSel');if(!sel)return;
+  sel.innerHTML='';
+  Object.entries(BOARDS).forEach(([id,b])=>{
+    const o=document.createElement('option');
+    o.value=id;o.textContent=b.name;
+    if(id===boardId)o.selected=true;
+    sel.appendChild(o);
+  });
+}
+/* Cambiar de teclado rehace geometria y keymap. Se guarda antes, para
+   que cada modelo conserve lo suyo al volver. */
+function setBoard(id){
+  if(!BOARDS[id]||id===boardId)return;
+  saveKeymap();
+  boardId=id;store.set('ck.board',id);
+  HALF=board().half;
+  GEO=geoMap();
+  ENC_GEO=board().enc||[];
+  OLED_GEO=oledGeo();
+  lastLedCol=new Array(NKEYS()).fill('');
+  keymap=loadKeymap();
+  activeLayer=0;selPos=-1;editingEnc=null;
+  hist.undo.length=0;hist.redo.length=0;updateHistBtns();
+  buildKeyboard();renderLayer();renderLayerBar();renderDrawerLayers();setBadge();
+  fitStage();
+  osd(board().name);
+}
+
 function init(){
   applyI18n();buildFxSel();buildKeyboard();renderLayer();syncRgbUI();setBadge();renderDrawerLayers();
   fitStage();addEventListener('resize',fitStage);
@@ -3319,6 +3532,8 @@ function init(){
     /* La barra de modificadores y la de distribucion tambien se generan
        por JS; sin esto se quedaban en el idioma anterior. */
     renderPickerMods();renderPickerGrid($('#pickerSearch').value);};
+  renderBoardSel();
+  const bs=$('#boardSel');if(bs)bs.onchange=()=>setBoard(bs.value);
   $('#btnUnlock').onclick=studioUnlock;
   $('#btnAddLayer').onclick=addLayer;
   $('#btnSaveKm').onclick=studioSave;
@@ -3403,7 +3618,8 @@ function init(){
     if(pos!==undefined){physHit.delete(e.code);const el=keyEls[pos];if(el)el.classList.remove('hit');}
   });
   /* acceso de depuración/tests */
-  window.__ck={studio,keymap:()=>keymap,rgb,FX,GEO,bindingDTS,bindingLegend,stockLayers,decodeResponse,frame};
+  window.__ck={studio,keymap:()=>keymap,rgb,FX,GEO:()=>GEO,bindingDTS,bindingLegend,stockLayers,decodeResponse,frame,
+    setBoard,BOARDS,board:()=>board(),boardId:()=>boardId,NKEYS};
   requestAnimationFrame(loop);
 }
 document.addEventListener('DOMContentLoaded',init);
