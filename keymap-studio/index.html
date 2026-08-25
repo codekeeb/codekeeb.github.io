@@ -238,6 +238,9 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   color:var(--faint);margin:5px 0 1px}
 .pkGroup::after{content:"";flex:1;height:1px;background:var(--hairline2)}
 .pkGroup:first-child{margin-top:0}
+.pkWarn{grid-column:1/-1;margin:0 0 6px;padding:7px 10px;border-radius:8px;
+  font-size:10px;line-height:1.5;color:#8a5a00;background:#fff6e5;
+  border:1px solid rgba(200,140,0,.3)}
 /* Barra de distribucion en la pestana de simbolos. */
 .symBar{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   margin:0 0 5px;font:600 .58rem var(--font-mono);letter-spacing:.1em;
@@ -682,6 +685,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   rgbMoreTitle:'Ajustes de RGB (efecto, brillo, matiz, velocidad)',
   ucNeedsKb:'Guardado. Se aplicara al conectar el teclado',
   uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
+  deadNeedsEs:'<b>Solo con el sistema en espanol (u otro layout que tenga acentos).</b> En un teclado US no existen las teclas muertas: saldria <code>&#39;a</code> en vez de la vocal acentuada. Con el sistema en US, usa los caracteres de abajo (a, e, i...), que funcionan en cualquier layout.',
   uniDeadTip:'Pulsa %a y luego la vocal: %s',
   uniAssigned:'%c asignado (macro %n)',uniNoSlot:'No quedan ranuras de macro libres (12). Vacia una en el panel Studio > Macros.',uniFail:'No se pudo guardar la macro en el teclado',
   secMacros:'Macros (&dmac)',
@@ -742,6 +746,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   rgbMoreTitle:'RGB settings (effect, brightness, hue, speed)',
   ucNeedsKb:'Saved. It will be applied when the keyboard connects',
   uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
+  deadNeedsEs:'<b>Only with a layout that has dead keys (ES, FR...).</b> A US keyboard has none: you would get <code>&#39;a</code> instead of the accented vowel. On a US layout use the characters below, which work anywhere.',
   uniDeadTip:'Press %a then the vowel: %s',
   uniAssigned:'%c assigned (macro %n)',uniNoSlot:'No free macro slots left (12). Clear one in Studio > Macros.',uniFail:'Could not save the macro to the keyboard',
   secMacros:'Macros (&dmac)',
@@ -2606,6 +2611,14 @@ function renderPickerGrid(q,cat){
         const h=document.createElement('div');h.className='pkGroup';
         h.textContent=uniGroupName(p.uniGroup);
         g.appendChild(h);
+        /* Las teclas muertas son POSICIONES de un layout que las tenga.
+           En US no existen: el apostrofo se escribe tal cual y no espera
+           a la vocal, asi que sale "'a" en vez de "a" con tilde. */
+        if(p.uniGroup==='dead'){
+          const w=document.createElement('div');w.className='pkWarn';
+          w.innerHTML=t('deadNeedsEs');
+          g.appendChild(w);
+        }
       }
       const el=document.createElement('div');
       el.className='pk'+(p.uni?' uni':'')+(p.dead?' uni dead':'');
