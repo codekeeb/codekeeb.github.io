@@ -1162,10 +1162,14 @@ const BOARDS={
     /* Pulgares de 1.25u como el Sofle: la interior muy girada (65
        grados, w 108) y las otras dos con la inclinacion suave. El signo
        lo pone el espejo, igual que en geoSofle (-65 izq / +65 dcha). */
-    thumbArc:[[0,0,0],[15,4,10],[65,34,28,108]],
+    /* Referencia: la mitad izquierda del Sofle (MO(1) rot +15, y la
+       1.25u rot -65 desplazada +102/+28 respecto a ella).
+       alt centrado bajo C-V y mas abajo; MO(1) a su derecha; y la
+       1.25u girada como el RET del Sofle, no al reves. */
+    thumbArc:[[0,45,26],[15,80,44],[-65,170,72,108]],
     thumbShift:0, thumbGap:24,
     oledSofle:true,              /* pantallas igual que en el Sofle */
-    half:[{x:89,y:80,rot:7,w:680,h:460},{x:765,y:80,rot:-7,w:700,h:460}],
+    half:[{x:27,y:80,rot:7,w:760,h:470},{x:827,y:80,rot:-7,w:760,h:470}],
     enc:null, oled:true,           /* el Corne mantiene las pantallas */
     geo:'grid3'
   },
@@ -1174,7 +1178,7 @@ const BOARDS={
     /* Stagger por columna, de indice (izq) a menique (der). La derecha
        lo lee invertido para que las mitades sean espejo. */
     off:{l:[34,22,0,22,34]},   /* simetrico: su inverso es el mismo */
-    half:[{x:56,y:80,rot:7,w:660,h:440},{x:820,y:80,rot:-7,w:660,h:440}],
+    half:[{x:154,y:80,rot:7,w:536,h:450},{x:830,y:80,rot:-7,w:536,h:450}],
     enc:null, oled:false,          /* el Totem no lleva pantallas */
     geo:'grid3',
     /* El primer pulgar (LGUI) no va en el arco: queda suelto a la
