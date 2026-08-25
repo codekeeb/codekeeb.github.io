@@ -205,6 +205,23 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   padding:.55em 1.1em;font-family:var(--font-mono);font-size:.74rem;outline:none;transition:border-color .2s}
 #pickerSearch:focus{border-color:var(--c-blue)}
 #pickerCats{display:flex;gap:6px;padding:8px 16px 0;flex-wrap:wrap}
+/* Interruptores de modificador: se marcan antes de elegir la tecla. */
+#pickerMods{display:flex;gap:5px;padding:7px 16px 0;flex-wrap:wrap;align-items:center}
+.pmodLbl{font:600 .55rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);margin-right:2px}
+.pmod{font:600 .62rem var(--font-mono);padding:3px 8px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--hairline2);background:var(--surface);color:var(--muted);
+  transition:background .18s,border-color .18s,color .18s}
+.pmod:hover{border-color:var(--ink);color:var(--ink)}
+.pmod.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.pmodClear{color:#c02a52;border-color:rgba(192,42,82,.35)}
+/* Con modificadores activos, las baldosas avisan de lo que van a dar. */
+#pickerGrid.hasMods .pk:not(.uni):not(.dead){border-color:var(--c-blue)}
+/* En tactil 22px de alto se falla con el dedo; 30 es objetivo comodo. */
+@media (max-width:760px){
+  #pickerMods{gap:6px;padding:8px 12px 0}
+  .pmod{padding:6px 11px;font-size:.66rem}
+}
 .pcat{background:transparent;border:1px solid var(--hairline2);color:var(--muted);border-radius:999px;padding:.35em 1em;
   font-family:var(--font-mono);font-size:.64rem;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;
   transition:border-color .2s,color .2s,background .2s}
@@ -580,6 +597,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
       <button class="btn small" id="btnTrans" title="&trans">▽ trans</button>
       <button class="btn small" id="btnDesel" data-i18n-title="deselTitle" title="Deseleccionar (Esc)">✕</button></div>
     <div id="pickerCats"></div>
+    <div id="pickerMods"></div>
     <div id="pickerGrid"></div>
   </div>
 </section>
@@ -684,6 +702,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   symLayoutLbl:'Distribucion del sistema:',symLayoutSaved:'Distribucion guardada',
   rgbMoreTitle:'Ajustes de RGB (efecto, brillo, matiz, velocidad)',
   ucNeedsKb:'Guardado. Se aplicara al conectar el teclado',
+  modsWith:'con:',modsClear:'Quitar modificadores',
   uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
   deadNeedsEs:'Cada tecla dice en su tooltip el layout que necesita: <b>US-International</b> (Windows en ingles) o <b>ES</b>. Si no usas ninguno de esos, las vocales acentuadas de abajo van por Unicode y funcionan en cualquier layout.',
   uniDeadTip:'Pulsa %a y luego la vocal: %s',
@@ -745,6 +764,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   symLayoutLbl:'System layout:',symLayoutSaved:'Layout saved',
   rgbMoreTitle:'RGB settings (effect, brightness, hue, speed)',
   ucNeedsKb:'Saved. It will be applied when the keyboard connects',
+  modsWith:'with:',modsClear:'Clear modifiers',
   uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
   deadNeedsEs:'Each key names the layout it needs in its tooltip: <b>US-International</b> (Windows in English) or <b>ES</b>. On any other layout, the accented vowels below go through Unicode and work anywhere.',
   uniDeadTip:'Press %a then the vowel: %s',
@@ -986,10 +1006,13 @@ const _kpNameOrig=kpName;
 kpName=function(p1){const mods=(p1>>>24)&0xFF,page=(p1>>>16)&0xFF,id=p1&0xFFFF;
   let base=(page===0x07&&HID7[id])?HID7[id].n:(page===0x0C&&HIDC[id])?HIDC[id].n:'0x'+id.toString(16).toUpperCase();
   if(!mods)return base;
-  const inv={0x01:'LC',0x02:'LS',0x04:'LA',0x08:'LG',0x10:'RC',0x20:'RS',0x40:'RA',0x80:'RG'};
-  if(inv[mods])return inv[mods]+'('+base+')';
-  let pre='';for(const[k,v]of Object.entries(MODBITS))if(mods&v)pre+=k+'+';
-  return pre+base;};
+  /* ZMK anida los modificadores: LS(RA(SQT)). Un "LS+RA+SQT" no compila.
+     Orden fijo (externo -> interno) para que el .keymap sea estable. */
+  const ORDER=[[0x01,'LC'],[0x02,'LS'],[0x04,'LA'],[0x08,'LG'],
+               [0x10,'RC'],[0x20,'RS'],[0x40,'RA'],[0x80,'RG']];
+  let out=base;
+  for(let i=ORDER.length-1;i>=0;i--)if(mods&ORDER[i][0])out=ORDER[i][1]+'('+out+')';
+  return out;};
 
 /* ============================================================
    GEOMETRÍA FÍSICA (foto real): grid 4×6 ortolineal por mitad,
@@ -2519,6 +2542,7 @@ function catForBinding(bd){
   return hit?hit.cat:null;
 }
 function openPicker(){
+  renderPickerMods();
   $('#pickerPos').textContent=editingEnc!==null
     ?`encoder ${editingEnc.side?'R':'L'} · ${ENC_PART_LABEL[editingEnc.part]} (pos ${editingEnc.side?43:42})`
     :(selPos>=0?`posición ZMK ${selPos}`:t('pressKey'));
@@ -2552,11 +2576,32 @@ async function uniAssign(ch){
   osd(t('uniAssigned').replace('%c',ch).replace('%n',slot));
   openPicker();
 }
+/* ============================================================
+   CODEKEEB: modificadores pegajosos del picker
+   ------------------------------------------------------------
+   Interruptores encima de la rejilla: marcas Ctrl/Shift/Alt/Gui y la
+   siguiente tecla que elijas se asigna con esos modificadores. Asi se
+   pueden crear combinaciones que no estan en ninguna pestana, por
+   ejemplo AltGr+' -> &kp RA(SQT), el acento muerto de US-International.
+
+   Solo aplica a &kp: el resto de behaviors (&mo, &bt, &dmac...) no
+   llevan modificadores, y se dejan intactos.
+   ============================================================ */
+let pickMods=0;   /* mascara de MODBITS */
+
+/* Aplica los modificadores marcados a un binding &kp. */
+function withPickMods(bd){
+  if(!pickMods||!bd||bd.b!=='&kp')return bd;
+  return B('&kp',((pickMods<<24)|(bd.p1&0x00FFFFFF))>>>0,bd.p2);
+}
 function dockAssign(mk){
   if(studio.connected&&!studio.lockState){osd(t('lockedWarn'));return;}
   if(selPos<0&&editingEnc===null){osd(t('pressKey'));return;}
   const wasKey=editingEnc===null,from=selPos;
-  assignBinding(mk());
+  assignBinding(withPickMods(mk()));
+  /* De un solo uso: si se quedaran pegados, la siguiente tecla saldria
+     con modificadores sin querer. */
+  if(pickMods){pickMods=0;renderPickerMods();}
   if(wasKey&&from>=0){selPos=nextPos(from);renderLayer();}
   openPicker();
 }
@@ -2567,6 +2612,34 @@ function uniGroupName(id){
   const g=UNI_GROUPS.find(x=>x.id===id);
   if(!g)return id;
   return g.name[lang]||g.name.en||g.name.es;
+}
+/* Pinta los interruptores de modificador. Se marcan antes de elegir la
+   tecla; el binding sale con esos modificadores aplicados. */
+function renderPickerMods(){
+  const box=$('#pickerMods');
+  if(!box)return;
+  box.innerHTML='';
+  const lab=document.createElement('span');
+  lab.className='pmodLbl';lab.textContent=t('modsWith');
+  box.appendChild(lab);
+  /* Izquierdos y derechos por separado: AltGr es RA, no LA, y esa
+     distincion importa (RA(SQT) es el acento de US-International). */
+  [['LC','Ctrl'],['LS','Shift'],['LA','Alt'],['LG','Gui'],
+   ['RC','RCtrl'],['RS','RShift'],['RA','AltGr'],['RG','RGui']].forEach(([k,txt])=>{
+    const bit=MODBITS[k];
+    const b=document.createElement('button');
+    b.className='pmod'+((pickMods&bit)?' on':'');
+    b.textContent=txt;b.title=k+'(...)';
+    b.onclick=()=>{pickMods^=bit;renderPickerMods();
+      renderPickerGrid($('#pickerSearch').value);};
+    box.appendChild(b);
+  });
+  if(pickMods){
+    const c=document.createElement('button');
+    c.className='pmod pmodClear';c.textContent='✕';c.title=t('modsClear');
+    c.onclick=()=>{pickMods=0;renderPickerMods();renderPickerGrid($('#pickerSearch').value);};
+    box.appendChild(c);
+  }
 }
 function renderPickerCats(cur){
   const c=$('#pickerCats');c.innerHTML='';
@@ -2581,6 +2654,9 @@ function renderPickerCats(cur){
   c.dataset.cur=cur;
 }
 function renderPickerGrid(q,cat){
+  /* Marca visual: con modificadores armados, lo que elijas saldra con
+     ellos. Sin esto es facil asignar algo sin darse cuenta. */
+  const _g=$('#pickerGrid');if(_g)_g.classList.toggle('hasMods',!!pickMods);
   cat=cat||$('#pickerCats').dataset.cur||'todo';
   q=(q||'').toLowerCase();
   const g=$('#pickerGrid');g.innerHTML='';
