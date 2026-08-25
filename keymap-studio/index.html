@@ -685,7 +685,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   rgbMoreTitle:'Ajustes de RGB (efecto, brillo, matiz, velocidad)',
   ucNeedsKb:'Guardado. Se aplicara al conectar el teclado',
   uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
-  deadNeedsEs:'Estas teclas necesitan un layout que tenga acentos (ES, FR...). <b>Si tu sistema esta en ingles US, usa las vocales acentuadas de abajo</b> (á é í ó ú ñ): van por Unicode y funcionan en cualquier layout.',
+  deadNeedsEs:'Cada tecla dice en su tooltip el layout que necesita: <b>US-International</b> (Windows en ingles) o <b>ES</b>. Si no usas ninguno de esos, las vocales acentuadas de abajo van por Unicode y funcionan en cualquier layout.',
   uniDeadTip:'Pulsa %a y luego la vocal: %s',
   uniAssigned:'%c asignado (macro %n)',uniNoSlot:'No quedan ranuras de macro libres (12). Vacia una en el panel Studio > Macros.',uniFail:'No se pudo guardar la macro en el teclado',
   secMacros:'Macros (&dmac)',
@@ -746,7 +746,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   rgbMoreTitle:'RGB settings (effect, brightness, hue, speed)',
   ucNeedsKb:'Saved. It will be applied when the keyboard connects',
   uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
-  deadNeedsEs:'These need a layout with dead keys (ES, FR...). <b>On a US layout, use the accented vowels below</b> (á é í ó ú ñ): they go through Unicode and work anywhere.',
+  deadNeedsEs:'Each key names the layout it needs in its tooltip: <b>US-International</b> (Windows in English) or <b>ES</b>. On any other layout, the accented vowels below go through Unicode and work anywhere.',
   uniDeadTip:'Press %a then the vowel: %s',
   uniAssigned:'%c assigned (macro %n)',uniNoSlot:'No free macro slots left (12). Clear one in Studio > Macros.',uniFail:'Could not save the macro to the keyboard',
   secMacros:'Macros (&dmac)',
@@ -2048,7 +2048,17 @@ async function studioSetSensorBinding(layer,sensorIdx,cw,bd){
    CODEKEEB: macros editables en caliente (&dmac)
    Campos 101/102/103 del fork codekeeb/zmk-studio-messages.
    ============================================================ */
-const DMAC_STEP_TAP=0, DMAC_STEP_UNICODE=1, DMAC_STEP_WAIT=2;
+const DMAC_STEP_TAP=0, DMAC_STEP_UNICODE=1, DMAC_STEP_WAIT=2, DMAC_STEP_UNICODE_PAIR=3;
+/* Par con mayuscula/minuscula: los 21 bits bajos son la minuscula y los
+   11 altos el desplazamiento hasta la mayuscula. Shift elige cual sale,
+   igual que ZMK_UNICODE_PAIR en un keymap escrito a mano. Sin esto,
+   Mayus + <tecla unicode> no tenia un segundo codepoint al que ir. */
+const PAIR_OFF_MIN=-1024, PAIR_OFF_MAX=1023;
+const pairPack=(lo,up)=>((lo&0x1FFFFF)|(((up-lo)&0x7FF)<<21))>>>0;
+const pairLower=v=>v&0x1FFFFF;
+/* El offset es NEGATIVO en Latin-1 (la mayuscula va antes), asi que hay
+   que extender el signo de los 11 bits. */
+const pairUpper=v=>{const o=(v>>>21)&0x7FF;return pairLower(v)+((o&0x400)?o-0x800:o);};
 /* Se restauran de localStorage: el keymap guarda "&dmac 0", pero sin el
    contenido de la ranura la tecla no sabe que pinta y caeria otra vez a
    M0. Cuando hay teclado conectado, lo que diga el firmware manda y
@@ -2086,7 +2096,18 @@ function textToSteps(txt){
   const steps=[];
   for(const ch of (txt||'')){
     if(PLAIN_KEYS[ch]!==undefined) steps.push({type:DMAC_STEP_TAP,value:PLAIN_KEYS[ch]>>>0});
-    else steps.push({type:DMAC_STEP_UNICODE,value:ch.codePointAt(0)});
+    else{
+      /* Si el caracter tiene mayuscula distinta, se guarda como par para
+         que Mayus escriba la mayuscula en vez de ensuciar la secuencia. */
+      const up=ch.toUpperCase();
+      const off=[...up].length===1?up.codePointAt(0)-ch.codePointAt(0):0;
+      if([...up].length===1&&up!==ch&&off>=PAIR_OFF_MIN&&off<=PAIR_OFF_MAX){
+        steps.push({type:DMAC_STEP_UNICODE_PAIR,
+                    value:pairPack(ch.codePointAt(0),up.codePointAt(0))});
+      }else{
+        steps.push({type:DMAC_STEP_UNICODE,value:ch.codePointAt(0)});
+      }
+    }
   }
   return steps;
 }
@@ -2095,6 +2116,7 @@ function stepsToText(steps){
   const rev={};Object.entries(PLAIN_KEYS).forEach(([c,u])=>{if(rev[u>>>0]===undefined)rev[u>>>0]=c;});
   return (steps||[]).map(s=>{
     if(s.type===DMAC_STEP_UNICODE)return String.fromCodePoint(s.value);
+    if(s.type===DMAC_STEP_UNICODE_PAIR)return String.fromCodePoint(pairLower(s.value));
     if(s.type===DMAC_STEP_TAP)return rev[s.value>>>0]!==undefined?rev[s.value>>>0]:'';
     return '';
   }).join('');
@@ -2240,7 +2262,20 @@ async function studioLayerOp(op,fn){
 const DEAD_KEYS=[
   /* legend: el acento, grande.  sample: que sale al pulsarlo despues,
      que es lo unico que la gente necesita leer en la baldosa.
-     key/need: el detalle tecnico, va al tooltip. */
+     key/need: el detalle tecnico, va al tooltip.
+
+     Las primeras son de US-International, el layout de Windows en
+     ingles que SI tiene teclas muertas: AltGr + comilla da el acento
+     agudo y espera a la vocal. Es lo que hay que usar con el sistema
+     en ingles; las de abajo son del layout espanol. */
+  {legend:'´', sample:'áéí', usage:()=>kpu(RA(U_SQT)), key:"AltGr+'",
+   need:{es:'US-International',en:'US-International'}},
+  {legend:'¨', sample:'üöä', usage:()=>kpu(RA(LS(U_SQT))), key:"AltGr+Shift+'",
+   need:{es:'US-International',en:'US-International'}},
+  {legend:'`', sample:'àèù', usage:()=>kpu(RA(U_GRAVE)), key:'AltGr+`',
+   need:{es:'US-International',en:'US-International'}},
+  {legend:'~', sample:'ñãõ', usage:()=>kpu(RA(U_N6)), key:'AltGr+6',
+   need:{es:'US-International',en:'US-International'}},
   {legend:'´', sample:'áéí', usage:()=>kpu(U_SQT),      key:"'",
    need:{es:'layout ES/FR',en:'ES/FR layout'}},
   {legend:'¨', sample:'üöä', usage:()=>kpu(LS(U_SQT)),  key:"Shift+'",
