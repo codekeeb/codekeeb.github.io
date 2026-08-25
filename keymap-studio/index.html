@@ -685,7 +685,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   rgbMoreTitle:'Ajustes de RGB (efecto, brillo, matiz, velocidad)',
   ucNeedsKb:'Guardado. Se aplicara al conectar el teclado',
   uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
-  deadNeedsEs:'<b>Solo con el sistema en espanol (u otro layout que tenga acentos).</b> En un teclado US no existen las teclas muertas: saldria <code>&#39;a</code> en vez de la vocal acentuada. Con el sistema en US, usa los caracteres de abajo (a, e, i...), que funcionan en cualquier layout.',
+  deadNeedsEs:'Estas teclas necesitan un layout que tenga acentos (ES, FR...). <b>Si tu sistema esta en ingles US, usa las vocales acentuadas de abajo</b> (á é í ó ú ñ): van por Unicode y funcionan en cualquier layout.',
   uniDeadTip:'Pulsa %a y luego la vocal: %s',
   uniAssigned:'%c asignado (macro %n)',uniNoSlot:'No quedan ranuras de macro libres (12). Vacia una en el panel Studio > Macros.',uniFail:'No se pudo guardar la macro en el teclado',
   secMacros:'Macros (&dmac)',
@@ -746,7 +746,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   rgbMoreTitle:'RGB settings (effect, brightness, hue, speed)',
   ucNeedsKb:'Saved. It will be applied when the keyboard connects',
   uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
-  deadNeedsEs:'<b>Only with a layout that has dead keys (ES, FR...).</b> A US keyboard has none: you would get <code>&#39;a</code> instead of the accented vowel. On a US layout use the characters below, which work anywhere.',
+  deadNeedsEs:'These need a layout with dead keys (ES, FR...). <b>On a US layout, use the accented vowels below</b> (á é í ó ú ñ): they go through Unicode and work anywhere.',
   uniDeadTip:'Press %a then the vowel: %s',
   uniAssigned:'%c assigned (macro %n)',uniNoSlot:'No free macro slots left (12). Clear one in Studio > Macros.',uniFail:'Could not save the macro to the keyboard',
   secMacros:'Macros (&dmac)',
@@ -2558,7 +2558,13 @@ function renderPickerGrid(q,cat){
      esta dentro de "Espanol", "Frances", "Aleman"... y saldria medio
      catalogo cuando lo que se busca es el caracter "a". */
   const qn=noAcc(q), byGroup=qn.length>=2;
-  const uniQ=p=>(p.uni||p.dead)&&(
+  /* Buscar "acento", "tilde" o el propio caracter muerto tiene que
+     llevar a las vocales acentuadas, que son las que funcionan en
+     cualquier layout -- no solo a las teclas muertas. */
+  const ACC={'´':'áéíóú','¨':'üöä','`':'àèù','^':'âêô','~':'ñãõ'};
+  const accQ=p=>p.uni&&qn.length>0&&Object.entries(ACC).some(([k,v])=>
+    (q===k||'acento tilde accent'.includes(qn)&&qn.length>2)&&v.includes(p.uni));
+  const uniQ=p=>accQ(p)||(p.uni||p.dead)&&(
     (byGroup&&noAcc(uniGroupName(p.uniGroup)).includes(qn))||
     (p.dead&&(p.dead.sample.includes(q)||(byGroup&&noAcc(t('uniDead')).includes(qn)))));
   /* CODEKEEB: aviso + selector de distribucion, solo en simbolos. Es
