@@ -205,22 +205,44 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   padding:.55em 1.1em;font-family:var(--font-mono);font-size:.74rem;outline:none;transition:border-color .2s}
 #pickerSearch:focus{border-color:var(--c-blue)}
 #pickerCats{display:flex;gap:6px;padding:8px 16px 0;flex-wrap:wrap}
-/* Interruptores de modificador: se marcan antes de elegir la tecla. */
-#pickerMods{display:flex;gap:5px;padding:7px 16px 0;flex-wrap:wrap;align-items:center}
-.pmodLbl{font:600 .55rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;
-  color:var(--faint);margin-right:2px}
-.pmod{font:600 .62rem var(--font-mono);padding:3px 8px;border-radius:999px;cursor:pointer;
-  border:1px solid var(--hairline2);background:var(--surface);color:var(--muted);
-  transition:background .18s,border-color .18s,color .18s}
+/* Modificadores. Las categorias de arriba son NAVEGACION (eliges una);
+   esto es ESTADO (acumulas varios), asi que no puede llevar la misma
+   pildora o parecen la misma fila. Se resuelve como teclas: cuadradas,
+   sobre una banda hundida, subordinadas a las categorias. */
+#pickerMods{display:flex;align-items:center;gap:4px;flex-wrap:wrap;
+  margin:8px 16px 0;padding:5px 6px;border-radius:9px;
+  background:var(--bg);border:1px solid var(--hairline)}
+.pmod{font:600 .6rem var(--font-mono);min-width:34px;padding:4px 7px;
+  border-radius:5px;cursor:pointer;letter-spacing:.02em;
+  border:1px solid var(--hairline2);border-bottom-width:2px;
+  background:var(--surface);color:var(--muted);
+  transition:background .15s,border-color .15s,color .15s,transform .05s}
 .pmod:hover{border-color:var(--ink);color:var(--ink)}
-.pmod.on{background:var(--ink);border-color:var(--ink);color:#fff}
-.pmodClear{color:#c02a52;border-color:rgba(192,42,82,.35)}
+/* Pulsada de verdad: se hunde, como una tecla mantenida. */
+.pmod.on{background:var(--ink);border-color:var(--ink);color:#fff;
+  border-bottom-width:1px;transform:translateY(1px)}
+.pmod:active{transform:translateY(1px)}
+/* Separacion izquierdos / derechos sin meter otra etiqueta. */
+.pmodGap{width:1px;align-self:stretch;margin:1px 4px;background:var(--hairline2)}
+.pmodClear{min-width:0;margin-left:auto;color:#c02a52;
+  border-color:transparent;background:transparent;border-bottom-width:1px}
+.pmodClear:hover{border-color:rgba(192,42,82,.35);color:#c02a52}
+/* Vista previa: sin modificadores no hace falta decir nada. */
+.pmodOut{font:700 .62rem var(--font-mono);color:var(--c-blue);
+  margin-left:auto;padding-right:4px;white-space:nowrap}
+.pmodOut+.pmodClear{margin-left:6px}
 /* Con modificadores activos, las baldosas avisan de lo que van a dar. */
 #pickerGrid.hasMods .pk:not(.uni):not(.dead){border-color:var(--c-blue)}
 /* En tactil 22px de alto se falla con el dedo; 30 es objetivo comodo. */
 @media (max-width:760px){
-  #pickerMods{gap:6px;padding:8px 12px 0}
-  .pmod{padding:6px 11px;font-size:.66rem}
+  /* Con flex salian 5 filas irregulares (el separador partia el wrap).
+     Grid de 4 columnas: izquierdos arriba, derechos abajo, exacto. */
+  #pickerMods{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;
+    margin:8px 12px 0;padding:6px}
+  .pmod{padding:8px 4px;font-size:.63rem;min-width:0;width:100%}
+  .pmodOut{grid-column:1/-1;margin:1px 0 0;padding:0;text-align:center}
+  .pmodClear{grid-column:1/-1;margin-left:0;width:100%;
+    border:1px solid rgba(192,42,82,.35)}
 }
 .pcat{background:transparent;border:1px solid var(--hairline2);color:var(--muted);border-radius:999px;padding:.35em 1em;
   font-family:var(--font-mono);font-size:.64rem;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;
@@ -702,7 +724,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   symLayoutLbl:'Distribucion del sistema:',symLayoutSaved:'Distribucion guardada',
   rgbMoreTitle:'Ajustes de RGB (efecto, brillo, matiz, velocidad)',
   ucNeedsKb:'Guardado. Se aplicara al conectar el teclado',
-  modsWith:'con:',modsClear:'Quitar modificadores',
+  modsClear:'Quitar modificadores',modsHint:'Mantener %s al pulsar la tecla',
   macroMigrated:'%n tecla(s) unicode actualizadas: Mayús ya da mayúscula',
   uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
   deadNeedsEs:'Cada tecla dice en su tooltip el layout que necesita: <b>US-International</b> (Windows en ingles) o <b>ES</b>. Si no usas ninguno de esos, las vocales acentuadas de abajo van por Unicode y funcionan en cualquier layout.',
@@ -765,7 +787,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   symLayoutLbl:'System layout:',symLayoutSaved:'Layout saved',
   rgbMoreTitle:'RGB settings (effect, brightness, hue, speed)',
   ucNeedsKb:'Saved. It will be applied when the keyboard connects',
-  modsWith:'with:',modsClear:'Clear modifiers',
+  modsClear:'Clear modifiers',modsHint:'Hold %s with the key',
   macroMigrated:'%n unicode key(s) updated: Shift now gives uppercase',
   uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
   deadNeedsEs:'Each key names the layout it needs in its tooltip: <b>US-International</b> (Windows in English) or <b>ES</b>. On any other layout, the accented vowels below go through Unicode and work anywhere.',
@@ -2659,24 +2681,45 @@ function renderPickerMods(){
   const box=$('#pickerMods');
   if(!box)return;
   box.innerHTML='';
-  const lab=document.createElement('span');
-  lab.className='pmodLbl';lab.textContent=t('modsWith');
-  box.appendChild(lab);
-  /* Izquierdos y derechos por separado: AltGr es RA, no LA, y esa
-     distincion importa (RA(SQT) es el acento de US-International). */
-  [['LC','Ctrl'],['LS','Shift'],['LA','Alt'],['LG','Gui'],
-   ['RC','RCtrl'],['RS','RShift'],['RA','AltGr'],['RG','RGui']].forEach(([k,txt])=>{
-    const bit=MODBITS[k];
+  /* Sin etiqueta "con:": las teclas ya se leen como modificadores y el
+     rotulo solo aniadia ruido en una fila que compite con las categorias.
+     El titulo de cada boton explica lo que hace. */
+  const MODS=[['LC','Ctrl'],['LS','Shift'],['LA','Alt'],['LG','Gui'],null,
+              ['RC','RCtrl'],['RS','RShift'],['RA','AltGr'],['RG','RGui']];
+  MODS.forEach(m=>{
+    /* En movil la barra es un grid de 4 columnas y el separador ocupaba
+       celda, dejando filas de 3+1. Alli directamente no se crea. */
+    if(!m){
+      if(!window.matchMedia('(max-width:760px)').matches){
+        const g=document.createElement('span');g.className='pmodGap';box.appendChild(g);
+      }
+      return;
+    }
+    const [k,txt]=m, bit=MODBITS[k];
     const b=document.createElement('button');
     b.className='pmod'+((pickMods&bit)?' on':'');
-    b.textContent=txt;b.title=k+'(...)';
+    b.textContent=txt;
+    b.title=t('modsHint').replace('%s',k);
+    b.setAttribute('aria-pressed',(pickMods&bit)?'true':'false');
     b.onclick=()=>{pickMods^=bit;renderPickerMods();
       renderPickerGrid($('#pickerSearch').value);};
     box.appendChild(b);
   });
   if(pickMods){
+    /* Vista previa: dice exactamente que saldra al elegir la tecla, que
+       es mas util que repetir los nombres de los modificadores. */
+    const out=document.createElement('span');
+    out.className='pmodOut';
+    /* Se construye a mano: "LS(RA(" + tecla + "))", que es la forma
+       real que tomara el binding. */
+    const ORDER=[['LC',0x01],['LS',0x02],['LA',0x04],['LG',0x08],
+                 ['RC',0x10],['RS',0x20],['RA',0x40],['RG',0x80]];
+    const act=ORDER.filter(([,b])=>pickMods&b).map(([n])=>n);
+    out.textContent='&kp '+act.join('(')+'(…'+')'.repeat(act.length);
+    box.appendChild(out);
     const c=document.createElement('button');
     c.className='pmod pmodClear';c.textContent='✕';c.title=t('modsClear');
+    c.setAttribute('aria-label',t('modsClear'));
     c.onclick=()=>{pickMods=0;renderPickerMods();renderPickerGrid($('#pickerSearch').value);};
     box.appendChild(c);
   }
@@ -3272,7 +3315,10 @@ function init(){
      repintarlas a mano al cambiar de idioma. */
   $('#btnLang').onclick=()=>{lang=lang==='es'?'en':'es';store.set('ck.lang',lang);
     applyI18n();syncRgbUI();renderLayerBar();
-    renderPickerCats($('#pickerCats').dataset.cur||'todo');renderMacros();};
+    renderPickerCats($('#pickerCats').dataset.cur||'todo');renderMacros();
+    /* La barra de modificadores y la de distribucion tambien se generan
+       por JS; sin esto se quedaban en el idioma anterior. */
+    renderPickerMods();renderPickerGrid($('#pickerSearch').value);};
   $('#btnUnlock').onclick=studioUnlock;
   $('#btnAddLayer').onclick=addLayer;
   $('#btnSaveKm').onclick=studioSave;
