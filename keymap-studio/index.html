@@ -703,6 +703,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   rgbMoreTitle:'Ajustes de RGB (efecto, brillo, matiz, velocidad)',
   ucNeedsKb:'Guardado. Se aplicara al conectar el teclado',
   modsWith:'con:',modsClear:'Quitar modificadores',
+  macroMigrated:'%n tecla(s) unicode actualizadas: Mayús ya da mayúscula',
   uniDead:'Teclas muertas (acento + letra)',uniNeeds:'requiere',
   deadNeedsEs:'Cada tecla dice en su tooltip el layout que necesita: <b>US-International</b> (Windows en ingles) o <b>ES</b>. Si no usas ninguno de esos, las vocales acentuadas de abajo van por Unicode y funcionan en cualquier layout.',
   uniDeadTip:'Pulsa %a y luego la vocal: %s',
@@ -765,6 +766,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   rgbMoreTitle:'RGB settings (effect, brightness, hue, speed)',
   ucNeedsKb:'Saved. It will be applied when the keyboard connects',
   modsWith:'with:',modsClear:'Clear modifiers',
+  macroMigrated:'%n unicode key(s) updated: Shift now gives uppercase',
   uniDead:'Dead keys (accent + letter)',uniNeeds:'needs',
   deadNeedsEs:'Each key names the layout it needs in its tooltip: <b>US-International</b> (Windows in English) or <b>ES</b>. On any other layout, the accented vowels below go through Unicode and work anywhere.',
   uniDeadTip:'Press %a then the vowel: %s',
@@ -2187,6 +2189,24 @@ async function studioFetchMacros(){
     saveMacros();
     if(macros.length)macroSlots=macros.length;
     macros.forEach(m=>m.text=stepsToText(m.steps));
+    /* Migracion: ranuras de un caracter guardadas antes de los pares
+       siguen siendo UNICODE simple, y con ellas Mayus no da mayuscula.
+       Se reescriben en el teclado una sola vez, al conectar. */
+    let migradas=0;
+    for(let i=0;i<macros.length;i++){
+      const m=macros[i];
+      if(!m||!m.text||[...m.text].length!==1)continue;
+      if(!stepsStale(m,m.text))continue;
+      const steps=textToSteps(m.text);
+      macros[i]={slot:i,steps,text:m.text};
+      await studioSetMacro(i,steps);
+      migradas++;
+    }
+    if(migradas){
+      saveMacros();
+      plog('inf',`macros: ${migradas} ranura(s) actualizadas a par may/min`);
+      osd(t('macroMigrated').replace('%n',migradas));
+    }
     renderMacros();
     plog('inf',`macros: ${macros.length} ranuras, máx ${macroMax} pasos`);
   }catch(e){/* firmware sin soporte de macros: la sección queda local */}
@@ -2326,11 +2346,31 @@ const UNI_GROUPS=[
 /* Busca el caracter en las ranuras existentes; si no esta, coge la
    primera libre. Devuelve el numero de ranura o -1 si estan todas
    ocupadas con otras cosas. */
+/* Una ranura vale solo si sus pasos son los que generariamos hoy. Las
+   guardadas antes de existir los pares tienen la egne como UNICODE
+   simple, y entonces Mayus+egne no da la mayuscula: hay que
+   regenerarlas, no reutilizarlas tal cual. */
+function stepsStale(m,ch){
+  const want=textToSteps(ch), got=m.steps||[];
+  if(got.length!==want.length)return true;
+  return want.some((w,i)=>got[i].type!==w.type||(got[i].value>>>0)!==(w.value>>>0));
+}
 function uniSlotFor(ch){
   const n=macroSlots;
   for(let i=0;i<n;i++){
     const m=macros[i];
-    if(m&&m.text===ch)return i;
+    if(m&&m.text===ch){
+      if(stepsStale(m,ch)){
+        /* Misma ranura, contenido al dia. Se reescribe en el teclado
+           si hay conexion; si no, queda listo para el proximo guardado. */
+        const steps=textToSteps(ch);
+        macros[i]={slot:i,steps,text:ch};saveMacros();
+        if(typeof studio!=='undefined'&&studio.connected&&studio.lockState){
+          studioSetMacro(i,steps);
+        }
+      }
+      return i;
+    }
   }
   for(let i=0;i<n;i++){
     const m=macros[i];
