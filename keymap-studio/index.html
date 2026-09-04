@@ -1301,9 +1301,13 @@ const BOARDS={
     thumbArc:[[0,45,26],[15,80,44],[-65,170,72,108]],
     thumbShift:0, thumbGap:24,
     oledSofle:true,              /* pantallas igual que en el Sofle */
-    half:[{x:27,y:80,rot:7,w:760,h:470},{x:827,y:80,rot:-7,w:760,h:470}],
+    /* La caja llega hasta la pantalla (columna 450 + tecla + hueco +
+       ancho del panel = 646). Con la caja mas corta el OLED se salia
+       de su mitad y las dos pantallas acababan superpuestas en el
+       centro. Las mitades quedan simetricas respecto al lienzo. */
+    half:[{x:69,y:90,rot:7,w:646,h:470},{x:805,y:90,rot:-7,w:646,h:470}],
     enc:null, oled:true,           /* el Corne mantiene las pantallas */
-    geo:'grid3'
+    geo:'corne'
   },
   totem:{
     name:'Totem', keys:38, cols:5, rows:3,
@@ -1376,6 +1380,7 @@ function geoMap(){
     });
   if(B.geo==='sofle')return geoSofle();
   if(B.geo==='totem')return geoTotem(B);
+  if(B.geo==='corne')return geoCorne(B);
   return geoGrid3(B);
 }
 /* CODEKEEB: the TOTEM is NOT a plain 3x5 + thumbs like the Corne, which
@@ -1510,6 +1515,68 @@ function updateShapeInfo(){
   const g=GEO[shapeSel];
   el.textContent='pos '+shapeSel+' · x '+Math.round(g.x)+' · y '+Math.round(g.y)+' · '+(g.rot||0)+'°';
 }
+/* Geometria del CORNE (foostan 6col) tomada del layout oficial de
+   ZMK: app/dts/layouts/foostan/corne/6column.dtsi. La mitad derecha
+   es copia de la izquierda con la rotacion invertida; la simetria en
+   pantalla la da el giro del contenedor de cada mitad. */
+const CORNE_KEYS=[
+  [0,0,33,0.0],           /* 0 */
+  [0,90,33,0.0],          /* 1 */
+  [0,180,11,0.0],         /* 2 */
+  [0,270,0,0.0],          /* 3 */
+  [0,360,11,0.0],         /* 4 */
+  [0,450,22,0.0],         /* 5 */
+  [1,450,22,-0.0],        /* 6 */
+  [1,360,11,-0.0],        /* 7 */
+  [1,270,0,-0.0],         /* 8 */
+  [1,180,11,-0.0],        /* 9 */
+  [1,90,33,-0.0],         /* 10 */
+  [1,0,33,-0.0],          /* 11 */
+  [0,0,123,0.0],          /* 12 */
+  [0,90,123,0.0],         /* 13 */
+  [0,180,101,0.0],        /* 14 */
+  [0,270,90,0.0],         /* 15 */
+  [0,360,101,0.0],        /* 16 */
+  [0,450,112,0.0],        /* 17 */
+  [1,450,112,-0.0],       /* 18 */
+  [1,360,101,-0.0],       /* 19 */
+  [1,270,90,-0.0],        /* 20 */
+  [1,180,101,-0.0],       /* 21 */
+  [1,90,123,-0.0],        /* 22 */
+  [1,0,123,-0.0],         /* 23 */
+  [0,0,213,0.0],          /* 24 */
+  [0,90,213,0.0],         /* 25 */
+  [0,180,191,0.0],        /* 26 */
+  [0,270,180,0.0],        /* 27 */
+  [0,360,191,0.0],        /* 28 */
+  [0,450,202,0.0],        /* 29 */
+  [1,450,202,-0.0],       /* 30 */
+  [1,360,191,-0.0],       /* 31 */
+  [1,270,180,-0.0],       /* 32 */
+  [1,180,191,-0.0],       /* 33 */
+  [1,90,213,-0.0],        /* 34 */
+  [1,0,213,-0.0],         /* 35 */
+  [0,315,281,0.0],        /* 36 */
+  [0,405,281,12.0],       /* 37 */
+  [0,493,255,24.0],       /* 38 */
+  [1,493,255,-24.0],      /* 39 */
+  [1,405,281,-12.0],      /* 40 */
+  [1,315,281,-0.0],       /* 41 */
+];
+/* CODEKEEB: el CORNE tampoco se calcula ya con la formula de rejilla.
+   geoGrid3 emparejaba mal las columnas de la mitad derecha y su arco de
+   pulgares, y el hueco de la pantalla (inset) descentraba el contenido
+   dentro de la caja, asi que al girarla una mitad quedaba mas alta que
+   la otra. Igual que en el TOTEM, se usan las coordenadas del layout
+   oficial y el reflejo se hace al pintar. */
+function geoCorne(B){
+  const W=(B.half&&B.half[1]?B.half[1].w:760)-KEY;
+  return CORNE_KEYS.map(([half,x,y,rot,w])=>{
+    const g={half,x:half===1?W-x:x,y,rot};
+    if(w)g.w=w;
+    return g;
+  });
+}
 function geoTotem(B){
   /* La tabla guarda, para las dos mitades, la x medida desde el borde
      EXTERIOR de su mitad (la del menique). La caja de la derecha se
@@ -1618,6 +1685,24 @@ function oledGeo(){
   if(!B.oled)return [];
   if(B.geo==='sofle')                      /* el Sofle conserva su sitio */
     return [{x:536+OLED_GAP,y:OLED_TOP},{x:134-OLED_GAP-OLED_BOX_W,y:OLED_TOP}];
+  /* CODEKEEB: el Corne ya no usa la rejilla calculada, asi que sus
+     pantallas tampoco pueden situarse con las medidas de geoGrid3: se
+     quedaban a distinta altura y a distinta distancia del centro. Se
+     colocan igual que las teclas, en x local reflejada dentro de cada
+     mitad, y a la misma y en las dos. */
+  if(B.geo==='corne'){
+    /* La pantalla va sobre la columna interior de cada mitad, no en el
+       hueco central: se apoya en el borde derecho de la ultima columna
+       de teclas (x=450+KEY en coordenadas locales) y la mitad derecha
+       la refleja dentro de su caja, igual que las teclas. */
+    /* x local de la pantalla en la mitad IZQUIERDA: pegada al borde
+       derecho de la ultima columna de teclas. La derecha usa la MISMA x
+       local; geoCorne no la toca, asi que hay que reflejarla aqui igual
+       que las teclas, restandola del ancho util de la caja. */
+    const Wbox=(B.half&&B.half[1]?B.half[1].w:579);
+    const x=450+KEY+OLED_GAP;
+    return [{x,y:OLED_TOP},{x:Wbox-x-OLED_BOX_W,y:OLED_TOP}];
+  }
   if(B.oledSofle){
     /* Mismo tamano, orientacion y colocacion que en el Sofle: dentro de
        cada mitad, girando con ella (paralelas a las columnas) y a la
