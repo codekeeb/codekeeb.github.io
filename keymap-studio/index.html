@@ -1310,7 +1310,20 @@ const BOARDS={
     /* Stagger por columna, de indice (izq) a menique (der). La derecha
        lo lee invertido para que las mitades sean espejo. */
     off:{l:[34,22,0,22,34]},   /* simetrico: su inverso es el mismo */
-    half:[{x:154,y:80,rot:7,w:536,h:450},{x:830,y:80,rot:-7,w:536,h:450}],
+    /* La caja tiene que dar cabida a TODAS las teclas: llegan a x=558 e
+       y=390, mas el ancho/alto de una tecla. Con la caja anterior (536)
+       los pulgares se salian, y como la mitad derecha se posiciona desde
+       el borde de su propia caja, el desbordamiento la descuadraba y las
+       dos mitades dejaban de ser simetricas. Las x de las dos cajas son
+       simetricas respecto al centro del lienzo (1061/2 = 530). */
+    /* Las teclas llegan a x=558 (mas KEY=86 => 644 de ancho util) y a
+       y=390. Con la caja anterior (536) los pulgares se salian y, como
+       la mitad derecha se dibuja desde el borde de SU caja, ese
+       desbordamiento descuadraba las dos mitades.
+       Las cajas se solapan hacia el centro (gap negativo) porque el
+       TOTEM es estrecho: asi el conjunto queda centrado en el lienzo y
+       las dos mitades siguen siendo simetricas respecto a el. */
+    half:[{x:102,y:80,rot:7,w:644,h:476},{x:774,y:80,rot:-7,w:644,h:476}],
     enc:null, oled:false,          /* el Totem no lleva pantallas */
     /* La tecla exterior de las filas 0 y 1 ES la columna del menique
        (va dentro de la rejilla); las dos sueltas de verdad son las de la
@@ -1378,49 +1391,49 @@ function geoMap(){
    add up to 38, so the editor loaded without complaining, but every key
    from the bottom row on was drawn in the wrong place and edits landed
    on the wrong switch. */
-/* Geometria REAL del TOTEM, derivada de totem-layout.dtsi del shield
-   (BildermanKawasaki/zmk-keyboard-TOTEM). Cada entrada es
-   [mitad, x, y, rotacion] en coordenadas locales de su mitad, con
-   las parejas espejo promediadas para que las dos salgan identicas. */
+/* Geometria del TOTEM tomada de totem-layout.dtsi del shield.
+   Solo se guarda la mitad izquierda: la derecha es su copia con
+   la rotacion invertida, y la simetria en pantalla la da el giro
+   del contenedor de cada mitad (+7 / -7), igual que en el Sofle. */
 const TOTEM_KEYS=[
   [0,70,137,-10.0],     /* 0 */
   [0,176,54,-4.0],      /* 1 */
   [0,286,0,0.0],        /* 2 */
   [0,381,45,0.0],       /* 3 */
   [0,476,59,0.0],       /* 4 */
-  [1,476,59,0.0],       /* 5 */
-  [1,381,45,0.0],       /* 6 */
-  [1,286,0,0.0],        /* 7 */
-  [1,176,54,-4.0],      /* 8 */
-  [1,70,137,-10.0],     /* 9 */
-  [0,85,225,-10.0],     /* 10 */
+  [1,476,59,-0.0],      /* 5 */
+  [1,381,45,-0.0],      /* 6 */
+  [1,286,0,-0.0],       /* 7 */
+  [1,176,54,4.0],       /* 8 */
+  [1,70,137,10.0],      /* 9 */
+  [0,86,225,-10.0],     /* 10 */
   [0,183,144,-4.0],     /* 11 */
   [0,286,90,0.0],       /* 12 */
   [0,381,135,0.0],      /* 13 */
   [0,476,149,0.0],      /* 14 */
-  [1,476,149,0.0],      /* 15 */
-  [1,381,135,0.0],      /* 16 */
-  [1,286,90,0.0],       /* 17 */
-  [1,183,144,-4.0],     /* 18 */
-  [1,85,225,-10.0],     /* 19 */
+  [1,476,149,-0.0],     /* 15 */
+  [1,381,135,-0.0],     /* 16 */
+  [1,286,90,-0.0],      /* 17 */
+  [1,183,144,4.0],      /* 18 */
+  [1,86,225,10.0],      /* 19 */
   [0,0,291,-10.0],      /* 20 */
   [0,101,314,-10.0],    /* 21 */
   [0,189,234,-4.0],     /* 22 */
   [0,286,180,0.0],      /* 23 */
   [0,381,225,0.0],      /* 24 */
   [0,476,239,0.0],      /* 25 */
-  [1,476,239,0.0],      /* 26 */
-  [1,381,225,0.0],      /* 27 */
-  [1,286,180,0.0],      /* 28 */
-  [1,189,234,-4.0],     /* 29 */
-  [1,101,314,-10.0],    /* 30 */
-  [1,0,291,-10.0],      /* 31 */
-  [0,354,334,0.0],      /* 32 */
-  [0,459,349,15.0],     /* 33 */
+  [1,476,239,-0.0],     /* 26 */
+  [1,381,225,-0.0],     /* 27 */
+  [1,286,180,-0.0],     /* 28 */
+  [1,189,234,4.0],      /* 29 */
+  [1,101,314,10.0],     /* 30 */
+  [1,0,291,10.0],       /* 31 */
+  [0,355,334,0.0],      /* 32 */
+  [0,460,349,15.0],     /* 33 */
   [0,558,390,30.0],     /* 34 */
-  [1,558,390,30.0],     /* 35 */
-  [1,459,349,15.0],     /* 36 */
-  [1,354,334,0.0],      /* 37 */
+  [1,558,390,-30.0],    /* 35 */
+  [1,460,349,-15.0],    /* 36 */
+  [1,355,334,-0.0],     /* 37 */
 ];
 /* CODEKEEB: el TOTEM ya no se calcula con una formula de rejilla. Su
    columna de menique va rotada y los pulgares en abanico, asi que
