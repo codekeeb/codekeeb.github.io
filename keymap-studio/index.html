@@ -1472,16 +1472,43 @@ function shapeColumn(i){
   const g=GEO[i];if(!g)return [i];
   return GEO.map((o,j)=>(o&&o.half===g.half&&Math.abs(o.x-g.x)<KEY*0.5)?j:-1).filter(j=>j>=0);
 }
-/* La pareja espejo: misma y, mitad contraria, x reflejada. */
+/* La pareja espejo de una tecla. Se resuelve por INDICE, no por
+   coordenadas: cada teclado ordena sus posiciones por filas (izquierda
+   y luego derecha), asi que el espejo de una tecla es el simetrico
+   dentro de su fila. Compararlas por x fallaba -- la mitad derecha lleva
+   la x ya reflejada dentro de su caja, asi que la T se "parecia" a la P
+   y el espejo movia la tecla equivocada. */
 function shapeMate(i){
-  const g=GEO[i];if(!g)return -1;
-  let best=-1,bd=1e9;
-  GEO.forEach((o,j)=>{
-    if(!o||o.half===g.half)return;
-    const d=Math.abs(o.y-g.y)+Math.abs(o.x-g.x);
-    if(d<bd){bd=d;best=j;}
-  });
-  return bd<KEY*0.6?best:-1;
+  const B=board(), N=B.keys;
+  if(B.geo==='totem'){
+    /* 10 / 10 / 12 / 6 */
+    if(i<10)return 9-i;
+    if(i<20)return 29-i;
+    if(i<32)return 51-i;
+    return 69-i;
+  }
+  if(B.geo==='corne'){
+    /* 3 filas de 6+6 y 3+3 pulgares */
+    if(i<36)return Math.floor(i/12)*12 + 11-(i%12);
+    return 77-i;
+  }
+  if(B.geo==='sofle'){
+    /* Filas 0-2: 6+6 seguidas (0..35).
+       Fila 3: 36..41 izquierda, 42 y 43 son los CLICKS DE ENCODER (sin
+       geometria propia) y 44..49 la derecha, asi que esa fila no se
+       puede emparejar con la misma formula que las otras.
+       Pulgares: 50..54 izquierda, 55..59 derecha. */
+    if(i<36)return Math.floor(i/12)*12 + 11-(i%12);
+    if(i>=36&&i<42)return 85-i;      /* 36<->49, 41<->44 */
+    if(i>=44&&i<50)return 85-i;
+    if(i>=50&&i<60)return 109-i;     /* 50<->59, 54<->55 */
+    return -1;                       /* 42/43: encoders */
+  }
+  /* Rejilla generica: filas de cols*2 y el resto, pulgares. */
+  const C=B.cols||6, R=B.rows||3, per=C*2*R;
+  if(i<per)return Math.floor(i/(C*2))*(C*2) + (C*2-1)-(i%(C*2));
+  const t=(N-per)/2;
+  return per + (N-per-1) - (i-per);
 }
 function shapeNudge(dx,dy,drot){
   if(shapeSel<0)return;
@@ -1498,11 +1525,17 @@ function shapeNudge(dx,dy,drot){
     K[i][2]=Math.round(K[i][2]+dy);
     K[i][3]=+((K[i][3]||0)+drot).toFixed(1);
   });
-  /* La otra mitad es un espejo: su x local crece hacia el otro lado, asi
-     que el desplazamiento horizontal y el giro van con signo cambiado.
-     Asi las dos mitades siguen siendo simetricas al editarlas. */
+  /* La otra mitad va en espejo: al arrastrar una tecla hacia la derecha
+     su pareja debe ir hacia la izquierda. Si la geometria ya refleja la
+     x al pintar (Corne y TOTEM: x local espejada dentro de la caja), un
+     +dx en la tabla YA sale hacia el otro lado, asi que se suma igual.
+     Si no lo hace (Sofle, que dibuja las dos mitades en el mismo
+     sentido), hay que restarlo. */
+  /* En los tres teclados el espejo se consigue restando el mismo dx a
+     la pareja: verificado midiendo el movimiento real en pantalla. */
+  const sx=-1;
   mates.forEach(i=>{
-    K[i][1]=Math.round(K[i][1]+dx);
+    K[i][1]=Math.round(K[i][1]+dx*sx);
     K[i][2]=Math.round(K[i][2]+dy);
     K[i][3]=+((K[i][3]||0)-drot).toFixed(1);
   });
