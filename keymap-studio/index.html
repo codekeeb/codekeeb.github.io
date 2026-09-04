@@ -64,6 +64,9 @@ button{font-family:var(--font-sans)}
 .btn.accent{color:#fff;border-color:transparent;background:var(--ink)}
 .btn.accent:hover{transform:translateY(-1px);box-shadow:0 10px 22px -12px rgba(20,22,27,.5);background:#23262e}
 .btn.on{border-color:var(--ink);background:var(--ink);color:#fff}
+/* CODEKEEB: selector de mitad (tap/hold) de una tecla hold-tap. */
+#htPart{display:inline-flex;gap:4px;align-items:center;margin-right:2px}
+#htPart .btn{white-space:nowrap}
 /* El estado encendido de #fxToggle lo define ahora .pill.on (más abajo),
    que comparte diseño con la pastilla del OLED. Solo queda el hover. */
 #fxToggle.on:hover{background:linear-gradient(90deg,rgba(255,153,42,.36),rgba(255,57,192,.34),rgba(42,61,255,.28),rgba(27,232,255,.34))}
@@ -624,6 +627,15 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 <section id="dock">
   <div id="dockCard">
     <div class="dockHead"><small id="pickerPos"></small>
+      <!-- CODEKEEB: en una tecla hold-tap (&lt / &mt) hay DOS cosas que
+           editar, la de tocar y la de mantener. Este par de botones dice
+           cual de las dos recibe lo siguiente que elijas; solo aparece
+           cuando la tecla seleccionada es hold-tap. -->
+      <span id="htPart" hidden>
+        <button class="btn small" id="htTap" data-i18n="htTap">tap</button>
+        <button class="btn small" id="htHold" data-i18n="htHold">hold</button>
+        <button class="btn small" id="htPlain" data-i18n="htPlain" title="Quitar el hold-tap">↺</button>
+      </span>
       <input type="search" id="pickerSearch" data-i18n-ph="search" placeholder="Buscar keycode o behavior…">
       <button class="btn small" id="btnTrans" title="&trans">▽ trans</button>
       <button class="btn small" id="btnDesel" data-i18n-title="deselTitle" title="Deseleccionar (Esc)">✕</button></div>
@@ -728,6 +740,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   deselTitle:'Deseleccionar (Esc)',lockTitle:'Bloqueo ZMK Studio',
   unsavedDot:'● CAMBIOS SIN GUARDAR',ozLeft:'OLED IZQUIERDA · CENTRAL',ozRight:'OLED DERECHA · PERIFÉRICO',
   cat_letras:'letras',cat_numeros:'números',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
+  htTap:'tocar',htHold:'mantener',htPlain:'quitar hold',
   cat_simbolos:'símbolos',cat_media:'multimedia',cat_capas:'capas',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'sistema',cat_todo:'todo',cat_unicode:'unicode',
   symLayoutLbl:'Distribucion del sistema:',symLayoutSaved:'Distribucion guardada',
@@ -792,6 +805,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   deselTitle:'Deselect (Esc)',lockTitle:'ZMK Studio lock',
   unsavedDot:'● UNSAVED CHANGES',ozLeft:'LEFT OLED · CENTRAL',ozRight:'RIGHT OLED · PERIPHERAL',
   cat_letras:'letters',cat_numeros:'numbers',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
+  htTap:'tap',htHold:'hold',htPlain:'remove hold',
   cat_simbolos:'symbols',cat_media:'media',cat_capas:'layers',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'system',cat_todo:'all',cat_unicode:'unicode',
   symLayoutLbl:'System layout:',symLayoutSaved:'Layout saved',
@@ -1002,6 +1016,33 @@ const B=(b,p1=0,p2=0)=>({b,p1,p2});
    picker. Reuses whatever &kp is already on the selected key, so
    turning A into "hold for Ctrl, tap A" keeps the A. Falls back to a
    plain A when the slot holds something that is not a &kp. */
+/* CODEKEEB: hold-tap helpers. A hold-tap key carries two bindings in
+   one: p1 is what holding it does (layer for &lt, modifier for &mt) and
+   p2 the keycode a short tap sends. htEditPart says which of the two the
+   picker is currently writing to. */
+const isHoldTap=bd=>!!bd&&(bd.b==='&lt'||bd.b==='&mt');
+const isModUsage=u=>{const page=(u>>>16)&0xFF,id=u&0xFFFF;return page===0x07&&id>=0xE0&&id<=0xE7;};
+let htEditPart='tap';
+function setHtPart(part){
+  htEditPart=part;
+  const tap=$('#htTap'),hold=$('#htHold');
+  if(tap)tap.classList.toggle('on',part==='tap');
+  if(hold)hold.classList.toggle('on',part==='hold');
+}
+/* Shown only while a hold-tap is selected; picking a plain key on a
+   normal key keeps working exactly as before. */
+function refreshHtPart(){
+  const box=$('#htPart');if(!box)return;
+  const bd=(selPos>=0&&keymap.layers[activeLayer])?keymap.layers[activeLayer].keys[selPos]:null;
+  const on=isHoldTap(bd);
+  box.hidden=!on;
+  if(on){
+    if(htEditPart!=='hold')setHtPart('tap');else setHtPart('hold');
+    const tap=$('#htTap'),hold=$('#htHold');
+    if(tap)tap.textContent=t('htTap')+': '+kpLegend(bd.p2>>>0);
+    if(hold)hold.textContent=t('htHold')+': '+(bd.b==='&lt'?('L'+bd.p1):kpLegend(bd.p1>>>0));
+  }else setHtPart('tap');
+}
 function curTapUsage(){
   try{
     const bd=keymap.layers[activeLayer].keys[selPos];
@@ -3007,6 +3048,7 @@ function openPicker(){
   $('#pickerPos').textContent=editingEnc!==null
     ?`encoder ${editingEnc.side?'R':'L'} · ${ENC_PART_LABEL[editingEnc.part]} (pos ${editingEnc.side?43:42})`
     :(selPos>=0?`posición ZMK ${selPos}`:t('pressKey'));
+  refreshHtPart();
   renderPickerGrid($('#pickerSearch').value);
 }
 function closePicker(){selPos=-1;editingEnc=null;renderLayer();openPicker();}
@@ -3256,6 +3298,22 @@ function assignBinding(bd){
     }
     oledState.mods.c^=0;editingEnc=null;
   }else if(selPos>=0){
+    /* CODEKEEB: on a hold-tap the pick edits ONE half of the key, the
+       one selected with the tap/hold buttons, instead of replacing the
+       whole binding. Picking "A" while on tap keeps the modifier; the
+       old behaviour threw the hold-tap away and left a plain &kp. */
+    const cur=keymap.layers[activeLayer].keys[selPos];
+    if(isHoldTap(cur)&&htEditPart==='tap'&&bd.b==='&kp'){
+      bd={b:cur.b,p1:cur.p1,p2:bd.p1};
+    }else if(isHoldTap(cur)&&htEditPart==='hold'){
+      /* Hold half: a layer pick turns it into &lt, a modifier into &mt;
+         both keep whatever the tap already sent. */
+      if(bd.b==='&mo'||bd.b==='&lt')       bd={b:'&lt',p1:(bd.b==='&lt'?bd.p1:bd.p1),p2:cur.p2};
+      else if(bd.b==='&mt')                bd={b:'&mt',p1:bd.p1,p2:cur.p2};
+      else if(bd.b==='&kp'&&isModUsage(bd.p1)) bd={b:'&mt',p1:bd.p1,p2:cur.p2};
+      /* anything else replaces the key outright: the user picked a
+         behaviour that cannot be the hold half of a hold-tap. */
+    }
     keymap.layers[activeLayer].keys[selPos]=bd;
     if(studio.connected&&studio.lockState)studioSetBinding(activeLayer,selPos,bd);
     const p=selPos;selPos=-1;fxEvent(p);
@@ -3799,6 +3857,21 @@ function init(){
     if(studio.connected)pushKeymapToDevice();};
   $('#btnDesel').onclick=closePicker;
   $('#btnTrans').onclick=()=>dockAssign(TR);
+  /* CODEKEEB: pick which half of a hold-tap the next choice edits. */
+  $('#htTap').onclick=()=>{setHtPart('tap');renderPickerGrid($('#pickerSearch').value);};
+  $('#htHold').onclick=()=>{setHtPart('hold');renderPickerGrid($('#pickerSearch').value);};
+  /* Turn a hold-tap back into the plain key it taps. */
+  $('#htPlain').onclick=()=>{
+    if(selPos<0)return;
+    const cur=keymap.layers[activeLayer].keys[selPos];
+    if(!isHoldTap(cur))return;
+    const pos=selPos;
+    snapshot();
+    const plain=B('&kp',cur.p2>>>0);
+    keymap.layers[activeLayer].keys[pos]=plain;
+    if(studio.connected&&studio.lockState)studioSetBinding(activeLayer,pos,plain);
+    saveKeymap();renderLayer();selPos=pos;openPicker();
+  };
   renderPickerCats('letras');openPicker();
   $('#pickerSearch').oninput=e=>renderPickerGrid(e.target.value);
   $('#pickerSearch').addEventListener('keydown',e=>{
