@@ -1511,7 +1511,14 @@ function updateShapeInfo(){
   el.textContent='pos '+shapeSel+' · x '+Math.round(g.x)+' · y '+Math.round(g.y)+' · '+(g.rot||0)+'°';
 }
 function geoTotem(B){
-  return TOTEM_KEYS.map(([half,x,y,rot])=>({half,x,y,rot}));
+  /* La tabla guarda, para las dos mitades, la x medida desde el borde
+     EXTERIOR de su mitad (la del menique). La caja de la derecha se
+     dibuja de izquierda a derecha como la izquierda, asi que su x hay
+     que reflejarla dentro de la caja: si no, la tecla interior (Y) se
+     va al extremo lejano y la exterior (P) al centro, que es justo lo
+     contrario de un espejo. */
+  const W=(B.half&&B.half[1]?B.half[1].w:644)-KEY;
+  return TOTEM_KEYS.map(([half,x,y,rot])=>({half,x:half===1?W-x:x,y,rot}));
 }
 /* Sofle: 4x6 + fila de pulgares con las dos teclas grandes giradas. */
 function geoSofle(){
