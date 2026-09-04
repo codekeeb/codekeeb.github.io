@@ -911,6 +911,13 @@ function bindingLegend(bd){
     case '&to':return 'TO('+bd.p1+')';
     case '&tog':return 'TG('+bd.p1+')';
     case '&sl':return 'SL('+bd.p1+')';
+    /* CODEKEEB: hold-taps. p1 = what the HOLD does (layer for &lt,
+       modifier for &mt), p2 = the keycode sent on TAP. Painting only
+       "lt" (the old default branch) told the user nothing: the key
+       shows the tap legend with the hold above it, which is what is
+       actually printed on the keycap. */
+    case '&lt':return kpLegend(bd.p2>>>0)+'\nL'+bd.p1;
+    case '&mt':return kpLegend(bd.p2>>>0)+'\n'+kpLegend(bd.p1>>>0);
     case '&bt':{const c=bd.p1&0xFF;
       if(c===BT_CMD.SEL)return 'BT'+(bd.p2+1);
       if(c===BT_CMD.CLR)return 'BTCLR';
@@ -951,6 +958,9 @@ function bindingDTS(bd){
     case '&kp':return '&kp '+kpName(bd.p1>>>0);
     case '&trans':return '&trans';
     case '&mo':case '&to':case '&tog':case '&sl':return bd.b+' '+bd.p1;
+    /* Two cells: hold parameter then tap keycode. */
+    case '&lt':return '&lt '+bd.p1+' '+kpName(bd.p2>>>0);
+    case '&mt':return '&mt '+kpName(bd.p1>>>0)+' '+kpName(bd.p2>>>0);
     case '&bt':{const c=bd.p1&0xFF;
       if(c===BT_CMD.SEL)return '&bt BT_SEL '+bd.p2;
       if(c===BT_CMD.DISC)return '&bt BT_DISC '+bd.p2;
@@ -974,6 +984,8 @@ function bindingDesc(bd){
     case '&kp':return 'KeyPress '+kpName(bd.p1>>>0);
     case '&mo':return 'Momentary layer '+bd.p1;
     case '&to':return 'To layer '+bd.p1;
+    case '&lt':return 'Layer-tap: hold = layer '+bd.p1+', tap = '+kpName(bd.p2>>>0);
+    case '&mt':return 'Mod-tap: hold = '+kpName(bd.p1>>>0)+', tap = '+kpName(bd.p2>>>0);
     case '&trans':return 'Transparent';
     case '&bt':return 'Bluetooth '+(BT_CMD_NAME[bd.p1&0xFF]||'')+(bd.p1===3?' '+(bd.p2+1):'');
     case '&rgbfx':return 'RGB FX '+(RGBFX_CMD_NAME[(bd.p1>>>16)&0xFF]||'');
@@ -986,6 +998,18 @@ function bindingDesc(bd){
   }
 }
 const B=(b,p1=0,p2=0)=>({b,p1,p2});
+/* CODEKEEB: default tap keycode when building a hold-tap from the
+   picker. Reuses whatever &kp is already on the selected key, so
+   turning A into "hold for Ctrl, tap A" keeps the A. Falls back to a
+   plain A when the slot holds something that is not a &kp. */
+function curTapUsage(){
+  try{
+    const bd=keymap.layers[activeLayer].keys[selPos];
+    if(bd&&bd.b==='&kp')return bd.p1>>>0;
+    if(bd&&(bd.b==='&lt'||bd.b==='&mt'))return bd.p2>>>0;
+  }catch(e){}
+  return (0x07<<16)|NAME2USAGE['A'].id;
+}
 const kp=name=>{const u=NAME2USAGE[name];return B('&kp',(u.page<<16)|u.id,0);};
 const kpu=usage=>B('&kp',usage,0);           /* usage cruda (shifted keycodes) */
 const LS=u=>(0x02<<24)|u, RA=u=>(0x40<<24)|u;
@@ -1035,30 +1059,43 @@ function stockCorne(){
     'LGUI',B('&mo',1),'SPACE',      'RET',B('&mo',2),'RALT']),
    enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]}];
 }
-/* Totem 38 = 3 filas x 5 columnas x 2 + 4 pulgares por mitad. */
+/* Totem 38, en el orden del matrix_transform del shield:
+   fila0 10 (5+5), fila1 10 (5+5), fila2 12 (6+6, con una tecla exterior
+   extra por lado) y 6 pulgares (3+3). Coincide con config/totem.keymap
+   del firmware (codekeeb/totem-zmk), hold-taps incluidos. */
 function stockTotem(){
   const F=(a)=>a.map(x=>typeof x==='string'?kp(x):x);
+  const MTK=(mod,key)=>B('&mt',(0x07<<16)|NAME2USAGE[mod].id,(0x07<<16)|NAME2USAGE[key].id);
+  const LTK=(lay,key)=>B('&lt',lay,(0x07<<16)|NAME2USAGE[key].id);
   return [
-  {name:'CODE',keys:F([
-    'Q','W','E','R','T',            'Y','U','I','O','P',
-    'A','S','D','F','G',            'H','J','K','L','SEMI',
-    'Z','X','C','V','B',            'N','M','COMMA','DOT','FSLH',
-    'LGUI','LSHFT',B('&mo',1),'SPACE',  'RET',B('&mo',2),'RCTRL','RALT']),
+  {name:'BASE',keys:F([
+    'Q','W','E','R','T',                         'Y','U','I','O','P',
+    MTK('LGUI','A'),MTK('LALT','S'),MTK('LCTRL','D'),MTK('LSHFT','F'),'G',
+                                                 'H',MTK('RSHFT','J'),MTK('RCTRL','K'),MTK('RALT','L'),MTK('RGUI','SEMI'),
+    'ESC','Z','X','C','V','B',                   'N','M','COMMA','DOT','FSLH','SQT',
+    'DEL',LTK(1,'TAB'),'SPACE',                  'RET',LTK(2,'ESC'),'BSPC']),
    enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]},
-  {name:'Lower',keys:F([
-    'N1','N2','N3','N4','N5',       'N6','N7','N8','N9','N0',
-    'F1','F2','F3','F4','F5',       'LEFT','DOWN','UP','RIGHT','BSPC',
-    'F6','F7','F8','F9','F10',      TR(),TR(),TR(),TR(),TR(),
-    'LGUI','LSHFT',B('&mo',1),'SPACE',  'RET',B('&mo',2),'RCTRL','RALT']),
+  {name:'NAV',keys:F([
+    'ESC','DEL','UP','EQUAL',SH(0x2F),             SH(0x30),'KP_N7','KP_N8','KP_N9','KP_PLUS',
+    'LSHFT','LEFT','DOWN','RIGHT','LBKT',        'RBKT','KP_N4','KP_N5','KP_N6','KP_MINUS',
+    TR(),B('&studio_unlock'),'PG_UP','CAPS','PG_DN',SH(0x26),
+                                                 SH(0x27),'KP_N1','KP_N2','KP_N3','KP_MULTIPLY',TR(),
+    TR(),TR(),TR(),                              B('&mo',3),'KP_N0','DEL']),
    enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]},
-  {name:'Raise',keys:F([
-    SH(0x1E),SH(0x1F),SH(0x20),SH(0x21),SH(0x22),
-    SH(0x23),SH(0x24),SH(0x25),SH(0x26),SH(0x27),
-    'MINUS',SH(0x2E),'EQUAL','LBKT','RBKT',
-    SH(0x2F),SH(0x30),SH(0x31),'BSLH','GRAVE',
-    B('&bt',BT_CMD.CLR),B('&bt',BT_CMD.SEL,0),B('&bt',BT_CMD.SEL,1),B('&bt',BT_CMD.SEL,2),B('&studio_unlock'),
-    TR(),TR(),TR(),TR(),TR(),
-    'LGUI','LSHFT',B('&mo',1),'SPACE',  'RET',B('&mo',2),'RCTRL','RALT']),
+  {name:'SYM',keys:F([
+    SH(0x1E),SH(0x1F),SH(0x20),SH(0x21),SH(0x22),           SH(0x23),SH(0x24),SH(0x25),'SQT',SH(0x34),
+    SH(0x2D),'MINUS','EQUAL',SH(0x2E),'BSLH',       'C_MUTE',SH(0x26),SH(0x27),'LBKT','RBKT',
+    TR(),'GRAVE',SH(0x35),SH(0x31),SH(0x36),SH(0x37),       'C_VOL_DN','C_VOL_UP','C_PREV','C_NEXT',SH(0x38),TR(),
+    TR(),B('&mo',3),TR(),                        TR(),TR(),'C_PP']),
+   enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]},
+  {name:'ADJ',keys:F([
+    B('&reset'),B('&bt',BT_CMD.CLR),B('&out',2),TR(),TR(),
+                                                 TR(),'F7','F8','F9','F12',
+    B('&bootloader'),B('&bt',BT_CMD.SEL,0),B('&bt',BT_CMD.SEL,1),B('&bt',BT_CMD.SEL,2),B('&bt',BT_CMD.SEL,3),
+                                                 TR(),'F4','F5','F6','F11',
+    TR(),TR(),B('&bt',BT_CMD.PRV),B('&bt',BT_CMD.NXT),TR(),TR(),
+                                                 TR(),'F1','F2','F3','F10',TR(),
+    TR(),TR(),TR(),                              TR(),TR(),TR()]),
    enc:[{cw:TR(),ccw:TR(),label:'—'},{cw:TR(),ccw:TR(),label:'—'}]}];
 }
 function stockSofle(){return [
@@ -1180,11 +1217,9 @@ const BOARDS={
     off:{l:[34,22,0,22,34]},   /* simetrico: su inverso es el mismo */
     half:[{x:154,y:80,rot:7,w:536,h:450},{x:830,y:80,rot:-7,w:536,h:450}],
     enc:null, oled:false,          /* el Totem no lleva pantallas */
-    geo:'grid3',
-    /* El primer pulgar (LGUI) no va en el arco: queda suelto a la
-       izquierda de la columna exterior, en paralelo y a media altura
-       entre la A y la Z. Los otros 3 forman el arco. */
-    outer:[1,PT/2],
+    /* La tecla exterior de las filas 0 y 1 ES la columna del menique
+       (va dentro de la rejilla); las dos sueltas de verdad son las de la
+       fila 2, que geoTotem coloca en las posiciones 20 y 31. */
     /* alt en paralelo con la fila de arriba (rot 0), MO(1) con la
        rotacion suave que antes tenia spc, y spc de 1.25u girada como
        la 1.25u del Sofle, proyectando hacia el centro. */
@@ -1193,7 +1228,8 @@ const BOARDS={
        y en paralelo; los otros dos con rotacion creciente. */
     thumbArc:[[0,45,4],[-15,62,16],[-30,80,32]],
     thumbShift:0,
-    thumbGap:16          /* pegados a la fila de arriba */
+    thumbGap:16,         /* pegados a la fila de arriba */
+    geo:'totem'          /* 10/10/12/6, no el 3x5+pulgares del Corne */
   }
 };
 let boardId=store.get('ck.board')||'sofle';
@@ -1209,7 +1245,66 @@ const OFFL=[43,43,14,0,14,29],OFFR=[29,14,0,14,43,43];
 function geoMap(){
   const B=board();
   if(B.geo==='sofle')return geoSofle();
+  if(B.geo==='totem')return geoTotem(B);
   return geoGrid3(B);
+}
+/* CODEKEEB: the TOTEM is NOT a plain 3x5 + thumbs like the Corne, which
+   is what geoGrid3 builds. Its matrix_transform (see the shield module,
+   boards/shields/totem) is 10 / 10 / 12 / 6:
+
+     row 0   5 + 5    the outer key of each half IS the rotated pinky
+     row 1   5 + 5    (they are part of the column, not extra keys)
+     row 2   6 + 6    one EXTRA outer key per side, below the pinky
+     row 3   3 + 3    thumbs
+
+   The old definition described it as 10/10/10 + 4 thumbs per half. Both
+   add up to 38, so the editor loaded without complaining, but every key
+   from the bottom row on was drawn in the wrong place and edits landed
+   on the wrong switch. */
+function geoTotem(B){
+  const M=new Array(38).fill(null);
+  const C=5, offL=B.off.l;
+  const outer=PT;                       /* room for the extra bottom key */
+  const W=(C-1)*PT+KEY+outer;           /* usable width of one half */
+  const esp=x=>W-KEY-x;                 /* mirror inside the right half */
+  /* Rows 0-2. Row 2 spans 20..31 and is a true mirror of itself: 20 is
+     the outermost left key and 31 the outermost right one, so the right
+     grid runs 26..30 with 30 as the second-outermost -- i.e. the right
+     block is laid out in reverse, exactly as the shield's physical
+     layout has it (p26 nearest the centre, p31 furthest out). */
+  for(let r=0;r<3;r++){
+    const base = r===2 ? 21 : r*10;
+    for(let c=0;c<C;c++){
+      const x=outer+c*PT, y=offL[c]+r*PT;
+      M[base+c]={half:0,x,y,rot:0};
+      /* Right half: column c mirrors, and its index counts inward. */
+      const iR = r===2 ? 30-c : r*10+9-c;
+      M[iR]={half:1,x:esp(x),y,rot:0};
+    }
+  }
+  /* The two extra outer keys, below the pinky: 20 on the left edge and
+     31 on the right edge (the outermost key of each half). */
+  const yOuter=offL[0]+2*PT;
+  M[20]={half:0,x:0,      y:yOuter,rot:0};
+  M[31]={half:1,x:esp(0), y:yOuter,rot:0};
+  /* Three thumbs per half. 32..34 run inward on the left, so 34 and 35
+     are the innermost pair; the right half mirrors as 35..37. */
+  const baseY=offL[C-1]+2*PT+PT-(B.thumbGap!==undefined?B.thumbGap:16);
+  const TH=B.thumbArc||[[0,45,4],[-15,62,16],[-30,80,32]];
+  /* The arc offsets push the innermost thumb past the half's nominal
+     width, so mirroring it against W alone lands at a negative x (off
+     canvas). Mirror the thumb row against its own span instead, which
+     is what the physical layout does: p34 and p35 are the innermost
+     pair and meet at the centre. */
+  const thumbXs=[0,1,2].map(i=>outer+(C-3+i)*PT+TH[Math.min(i,TH.length-1)][1]);
+  const thumbSpan=thumbXs[0]+thumbXs[2];
+  for(let i=0;i<3;i++){
+    const [rot,dx,dy]=TH[Math.min(i,TH.length-1)];
+    const x=thumbXs[i];
+    M[32+i]={half:0,x,                    y:baseY+dy,rot};
+    M[37-i]={half:1,x:thumbSpan-x,        y:baseY+dy,rot:-rot};
+  }
+  return M;
 }
 /* Sofle: 4x6 + fila de pulgares con las dos teclas grandes giradas. */
 function geoSofle(){
@@ -1381,7 +1476,8 @@ function pasteBind(pos){if(pos<0)return;if(!clipBind){osd(t('nothingCopy'));retu
 const keyEls=[],encEls=[];
 function keyClass(bd){
   if(!bd)return '';
-  if(bd.b==='&mo'||bd.b==='&to'||bd.b==='&tog'||bd.b==='&sl')return 'lay';
+  if(bd.b==='&mo'||bd.b==='&to'||bd.b==='&tog'||bd.b==='&sl'||bd.b==='&lt')return 'lay';
+  if(bd.b==='&mt')return 'mod';
   if(bd.b==='&rgbfx'||bd.b==='&studio_unlock'||bd.b==='&oledanim'||bd.b==='&bt'||bd.b==='&out'||bd.b==='&reset'||bd.b==='&bootloader'||bd.b==='&ext_power')return 'sys';
   if(bd.b==='&kp'){const id=bd.p1&0xFFFF,page=(bd.p1>>>16)&0xFF;
     if((bd.p1>>>24)&0xFF)return 'mod';
@@ -2168,7 +2264,7 @@ async function studioReadLoop(){
   finally{try{rd.releaseLock();}catch(e){}}
 }
 /* behavior_id real (o local) por nombre; ids locales estables si offline */
-const LOCAL_BEH_IDS={};let _lid=0;['&kp','&trans','&mo','&to','&tog','&sl','&bt','&rgbfx','&studio_unlock','&oledanim','&out','&caps_word','&reset','&bootloader','&ext_power','&none','&mwheel','&dmac','&mkp','&mmv','&msc'].forEach(n=>LOCAL_BEH_IDS[n]=_lid++);
+const LOCAL_BEH_IDS={};let _lid=0;['&kp','&trans','&mo','&to','&tog','&sl','&lt','&mt','&bt','&rgbfx','&studio_unlock','&oledanim','&out','&caps_word','&reset','&bootloader','&ext_power','&none','&mwheel','&dmac','&mkp','&mmv','&msc'].forEach(n=>LOCAL_BEH_IDS[n]=_lid++);
 /* El firmware reporta display_names tipo "key_press", "momentary_layer"...:
    mapeo a nuestros nombres '&' (normalizado: minúsculas, sin separadores) */
 const BEH_ALIASES={
@@ -2847,6 +2943,21 @@ for(let i=0;i<8;i++){
   pkAdd('capas','TO('+i+')','To layer '+i,()=>B('&to',i));
   pkAdd('capas','TG('+i+')','Toggle layer '+i,()=>B('&tog',i));
 }
+/* CODEKEEB: hold-taps. &lt (hold = layer, tap = key) and &mt (hold =
+   modifier, tap = key) were readable but not assignable: they were
+   missing from LOCAL_BEH_IDS and had no picker entry, so a keymap that
+   used them -- the TOTEM's thumbs and its whole home row -- could not be
+   edited here at all.
+
+   The tap key is picked separately: choose the hold half from this tab,
+   then use "tap:" on the key editor to set what a short press sends.
+   Defaults to the key already on that position so the common case (turn
+   an existing key into a hold-tap) keeps its legend. */
+for(let i=1;i<8;i++)
+  pkAdd('capas','LT('+i+')','Layer-tap: hold = layer '+i,()=>B('&lt',i,curTapUsage()));
+[['⇧','LSHFT'],['ctrl','LCTRL'],['alt','LALT'],['⌘','LGUI']]
+ .forEach(([l,n])=>pkAdd('capas','MT '+l,'Mod-tap: hold = '+n,
+   ()=>B('&mt',(0x07<<16)|NAME2USAGE[n].id,curTapUsage())));
 pkAdd('capas','▽','&trans',()=>TR());
 for(let i=0;i<5;i++)pkAdd('bluetooth','BT'+(i+1),'&bt BT_SEL '+i,()=>B('&bt',BT_CMD.SEL,i));
 pkAdd('bluetooth','BTCLR','&bt BT_CLR',()=>B('&bt',BT_CMD.CLR));
