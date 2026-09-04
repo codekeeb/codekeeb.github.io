@@ -1558,8 +1558,8 @@ const CORNE_KEYS=[
   [1,0,213,-0.0],         /* 35 */
   [0,315,281,0.0],        /* 36 */
   [0,405,281,12.0],       /* 37 */
-  [0,493,255,24.0],       /* 38 */
-  [1,493,255,-24.0],      /* 39 */
+  [0,493,255,24.0,108],   /* 38  SPACE 1.25u */
+  [1,493,255,-24.0,108],  /* 39  ENTER 1.25u */
   [1,405,281,-12.0],      /* 40 */
   [1,315,281,-0.0],       /* 41 */
 ];
@@ -1570,9 +1570,12 @@ const CORNE_KEYS=[
    la otra. Igual que en el TOTEM, se usan las coordenadas del layout
    oficial y el reflejo se hace al pintar. */
 function geoCorne(B){
-  const W=(B.half&&B.half[1]?B.half[1].w:760)-KEY;
+  const Wbox=(B.half&&B.half[1]?B.half[1].w:760);
   return CORNE_KEYS.map(([half,x,y,rot,w])=>{
-    const g={half,x:half===1?W-x:x,y,rot};
+    /* x es el borde izquierdo, asi que el reflejo tiene que descontar el
+       ancho REAL de la tecla: con una 1.25u (SPACE/ENTER) restar solo
+       KEY la dejaria 22px descuadrada respecto a su pareja. */
+    const g={half,x:half===1?(Wbox-x-(w||KEY)):x,y,rot};
     if(w)g.w=w;
     return g;
   });
