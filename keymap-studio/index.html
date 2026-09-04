@@ -1370,6 +1370,11 @@ function geoMap(){
   if(B.keysXY&&B.keysXY.length===B.keys)
     return B.keysXY.map((row,i)=>{
       if(!row)return null;                    /* hueco (encoder del Sofle) */
+      /* La forma guardada ya viene en coordenadas FINALES (currentShape
+         copia GEO, que para Corne y TOTEM sale con la mitad derecha ya
+         reflejada). Por eso se aplica tal cual: volver a pasarla por
+         geoCorne/geoTotem la reflejaria por segunda vez y la mitad
+         derecha se descolocaba entera en cuanto se movia una tecla. */
       const [half,x,y,rot,w]=row;
       const g={half,x,y,rot};
       /* El ancho viene en la propia forma. Antes se recuperaba llamando
@@ -1546,8 +1551,19 @@ function shapeNudge(dx,dy,drot){
      +dx en la tabla YA sale hacia el otro lado, asi que se suma igual.
      Si no lo hace (Sofle, que dibuja las dos mitades en el mismo
      sentido), hay que restarlo. */
-  /* En los tres teclados el espejo se consigue restando el mismo dx a
-     la pareja: verificado midiendo el movimiento real en pantalla. */
+  /* Para que la pareja se mueva en espejo, su x local tiene que variar
+     de forma que la posicion ABSOLUTA vaya al lado contrario.
+     - Sofle: las dos mitades se dibujan en el mismo sentido, asi que
+       basta restar (-dx).
+     - Corne y TOTEM: la mitad derecha se pinta con la x reflejada
+       dentro de su caja (x_abs = borde - x_local), asi que restarla la
+       mueve hacia el MISMO lado; hay que sumar (+dx).
+     Verificado midiendo la posicion absoluta, no la local. */
+  /* La pareja se mueve al lado contrario restando el mismo dx. Vale
+     para los tres teclados: en cuanto se toca la forma, geoMap deja de
+     llamar a geoCorne/geoTotem y aplica keysXY tal cual, asi que a
+     partir de ese momento la x de las dos mitades se interpreta igual.
+     Medido sobre la posicion final (caja + x local), no sobre la tabla. */
   const sx=-1;
   mates.forEach(i=>{
     K[i][1]=Math.round(K[i][1]+dx*sx);
