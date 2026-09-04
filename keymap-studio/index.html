@@ -772,6 +772,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   unsavedDot:'● CAMBIOS SIN GUARDAR',ozLeft:'OLED IZQUIERDA · CENTRAL',ozRight:'OLED DERECHA · PERIFÉRICO',
   cat_letras:'letras',cat_numeros:'números',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
   htTap:'tocar',htHold:'mantener',htPlain:'quitar hold',
+  htHoldBad:'En «mantener» solo caben una capa (MO) o una tecla. Usa «quitar hold» para poner otra cosa.',
   secShape:'Forma del teclado',shapeOn:'Editar posiciones',
   shapeCol:'Mover la columna entera',shapeMirror:'Reflejar en la otra mitad',
   shapeExport:'Exportar forma',shapeImport:'Importar forma',shapeReset:'Forma original',
@@ -845,6 +846,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   unsavedDot:'● UNSAVED CHANGES',ozLeft:'LEFT OLED · CENTRAL',ozRight:'RIGHT OLED · PERIPHERAL',
   cat_letras:'letters',cat_numeros:'numbers',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
   htTap:'tap',htHold:'hold',htPlain:'remove hold',
+  htHoldBad:'The hold half takes a layer (MO) or a key. Use «remove hold» to put anything else there.',
   secShape:'Keyboard shape',shapeOn:'Edit positions',
   shapeCol:'Move the whole column',shapeMirror:'Mirror on the other half',
   shapeExport:'Export shape',shapeImport:'Import shape',shapeReset:'Original shape',
@@ -1068,7 +1070,6 @@ const B=(b,p1=0,p2=0)=>({b,p1,p2});
    p2 the keycode a short tap sends. htEditPart says which of the two the
    picker is currently writing to. */
 const isHoldTap=bd=>!!bd&&(bd.b==='&lt'||bd.b==='&mt');
-const isModUsage=u=>{const page=(u>>>16)&0xFF,id=u&0xFFFF;return page===0x07&&id>=0xE0&&id<=0xE7;};
 let htEditPart='tap';
 function setHtPart(part){
   htEditPart=part;
@@ -3678,13 +3679,18 @@ function assignBinding(bd){
     if(isHoldTap(cur)&&htEditPart==='tap'&&bd.b==='&kp'){
       bd={b:cur.b,p1:cur.p1,p2:bd.p1};
     }else if(isHoldTap(cur)&&htEditPart==='hold'){
-      /* Hold half: a layer pick turns it into &lt, a modifier into &mt;
-         both keep whatever the tap already sent. */
-      if(bd.b==='&mo'||bd.b==='&lt')       bd={b:'&lt',p1:(bd.b==='&lt'?bd.p1:bd.p1),p2:cur.p2};
-      else if(bd.b==='&mt')                bd={b:'&mt',p1:bd.p1,p2:cur.p2};
-      else if(bd.b==='&kp'&&isModUsage(bd.p1)) bd={b:'&mt',p1:bd.p1,p2:cur.p2};
-      /* anything else replaces the key outright: the user picked a
-         behaviour that cannot be the hold half of a hold-tap. */
+      /* Mitad de MANTENER. ZMK admite dos formas:
+           &lt  ->  bindings = <&mo>, <&kp>   el hold es una CAPA
+           &mt  ->  bindings = <&kp>, <&kp>   el hold es CUALQUIER tecla
+         Antes solo se aceptaban los 4 modificadores, cuando &mt admite
+         cualquier &kp; y peor: cualquier otra eleccion reemplazaba la
+         tecla entera en silencio y se perdia el hold-tap. Ahora una
+         capa da &lt, una tecla da &mt, y lo que no puede ir en el hold
+         se rechaza avisando, sin tocar la tecla. */
+      if(bd.b==='&mo'||bd.b==='&lt')  bd={b:'&lt',p1:bd.p1,p2:cur.p2};
+      else if(bd.b==='&mt')           bd={b:'&mt',p1:bd.p1,p2:cur.p2};
+      else if(bd.b==='&kp')           bd={b:'&mt',p1:bd.p1,p2:cur.p2};
+      else{ osd(t('htHoldBad')); selPos=-1; renderLayer(); return; }
     }
     keymap.layers[activeLayer].keys[selPos]=bd;
     if(studio.connected&&studio.lockState)studioSetBinding(activeLayer,selPos,bd);
