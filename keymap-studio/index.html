@@ -64,6 +64,9 @@ button{font-family:var(--font-sans)}
 .btn.accent{color:#fff;border-color:transparent;background:var(--ink)}
 .btn.accent:hover{transform:translateY(-1px);box-shadow:0 10px 22px -12px rgba(20,22,27,.5);background:#23262e}
 .btn.on{border-color:var(--ink);background:var(--ink);color:#fff}
+/* CODEKEEB: modo forma. */
+body.shaping .key{cursor:move}
+.key.shapeSel{outline:2px solid var(--c-blue);outline-offset:2px;z-index:5}
 /* CODEKEEB: selector de mitad (tap/hold) de una tecla hold-tap. */
 #htPart{display:inline-flex;gap:4px;align-items:center;margin-right:2px}
 #htPart .btn{white-space:nowrap}
@@ -614,6 +617,34 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
         <button class="btn small" id="btnOled" data-i18n="oledzoom">OLED ×4</button>
       </div>
     </details>
+    <!-- CODEKEEB: editor de forma. La geometria por defecto sale del
+         layout fisico del shield, pero cada montaje puede variar (o el
+         usuario querer otra disposicion), asi que se puede mover, girar
+         y guardar. Queda en localStorage por teclado y se exporta a JSON. -->
+    <details class="dsec" id="secShape">
+      <summary data-i18n="secShape">Forma del teclado</summary>
+      <div id="shapeBox">
+        <label class="row" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <input type="checkbox" id="shapeOn"> <span data-i18n="shapeOn">Editar posiciones</span>
+        </label>
+        <p style="font-size:10px;color:var(--faint);line-height:1.5;margin:0 0 6px" data-i18n="shapeHint">
+          Con el modo activo: clic en una tecla para seleccionarla, flechas para moverla,
+          Shift+flechas para girarla. Se aplica a toda la columna si marcas la casilla.</p>
+        <label class="row" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <input type="checkbox" id="shapeCol"> <span data-i18n="shapeCol">Mover la columna entera</span>
+        </label>
+        <label class="row" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <input type="checkbox" id="shapeMirror" checked> <span data-i18n="shapeMirror">Reflejar en la otra mitad</span>
+        </label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn small" id="shapeExport" data-i18n="shapeExport">Exportar forma</button>
+          <button class="btn small" id="shapeImport" data-i18n="shapeImport">Importar forma</button>
+          <button class="btn small danger" id="shapeReset" data-i18n="shapeReset">Forma original</button>
+        </div>
+        <input type="file" id="shapeFile" accept="application/json,.json" hidden>
+        <p id="shapeSel" style="font-size:10px;color:var(--faint);margin-top:6px"></p>
+      </div>
+    </details>
     <details class="dsec">
       <summary data-i18n="secInfo">Dispositivo</summary>
       <div id="devInfo" style="font-size:11px;color:var(--dim);line-height:1.7">—</div>
@@ -741,6 +772,14 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   unsavedDot:'● CAMBIOS SIN GUARDAR',ozLeft:'OLED IZQUIERDA · CENTRAL',ozRight:'OLED DERECHA · PERIFÉRICO',
   cat_letras:'letras',cat_numeros:'números',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
   htTap:'tocar',htHold:'mantener',htPlain:'quitar hold',
+  secShape:'Forma del teclado',shapeOn:'Editar posiciones',
+  shapeCol:'Mover la columna entera',shapeMirror:'Reflejar en la otra mitad',
+  shapeExport:'Exportar forma',shapeImport:'Importar forma',shapeReset:'Forma original',
+  shapeHint:'Con el modo activo: clic en una tecla para seleccionarla, flechas para moverla, Shift+flechas para girarla. Alt = paso fino, Ctrl = paso grande.',
+  shapeNone:'Ninguna tecla seleccionada',
+  shapeResetAsk:'¿Volver a la forma original de este teclado?',
+  shapeResetDone:'Forma original restaurada',shapeLoaded:'Forma importada',
+  shapeBadLen:'El JSON debe traer tantas teclas como el teclado:',
   cat_simbolos:'símbolos',cat_media:'multimedia',cat_capas:'capas',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'sistema',cat_todo:'todo',cat_unicode:'unicode',
   symLayoutLbl:'Distribucion del sistema:',symLayoutSaved:'Distribucion guardada',
@@ -806,6 +845,14 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   unsavedDot:'● UNSAVED CHANGES',ozLeft:'LEFT OLED · CENTRAL',ozRight:'RIGHT OLED · PERIPHERAL',
   cat_letras:'letters',cat_numeros:'numbers',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
   htTap:'tap',htHold:'hold',htPlain:'remove hold',
+  secShape:'Keyboard shape',shapeOn:'Edit positions',
+  shapeCol:'Move the whole column',shapeMirror:'Mirror on the other half',
+  shapeExport:'Export shape',shapeImport:'Import shape',shapeReset:'Original shape',
+  shapeHint:'With the mode on: click a key to select it, arrows to move it, Shift+arrows to rotate. Alt = fine step, Ctrl = big step.',
+  shapeNone:'No key selected',
+  shapeResetAsk:'Restore the original shape for this keyboard?',
+  shapeResetDone:'Original shape restored',shapeLoaded:'Shape imported',
+  shapeBadLen:'The JSON must carry as many keys as the keyboard:',
   cat_simbolos:'symbols',cat_media:'media',cat_capas:'layers',cat_bluetooth:'bluetooth',
   cat_rgb:'rgb',cat_sistema:'system',cat_todo:'all',cat_unicode:'unicode',
   symLayoutLbl:'System layout:',symLayoutSaved:'Layout saved',
@@ -1041,7 +1088,14 @@ function refreshHtPart(){
     const tap=$('#htTap'),hold=$('#htHold');
     if(tap)tap.textContent=t('htTap')+': '+kpLegend(bd.p2>>>0);
     if(hold)hold.textContent=t('htHold')+': '+(bd.b==='&lt'?('L'+bd.p1):kpLegend(bd.p1>>>0));
-  }else setHtPart('tap');
+  }else{
+    /* Not a hold-tap any more: blank the labels too. Leaving "mantener:
+       GUI" behind was confusing -- the key no longer has a hold half. */
+    const tap=$('#htTap'),hold=$('#htHold');
+    if(tap)tap.textContent=t('htTap');
+    if(hold)hold.textContent=t('htHold');
+    setHtPart('tap');
+  }
 }
 function curTapUsage(){
   try{
@@ -1275,6 +1329,14 @@ const BOARDS={
 };
 let boardId=store.get('ck.board')||'sofle';
 if(!BOARDS[boardId])boardId='sofle';
+/* CODEKEEB: forma guardada por el usuario para este teclado, si la hay.
+   Se aplica ANTES del primer geoMap() para que el render inicial ya
+   salga con ella. */
+try{
+  const _sh=store.get('ck.shape.'+boardId);
+  if(_sh){const _k=JSON.parse(_sh);
+    if(Array.isArray(_k)&&_k.length===BOARDS[boardId].keys)BOARDS[boardId].keysXY=_k;}
+}catch(e){}
 const board=()=>BOARDS[boardId];
 const NKEYS=()=>board().keys;
 
@@ -1285,6 +1347,20 @@ let HALF=board().half;   /* tenting +-7 grados en todos los modelos */
 const OFFL=[43,43,14,0,14,29],OFFR=[29,14,0,14,43,43];
 function geoMap(){
   const B=board();
+  /* CODEKEEB: si el usuario ha ajustado la forma de ESTE teclado, esa
+     manda sobre la geometria calculada -- para cualquier modelo, no solo
+     el TOTEM. Asi el editor de forma sirve tambien en Sofle y Corne. */
+  if(B.keysXY&&B.keysXY.length===B.keys)
+    return B.keysXY.map((row,i)=>{
+      if(!row)return null;                    /* hueco (encoder del Sofle) */
+      const [half,x,y,rot]=row;
+      const g={half,x,y,rot};
+      /* Conserva anchos especiales (las 1.25u del Sofle) del calculo
+         original: la forma guardada solo lleva posicion y giro. */
+      const base=(B.geo==='sofle')?geoSofle()[i]:(B.geo==='totem')?null:geoGrid3(B)[i];
+      if(base&&base.w)g.w=base.w;
+      return g;
+    });
   if(B.geo==='sofle')return geoSofle();
   if(B.geo==='totem')return geoTotem(B);
   return geoGrid3(B);
@@ -1302,50 +1378,127 @@ function geoMap(){
    add up to 38, so the editor loaded without complaining, but every key
    from the bottom row on was drawn in the wrong place and edits landed
    on the wrong switch. */
+/* Geometria REAL del TOTEM, derivada de totem-layout.dtsi del shield
+   (BildermanKawasaki/zmk-keyboard-TOTEM). Cada entrada es
+   [mitad, x, y, rotacion] en coordenadas locales de su mitad, con
+   las parejas espejo promediadas para que las dos salgan identicas. */
+const TOTEM_KEYS=[
+  [0,70,137,-10.0],     /* 0 */
+  [0,176,54,-4.0],      /* 1 */
+  [0,286,0,0.0],        /* 2 */
+  [0,381,45,0.0],       /* 3 */
+  [0,476,59,0.0],       /* 4 */
+  [1,476,59,0.0],       /* 5 */
+  [1,381,45,0.0],       /* 6 */
+  [1,286,0,0.0],        /* 7 */
+  [1,176,54,-4.0],      /* 8 */
+  [1,70,137,-10.0],     /* 9 */
+  [0,85,225,-10.0],     /* 10 */
+  [0,183,144,-4.0],     /* 11 */
+  [0,286,90,0.0],       /* 12 */
+  [0,381,135,0.0],      /* 13 */
+  [0,476,149,0.0],      /* 14 */
+  [1,476,149,0.0],      /* 15 */
+  [1,381,135,0.0],      /* 16 */
+  [1,286,90,0.0],       /* 17 */
+  [1,183,144,-4.0],     /* 18 */
+  [1,85,225,-10.0],     /* 19 */
+  [0,0,291,-10.0],      /* 20 */
+  [0,101,314,-10.0],    /* 21 */
+  [0,189,234,-4.0],     /* 22 */
+  [0,286,180,0.0],      /* 23 */
+  [0,381,225,0.0],      /* 24 */
+  [0,476,239,0.0],      /* 25 */
+  [1,476,239,0.0],      /* 26 */
+  [1,381,225,0.0],      /* 27 */
+  [1,286,180,0.0],      /* 28 */
+  [1,189,234,-4.0],     /* 29 */
+  [1,101,314,-10.0],    /* 30 */
+  [1,0,291,-10.0],      /* 31 */
+  [0,354,334,0.0],      /* 32 */
+  [0,459,349,15.0],     /* 33 */
+  [0,558,390,30.0],     /* 34 */
+  [1,558,390,30.0],     /* 35 */
+  [1,459,349,15.0],     /* 36 */
+  [1,354,334,0.0],      /* 37 */
+];
+/* CODEKEEB: el TOTEM ya no se calcula con una formula de rejilla. Su
+   columna de menique va rotada y los pulgares en abanico, asi que
+   cualquier aproximacion salia torcida y asimetrica. Estas coordenadas
+   vienen del layout fisico del propio shield, que es lo que define el
+   hardware. custom() permite mover/rotar teclas a mano y guardarlas. */
+/* ============ CODEKEEB: editor de forma ============
+   La geometria por defecto de cada teclado sale de su definicion, pero
+   se puede ajustar a mano: mover teclas, girarlas y guardar el
+   resultado. Se guarda por teclado en localStorage y se puede exportar
+   a JSON para reutilizarlo o compartirlo. */
+let shapeMode=false, shapeSel=-1, shapeWholeCol=false, shapeMirror=true;
+/* Snapshot de la geometria actual en el formato [half,x,y,rot]. */
+/* Ojo: geoSofle deja huecos (los 2 encoders no son teclas), asi que la
+   forma tiene que tolerar posiciones nulas y devolverlas tal cual. */
+function currentShape(){return GEO.map(g=>g?[g.half,Math.round(g.x),Math.round(g.y),+(g.rot||0)]:null);}
+function saveShape(){
+  try{store.set('ck.shape.'+boardId,JSON.stringify(BOARDS[boardId].keysXY||currentShape()));}catch(e){}
+}
+function loadShape(id){
+  try{
+    const raw=store.get('ck.shape.'+id);
+    if(!raw)return;
+    const k=JSON.parse(raw);
+    if(Array.isArray(k)&&k.length===BOARDS[id].keys)BOARDS[id].keysXY=k;
+  }catch(e){}
+}
+/* La "columna" de una tecla: las de su misma mitad cuya x esta a menos
+   de media tecla, que es como se agrupan visualmente. */
+function shapeColumn(i){
+  const g=GEO[i];if(!g)return [i];
+  return GEO.map((o,j)=>(o&&o.half===g.half&&Math.abs(o.x-g.x)<KEY*0.5)?j:-1).filter(j=>j>=0);
+}
+/* La pareja espejo: misma y, mitad contraria, x reflejada. */
+function shapeMate(i){
+  const g=GEO[i];if(!g)return -1;
+  let best=-1,bd=1e9;
+  GEO.forEach((o,j)=>{
+    if(!o||o.half===g.half)return;
+    const d=Math.abs(o.y-g.y)+Math.abs(o.x-g.x);
+    if(d<bd){bd=d;best=j;}
+  });
+  return bd<KEY*0.6?best:-1;
+}
+function shapeNudge(dx,dy,drot){
+  if(shapeSel<0)return;
+  if(!BOARDS[boardId].keysXY)BOARDS[boardId].keysXY=currentShape();
+  const K=BOARDS[boardId].keysXY;
+  /* Se resuelven ANTES de tocar nada: shapeColumn y shapeMate miran la
+     geometria actual, y si se recalculan mientras se mueve la primera
+     tecla el resto de la columna ya no coincide. */
+  if(!GEO[shapeSel]||!K[shapeSel])return;
+  const targets=(shapeWholeCol?shapeColumn(shapeSel):[shapeSel]).filter(i=>K[i]);
+  const mates=shapeMirror?targets.map(i=>shapeMate(i)).filter(m=>m>=0&&K[m]):[];
+  targets.forEach(i=>{
+    K[i][1]=Math.round(K[i][1]+dx);
+    K[i][2]=Math.round(K[i][2]+dy);
+    K[i][3]=+((K[i][3]||0)+drot).toFixed(1);
+  });
+  /* La otra mitad es un espejo: su x local crece hacia el otro lado, asi
+     que el desplazamiento horizontal y el giro van con signo cambiado.
+     Asi las dos mitades siguen siendo simetricas al editarlas. */
+  mates.forEach(i=>{
+    K[i][1]=Math.round(K[i][1]+dx);
+    K[i][2]=Math.round(K[i][2]+dy);
+    K[i][3]=+((K[i][3]||0)-drot).toFixed(1);
+  });
+  saveShape();GEO=geoMap();buildKeyboard();renderLayer();updateShapeInfo();
+}
+function updateShapeInfo(){
+  const el=$('#shapeSel');if(!el)return;
+  if(!shapeMode){el.textContent='';return;}
+  if(shapeSel<0){el.textContent=t('shapeNone');return;}
+  const g=GEO[shapeSel];
+  el.textContent='pos '+shapeSel+' · x '+Math.round(g.x)+' · y '+Math.round(g.y)+' · '+(g.rot||0)+'°';
+}
 function geoTotem(B){
-  const M=new Array(38).fill(null);
-  const C=5, offL=B.off.l;
-  const outer=PT;                       /* room for the extra bottom key */
-  const W=(C-1)*PT+KEY+outer;           /* usable width of one half */
-  const esp=x=>W-KEY-x;                 /* mirror inside the right half */
-  /* Rows 0-2. Row 2 spans 20..31 and is a true mirror of itself: 20 is
-     the outermost left key and 31 the outermost right one, so the right
-     grid runs 26..30 with 30 as the second-outermost -- i.e. the right
-     block is laid out in reverse, exactly as the shield's physical
-     layout has it (p26 nearest the centre, p31 furthest out). */
-  for(let r=0;r<3;r++){
-    const base = r===2 ? 21 : r*10;
-    for(let c=0;c<C;c++){
-      const x=outer+c*PT, y=offL[c]+r*PT;
-      M[base+c]={half:0,x,y,rot:0};
-      /* Right half: column c mirrors, and its index counts inward. */
-      const iR = r===2 ? 30-c : r*10+9-c;
-      M[iR]={half:1,x:esp(x),y,rot:0};
-    }
-  }
-  /* The two extra outer keys, below the pinky: 20 on the left edge and
-     31 on the right edge (the outermost key of each half). */
-  const yOuter=offL[0]+2*PT;
-  M[20]={half:0,x:0,      y:yOuter,rot:0};
-  M[31]={half:1,x:esp(0), y:yOuter,rot:0};
-  /* Three thumbs per half. 32..34 run inward on the left, so 34 and 35
-     are the innermost pair; the right half mirrors as 35..37. */
-  const baseY=offL[C-1]+2*PT+PT-(B.thumbGap!==undefined?B.thumbGap:16);
-  const TH=B.thumbArc||[[0,45,4],[-15,62,16],[-30,80,32]];
-  /* The arc offsets push the innermost thumb past the half's nominal
-     width, so mirroring it against W alone lands at a negative x (off
-     canvas). Mirror the thumb row against its own span instead, which
-     is what the physical layout does: p34 and p35 are the innermost
-     pair and meet at the centre. */
-  const thumbXs=[0,1,2].map(i=>outer+(C-3+i)*PT+TH[Math.min(i,TH.length-1)][1]);
-  const thumbSpan=thumbXs[0]+thumbXs[2];
-  for(let i=0;i<3;i++){
-    const [rot,dx,dy]=TH[Math.min(i,TH.length-1)];
-    const x=thumbXs[i];
-    M[32+i]={half:0,x,                    y:baseY+dy,rot};
-    M[37-i]={half:1,x:thumbSpan-x,        y:baseY+dy,rot:-rot};
-  }
-  return M;
+  return TOTEM_KEYS.map(([half,x,y,rot])=>({half,x,y,rot}));
 }
 /* Sofle: 4x6 + fila de pulgares con las dos teclas grandes giradas. */
 function geoSofle(){
@@ -3322,6 +3475,13 @@ function assignBinding(bd){
 }
 /* click en tecla / encoder */
 function onKeyClick(pos){
+  /* CODEKEEB: en modo forma el clic elige que tecla se mueve, no que
+     binding se edita. */
+  if(shapeMode){
+    shapeSel=pos;updateShapeInfo();
+    keyEls.forEach((el,i)=>{if(el)el.classList.toggle('shapeSel',i===pos);});
+    return;
+  }
   selPos=pos;editingEnc=null;
   fxEvent(pos);typeBump();
   const el=keyEls[pos];
@@ -3745,6 +3905,7 @@ function setBoard(id){
   if(!BOARDS[id]||id===boardId)return;
   saveKeymap();
   boardId=id;store.set('ck.board',id);
+  loadShape(id);shapeSel=-1;      /* forma guardada de ESE teclado */
   HALF=board().half;
   GEO=geoMap();
   ENC_GEO=board().enc||[];
@@ -3795,6 +3956,17 @@ function init(){
     }
     const tag=e.target&&e.target.tagName;
     if(tag==='INPUT'||tag==='TEXTAREA')return;
+    /* CODEKEEB: en modo forma las flechas mueven la tecla seleccionada
+       y Shift+flechas la giran. Alt = paso fino, Ctrl = paso grande. */
+    if(shapeMode&&shapeSel>=0){
+      const M={arrowleft:[-1,0],arrowright:[1,0],arrowup:[0,-1],arrowdown:[0,1]}[e.key.toLowerCase()];
+      if(M){
+        e.preventDefault();
+        if(e.shiftKey)shapeNudge(0,0,(M[0]||M[1])*(e.altKey?0.5:2));
+        else{const step=e.altKey?1:((e.ctrlKey||e.metaKey)?20:5);shapeNudge(M[0]*step,M[1]*step,0);}
+        return;
+      }
+    }
     const k=e.key.toLowerCase();
     if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&k==='z'){e.preventDefault();undoKm();}
     else if((e.ctrlKey||e.metaKey)&&(k==='y'||(e.shiftKey&&k==='z'))){e.preventDefault();redoKm();}
@@ -3847,6 +4019,40 @@ function init(){
   $('#rgBri').oninput=e=>{rgb.bri=+e.target.value;saveRgb();syncRgbUI();};
   $('#rgHue').oninput=e=>{rgb.hue=+e.target.value;saveRgb();syncRgbUI();};
   $('#rgSpd').oninput=e=>{rgb.spd=+e.target.value;saveRgb();syncRgbUI();};
+  /* ---------- CODEKEEB: editor de forma del teclado ---------- */
+  $('#shapeOn').onchange=e=>{shapeMode=e.target.checked;
+    document.body.classList.toggle('shaping',shapeMode);
+    shapeSel=-1;updateShapeInfo();renderLayer();};
+  $('#shapeCol').onchange=e=>{shapeWholeCol=e.target.checked;};
+  $('#shapeMirror').onchange=e=>{shapeMirror=e.target.checked;};
+  $('#shapeReset').onclick=()=>{
+    if(!confirm(t('shapeResetAsk')))return;
+    delete BOARDS[boardId].keysXY;
+    store.set('ck.shape.'+boardId,'');
+    GEO=geoMap();buildKeyboard();renderLayer();osd(t('shapeResetDone'));
+  };
+  $('#shapeExport').onclick=()=>{
+    const data={board:boardId,keys:currentShape()};
+    const blob=new Blob([JSON.stringify(data,null,1)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=boardId+'-forma.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  };
+  $('#shapeImport').onclick=()=>$('#shapeFile').click();
+  $('#shapeFile').onchange=async e=>{
+    const f=e.target.files[0];if(!f)return;
+    try{
+      const j=JSON.parse(await f.text());
+      const k=Array.isArray(j)?j:j.keys;
+      if(!Array.isArray(k)||k.length!==NKEYS())throw new Error(t('shapeBadLen')+' '+NKEYS());
+      /* Acepta [half,x,y,rot] o {half,x,y,rot}; se normaliza a array. */
+      BOARDS[boardId].keysXY=k.map(r=>Array.isArray(r)
+        ?[r[0]|0,+r[1]||0,+r[2]||0,+r[3]||0]
+        :[r.half|0,+r.x||0,+r.y||0,+r.rot||0]);
+      saveShape();GEO=geoMap();buildKeyboard();renderLayer();osd(t('shapeLoaded'));
+    }catch(err){osd('JSON: '+err.message);}
+    e.target.value='';
+  };
   $('#btnExportKeymap').onclick=exportKeymap;
   $('#btnExportJson').onclick=exportJSON;
   $('#btnImportJson').onclick=()=>$('#fileJson').click();
