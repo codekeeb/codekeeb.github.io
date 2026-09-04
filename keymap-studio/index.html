@@ -1370,12 +1370,19 @@ function geoMap(){
   if(B.keysXY&&B.keysXY.length===B.keys)
     return B.keysXY.map((row,i)=>{
       if(!row)return null;                    /* hueco (encoder del Sofle) */
-      const [half,x,y,rot]=row;
+      const [half,x,y,rot,w]=row;
       const g={half,x,y,rot};
-      /* Conserva anchos especiales (las 1.25u del Sofle) del calculo
-         original: la forma guardada solo lleva posicion y giro. */
-      const base=(B.geo==='sofle')?geoSofle()[i]:(B.geo==='totem')?null:geoGrid3(B)[i];
-      if(base&&base.w)g.w=base.w;
+      /* El ancho viene en la propia forma. Antes se recuperaba llamando
+         a la geometria calculada (geoGrid3), que para el Corne ya no es
+         la suya: por eso el 1.25u acababa en la tecla de al lado. Si la
+         forma es antigua y no lo trae, se cae a la geometria base. */
+      if(w)g.w=w;
+      else{
+        const base=(B.geo==='sofle')?geoSofle()[i]
+                  :(B.geo==='corne')?geoCorne(B)[i]
+                  :(B.geo==='totem')?geoTotem(B)[i]:geoGrid3(B)[i];
+        if(base&&base.w)g.w=base.w;
+      }
       return g;
     });
   if(B.geo==='sofle')return geoSofle();
@@ -1454,7 +1461,15 @@ let shapeMode=false, shapeSel=-1, shapeWholeCol=false, shapeMirror=true;
 /* Snapshot de la geometria actual en el formato [half,x,y,rot]. */
 /* Ojo: geoSofle deja huecos (los 2 encoders no son teclas), asi que la
    forma tiene que tolerar posiciones nulas y devolverlas tal cual. */
-function currentShape(){return GEO.map(g=>g?[g.half,Math.round(g.x),Math.round(g.y),+(g.rot||0)]:null);}
+/* [half,x,y,rot,w]. El ancho es imprescindible: sin el, en cuanto se
+   movia una tecla el teclado entero pasaba a esta tabla y las teclas de
+   1.25u (spc/enter del Corne, las grandes del Sofle) perdian su ancho.
+   Como geoCorne/geoMap reconstruyen desde aqui, el ancho "saltaba" a
+   otra tecla: se veia spc ancha y su espejo normal, y el alt de al lado
+   convertido en 1.25u. */
+function currentShape(){
+  return GEO.map(g=>g?[g.half,Math.round(g.x),Math.round(g.y),+(g.rot||0),g.w||0]:null);
+}
 function saveShape(){
   try{store.set('ck.shape.'+boardId,JSON.stringify(BOARDS[boardId].keysXY||currentShape()));}catch(e){}
 }
@@ -4187,9 +4202,11 @@ function init(){
       const k=Array.isArray(j)?j:j.keys;
       if(!Array.isArray(k)||k.length!==NKEYS())throw new Error(t('shapeBadLen')+' '+NKEYS());
       /* Acepta [half,x,y,rot] o {half,x,y,rot}; se normaliza a array. */
-      BOARDS[boardId].keysXY=k.map(r=>Array.isArray(r)
-        ?[r[0]|0,+r[1]||0,+r[2]||0,+r[3]||0]
-        :[r.half|0,+r.x||0,+r.y||0,+r.rot||0]);
+      /* El 5o campo es el ancho (1.25u = 108). Se acepta ausente para
+         no romper las formas exportadas antes de guardarlo. */
+      BOARDS[boardId].keysXY=k.map(r=>!r?null:(Array.isArray(r)
+        ?[r[0]|0,+r[1]||0,+r[2]||0,+r[3]||0,+r[4]||0]
+        :[r.half|0,+r.x||0,+r.y||0,+r.rot||0,+r.w||0]));
       saveShape();GEO=geoMap();buildKeyboard();renderLayer();osd(t('shapeLoaded'));
     }catch(err){osd('JSON: '+err.message);}
     e.target.value='';
