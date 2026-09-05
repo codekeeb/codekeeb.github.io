@@ -1200,7 +1200,9 @@ function stockSofle(){return [
   kp('TAB'),kp('Q'),kp('W'),kp('E'),kp('R'),kp('T'), kp('Y'),kp('U'),kp('I'),kp('O'),kp('P'),kp('BSPC'),
   kp('LSHFT'),kp('A'),kp('S'),kp('D'),kp('F'),kp('G'), kp('H'),kp('J'),kp('K'),kp('L'),kp('SEMI'),kp('SQT'),
   kp('LCTRL'),kp('Z'),kp('X'),kp('C'),kp('V'),kp('B'), kp('C_MUTE'),kp('C_PLAY'), kp('N'),kp('M'),kp('COMMA'),kp('DOT'),kp('FSLH'),kp('RSHFT'),
-  kp('LGUI'),kp('LALT'),kp('LCTRL'),B('&mo',1),kp('RET'), kp('SPACE'),B('&mo',2),kp('RCTRL'),kp('RALT'),kp('RGUI')],
+  /* SPACE en el pulgar IZQUIERDO y ENTER en el derecho, como el
+     firmware (config/sofle.keymap de sofle-rgb-zmk). Estaban al reves. */
+  kp('LGUI'),kp('LALT'),kp('LCTRL'),B('&mo',1),kp('SPACE'), kp('RET'),B('&mo',2),kp('RCTRL'),kp('RALT'),kp('RGUI')],
  enc:[{cw:kp('C_VOL_UP'),ccw:kp('C_VOL_DN'),label:'VOL'},{cw:kp('UP'),ccw:kp('DOWN'),label:'SCROLL'}]},
 {name:'Lower',keys:[
   TR(),kp('F1'),kp('F2'),kp('F3'),kp('F4'),kp('F5'), kp('F6'),kp('F7'),kp('F8'),kp('F9'),kp('F10'),kp('DEL'),
