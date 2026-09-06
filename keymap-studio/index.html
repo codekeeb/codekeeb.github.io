@@ -2350,7 +2350,12 @@ const BASE_SH={
   mod:'0 3px 0 #0a0b0d,0 4px 10px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06)'};
 let lastLedCol=new Array(NKEYS()).fill('');
 function drawRgb(cols){
-  const bri=rgb.on?rgb.bri/5:0;
+  /* CODEKEEB: el brillo iba lineal 1/5..5/5, asi que al minimo (0.2) el
+     RGB casi no se veia en pantalla. Ahora el minimo equivale a lo que
+     antes era el maximo, y el maximo sube bastante mas: color mas
+     saturado y halo mas amplio. Solo afecta a la SIMULACION -- el brillo
+     que se manda al teclado sigue siendo rgb.bri (1..5). */
+  const bri=rgb.on?(1.0+(clamp(rgb.bri,1,5)-1)/4*0.9):0;
   for(let pos=0;pos<NKEYS();pos++){
     const el=keyEls[pos];if(!el)continue;
     const half=posHalf(pos);
@@ -2363,20 +2368,27 @@ function drawRgb(cols){
     }
     const kpi=(half?KP_R:KP_L)[pos];
     const hsl=cols[half][kpi];
-    const[r,g,b]=hsl2rgb(hsl[0]+rgb.hue,hsl[1],hsl[2]*bri);
+    /* La luminosidad se satura en 100: pasado ese punto el color se
+       lavaria a blanco, asi que el resto del brillo se lleva al halo. */
+    const[r,g,b]=hsl2rgb(hsl[0]+rgb.hue,hsl[1],Math.min(100,hsl[2]*bri));
     const col=`rgb(${r|0},${g|0},${b|0})`;
     if(col!==lastLedCol[pos]){lastLedCol[pos]=col;
-      el.style.boxShadow=sh+`,0 26px 40px -8px rgba(${r|0},${g|0},${b|0},.55),0 0 22px rgba(${r|0},${g|0},${b|0},.25)`;
+      /* El halo crece con el brillo: mas radio y mas opacidad, que es
+         lo que hace que se note la diferencia entre 1 y 5. */
+      const k=bri/1.9;                       /* 0.53 .. 1 */
+      const spread=Math.round(22+34*k), drop=Math.round(30+26*k);
+      el.style.boxShadow=sh+`,0 26px ${drop}px -8px rgba(${r|0},${g|0},${b|0},${(0.45+0.35*k).toFixed(2)}),0 0 ${spread}px rgba(${r|0},${g|0},${b|0},${(0.22+0.33*k).toFixed(2)})`;
       led.style.background=col;
-      led.style.boxShadow=`0 0 10px ${col}`;
+      led.style.boxShadow=`0 0 ${Math.round(10+14*k)}px ${col}`;
     }
   }
   /* LED del encoder (pixel 4 de cada cadena) */
   for(let s=0;s<2;s++){const el=encEls[s];if(!el)continue;
     const hsl=cols[s][4];
-    const[r,g,b]=hsl2rgb(hsl[0]+rgb.hue,hsl[1],hsl[2]*bri);
+    const[r,g,b]=hsl2rgb(hsl[0]+rgb.hue,hsl[1],Math.min(100,hsl[2]*bri));
+    const k=bri/1.9;
     el.style.boxShadow=`0 3px 10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)`+
-      (bri>0?`,0 20px 32px -6px rgba(${r|0},${g|0},${b|0},.55)`:'');
+      (bri>0?`,0 20px ${Math.round(26+22*k)}px -6px rgba(${r|0},${g|0},${b|0},${(0.45+0.35*k).toFixed(2)})`:'');
   }
 }
 
