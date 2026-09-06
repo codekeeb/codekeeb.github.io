@@ -2389,10 +2389,15 @@ function drawRgb(cols){
       const aNear=(0.55+0.40*k).toFixed(2);
       const aFar =(0.20+0.42*k).toFixed(2);
       const aDrop=(0.50+0.35*k).toFixed(2);
+      /* El 4o valor (spread) es lo que saca el halo FUERA del keycap:
+         sin el, un box-shadow 0 0 Npx difumina tambien hacia dentro y
+         el color se comia la tecla. Con spread negativo la sombra
+         encoge antes de difuminarse, asi que el brillo queda en el
+         borde y alrededor, como la luz real de un LED bajo la tecla. */
       el.style.boxShadow=sh
-        +`,0 26px ${drop}px -8px rgba(${r|0},${g|0},${b|0},${aDrop})`
-        +`,0 0 ${glowNear}px rgba(${r|0},${g|0},${b|0},${aNear})`
-        +`,0 0 ${glowFar}px rgba(${r|0},${g|0},${b|0},${aFar})`;
+        +`,0 26px ${drop}px -10px rgba(${r|0},${g|0},${b|0},${aDrop})`
+        +`,0 0 ${glowNear}px -6px rgba(${r|0},${g|0},${b|0},${aNear})`
+        +`,0 0 ${glowFar}px -10px rgba(${r|0},${g|0},${b|0},${aFar})`;
       led.style.background=col;
       led.style.boxShadow=`0 0 ${Math.round(12+20*k)}px ${col}`;
     }
@@ -2404,7 +2409,7 @@ function drawRgb(cols){
     const k=(bri-1)/0.9;
     el.style.boxShadow=`0 3px 10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)`+
       (bri>0?`,0 20px ${Math.round(28+26*k)}px -6px rgba(${r|0},${g|0},${b|0},${(0.55+0.35*k).toFixed(2)})`
-            +`,0 0 ${Math.round(30+50*k)}px rgba(${r|0},${g|0},${b|0},${(0.20+0.40*k).toFixed(2)})`:'');
+            +`,0 0 ${Math.round(30+50*k)}px -8px rgba(${r|0},${g|0},${b|0},${(0.20+0.40*k).toFixed(2)})`:'');
   }
 }
 
