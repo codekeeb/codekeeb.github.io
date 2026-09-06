@@ -549,6 +549,12 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
       <div class="drow"><span data-i18n="spd">Velocidad</span>
         <input type="range" id="rgSpd" min="0" max="4" step="1" value="2"><b id="rgSpdV">2</b></div>
     </div>
+    <div class="ctlRow">
+      <span class="tlabel" data-i18n="sleepLbl">SLEEP</span>
+      <button class="pill" id="slpToggle" data-i18n-title="sleepTitle"
+              title="Apagado automatico por inactividad">ON</button>
+      <select id="slpMin" data-i18n-title="sleepMinTitle" title="Minutos de inactividad antes de apagarse"></select>
+    </div>
     <input type="file" id="fileJson" class="hiddenInput" accept="application/json">
   </div>
 </div>
@@ -774,6 +780,9 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   confirmReset:'¿Restaurar el keymap de fábrica? Se perderán los cambios locales.',
   oledLbl:'OLED',animBtnTitle:'Cambiar animación del OLED derecho (&oledanim)',
   wpmBtnTitle:'Cambiar vista del OLED izquierdo (&wpmview)',
+  sleepLbl:'SLEEP',
+  sleepTitle:'Apagado automático por inactividad (se despierta con cualquier tecla)',
+  sleepMinTitle:'Minutos de inactividad antes de apagarse',
   secWpm:'Vista OLED izquierda (&wpmview)',
   wpmHint:'Cicla bongo → luna → número → velocímetro → gráfico, como &wpmview (Lower + click del encoder izquierdo).',
   lockOverlayTitle:'Teclado BLOQUEADO',
@@ -851,6 +860,9 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   confirmReset:'Restore the factory keymap? Local changes will be lost.',
   oledLbl:'OLED',animBtnTitle:'Change the right OLED animation (&oledanim)',
   wpmBtnTitle:'Change the left OLED view (&wpmview)',
+  sleepLbl:'SLEEP',
+  sleepTitle:'Automatic power off after inactivity (any key wakes it up)',
+  sleepMinTitle:'Minutes of inactivity before powering off',
   secWpm:'Left OLED view (&wpmview)',
   wpmHint:'Cycles bongo → luna → number → speedometer → graph, like &wpmview (Lower + left encoder click).',
   lockOverlayTitle:'Keyboard LOCKED',
@@ -1894,6 +1906,10 @@ const ANIMS=['crystal','cat','head','spaceman','pokemon','logo'];
    no hay forma de elegir cual, asi que no se compila. */
 const WPMVIEWS=['bongo','luna','number','speedometer','graph'];
 let wpmIdx=0;
+/* Deep sleep: apagado por inactividad. El plazo vive en la flash del
+   teclado, asi que aqui solo se ofrece un juego de valores redondos. */
+const SLEEPMINS=[5,10,15,30,45,60,120,240];
+let sleep={on:true,min:30};
 function saveKeymap(){store.set(kmKey(boardId),JSON.stringify(keymap));}
 /* CODEKEEB: cualquier cambio de RGB pasa por aqui (sliders, selector de
    efecto, encendido y las teclas &rgbfx), asi que este es el sitio donde
@@ -2602,7 +2618,8 @@ function parseKeymapResponse(buf){
       effect:v(5), effect_count:v(6),
       hue:v(7), speed:v(8),
       animation_available:!!v(9), animation:v(10), animation_count:v(11),
-      wpm_view_available:!!v(12), wpm_view:v(13), wpm_view_count:v(14)}};
+      wpm_view_available:!!v(12), wpm_view:v(13), wpm_view_count:v(14),
+      sleep_available:!!v(15), sleep_enabled:!!v(16), sleep_minutes:v(17)}};
   }
   const srgb=first(fs,105);if(srgb)return{set_rgb:!!srgb.val};
   const sanim=first(fs,106);if(sanim)return{set_animation:!!sanim.val};
@@ -3143,6 +3160,11 @@ function reqKeymapSetAnimation(id,idx){
 
 function reqKeymapSetWpmView(id,idx){
   return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.uint(107,idx)));
+}
+
+function reqKeymapSetSleep(id,on,min){
+  const body=PBW.cat(PBW.uint(1,on?1:0),PBW.uint(2,min));
+  return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(108,body)));
 }
 
 async function studioFetchMacros(){
@@ -3957,6 +3979,20 @@ async function pushWpmToBoard(){
     await studioRequest(rid=>reqKeymapSetWpmView(rid,wpmIdx));
   }catch(e){plog('err','set_wpm_view: '+e.message);}
 }
+function syncSleepUI(){
+  const t=$('#slpToggle'); if(t){t.textContent=sleep.on?'ON':'OFF';t.classList.toggle('off',!sleep.on);}
+  const m=$('#slpMin');
+  if(m){
+    if(!m.options.length) for(const v of SLEEPMINS){
+      const o=document.createElement('option');o.value=v;o.textContent=v+' min';m.appendChild(o);}
+    m.value=String(sleep.min); m.disabled=!sleep.on;
+  }}
+async function pushSleepToBoard(){
+  if(!studio.connected||!studio.lockState)return;
+  try{
+    await studioRequest(rid=>reqKeymapSetSleep(rid,sleep.on,sleep.min));
+  }catch(e){plog('err','set_sleep: '+e.message);}
+}
 async function pushAnimToBoard(){
   if(!studio.connected||!studio.lockState)return;
   try{
@@ -3986,6 +4022,15 @@ async function studioFetchLighting(){
     if(L.wpm_view_available&&L.wpm_view<WPMVIEWS.length){
       wpmIdx=L.wpm_view; syncWpmUI();
       plog('inf','oled izq: vista '+WPMVIEWS[wpmIdx]);
+    }
+    if(L.sleep_available){
+      sleep.on=L.sleep_enabled; sleep.min=L.sleep_minutes||30;
+      /* El teclado puede tener un plazo que no esta en la lista (por
+         ejemplo puesto desde otra version): se anade para no perderlo. */
+      if(!SLEEPMINS.includes(sleep.min)){SLEEPMINS.push(sleep.min);SLEEPMINS.sort((a,b)=>a-b);
+        const m=$('#slpMin'); if(m)m.innerHTML='';}
+      syncSleepUI();
+      plog('inf','sleep: '+(sleep.on?sleep.min+' min':'desactivado'));
     }
   }catch(e){/* firmware sin este RPC: la simulacion sigue funcionando */}
 }
@@ -4444,6 +4489,11 @@ function init(){
   $('#btnAnim2').onclick=cycleAnim;
   $('#btnWpm').onclick=cycleWpmView;
   $('#btnWpm2').onclick=cycleWpmView;
+  $('#slpToggle').onclick=()=>{sleep.on=!sleep.on;syncSleepUI();
+    osd('Sleep: '+(sleep.on?sleep.min+' min':'off'));pushSleepToBoard();};
+  $('#slpMin').onchange=e=>{sleep.min=+e.target.value;syncSleepUI();
+    osd('Sleep: '+sleep.min+' min');pushSleepToBoard();};
+  syncSleepUI();
   $('#fxSel').onchange=e=>{rgb.fx=+e.target.value;saveRgb();syncRgbUI();};
   $('#fxToggle').onclick=()=>rgbCmd(RGBFX_CMD.TOGGLE);
   /* Abre/cierra los ajustes de RGB a mano. Antes se abrian solos al
