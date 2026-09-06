@@ -2479,6 +2479,18 @@ function parseKeymapResponse(buf){
     return{remove_layer:first(d,1)?{ok:true}:{err:first(d,2)?first(d,2).val:1}};}
   const rs=first(fs,11);if(rs){const d=PBR(rs.bytes);const ok=first(d,1);
     return{restore_layer:ok?{layer:parseLayer(ok.bytes)}:{err:first(d,2)?first(d,2).val:1}};}
+  /* CODEKEEB PATCH: iluminacion, campos 104-106. */
+  const gl=first(fs,104);if(gl){
+    const d=PBR(gl.bytes), v=n=>first(d,n)?first(d,n).val:0;
+    return{get_lighting:{
+      rgb_available:!!v(1), active:!!v(2),
+      brightness:v(3), brightness_max:v(4),
+      effect:v(5), effect_count:v(6),
+      hue:v(7), speed:v(8),
+      animation_available:!!v(9), animation:v(10), animation_count:v(11)}};
+  }
+  const srgb=first(fs,105);if(srgb)return{set_rgb:!!srgb.val};
+  const sanim=first(fs,106);if(sanim)return{set_animation:!!sanim.val};
   /* CODEKEEB PATCH: fields 99/100 (codekeeb/zmk-studio-messages fork). */
   const gsb=first(fs,99);if(gsb){
     const d=PBR(gsb.bytes);
@@ -2802,6 +2814,8 @@ async function studioFetchSecured(step){
   /* CODEKEEB: contenido de las macros. Silencioso si el firmware es
      antiguo y no conoce get_macros. */
   await studioFetchMacros();
+  /* CODEKEEB: adoptar el RGB y la animacion que el teclado tiene puestos. */
+  await studioFetchLighting();
 }
 function showLockOverlay(show){
   let ov=$('#lockOverlay');
@@ -2990,6 +3004,26 @@ function reqKeymapSetMacro(id,slot,steps){
 function reqKeymapSetUnicodeMode(id,mode){
   const chg=PBW.uint(1,mode);
   return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(103,chg)));
+}
+
+/* CODEKEEB: iluminacion (RGB + animacion del OLED). Van en el subsistema
+   keymap (campos 104-106) porque el CMakeLists de ZMK lleva escrita a
+   mano la lista de .proto que compila, asi que un fichero nuevo nunca se
+   generaria. Ver src/studio/lighting_subsystem.c del firmware. */
+function reqKeymapGetLighting(id){return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bool(104,true)));}
+/* Solo se mandan los campos presentes en `v`, asi cambiar el brillo no
+   toca el resto del estado. */
+function reqKeymapSetRgb(id,v){
+  let chg=[];
+  if(v.active!==undefined)     chg=chg.concat(PBW.bool(1,!!v.active));
+  if(v.brightness!==undefined) chg=chg.concat(PBW.uint(2,v.brightness));
+  if(v.effect!==undefined)     chg=chg.concat(PBW.uint(3,v.effect));
+  if(v.hue!==undefined)        chg=chg.concat(PBW.uint(4,v.hue));
+  if(v.speed!==undefined)      chg=chg.concat(PBW.uint(5,v.speed));
+  return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(105,chg)));
+}
+function reqKeymapSetAnimation(id,idx){
+  return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.uint(106,idx)));
 }
 
 async function studioFetchMacros(){
@@ -3774,11 +3808,51 @@ function rgbCmd(cmd){
     case RGBFX_CMD.SPD_DOWN:rgb.spd=clamp(rgb.spd-1,0,4);break;
   }
   saveRgb();syncRgbUI();
+  pushRgbToBoard();
+}
+/* CODEKEEB: manda el estado RGB al teclado. Hasta ahora estos controles
+   solo cambiaban la simulacion; el firmware lo guarda en flash y lo
+   sincroniza con la otra mitad, asi que queda puesto al reiniciar. */
+async function pushRgbToBoard(){
+  if(!studio.connected||!studio.lockState)return;
+  try{
+    await studioRequest(rid=>reqKeymapSetRgb(rid,{
+      active:rgb.on, brightness:rgb.bri, effect:rgb.fx, hue:rgb.hue, speed:rgb.spd}));
+  }catch(e){plog('err','set_rgb: '+e.message);}
 }
 function cycleAnim(){animIdx=(animIdx+1)%ANIMS.length;animT0=performance.now();
   const nm=ANIMS[animIdx].toUpperCase();
   $('#animName').textContent=nm;const a2=$('#animName2');if(a2)a2.textContent=nm;
-  osd('OLED: '+ANIMS[animIdx]);}
+  osd('OLED: '+ANIMS[animIdx]);
+  pushAnimToBoard();}
+async function pushAnimToBoard(){
+  if(!studio.connected||!studio.lockState)return;
+  try{
+    await studioRequest(rid=>reqKeymapSetAnimation(rid,animIdx));
+  }catch(e){plog('err','set_animation: '+e.message);}
+}
+/* Al conectar, la web adopta lo que el teclado tiene puesto de verdad,
+   en vez de mostrar lo ultimo que se simulo en el navegador. */
+async function studioFetchLighting(){
+  if(!studio.connected)return;
+  try{
+    const r=await studioRequest(reqKeymapGetLighting,4000);
+    const L=r&&r.data&&r.data.get_lighting;
+    if(!L)return;
+    if(L.rgb_available){
+      rgb.on=L.active; rgb.bri=L.brightness||1; rgb.fx=L.effect||0;
+      rgb.hue=L.hue||0; rgb.spd=L.speed||0;
+      saveRgb();syncRgbUI();
+      plog('inf','rgb: efecto '+rgb.fx+' brillo '+rgb.bri+'/'+L.brightness_max+' tono '+rgb.hue);
+    }
+    if(L.animation_available&&L.animation<ANIMS.length){
+      animIdx=L.animation;animT0=performance.now();
+      const nm=ANIMS[animIdx].toUpperCase();
+      $('#animName').textContent=nm;const a2=$('#animName2');if(a2)a2.textContent=nm;
+      plog('inf','oled: animacion '+ANIMS[animIdx]);
+    }
+  }catch(e){/* firmware sin este RPC: la simulacion sigue funcionando */}
+}
 
 /* ============================================================
    OSD / tooltip
