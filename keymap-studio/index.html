@@ -1863,9 +1863,28 @@ let activeLayer=0, selPos=-1, editingEnc=null;
 let rgb=Object.assign({on:true,fx:8,bri:5,hue:0,spd:2},JSON.parse(store.get('ck.rgb')||'{}'));
 let unlocked=false;      // studio lock (simulado en LOCAL)
 let oledState={output:'bt',profile:0,levelL:87,levelR:82,charging:false,anim:'crystal',mods:{c:0,s:0,a:0,g:0}};
-const ANIMS=['crystal','cat','head','spaceman','pokemon'];
+/* CODEKEEB: el orden y el numero TIENEN que coincidir con sel_anims[] del
+   firmware (zmk-nice-oled, widgets/animation.c), porque la animacion se
+   selecciona por indice: si aqui faltaba una, el indice que se manda al
+   teclado no era el que el usuario habia elegido.
+   'logo' es el sprite de CODE/KEEB; su bitmap todavia no esta extraido a
+   OLED_ASSETS, asi que en la simulacion se ve el fallback -- en el
+   teclado se selecciona correctamente. */
+const ANIMS=['crystal','cat','head','spaceman','pokemon','logo'];
 function saveKeymap(){store.set(kmKey(boardId),JSON.stringify(keymap));}
-function saveRgb(){store.set('ck.rgb',JSON.stringify(rgb));}
+/* CODEKEEB: cualquier cambio de RGB pasa por aqui (sliders, selector de
+   efecto, encendido y las teclas &rgbfx), asi que este es el sitio donde
+   mandarlo al teclado. Antes solo lo hacia rgbCmd(), asi que encender
+   funcionaba pero mover un slider no salia del navegador.
+   Se agrupa (debounce) porque un slider dispara oninput en cada pixel y
+   no tiene sentido soltar una peticion por cada uno. */
+let _rgbPushT=null;
+function saveRgb(){
+  store.set('ck.rgb',JSON.stringify(rgb));
+  if(typeof pushRgbToBoard!=='function')return;
+  clearTimeout(_rgbPushT);
+  _rgbPushT=setTimeout(pushRgbToBoard,60);
+}
 function saveMacros(){store.set('ck.macros',JSON.stringify(macros));}
 
 /* ---------------- historial (undo/redo) + portapapeles ---------------- */
@@ -3808,7 +3827,6 @@ function rgbCmd(cmd){
     case RGBFX_CMD.SPD_DOWN:rgb.spd=clamp(rgb.spd-1,0,4);break;
   }
   saveRgb();syncRgbUI();
-  pushRgbToBoard();
 }
 /* CODEKEEB: manda el estado RGB al teclado. Hasta ahora estos controles
    solo cambiaban la simulacion; el firmware lo guarda en flash y lo
