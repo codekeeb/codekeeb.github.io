@@ -531,6 +531,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   <div id="ctlStack">
     <div class="ctlRow">
       <span class="tlabel" data-i18n="oledLbl">OLED</span>
+      <button class="pill" id="btnWpm2" data-i18n-title="wpmBtnTitle" title="Cambiar vista del OLED izquierdo (&wpmview)">▶ <span id="wpmName2" class="animName">BONGO</span></button>
       <button class="pill" id="btnAnim2" data-i18n-title="animBtnTitle" title="Cambiar animación del OLED derecho (&oledanim)">▶ <span id="animName2" class="animName">CRYSTAL</span></button>
     </div>
     <div class="ctlRow">
@@ -589,6 +590,12 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
         <button class="btn small" id="btnDiscard" data-i18n="discard">Descartar</button>
         <button class="btn small" id="btnStock" data-i18n="stock">↺ Keymap de fábrica</button>
       </div>
+    </details>
+    <details class="dsec">
+      <summary data-i18n="secWpm">Vista OLED izquierda (&wpmview)</summary>
+      <button class="btn small" id="btnWpm">▶ <span id="wpmName">BONGO</span></button>
+      <p style="font-size:10px;color:var(--faint);margin-top:8px;line-height:1.5" data-i18n="wpmHint">
+        Cicla bongo → luna → número → velocímetro → gráfico, como &wpmview (Lower + click del encoder izquierdo).</p>
     </details>
     <details class="dsec">
       <summary data-i18n="secAnim">Animación OLED derecha (&oledanim)</summary>
@@ -766,6 +773,9 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   copied:'Tecla copiada',pasted:'Tecla pegada',nothingCopy:'Nada que pegar',undone:'Deshecho',redone:'Rehecho',
   confirmReset:'¿Restaurar el keymap de fábrica? Se perderán los cambios locales.',
   oledLbl:'OLED',animBtnTitle:'Cambiar animación del OLED derecho (&oledanim)',
+  wpmBtnTitle:'Cambiar vista del OLED izquierdo (&wpmview)',
+  secWpm:'Vista OLED izquierda (&wpmview)',
+  wpmHint:'Cicla bongo → luna → número → velocímetro → gráfico, como &wpmview (Lower + click del encoder izquierdo).',
   lockOverlayTitle:'Teclado BLOQUEADO',
   lockOverlayBody:'Pulsa <b>&studio_unlock</b> en el teclado físico para editar y guardar.<br>Por defecto es <b>Lower + Z</b>.<br>La app continuará automáticamente.',
   alreadyUnlocked:'Ya está desbloqueado',pressUnlockKey:'Pulsa &studio_unlock en el teclado (Lower, fila Z)',
@@ -840,6 +850,9 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   copied:'Key copied',pasted:'Key pasted',nothingCopy:'Nothing to paste',undone:'Undone',redone:'Redone',
   confirmReset:'Restore the factory keymap? Local changes will be lost.',
   oledLbl:'OLED',animBtnTitle:'Change the right OLED animation (&oledanim)',
+  wpmBtnTitle:'Change the left OLED view (&wpmview)',
+  secWpm:'Left OLED view (&wpmview)',
+  wpmHint:'Cycles bongo → luna → number → speedometer → graph, like &wpmview (Lower + left encoder click).',
   lockOverlayTitle:'Keyboard LOCKED',
   lockOverlayBody:'Press <b>&studio_unlock</b> on the physical keyboard to edit and save.<br>The default is <b>Lower + Z</b>.<br>The app will resume automatically.',
   alreadyUnlocked:'Already unlocked',pressUnlockKey:'Press &studio_unlock on the keyboard (Lower, Z row)',
@@ -1875,6 +1888,12 @@ let oledState={output:'bt',profile:0,levelL:87,levelR:82,charging:false,anim:'cr
    teclado no era el que el usuario habia elegido.
    'logo' es el sprite estatico de CODE/KEEB. */
 const ANIMS=['crystal','cat','head','spaceman','pokemon','logo'];
+/* Vista de WPM del OLED izquierdo. El orden debe coincidir con
+   wpm_view.h del firmware. El bongo cat "responsive" del modulo queda
+   fuera: sus imagenes viven en dos ficheros con los mismos simbolos y
+   no hay forma de elegir cual, asi que no se compila. */
+const WPMVIEWS=['bongo','luna','number','speedometer','graph'];
+let wpmIdx=0;
 function saveKeymap(){store.set(kmKey(boardId),JSON.stringify(keymap));}
 /* CODEKEEB: cualquier cambio de RGB pasa por aqui (sliders, selector de
    efecto, encendido y las teclas &rgbfx), asi que este es el sitio donde
@@ -2582,7 +2601,8 @@ function parseKeymapResponse(buf){
       brightness:v(3), brightness_max:v(4),
       effect:v(5), effect_count:v(6),
       hue:v(7), speed:v(8),
-      animation_available:!!v(9), animation:v(10), animation_count:v(11)}};
+      animation_available:!!v(9), animation:v(10), animation_count:v(11),
+      wpm_view_available:!!v(12), wpm_view:v(13), wpm_view_count:v(14)}};
   }
   const srgb=first(fs,105);if(srgb)return{set_rgb:!!srgb.val};
   const sanim=first(fs,106);if(sanim)return{set_animation:!!sanim.val};
@@ -3119,6 +3139,10 @@ function reqKeymapSetRgb(id,v){
 }
 function reqKeymapSetAnimation(id,idx){
   return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.uint(106,idx)));
+}
+
+function reqKeymapSetWpmView(id,idx){
+  return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.uint(107,idx)));
 }
 
 async function studioFetchMacros(){
@@ -3919,6 +3943,20 @@ function cycleAnim(){animIdx=(animIdx+1)%ANIMS.length;animT0=performance.now();
   $('#animName').textContent=nm;const a2=$('#animName2');if(a2)a2.textContent=nm;
   osd('OLED: '+ANIMS[animIdx]);
   pushAnimToBoard();}
+function cycleWpmView(){wpmIdx=(wpmIdx+1)%WPMVIEWS.length;
+  syncWpmUI();
+  osd('OLED izq: '+WPMVIEWS[wpmIdx]);
+  pushWpmToBoard();}
+function syncWpmUI(){
+  const nm=WPMVIEWS[wpmIdx].toUpperCase();
+  const a=$('#wpmName'); if(a)a.textContent=nm;
+  const b=$('#wpmName2'); if(b)b.textContent=nm;}
+async function pushWpmToBoard(){
+  if(!studio.connected||!studio.lockState)return;
+  try{
+    await studioRequest(rid=>reqKeymapSetWpmView(rid,wpmIdx));
+  }catch(e){plog('err','set_wpm_view: '+e.message);}
+}
 async function pushAnimToBoard(){
   if(!studio.connected||!studio.lockState)return;
   try{
@@ -3944,6 +3982,10 @@ async function studioFetchLighting(){
       const nm=ANIMS[animIdx].toUpperCase();
       $('#animName').textContent=nm;const a2=$('#animName2');if(a2)a2.textContent=nm;
       plog('inf','oled: animacion '+ANIMS[animIdx]);
+    }
+    if(L.wpm_view_available&&L.wpm_view<WPMVIEWS.length){
+      wpmIdx=L.wpm_view; syncWpmUI();
+      plog('inf','oled izq: vista '+WPMVIEWS[wpmIdx]);
     }
   }catch(e){/* firmware sin este RPC: la simulacion sigue funcionando */}
 }
@@ -4400,6 +4442,8 @@ function init(){
     if(studio.connected)pushKeymapToDevice();};
   $('#btnAnim').onclick=cycleAnim;
   $('#btnAnim2').onclick=cycleAnim;
+  $('#btnWpm').onclick=cycleWpmView;
+  $('#btnWpm2').onclick=cycleWpmView;
   $('#fxSel').onchange=e=>{rgb.fx=+e.target.value;saveRgb();syncRgbUI();};
   $('#fxToggle').onclick=()=>rgbCmd(RGBFX_CMD.TOGGLE);
   /* Abre/cierra los ajustes de RGB a mano. Antes se abrian solos al
