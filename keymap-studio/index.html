@@ -2368,27 +2368,43 @@ function drawRgb(cols){
     }
     const kpi=(half?KP_R:KP_L)[pos];
     const hsl=cols[half][kpi];
-    /* La luminosidad se satura en 100: pasado ese punto el color se
-       lavaria a blanco, asi que el resto del brillo se lleva al halo. */
-    const[r,g,b]=hsl2rgb(hsl[0]+rgb.hue,hsl[1],Math.min(100,hsl[2]*bri));
+    /* En HSL subir la luminosidad va hacia el BLANCO, no hacia "mas
+       color": multiplicarla lavaba el tono justo al maximo, que es lo
+       contrario de lo que se busca. El color se mantiene en su
+       luminosidad propia (con un empujon suave y tope 62, donde el tono
+       sigue siendo vivo) y todo el brillo se lleva al halo, que es lo
+       que de verdad se percibe como intensidad del RGB. */
+    const L=Math.min(62,hsl[2]*(0.9+0.18*bri));
+    const[r,g,b]=hsl2rgb(hsl[0]+rgb.hue,hsl[1],L);
     const col=`rgb(${r|0},${g|0},${b|0})`;
     if(col!==lastLedCol[pos]){lastLedCol[pos]=col;
-      /* El halo crece con el brillo: mas radio y mas opacidad, que es
-         lo que hace que se note la diferencia entre 1 y 5. */
-      const k=bri/1.9;                       /* 0.53 .. 1 */
-      const spread=Math.round(22+34*k), drop=Math.round(30+26*k);
-      el.style.boxShadow=sh+`,0 26px ${drop}px -8px rgba(${r|0},${g|0},${b|0},${(0.45+0.35*k).toFixed(2)}),0 0 ${spread}px rgba(${r|0},${g|0},${b|0},${(0.22+0.33*k).toFixed(2)})`;
+      /* Toda la sensacion de brillo vive aqui: el halo alrededor del
+         keycap. k va 0 (brillo 1) .. 1 (brillo 5), asi que el minimo ya
+         luce como el maximo de antes y el maximo va bastante mas lejos:
+         mas radio, mas opacidad y una tercera capa de difusion amplia. */
+      const k=(bri-1)/0.9;                   /* 0 .. 1 */
+      const glowNear=Math.round(26+30*k);    /* halo pegado al keycap */
+      const glowFar =Math.round(46+64*k);    /* difusion amplia */
+      const drop    =Math.round(34+26*k);
+      const aNear=(0.55+0.40*k).toFixed(2);
+      const aFar =(0.20+0.42*k).toFixed(2);
+      const aDrop=(0.50+0.35*k).toFixed(2);
+      el.style.boxShadow=sh
+        +`,0 26px ${drop}px -8px rgba(${r|0},${g|0},${b|0},${aDrop})`
+        +`,0 0 ${glowNear}px rgba(${r|0},${g|0},${b|0},${aNear})`
+        +`,0 0 ${glowFar}px rgba(${r|0},${g|0},${b|0},${aFar})`;
       led.style.background=col;
-      led.style.boxShadow=`0 0 ${Math.round(10+14*k)}px ${col}`;
+      led.style.boxShadow=`0 0 ${Math.round(12+20*k)}px ${col}`;
     }
   }
   /* LED del encoder (pixel 4 de cada cadena) */
   for(let s=0;s<2;s++){const el=encEls[s];if(!el)continue;
     const hsl=cols[s][4];
-    const[r,g,b]=hsl2rgb(hsl[0]+rgb.hue,hsl[1],Math.min(100,hsl[2]*bri));
-    const k=bri/1.9;
+    const[r,g,b]=hsl2rgb(hsl[0]+rgb.hue,hsl[1],Math.min(62,hsl[2]*(0.9+0.18*bri)));
+    const k=(bri-1)/0.9;
     el.style.boxShadow=`0 3px 10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)`+
-      (bri>0?`,0 20px ${Math.round(26+22*k)}px -6px rgba(${r|0},${g|0},${b|0},${(0.45+0.35*k).toFixed(2)})`:'');
+      (bri>0?`,0 20px ${Math.round(28+26*k)}px -6px rgba(${r|0},${g|0},${b|0},${(0.55+0.35*k).toFixed(2)})`
+            +`,0 0 ${Math.round(30+50*k)}px rgba(${r|0},${g|0},${b|0},${(0.20+0.40*k).toFixed(2)})`:'');
   }
 }
 
