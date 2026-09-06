@@ -2383,21 +2383,38 @@ function drawRgb(cols){
          luce como el maximo de antes y el maximo va bastante mas lejos:
          mas radio, mas opacidad y una tercera capa de difusion amplia. */
       const k=(bri-1)/0.9;                   /* 0 .. 1 */
-      const glowNear=Math.round(26+30*k);    /* halo pegado al keycap */
-      const glowFar =Math.round(46+64*k);    /* difusion amplia */
-      const drop    =Math.round(34+26*k);
-      const aNear=(0.55+0.40*k).toFixed(2);
-      const aFar =(0.20+0.42*k).toFixed(2);
-      const aDrop=(0.50+0.35*k).toFixed(2);
-      /* El 4o valor (spread) es lo que saca el halo FUERA del keycap:
-         sin el, un box-shadow 0 0 Npx difumina tambien hacia dentro y
-         el color se comia la tecla. Con spread negativo la sombra
-         encoge antes de difuminarse, asi que el brillo queda en el
-         borde y alrededor, como la luz real de un LED bajo la tecla. */
+      /* Un LED apagado (ripple fuera de la onda, sparkle sin chispa...)
+         da color negro. Pintarlo igual dibujaba un halo NEGRO alrededor
+         de la tecla, cuando lo correcto es que no haya nada: la luz se
+         escala por lo encendido que este el pixel. */
+      const lum=Math.max(r,g,b)/255;         /* 0 = apagado */
+      if(lum<0.02){
+        /* Sin halo, pero el color queda registrado: si se saliera con
+           continue sin guardarlo, al volver a encenderse el mismo color
+           no se repintaria. */
+        el.style.boxShadow=sh;
+        led.style.background='transparent';
+        led.style.boxShadow='none';
+        continue;
+      }
+      const glowNear=Math.round(22+26*k);
+      const glowFar =Math.round(40+58*k);
+      const drop    =Math.round(30+22*k);
+      /* La opacidad se multiplica por lum: un pixel a medias ilumina a
+         medias, en vez de saltar de nada a todo. */
+      const aNear=(( 0.50+0.40*k)*lum).toFixed(2);
+      const aFar =(( 0.18+0.40*k)*lum).toFixed(2);
+      const aDrop=(( 0.45+0.32*k)*lum).toFixed(2);
+      /* El 4o valor (spread) saca el halo FUERA del keycap: sin el, un
+         box-shadow 0 0 Npx difumina tambien hacia dentro y el color se
+         come la tecla. El spread negativo crece con el brillo, asi que
+         subirlo amplia el halo pero NO lo mete mas en el keycap. */
+      const sprNear=-Math.round(8+6*k);
+      const sprFar =-Math.round(14+10*k);
       el.style.boxShadow=sh
-        +`,0 26px ${drop}px -10px rgba(${r|0},${g|0},${b|0},${aDrop})`
-        +`,0 0 ${glowNear}px -6px rgba(${r|0},${g|0},${b|0},${aNear})`
-        +`,0 0 ${glowFar}px -10px rgba(${r|0},${g|0},${b|0},${aFar})`;
+        +`,0 26px ${drop}px -12px rgba(${r|0},${g|0},${b|0},${aDrop})`
+        +`,0 0 ${glowNear}px ${sprNear}px rgba(${r|0},${g|0},${b|0},${aNear})`
+        +`,0 0 ${glowFar}px ${sprFar}px rgba(${r|0},${g|0},${b|0},${aFar})`;
       led.style.background=col;
       led.style.boxShadow=`0 0 ${Math.round(12+20*k)}px ${col}`;
     }
@@ -2407,9 +2424,12 @@ function drawRgb(cols){
     const hsl=cols[s][4];
     const[r,g,b]=hsl2rgb(hsl[0]+rgb.hue,hsl[1],Math.min(62,hsl[2]*(0.9+0.18*bri)));
     const k=(bri-1)/0.9;
+    const lum=Math.max(r,g,b)/255;   /* apagado -> sin halo, no un halo negro */
     el.style.boxShadow=`0 3px 10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)`+
-      (bri>0?`,0 20px ${Math.round(28+26*k)}px -6px rgba(${r|0},${g|0},${b|0},${(0.55+0.35*k).toFixed(2)})`
-            +`,0 0 ${Math.round(30+50*k)}px -8px rgba(${r|0},${g|0},${b|0},${(0.20+0.40*k).toFixed(2)})`:'');
+      (bri>0&&lum>=0.02
+        ?`,0 20px ${Math.round(26+22*k)}px -8px rgba(${r|0},${g|0},${b|0},${((0.50+0.32*k)*lum).toFixed(2)})`
+        +`,0 0 ${Math.round(28+44*k)}px ${-Math.round(10+8*k)}px rgba(${r|0},${g|0},${b|0},${((0.18+0.38*k)*lum).toFixed(2)})`
+        :'');
   }
 }
 
