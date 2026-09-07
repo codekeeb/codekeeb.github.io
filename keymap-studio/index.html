@@ -445,6 +445,29 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #help kbd{background:var(--bg);border:1px solid var(--hairline2);border-bottom-width:2px;border-radius:6px;
   padding:2px 8px;font-family:var(--font-mono);font-size:10.5px;color:var(--ink);white-space:nowrap}
 #help p{color:var(--muted);margin:4px 0}
+/* La ayuda crecio de una tabla de atajos a todas las funciones, asi que
+   se agrupa en pestanas: se ve una seccion cada vez en vez de un muro. */
+#help{width:760px}
+#helpTabs{display:flex;gap:4px;padding:0 20px;border-bottom:1px solid var(--hairline);flex-wrap:wrap}
+#helpTabs button{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  background:none;border:0;border-bottom:2px solid transparent;color:var(--faint);
+  padding:9px 10px;cursor:pointer;margin-bottom:-1px}
+#helpTabs button:hover{color:var(--ink)}
+#helpTabs button.on{color:var(--ink);border-bottom-color:var(--ink)}
+#help .hcard{background:var(--bg);border:1px solid var(--hairline);border-radius:10px;
+  padding:11px 13px;margin:8px 0}
+#help .hcard b{color:var(--ink)}
+#help .hcard p{margin:3px 0 0}
+#help .hlead{color:var(--muted);margin:0 0 10px}
+#help .hgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin:8px 0}
+#help .htag{display:inline-block;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--faint);border:1px solid var(--hairline2);
+  border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:1px}
+#help .hstep{display:flex;gap:9px;margin:7px 0;align-items:flex-start}
+#help .hstep i{flex:none;width:19px;height:19px;border-radius:50%;background:var(--ink);color:var(--surface);
+  font-family:var(--font-mono);font-size:10px;font-style:normal;display:flex;
+  align-items:center;justify-content:center;margin-top:1px}
+@media (max-width:560px){#help td:first-child{width:auto}}
 
 /* ---------- OLED zoom overlay ---------- */
 #oledZoom{position:fixed;inset:0;background:rgba(20,22,27,.55);backdrop-filter:blur(8px);z-index:55;display:none;align-items:center;justify-content:center;gap:40px}
@@ -514,7 +537,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
     <button class="btn accent" id="btnConnect" data-short="Conectar" data-short-i18n="connectShort"><span data-i18n="connect">Conectar teclado</span></button>
     <button class="btn" id="btnSaveHdr" data-i18n-title="saveHdrTitle" title="Guardar keymap en la flash del teclado (ZMK Studio save_changes)" style="display:none">💾 <span data-i18n="saveKm">Guardar (flash)</span></button>
     <button class="btn" id="btnStudio" data-i18n="studio">Panel Studio</button>
-    <button class="btn" id="btnHelp" data-i18n-title="helpBtnTitle" title="Ayuda y atajos (F1)">?</button>
+    <button class="btn" id="btnHelp" data-i18n-title="helpBtnTitle" title="Guía de uso (F1)">?</button>
     <button class="btn" id="btnLang">EN</button>
     <a class="iconlink" href="https://github.com/codekeeb/sofle-choc-rgb-zmk" target="_blank" rel="noopener" title="Firmware en GitHub"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
   </div>
@@ -716,8 +739,9 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 <!-- modal ayuda -->
 <div id="helpBk">
   <div id="help">
-    <div class="phead"><h2 data-i18n="helpTitle">Ayuda · atajos</h2>
+    <div class="phead"><h2 data-i18n="helpTitle">Guía de uso</h2>
       <button class="btn small x" id="btnHelpX" style="margin-left:auto">✕</button></div>
+    <div id="helpTabs"></div>
     <div class="hbody" id="helpBody"></div>
   </div>
 </div>
@@ -771,7 +795,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   exported:'Exportado',imported:'Keymap importado',badJson:'JSON inválido',restored:'Capa restaurada',stockRestored:'Keymap de fábrica restaurado',renamePrompt:'Nombre de la capa:',renamed:'Capa renombrada',
   removeLayer:'Eliminar',moveL:'←',moveR:'→',restoreL:'Restaurar',pressKey:'Pulsa una tecla para editar…',
   local:'SIMULACIÓN',connected:'CONECTADO',
-  ctxEdit:'Editar…',ctxCopy:'Copiar',ctxPaste:'Pegar',ctxTrans:'Transparente',helpTitle:'Ayuda · atajos',
+  ctxEdit:'Editar…',ctxCopy:'Copiar',ctxPaste:'Pegar',ctxTrans:'Transparente',helpTitle:'Guía de uso',
   encCtxCw:'Editar giro horario (CW)',encCtxCcw:'Editar giro antihorario (CCW)',encCtxPress:'Editar click (press)',
   copied:'Tecla copiada',pasted:'Tecla pegada',nothingCopy:'Nada que pegar',undone:'Deshecho',redone:'Rehecho',
   confirmReset:'¿Restaurar el keymap de fábrica? Se perderán los cambios locales.',
@@ -786,7 +810,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   syncing:'Sincronizando con el teclado…',syncedOk:'Sincronizado con el teclado ✓',syncedErr:'Sincronizado con %n error(es)',
   serial:'nº de serie',stockOsd:'Keymap de fábrica',
   saveHdrTitle:'Guardar keymap en la flash del teclado (ZMK Studio save_changes)',
-  helpBtnTitle:'Ayuda y atajos (F1)',undoTitle:'Deshacer (Ctrl+Z)',redoTitle:'Rehacer (Ctrl+Y)',
+  helpBtnTitle:'Guía de uso (F1)',undoTitle:'Deshacer (Ctrl+Z)',redoTitle:'Rehacer (Ctrl+Y)',
   deselTitle:'Deseleccionar (Esc)',lockTitle:'Bloqueo ZMK Studio',
   unsavedDot:'● CAMBIOS SIN GUARDAR',ozLeft:'OLED IZQUIERDA · CENTRAL',ozRight:'OLED DERECHA · PERIFÉRICO',
   cat_letras:'letras',cat_numeros:'números',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
@@ -848,7 +872,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   exported:'Exported',imported:'Keymap imported',badJson:'Invalid JSON',restored:'Layer restored',stockRestored:'Factory keymap restored',renamePrompt:'Layer name:',renamed:'Layer renamed',
   removeLayer:'Remove',moveL:'←',moveR:'→',restoreL:'Restore',pressKey:'Press a key to edit…',
   local:'SIMULATION',connected:'CONNECTED',
-  ctxEdit:'Edit…',ctxCopy:'Copy',ctxPaste:'Paste',ctxTrans:'Transparent',helpTitle:'Help · shortcuts',
+  ctxEdit:'Edit…',ctxCopy:'Copy',ctxPaste:'Paste',ctxTrans:'Transparent',helpTitle:'How to use it',
   encCtxCw:'Edit clockwise turn (CW)',encCtxCcw:'Edit counter-clockwise turn (CCW)',encCtxPress:'Edit click (press)',
   copied:'Key copied',pasted:'Key pasted',nothingCopy:'Nothing to paste',undone:'Undone',redone:'Redone',
   confirmReset:'Restore the factory keymap? Local changes will be lost.',
@@ -863,7 +887,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   syncing:'Syncing with keyboard…',syncedOk:'Synced with keyboard ✓',syncedErr:'Synced with %n error(s)',
   serial:'serial',stockOsd:'Factory keymap',
   saveHdrTitle:'Save keymap to the keyboard flash (ZMK Studio save_changes)',
-  helpBtnTitle:'Help and shortcuts (F1)',undoTitle:'Undo (Ctrl+Z)',redoTitle:'Redo (Ctrl+Y)',
+  helpBtnTitle:'How to use it (F1)',undoTitle:'Undo (Ctrl+Z)',redoTitle:'Redo (Ctrl+Y)',
   deselTitle:'Deselect (Esc)',lockTitle:'ZMK Studio lock',
   unsavedDot:'● UNSAVED CHANGES',ozLeft:'LEFT OLED · CENTRAL',ozRight:'RIGHT OLED · PERIPHERAL',
   cat_letras:'letters',cat_numeros:'numbers',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
@@ -4110,31 +4134,149 @@ function openCtx(e,pos){
 }
 function closeCtx(){$('#ctx').classList.remove('open');}
 function openHelp(){renderHelp();$('#helpBk').classList.add('open');}
+let helpTab='basics';
+/* La ayuda cubre ya seis areas (edicion, capas, simulacion, teclado
+   real, forma y hardware), demasiado para una sola lista: se reparte en
+   pestanas y cada una cabe en pantalla sin scroll largo. */
 function renderHelp(){
   const es=lang==='es';
+  const T=[
+    ['basics',  es?'Empezar':'Start'],
+    ['editing', es?'Editar':'Editing'],
+    ['layers',  es?'Capas y macros':'Layers & macros'],
+    ['board',   es?'Teclado real':'Real keyboard'],
+    ['light',   es?'Luz y pantallas':'Light & screens'],
+    ['shape',   es?'Forma':'Shape'],
+  ];
+  $('#helpTabs').innerHTML=T.map(([k,l])=>
+    `<button data-tab="${k}" class="${k===helpTab?'on':''}">${l}</button>`).join('');
+  $('#helpTabs').querySelectorAll('button').forEach(b=>
+    b.onclick=()=>{helpTab=b.dataset.tab;renderHelp();});
+
   const row=(k,d)=>`<tr><td><kbd>${k}</kbd></td><td>${d}</td></tr>`;
-  $('#helpBody').innerHTML=`
-  <h3>${es?'Edición':'Editing'}</h3>
+  const card=(t,d,tag)=>`<div class="hcard"><b>${t}</b>${tag?`<span class="htag">${tag}</span>`:''}<p>${d}</p></div>`;
+  const step=(n,d)=>`<div class="hstep"><i>${n}</i><div>${d}</div></div>`;
+  const H={};
+
+  H.basics=es?`
+  <p class="hlead">Editor de keymaps para los teclados CODE/KEEB. Funciona sin teclado
+     conectado: todo lo que cambies se guarda en el navegador.</p>
+  ${step(1,'Elige tu teclado arriba a la izquierda: <b>Sofle</b>, <b>Corne</b> o <b>Totem</b>.')}
+  ${step(2,'Haz clic en una tecla y elige el keycode en el panel de abajo. La selección avanza sola.')}
+  ${step(3,'Cambia de capa con las pestañas bajo el teclado (<kbd>Alt+1…9</kbd>).')}
+  ${step(4,'¿Tienes el teclado a mano? Conéctalo por USB y escríbelo en la placa. Si no, exporta el keymap.')}
+  <h3>Modo simulación</h3>
+  <p>Teclea en tu teclado normal y el de la pantalla se ilumina, cuenta las
+     pulsaciones por minuto y anima las pantallas y el RGB. Sirve para ver
+     cómo queda antes de tocar el firmware.</p>`
+  :`
+  <p class="hlead">Keymap editor for CODE/KEEB keyboards. It works with no keyboard
+     attached: everything you change is saved in your browser.</p>
+  ${step(1,'Pick your keyboard at the top left: <b>Sofle</b>, <b>Corne</b> or <b>Totem</b>.')}
+  ${step(2,'Click a key and pick a keycode in the bottom panel. The selection auto-advances.')}
+  ${step(3,'Switch layers with the tabs under the keyboard (<kbd>Alt+1…9</kbd>).')}
+  ${step(4,'Got the keyboard with you? Plug it in over USB and write it to the board. If not, export the keymap.')}
+  <h3>Simulation mode</h3>
+  <p>Type on your real keyboard and the one on screen lights up, counts words
+     per minute and animates the screens and the RGB. Handy to see how it
+     looks before touching the firmware.</p>`;
+
+  H.editing=`
+  <h3>${es?'Atajos':'Shortcuts'}</h3>
   <table>
-    ${row('Click',es?'Seleccionar tecla; después elige un keycode en el panel inferior (la selección avanza sola)':'Select a key; then pick a keycode in the bottom panel (selection auto-advances)')}
+    ${row('Click',es?'Seleccionar tecla':'Select a key')}
     ${row(es?'Click derecho':'Right click',es?'Menú: editar, copiar, pegar, transparente':'Menu: edit, copy, paste, transparent')}
     ${row('Ctrl+C / Ctrl+V',es?'Copiar / pegar la tecla seleccionada':'Copy / paste the selected key')}
     ${row('Ctrl+Z / Ctrl+Y',es?'Deshacer / rehacer':'Undo / redo')}
     ${row('Alt+1…9',es?'Cambiar de capa':'Switch layer')}
-    ${row('Esc',es?'Cerrar picker, menús y paneles':'Close picker, menus and panels')}
-    ${row('Enter',es?'En el picker: asignar el primer resultado':'In the picker: assign first result')}
+    ${row('Enter',es?'En el buscador: asignar el primer resultado':'In the search box: assign the first result')}
+    ${row('Esc',es?'Cerrar buscador, menús y paneles':'Close search, menus and panels')}
   </table>
-  <h3>${es?'Simulación':'Simulation'}</h3>
-  <table>
-    ${row(es?'Teclear':'Type',es?'Ilumina la tecla equivalente, cuenta WPM y anima OLED/RGB':'Lights the matching key, counts WPM, animates OLED/RGB')}
-    ${row(es?'Arrastrar encoder':'Drag encoder',es?'Gira el encoder y ejecuta su behavior (RGB, volumen…)':'Rotates the encoder and runs its behavior (RGB, volume…)')}
-    ${row(es?'Click encoder':'Click encoder',es?'Edita el press del encoder (pos 42/43)':'Edit the encoder press (pos 42/43)')}
-  </table>
-  <h3>${es?'Teclado real':'Real keyboard'}</h3>
+  <h3>${es?'Teclas de dos funciones':'Dual-function keys'}</h3>
   <p>${es
-    ?'Conecta la mitad izquierda por USB (Chrome/Edge) y pulsa <b>Conectar teclado</b>. Para editar en vivo, desbloquea con la tecla <b>&studio_unlock</b> (capa Lower). <b>Guardar (flash)</b> persiste el keymap en el teclado.'
-    :'Plug the left half via USB (Chrome/Edge) and press <b>Connect keyboard</b>. To live-edit, unlock with the <b>&studio_unlock</b> key (Lower layer). <b>Save (flash)</b> persists the keymap on the keyboard.'}</p>
-  <p>${es?'Sin teclado, todo funciona en modo simulación y se guarda en el navegador.':'Without a keyboard everything runs in simulation mode and is saved in your browser.'}</p>`;
+    ?'Una tecla puede hacer una cosa al <b>tocar</b> y otra al <b>mantener</b>: por ejemplo Esc al tocar y Ctrl al mantener. En el panel de abajo cambia entre <b>tocar</b> y <b>mantener</b> para editar cada mitad, o pulsa <b>quitar hold</b> para dejarla normal.'
+    :'A key can do one thing when <b>tapped</b> and another when <b>held</b>: Esc on tap and Ctrl on hold, say. In the bottom panel switch between <b>tap</b> and <b>hold</b> to edit each half, or press <b>remove hold</b> to make it a plain key.'}</p>
+  <p>${es
+    ?'En «mantener» solo caben una capa (MO) o una tecla suelta, que es lo que ZMK admite ahí.'
+    :'The hold half only takes a layer (MO) or a single key — that is what ZMK allows there.'}</p>`;
+
+  H.layers=`
+  <h3>${es?'Capas':'Layers'}</h3>
+  <p>${es
+    ?'Abre <b>Panel Studio → Capas</b> para añadir, renombrar, reordenar o borrar capas, y para devolver una capa a como venía de fábrica.'
+    :'Open <b>Studio panel → Layers</b> to add, rename, reorder or delete layers, and to restore one to how it shipped.'}</p>
+  <h3>${es?'Macros':'Macros'}</h3>
+  <p>${es
+    ?'<b>&dmac</b> son ranuras de macro que viven en la memoria del teclado: escribes ahí un email, una ñ, un «→» o una secuencia de teclas y la asignas a una tecla, <b>sin recompilar el firmware</b>.'
+    :'<b>&dmac</b> are macro slots that live in the keyboard’s own memory: put an email address, an accented letter, an arrow or a key sequence in one and bind it to a key, <b>with no firmware rebuild</b>.'}</p>
+  ${card(es?'Método Unicode':'Unicode method',
+    es?'Para acentos y símbolos, elige en el panel cómo los escribe tu sistema (Windows, Linux o macOS). Si salen caracteres raros, es este ajuste.'
+      :'For accents and symbols, pick how your system types them (Windows, Linux or macOS) in the panel. If you get garbled characters, this is the setting.')}`;
+
+  H.board=es?`
+  <p class="hlead">Necesitas Chrome o Edge: Firefox y Safari no permiten hablar con
+     el teclado desde el navegador.</p>
+  ${step(1,'Conecta la <b>mitad izquierda</b> por USB. Es la que manda; la derecha se entera por Bluetooth.')}
+  ${step(2,'Pulsa <b>Conectar teclado</b> y elige el puerto que aparece.')}
+  ${step(3,'Para poder editar, desbloquea con la tecla <b>&studio_unlock</b> (capa Lower). Es una protección de ZMK para que nadie reescriba tu teclado sin tocarlo.')}
+  ${step(4,'<b>Guardar (flash)</b> deja los cambios grabados en el teclado, y siguen ahí al desenchufarlo.')}
+  ${card('Encoders','Los giros también se editan: haz clic en el encoder de la pantalla y asigna qué hace al girar en cada sentido.')}
+  ${card(es?'Exportar / importar':'Export / import','En <b>Archivo</b> puedes descargar el keymap como <b>.keymap</b> de ZMK para compilarlo, o guardarlo en JSON para llevártelo a otro navegador.')}`
+  :`
+  <p class="hlead">You need Chrome or Edge: Firefox and Safari cannot talk to the
+     keyboard from the browser.</p>
+  ${step(1,'Plug the <b>left half</b> in over USB. That is the one in charge; the right half follows over Bluetooth.')}
+  ${step(2,'Press <b>Connect keyboard</b> and pick the port it offers.')}
+  ${step(3,'To edit, unlock with the <b>&studio_unlock</b> key (Lower layer). It is a ZMK safeguard so nobody rewrites your keyboard without touching it.')}
+  ${step(4,'<b>Save (flash)</b> writes the changes into the keyboard, and they stay there once you unplug it.')}
+  ${card('Encoders','Rotations are editable too: click the encoder on screen and set what each direction does.')}
+  ${card('Export / import','Under <b>File</b> you can download the keymap as a ZMK <b>.keymap</b> to compile, or save it as JSON to carry to another browser.')}`;
+
+  H.light=`
+  <p class="hlead">${es
+    ?'Solo en los teclados que lo llevan. El Totem no tiene ni pantallas ni RGB, así que estos controles no aparecen.'
+    :'Only on the keyboards that have it. The Totem has neither screens nor RGB, so these controls are hidden there.'}</p>
+  <div class="hgrid">
+    ${card('RGB',es
+      ?'Enciende, apaga y ajusta efecto, brillo, tono y velocidad. Con el teclado conectado los cambios van a la placa y <b>se guardan en ella</b>.'
+      :'Turn it on or off and set effect, brightness, hue and speed. With the keyboard connected the changes go to the board and <b>are saved there</b>.')}
+    ${card(es?'Pantalla izquierda':'Left screen',es
+      ?'Cinco vistas: bongo cat, luna, número de WPM, velocímetro y gráfica. En el teclado: <b>Lower + click del encoder izquierdo</b>.'
+      :'Five views: bongo cat, luna, WPM number, speedometer and graph. On the keyboard: <b>Lower + left encoder click</b>.')}
+    ${card(es?'Pantalla derecha':'Right screen',es
+      ?'Cicla la animación. En el teclado: <b>Lower + click del encoder derecho</b>.'
+      :'Cycles the animation. On the keyboard: <b>Lower + right encoder click</b>.')}
+    ${card(es?'Ver las pantallas de cerca':'See the screens up close',es
+      ?'El botón junto a «Simulación» las amplía a tamaño grande.'
+      :'The button next to “Simulation” blows them up to a large size.')}
+  </div>
+  <p>${es
+    ?'Lo que elijas aquí queda guardado en el teclado, así que sigue puesto al desenchufarlo.'
+    :'Whatever you pick here is stored on the keyboard, so it survives unplugging.'}</p>`;
+
+  H.shape=`
+  <p class="hlead">${es
+    ?'El dibujo del teclado se puede recolocar para que se parezca al tuyo. Es solo el dibujo: no cambia el firmware ni el keymap.'
+    :'The keyboard drawing can be rearranged to match yours. It is only the drawing: it changes neither the firmware nor the keymap.'}</p>
+  <p>${es?'En <b>Panel Studio → Forma del teclado</b>, marca <b>Editar posiciones</b>:':'Under <b>Studio panel → Keyboard shape</b>, tick <b>Edit positions</b>:'}</p>
+  <table>
+    ${row(es?'Clic':'Click',es?'Seleccionar la tecla':'Select the key')}
+    ${row('↑ ↓ ← →',es?'Moverla':'Move it')}
+    ${row('Shift + ← →',es?'Girarla':'Rotate it')}
+  </table>
+  <div class="hgrid">
+    ${card(es?'Mover la columna entera':'Move the whole column',es
+      ?'Aplica el movimiento a toda la columna de la tecla, no solo a ella.'
+      :'Applies the movement to the key’s whole column, not just that key.')}
+    ${card(es?'Reflejar en la otra mitad':'Mirror on the other half',es
+      ?'Mueve la tecla simétrica de la otra mitad, como si un espejo dividiera el teclado.'
+      :'Moves the mirrored key on the other half, as if a mirror split the keyboard.')}
+  </div>
+  <p>${es
+    ?'Puedes <b>exportar</b> la forma a JSON para guardarla, o volver a la original cuando quieras.'
+    :'You can <b>export</b> the shape to JSON to keep it, or go back to the original whenever you want.'}</p>`;
+
+  $('#helpBody').innerHTML=H[helpTab]||H.basics;
 }
 
 /* ============================================================
@@ -4526,7 +4668,10 @@ function init(){
     renderPickerCats($('#pickerCats').dataset.cur||'todo');renderMacros();
     /* La barra de modificadores y la de distribucion tambien se generan
        por JS; sin esto se quedaban en el idioma anterior. */
-    renderPickerMods();renderPickerGrid($('#pickerSearch').value);};
+    renderPickerMods();renderPickerGrid($('#pickerSearch').value);
+    /* La ayuda se genera por JS y no la toca applyI18n: si esta abierta
+       hay que rehacerla o se queda en el idioma anterior. */
+    if($('#helpBk').classList.contains('open'))renderHelp();};
   renderBoardSel();
   const bs=$('#boardSel');if(bs)bs.onchange=()=>setBoard(bs.value);
   /* Tambien al arrancar: la placa se recuerda entre sesiones, asi que
