@@ -336,6 +336,9 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #ctlStack{position:relative;margin-left:auto;display:flex;flex-direction:column;
   align-items:flex-end;gap:5px;min-width:186px}
 .ctlRow{display:flex;align-items:center;gap:9px;justify-content:flex-end;width:100%}
+/* display:flex gana a [hidden], que solo lleva display:none de la hoja
+   del navegador: sin esto, ocultar una fila no hacia nada. */
+.ctlRow[hidden]{display:none}
 .pill{background:var(--surface);border:1px solid var(--hairline2);color:var(--ink);
   border-radius:999px;padding:.34em 1.05em;font-family:var(--font-mono);font-size:.68rem;
   font-weight:700;letter-spacing:.06em;cursor:pointer;white-space:nowrap;min-width:104px;
@@ -529,12 +532,12 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   <!-- OLED y RGB comparten diseño: etiqueta + pastilla. La de RGB abre
        sus ajustes debajo cuando está encendido. -->
   <div id="ctlStack">
-    <div class="ctlRow">
+    <div class="ctlRow" id="rowOled">
       <span class="tlabel" data-i18n="oledLbl">OLED</span>
       <button class="pill" id="btnWpm2" data-i18n-title="wpmBtnTitle" title="Cambiar vista del OLED izquierdo (&wpmview)">▶ <span id="wpmName2" class="animName">BONGO</span></button>
       <button class="pill" id="btnAnim2" data-i18n-title="animBtnTitle" title="Cambiar animación del OLED derecho (&oledanim)">▶ <span id="animName2" class="animName">CRYSTAL</span></button>
     </div>
-    <div class="ctlRow">
+    <div class="ctlRow" id="rowRgb">
       <span class="tlabel" data-i18n="rgbLbl">RGB</span>
       <button class="pill" id="fxToggle" data-i18n="rgbOn">ON</button>
       <button class="pill" id="fxMore" data-i18n-title="rgbMoreTitle"
@@ -591,13 +594,13 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
         <button class="btn small" id="btnStock" data-i18n="stock">↺ Keymap de fábrica</button>
       </div>
     </details>
-    <details class="dsec">
+    <details class="dsec" id="secWpmBox">
       <summary data-i18n="secWpm">Vista OLED izquierda (&wpmview)</summary>
       <button class="btn small" id="btnWpm">▶ <span id="wpmName">BONGO</span></button>
       <p style="font-size:10px;color:var(--faint);margin-top:8px;line-height:1.5" data-i18n="wpmHint">
         Cicla bongo → luna → número → velocímetro → gráfico, como &wpmview (Lower + click del encoder izquierdo).</p>
     </details>
-    <details class="dsec">
+    <details class="dsec" id="secAnimBox">
       <summary data-i18n="secAnim">Animación OLED derecha (&oledanim)</summary>
       <button class="btn small" id="btnAnim">▶ <span id="animName">CRYSTAL</span></button>
       <p style="font-size:10px;color:var(--faint);margin-top:8px;line-height:1.5" data-i18n="animHint">
@@ -1305,7 +1308,7 @@ const BOARDS={
     name:'Sofle RGB', keys:60, cols:6, rows:4,
     off:{l:[43,43,14,0,14,29],r:[29,14,0,14,43,43]},
     half:[{x:80,y:24,rot:7,w:661,h:528},{x:770,y:24,rot:-7,w:670,h:528}],
-    enc:[{x:551,y:287},{x:9,y:287}], oled:true,
+    enc:[{x:551,y:287},{x:9,y:287}], oled:true, rgb:true,
     /* 60 = 58 teclas + 2 clicks de encoder. Las rotaciones van en
        'sensors', por eso no ocupan posicion. */
     geo:'sofle'
@@ -1328,7 +1331,7 @@ const BOARDS={
        de su mitad y las dos pantallas acababan superpuestas en el
        centro. Las mitades quedan simetricas respecto al lienzo. */
     half:[{x:69,y:90,rot:7,w:646,h:470},{x:805,y:90,rot:-7,w:646,h:470}],
-    enc:null, oled:true,           /* el Corne mantiene las pantallas */
+    enc:null, oled:true, rgb:true, /* el Corne mantiene las pantallas */
     geo:'corne'
   },
   totem:{
@@ -1350,7 +1353,7 @@ const BOARDS={
        TOTEM es estrecho: asi el conjunto queda centrado en el lienzo y
        las dos mitades siguen siendo simetricas respecto a el. */
     half:[{x:102,y:80,rot:7,w:644,h:476},{x:774,y:80,rot:-7,w:644,h:476}],
-    enc:null, oled:false,          /* el Totem no lleva pantallas */
+    enc:null, oled:false, rgb:false, /* el Totem no lleva pantallas ni RGB */
     /* La tecla exterior de las filas 0 y 1 ES la columna del menique
        (va dentro de la rejilla); las dos sueltas de verdad son las de la
        fila 2, que geoTotem coloca en las posiciones 20 y 31. */
@@ -2463,7 +2466,7 @@ function drawRgb(cols){
      antes era el maximo, y el maximo sube bastante mas: color mas
      saturado y halo mas amplio. Solo afecta a la SIMULACION -- el brillo
      que se manda al teclado sigue siendo rgb.bri (1..5). */
-  const bri=rgb.on?(1.0+(clamp(rgb.bri,1,5)-1)/4*0.9):0;
+  const bri=(rgb.on&&board().rgb)?(1.0+(clamp(rgb.bri,1,5)-1)/4*0.9):0;
   for(let pos=0;pos<NKEYS();pos++){
     const el=keyEls[pos];if(!el)continue;
     const half=posHalf(pos);
@@ -4382,7 +4385,9 @@ function loop(now){
   composeLeft(now);composeRight(now);
   blit(scrL,ctxL,1);blit(scrR,ctxR,1);
   if($('#oledZoom').classList.contains('open')){blit(scrL,ctxZL,4);blit(scrR,ctxZR,4);}
-  drawRgb(fxFrame());
+  /* Sin RGB no se pinta el halo. No vale pasar null: drawRgb indexa
+     cols[half], y la rama que limpia las teclas es la de brillo 0. */
+  if(board().rgb)drawRgb(fxFrame());
 }
 function fitStage(){
   /* Antes esto tenía dos topes que dejaban el teclado pequeño en
@@ -4421,6 +4426,22 @@ function renderBoardSel(){
 }
 /* Cambiar de teclado rehace geometria y keymap. Se guarda antes, para
    que cada modelo conserve lo suyo al volver. */
+/* El Totem no lleva ni pantallas ni RGB, asi que sus controles no
+   pintan nada ahi. Se ocultan en vez de borrarlos porque el mismo HTML
+   sirve para los tres teclados. */
+function applyBoardFeatures(){
+  const B=board();
+  const show=(sel,on)=>{const e=$(sel);if(e)e.hidden=!on;};
+  show('#rowOled',!!B.oled);
+  show('#secWpmBox',!!B.oled);
+  show('#secAnimBox',!!B.oled);
+  show('#rowRgb',!!B.rgb);
+  const rc=$('#rgbCtl');
+  if(rc&&!B.rgb)rc.classList.remove('on');   /* si estaba desplegado */
+  /* Un repintado con brillo 0 quita el halo que hubiera dejado la placa
+     anterior; si no, las teclas del Totem heredaban el tinte del Sofle. */
+  if(!B.rgb)drawRgb(fxFrame());
+}
 function setBoard(id){
   if(!BOARDS[id]||id===boardId)return;
   saveKeymap();
@@ -4435,6 +4456,7 @@ function setBoard(id){
   activeLayer=0;selPos=-1;editingEnc=null;
   hist.undo.length=0;hist.redo.length=0;updateHistBtns();
   buildKeyboard();renderLayer();renderLayerBar();renderDrawerLayers();setBadge();
+  applyBoardFeatures();
   fitStage();
   osd(board().name);
 }
@@ -4507,6 +4529,9 @@ function init(){
     renderPickerMods();renderPickerGrid($('#pickerSearch').value);};
   renderBoardSel();
   const bs=$('#boardSel');if(bs)bs.onchange=()=>setBoard(bs.value);
+  /* Tambien al arrancar: la placa se recuerda entre sesiones, asi que
+     abrir directamente con el Totem debe ocultar OLED y RGB igual. */
+  applyBoardFeatures();
   $('#btnUnlock').onclick=studioUnlock;
   $('#btnAddLayer').onclick=addLayer;
   $('#btnSaveKm').onclick=studioSave;
