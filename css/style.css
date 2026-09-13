@@ -12,9 +12,9 @@
 
 :root{
   /* --- sustrato --- */
-  --board:#0b0e0d;          /* soldermask negro mate, leve tinte verde */
-  --board-2:#121716;        /* region elevada */
-  --board-3:#1a201e;        /* componente sobre la placa */
+  --board:#0e1211;          /* soldermask negro mate, leve tinte verde */
+  --board-2:#151b19;        /* region elevada */
+  --board-3:#1c2321;        /* componente sobre la placa */
   --edge:rgba(201,138,75,.22);   /* borde de placa, cobre muy bajado */
 
   /* --- serigrafia --- */
@@ -75,7 +75,7 @@ body{
   overflow-x:hidden;
   /* Retícula de taladros del sustrato: paso de 2,54 mm como en una placa
      de prototipos, muy bajada para que sea textura y no patron. */
-  background-image:radial-gradient(circle at 1px 1px,rgba(230,228,221,.045) 1px,transparent 0);
+  background-image:radial-gradient(circle at 1px 1px,rgba(230,228,221,.075) 1px,transparent 0);
   background-size:24px 24px;
 }
 body::after{
@@ -970,4 +970,55 @@ a.model-card{text-decoration:none;color:inherit}
 
 @media (prefers-reduced-motion: reduce){
   .hero__aura{animation:none;opacity:.75;clip-path:none}
+}
+
+/* ============================================================
+   RUTEADO — lo que convierte el fondo oscuro en una placa
+   ------------------------------------------------------------
+   Una pista de PCB no gira 90 grados: gira 45. Ese detalle es lo
+   que separa "fondo oscuro con lineas" de "esto es una placa".
+   ============================================================ */
+
+/* Cada region del sitio se rutea al borde con dos pistas verticales
+   y una via de paso en la costura entre secciones. */
+.models,.features,.specs,.flavors,.seller,.cta{position:relative}
+.models::before,.features::before,.specs::before,.flavors::before,.seller::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:
+    linear-gradient(90deg,transparent 0 6%,var(--copper-dark) 6% 6.09%,transparent 6.09%),
+    linear-gradient(90deg,transparent 0 94%,var(--copper-dark) 94% 94.09%,transparent 94.09%);
+  opacity:.38;
+}
+.models>*,.features>*,.specs>*,.flavors>*,.seller>*{position:relative;z-index:1}
+
+/* La via: taladro metalizado en la costura entre dos regiones. */
+.models::after,.features::after,.specs::after,.flavors::after{
+  content:"";position:absolute;left:50%;bottom:-7px;width:14px;height:14px;
+  transform:translateX(-50%);border-radius:50%;z-index:2;
+  background:var(--board);
+  border:2px solid var(--copper-dark);
+  box-shadow:0 0 0 3px var(--board);
+}
+
+/* Giro a 45 grados: la esquina de la region acusa el chaflan de fresado,
+   como el corte real de una placa. */
+.model-card,.glance__box,.flavor-card{
+  clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px);
+}
+
+/* Pads de anclaje en las esquinas del catalogo: cobre, no adorno. */
+.models__grid{position:relative}
+.models__grid::before,.models__grid::after{
+  content:"";position:absolute;width:9px;height:9px;border-radius:50%;
+  background:var(--copper-dark);opacity:.7;
+}
+.models__grid::before{top:-22px;left:-4px}
+.models__grid::after{bottom:-22px;right:-4px}
+
+@media (prefers-reduced-motion: no-preference){
+  /* La pista del héroe ya se energiza al cargar; las del cuerpo no se
+     animan para que el movimiento siga siendo un solo momento. */
+  .models::before,.features::before,.specs::before,.flavors::before,.seller::before{
+    animation:none;
+  }
 }
