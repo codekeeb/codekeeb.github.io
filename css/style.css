@@ -142,7 +142,9 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
 
 /* ---------- hero ---------- */
 .hero{
-  min-height:100svh;position:relative;display:flex;flex-direction:column;justify-content:center;
+  /* Por debajo de la pantalla completa a proposito: asi asoma el borde
+     de la rejilla de modelos y se ve que hay tienda debajo. */
+  min-height:86svh;position:relative;display:flex;flex-direction:column;justify-content:center;
   padding:140px var(--pad) 80px;overflow:hidden;
 }
 .hero__aura{

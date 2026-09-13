@@ -106,7 +106,11 @@ function priceBlock(p){
     /* Al carrusel solo van los destacados: con 5 modelos, pasarlos
        todos era justo lo que lo hacia parecer un pase de diapositivas.
        El resto vive en la reja de "Modelos", que se escanea de un vistazo. */
-    carSlides = CK_PRODUCTS.filter(p => p.status === "available" && p.featured && p.heroImg);
+    carSlides = CK_PRODUCTS
+      .filter(p => p.status === "available" && p.featured && p.heroImg)
+      /* Manda primero el que mas unidades tiene. Abrir con el que queda una
+         unidad significa mandar todo el trafico al que antes se agota. */
+      .sort((a, b) => (b.stock ?? 0) - (a.stock ?? 0));
 
     track.innerHTML = carSlides.map((p, i) => {
       const url = p.url || CK_SHOP_URL;

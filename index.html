@@ -40,10 +40,10 @@
            alt="Codekeeb" width="160" height="56">
     </a>
     <nav class="nav__links" id="navLinks">
+      <a href="#modelos" data-i18n="nav.models">Modelos</a>
       <a href="#caracteristicas" data-i18n="nav.features">Características</a>
       <a href="#specs" data-i18n="nav.specs">Specs</a>
       <a href="#sabores" data-i18n="nav.flavors">Sabores</a>
-      <a href="#modelos" data-i18n="nav.models">Modelos</a>
       <a href="keymap-studio/">Keymap Studio</a>
     </nav>
     <div class="nav__right">
@@ -78,10 +78,22 @@
         <div class="carousel__dots" id="carouselDots" role="tablist"><!-- puntos desde JS --></div>
       </div>
 
-      <a class="hero__scrollcue" href="#manifiesto" aria-label="Bajar">
+      <a class="hero__scrollcue" href="#modelos" aria-label="Ver los modelos">
         <span class="mono" data-i18n="hero.scroll">scroll</span>
         <span class="hero__line"></span>
       </a>
+    </section>
+
+    <!-- ============ MODELS ============ -->
+    <section class="models" id="modelos">
+      <header class="section-head">
+        <p class="kicker reveal" data-i18n="models.label">Modelos</p>
+        <h2 class="section-title reveal" style="--d:.08s" data-i18n-html="models.title">
+          Una familia <em>que crece</em>.
+        </h2>
+      </header>
+      <div class="models__grid" id="modelsGrid"><!-- JS desde data.js --></div>
+      <p class="price-note mono" id="priceNote"></p>
     </section>
 
     <!-- ============ MARQUEE ============ -->
@@ -333,17 +345,6 @@
       </div>
     </section>
 
-    <!-- ============ MODELS ============ -->
-    <section class="models" id="modelos">
-      <header class="section-head">
-        <p class="kicker reveal" data-i18n="models.label">Modelos</p>
-        <h2 class="section-title reveal" style="--d:.08s" data-i18n-html="models.title">
-          Una familia <em>que crece</em>.
-        </h2>
-      </header>
-      <div class="models__grid" id="modelsGrid"><!-- JS desde data.js --></div>
-      <p class="price-note mono" id="priceNote"></p>
-    </section>
 
     <!-- ============ CONFIANZA (vendedor) ============ -->
     <section class="seller" id="confianza">
