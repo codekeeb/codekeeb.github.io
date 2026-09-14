@@ -293,7 +293,14 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
   /* Sin vaiven: el lavado de color viste el fondo, no tiene que moverse. */
 }
 /* ---------- carrusel ---------- */
-.carousel{position:relative;max-width:1320px;width:100%;margin:0 auto;outline:none}
+.carousel{
+  position:relative;max-width:1320px;width:100%;margin:0 auto;outline:none;
+  /* Hueco propio para las flechas. Antes iban en `left:-6px`, o sea por
+     dentro del carrusel y encima del texto del slide: en 1440 se comian
+     "El mi" de "El mismo Sofle Choc". Reservando el canal, la flecha vive
+     en su sitio y el parrafo empieza donde tiene que empezar. */
+  padding-inline:58px;
+}
 .carousel__viewport{overflow:hidden}
 .carousel__track{display:flex;transition:transform var(--t-enter) var(--ease);will-change:transform}
 
@@ -353,8 +360,8 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
 }
 .carousel__arrow svg{width:22px;height:22px}
 .carousel__arrow:hover{background:var(--ink);color:#fff;border-color:var(--ink);box-shadow:0 12px 24px -12px rgba(20,22,27,.5)}
-.carousel__arrow--prev{left:-6px}
-.carousel__arrow--next{right:-6px}
+.carousel__arrow--prev{left:0}
+.carousel__arrow--next{right:0}
 
 /* puntos */
 .carousel__dots{display:flex;justify-content:center;gap:10px;margin-top:30px}
@@ -591,8 +598,9 @@ figure .cross{mix-blend-mode:multiply}
   .hero{padding-top:120px}
   .slide__figure{max-width:460px}
   .slide{align-content:center}
+  .carousel{padding-inline:0}
   .carousel__arrow--prev{left:auto;right:54px;top:auto;bottom:-66px;transform:none}
-  .carousel__arrow--next{right:-6px;top:auto;bottom:-66px;transform:none}
+  .carousel__arrow--next{right:0;top:auto;bottom:-66px;transform:none}
   .carousel__dots{justify-content:flex-start;margin-top:24px}
   .feature{grid-template-columns:1fr;gap:32px}
   .feature--flip .feature__media{order:0}
