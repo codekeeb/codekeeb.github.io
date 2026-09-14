@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#0b0e0d">
+  <meta name="theme-color" content="#fafaf8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -35,8 +35,8 @@
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
     <a class="nav__logo" href="#top" aria-label="Codekeeb">
-      <img src="assets/brand/logo-horizontal-light.png"
-           srcset="assets/brand/logo-horizontal-light.png 1x, assets/brand/logo-horizontal-light@2x.png 2x"
+      <img src="assets/brand/logo-horizontal-dark.png"
+           srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
            alt="Codekeeb" width="160" height="56">
     </a>
     <nav class="nav__links" id="navLinks">
@@ -144,34 +144,8 @@
       </div>
     </section>
 
-    <!-- ============ MARQUEE ============ -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee__track" id="marqueeTrack">
-        <span data-i18n="marquee">SPLIT ✦ ERGONÓMICO ✦ HOTSWAP ✦ INALÁMBRICO ✦ OPEN-SOURCE ✦ PRESOLDADO ✦ RGB ✦ OLED ✦&nbsp;</span>
-      </div>
-    </div>
-
-    <!-- ============ MANIFIESTO ============ -->
-    <section class="manifesto" id="manifiesto">
-      <span class="crosshair-icon reveal" aria-hidden="true">
-        <svg viewBox="0 0 512 512" fill="none" stroke="currentColor" stroke-width="26" stroke-linecap="round">
-          <path d="M256 28v160M256 324v160M28 256h160M324 256h160"/>
-          <rect x="178" y="178" width="156" height="156"/>
-          <path d="M92 188V104a12 12 0 0 1 12-12h84M324 92h84a12 12 0 0 1 12 12v84M420 324v84a12 12 0 0 1-12 12h-84M188 420h-84a12 12 0 0 1-12-12v-84"/>
-        </svg>
-      </span>
-      <p class="manifesto__label mono reveal" data-i18n="manifesto.label">Manifiesto</p>
-      <h2 class="manifesto__text reveal" style="--d:.1s" data-i18n-html="manifesto.text">
-        Creemos que un teclado no se compra: <em>se elige</em>.
-        Cada Sofle sale del taller presoldado, probado y afinado.
-        Sin soldador. Sin esperas. <em>Sin compromisos.</em>
-      </h2>
-    </section>
-
-    <!-- ============ DE UN VISTAZO (iconos) ============ -->
-    <section class="glance" id="vistazo">
-      <!-- Iconos: Tabler Icons (MIT) — https://tabler.io/icons -->
-      <svg style="display:none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <!-- Iconos: Tabler Icons (MIT) — https://tabler.io/icons -->
+    <svg style="display:none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <symbol id="ic-split" viewBox="0 0 24 24">
             <path d="M2 6m0 2a2 2 0 0 1 2 -2h16a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2z"/>
@@ -220,21 +194,6 @@
           </symbol>
         </defs>
       </svg>
-
-      <p class="kicker reveal" data-i18n="glance.label">De un vistazo</p>
-      <ul class="glance__grid">
-        <li class="reveal"><span class="glance__box"><svg viewBox="0 0 48 48"><use href="#ic-split"/></svg></span><span class="glance__label" data-i18n="g1">Split ergonómico</span></li>
-        <li class="reveal" style="--d:.05s"><span class="glance__box"><svg viewBox="0 0 48 48"><use href="#ic-hotswap"/></svg></span><span class="glance__label" data-i18n="g2">Hotswap total</span></li>
-        <li class="reveal" style="--d:.1s"><span class="glance__box"><svg viewBox="0 0 48 48"><use href="#ic-wireless"/></svg></span><span class="glance__label" data-i18n="g3">BT ×5 + USB-C</span></li>
-        <li class="reveal" style="--d:.15s"><span class="glance__box"><svg viewBox="0 0 48 48"><use href="#ic-oled"/></svg></span><span class="glance__label" data-i18n="g4">OLED ×2 custom</span></li>
-        <li class="reveal" style="--d:.2s"><span class="glance__box"><svg viewBox="0 0 48 48"><use href="#ic-rgb"/></svg></span><span class="glance__label" data-i18n="g5">RGB per-key</span></li>
-        <li class="reveal" style="--d:.25s"><span class="glance__box"><svg viewBox="0 0 48 48"><use href="#ic-battery"/></svg></span><span class="glance__label" data-i18n="g6">Batería 1200 mAh</span></li>
-        <li class="reveal" style="--d:.3s"><span class="glance__box"><svg viewBox="0 0 48 48"><use href="#ic-encoder"/></svg></span><span class="glance__label" data-i18n="g7">2× encoders</span></li>
-        <li class="reveal" style="--d:.35s"><span class="glance__box"><svg viewBox="0 0 48 48"><use href="#ic-mcu"/></svg></span><span class="glance__label" data-i18n="g8">NRF52840 en socket</span></li>
-        <li class="reveal" style="--d:.4s"><span class="glance__box"><svg viewBox="0 0 48 48"><use href="#ic-zmk"/></svg></span><span class="glance__label" data-i18n="g9">ZMK open-source</span></li>
-        <li class="reveal" style="--d:.45s"><span class="glance__box"><svg viewBox="0 0 48 48"><use href="#ic-soldered"/></svg></span><span class="glance__label" data-i18n="g10">Presoldado</span></li>
-      </ul>
-    </section>
 
     <!-- ============ FEATURES ============ -->
     <section class="features" id="caracteristicas">
@@ -419,28 +378,6 @@
       </ul>
     </section>
 
-    <!-- ============ TRUST ============ -->
-    <section class="trust">
-      <ul class="trust__grid">
-        <li class="reveal">
-          <h3 data-i18n="t1.title">Presoldado y probado</h3>
-          <p data-i18n="t1.text">Listo nada más abrir la caja. Cero soldador.</p>
-        </li>
-        <li class="reveal" style="--d:.08s">
-          <h3 data-i18n="t2.title">Hotswap total</h3>
-          <p data-i18n="t2.text">Switches y MCU intercambiables sin herramientas.</p>
-        </li>
-        <li class="reveal" style="--d:.16s">
-          <h3 data-i18n="t3.title">ZMK open-source</h3>
-          <p data-i18n="t3.text">Firmware libre. Tu keymap, tuyo para siempre.</p>
-        </li>
-        <li class="reveal" style="--d:.24s">
-          <h3 data-i18n="t4.title">Series pequeñas</h3>
-          <p data-i18n="t4.text">Montado y revisado a mano, unidad a unidad.</p>
-        </li>
-      </ul>
-    </section>
-
     <!-- ============ CTA ============ -->
     <section class="cta">
       <div class="cta__aura" aria-hidden="true"></div>
@@ -454,8 +391,8 @@
   <footer class="footer" id="contacto">
     <div class="footer__top">
       <div class="footer__brand">
-        <img src="assets/brand/logo-stacked-light.png"
-             srcset="assets/brand/logo-stacked-light.png 1x, assets/brand/logo-stacked-light@2x.png 2x"
+        <img src="assets/brand/logo-stacked-dark.png"
+             srcset="assets/brand/logo-stacked-dark.png 1x, assets/brand/logo-stacked-dark@2x.png 2x"
              alt="Codekeeb" class="footer__logo" width="200" height="106">
         <p class="footer__tag" data-i18n="footer.tag">Teclados split ergonómicos, hechos con mirilla.</p>
       </div>
