@@ -13,11 +13,11 @@
 <body>
 
 <header class="top">
-  <div class="top__in envoltura">
+  <div class="top__in env">
     <a class="marca" href="index.html">CODE<i>/</i>KEEB</a>
     <nav class="top__nav">
-      <a href="#ventajas" data-t="p.navVentajas">Ventajas</a>
-      <a href="a.html" data-t="nav.models">Modelos</a>
+      <a href="#rgb" data-t="p.navVentajas">Ventajas</a>
+      <a href="#cinco" data-t="p.losCinco">Los cinco</a>
       <a href="b.html" data-t="d.compare">Comparar</a>
     </nav>
     <span class="top__sp"></span>
@@ -26,185 +26,164 @@
       <button data-lang-btn="en">EN</button>
       <button data-lang-btn="fr">FR</button>
     </div>
-    <a class="btn btn--solido" id="tienda" href="#" data-t="nav.buy">Comprar</a>
+    <a class="btn" id="tienda" href="#" data-t="nav.buy">Comprar</a>
   </div>
 </header>
 
 <main>
 
-  <!-- ============ HERO ============
-       Ni carrusel ni foto a sangre: un titular que dice la promesa,
-       la foto del modelo destacado dentro de su marco, y dos puertas
-       — catalogo y comparador. -->
-  <section class="hero envoltura">
-    <div class="hero__in">
-      <div>
-        <span class="rotulo entra entra--rotulo" data-t="p.heroKicker"></span>
-        <h1 class="entra entra--titulo" style="--d:1" data-t-html="p.heroTitle"></h1>
-        <p class="hero__texto entra entra--texto" style="--d:2" data-t="p.heroText"></p>
-        <div class="hero__acciones entra entra--texto" style="--d:3">
-          <a class="btn btn--solido" href="a.html" data-t="p.heroCta"></a>
-          <a class="btn btn--linea" href="b.html" data-t="p.heroCta2"></a>
-        </div>
-        <div class="hero__cifras entra entra--dato" style="--d:4" id="cifras"></div>
-      </div>
-      <figure class="marco entra entra--demo" style="--d:2" id="heroFoto"></figure>
+  <!-- ============ 1 · HERO ============
+       Titular grande y centrado, y el teclado apoyado debajo sin marco.
+       Nada mas en la pantalla: es la idea de esta pantalla. -->
+  <section class="hero env">
+    <div class="centro">
+      <span class="rotulo entra entra--rotulo" data-t="p.heroKicker"></span>
+      <h1 class="titular entra entra--titulo" style="--d:1" data-t-html="p.heroTitle"></h1>
     </div>
-    <div class="tira" id="tira"></div>
+    <p class="bajada centro entra entra--texto" style="--d:2" data-t="p.heroText"></p>
+    <div class="acciones entra entra--texto" style="--d:3">
+      <a class="btn" href="a.html" data-t="p.heroCta"></a>
+      <a class="btn btn--suave" href="b.html" data-t="p.heroCta2"></a>
+    </div>
+    <figure class="pieza entra entra--pieza" style="--d:4" id="heroFoto"></figure>
   </section>
 
-  <!-- ============ VENTAJAS ============
-       Cada una con su demostracion funcionando al lado. Los esquemas
-       estan dibujados con CSS y rotulados: no son fotos del producto. -->
-  <section class="region region--carta" id="ventajas">
-    <div class="envoltura">
-      <div class="region__cab">
-        <span class="rotulo entra entra--rotulo" data-t="p.rgbLabel"></span>
-        <h2 class="entra entra--titulo" style="--d:1" data-t="p.ventajas"></h2>
-        <p class="entra entra--texto" style="--d:2" data-t="p.ventajasText"></p>
+  <!-- ============ 2 · RGB, con el teclado fijado ============
+       El producto se queda quieto y los argumentos pasan a su lado,
+       encendiendose de uno en uno. Es el momento conducido de la pagina. -->
+  <section class="fijada" id="rgb">
+    <div class="fijada__in env">
+      <div class="fijada__lienzo">
+        <div class="esquema">
+          <div class="kb">
+            <div class="kb__luz" aria-hidden="true"></div>
+            <div class="kb__placa" id="kbPlaca" aria-hidden="true"></div>
+          </div>
+          <p class="esquema__nota" data-t="p.demoNota"></p>
+        </div>
       </div>
-
-      <!-- 1 · el degradado cruza las dos mitades -->
-      <article class="ventaja">
-        <div class="ventaja__demo entra entra--demo">
-          <div class="demo">
-            <span class="demo__et" data-t="p.rgbLabel"></span>
-            <div class="kb">
-              <div class="kb__luz" aria-hidden="true"></div>
-              <div class="kb__placa" id="kbPlaca" aria-hidden="true"></div>
-            </div>
-          </div>
-        </div>
-        <div class="ventaja__texto">
-          <span class="rotulo entra entra--rotulo" data-t="p.rgbLabel"></span>
-          <h3 class="entra entra--titulo" style="--d:1" data-t-html="p.rgbTitle"></h3>
-          <p class="entra entra--texto" style="--d:2" data-t="p.rgbText"></p>
-          <span class="nota entra entra--texto" style="--d:3" data-t="p.demoNota"></span>
-        </div>
-      </article>
-
-      <!-- 2 · las cuatro vistas del OLED -->
-      <article class="ventaja ventaja--giro">
-        <div class="ventaja__demo entra entra--demo">
-          <div class="demo">
-            <span class="demo__et" data-t="p.oledLabel"></span>
-            <div class="oled" aria-hidden="true">
-              <div class="oled__v"><small>Bat</small><b>82%</b><span class="oled__bar"><i></i></span></div>
-              <div class="oled__v"><small>Capa</small><b>2</b></div>
-              <div class="oled__v"><small>WPM</small><b>96</b></div>
-              <div class="oled__v"><span class="gato"><span class="gato__cara"><i class="gato__ojo gato__ojo--i"></i><i class="gato__ojo gato__ojo--d"></i></span><i></i><i></i><span class="gato__mesa"></span></span><small>Bongo Cat</small></div>
-            </div>
-          </div>
-        </div>
-        <div class="ventaja__texto">
-          <span class="rotulo entra entra--rotulo" data-t="p.oledLabel"></span>
-          <h3 class="entra entra--titulo" style="--d:1" data-t-html="p.oledTitle"></h3>
-          <p class="entra entra--texto" style="--d:2" data-t="p.oledText"></p>
-          <span class="nota entra entra--texto" style="--d:3" data-t="p.demoNota"></span>
-        </div>
-      </article>
-
-      <!-- 3 · las capas -->
-      <article class="ventaja">
-        <div class="ventaja__demo entra entra--demo">
-          <div class="demo">
-            <span class="demo__et" data-t="p.capasLabel"></span>
-            <div class="capas">
-              <div id="capasFila" aria-hidden="true"></div>
-              <p class="capas__pie" aria-hidden="true">
-                <span data-t="p.capasLabel"></span>
-                <b><span>1</span><span>2</span></b>
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="ventaja__texto">
-          <span class="rotulo entra entra--rotulo" data-t="p.capasLabel"></span>
-          <h3 class="entra entra--titulo" style="--d:1" data-t-html="p.capasTitle"></h3>
-          <p class="entra entra--texto" style="--d:2" data-t="p.capasText"></p>
-          <span class="nota entra entra--texto" style="--d:3" data-t="p.demoNota"></span>
-        </div>
-      </article>
-
-      <!-- 4 · hotswap -->
-      <article class="ventaja ventaja--giro">
-        <div class="ventaja__demo entra entra--demo">
-          <div class="demo">
-            <span class="demo__et" data-t="p.hotLabel"></span>
-            <div class="hot" aria-hidden="true">
-              <div class="hot__col">
-                <span class="hot__hueco">
-                  <span class="hot__socket"><i></i><i></i></span>
-                  <span class="hot__sw hot__sw--rojo"></span>
-                </span>
-                <span class="hot__et">Choc Red</span>
-              </div>
-              <div class="hot__col">
-                <span class="hot__hueco">
-                  <span class="hot__socket"><i></i><i></i></span>
-                  <span class="hot__sw hot__sw--marron" style="animation-delay:1.6s"></span>
-                </span>
-                <span class="hot__et">MMD Holy Panda</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="ventaja__texto">
-          <span class="rotulo entra entra--rotulo" data-t="p.hotLabel"></span>
-          <h3 class="entra entra--titulo" style="--d:1" data-t-html="p.hotTitle"></h3>
-          <p class="entra entra--texto" style="--d:2" data-t="p.hotText"></p>
-          <span class="nota entra entra--texto" style="--d:3" data-t="p.demoNota"></span>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- ============ CATALOGO Y COMPARADOR ============ -->
-  <section class="region">
-    <div class="envoltura">
-      <div class="region__cab">
-        <h2 class="entra entra--titulo" data-t="p.catalogoTitle"></h2>
-        <p class="entra entra--texto" style="--d:1" data-t="p.catalogoText"></p>
-      </div>
-      <div class="dos">
-        <article class="puerta entra entra--demo">
-          <h3 data-t="p.verCatalogo"></h3>
-          <p data-t="d.lede"></p>
-          <a class="btn btn--solido" href="a.html" data-t="p.heroCta"></a>
-        </article>
-        <article class="puerta entra entra--demo" style="--d:1">
-          <h3 data-t="p.verComparador"></h3>
-          <p data-t="d.compareLede"></p>
-          <a class="btn btn--linea" href="b.html" data-t="p.heroCta2"></a>
-        </article>
+      <div class="fijada__pasos">
+        <div class="paso"><p data-t-html="p.rgbTitle"></p></div>
+        <div class="paso"><p data-t="p.paso1"></p></div>
+        <div class="paso"><p data-t="p.paso2"></p></div>
+        <div class="paso"><p data-t="p.paso3"></p></div>
+        <div class="paso"><p data-t="p.paso4"></p></div>
       </div>
     </div>
   </section>
 
-  <!-- ============ KEYMAP STUDIO ============ -->
-  <section class="region region--carta">
-    <div class="envoltura">
-      <div class="region__cab">
+  <!-- ============ 3 · OLED ============ -->
+  <section class="escena escena--noche">
+    <div class="env centro" style="display:grid;gap:clamp(30px,6svh,64px);justify-items:center">
+      <div class="centro">
+        <span class="rotulo entra entra--rotulo" data-t="p.oledLabel"></span>
+        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.oledTitle"></h2>
+      </div>
+      <div class="esquema entra entra--pieza" style="--d:2">
+        <div class="oled" aria-hidden="true">
+          <div class="oled__v"><small>Bat</small><b>82%</b><span class="oled__bar"><i></i></span></div>
+          <div class="oled__v"><small>Capa</small><b>2</b></div>
+          <div class="oled__v"><small>WPM</small><b>96</b></div>
+          <div class="oled__v"><span class="gato"><span class="gato__cara"><i class="gato__ojo gato__ojo--i"></i><i class="gato__ojo gato__ojo--d"></i></span><i></i><i></i><span class="gato__mesa"></span></span><small>Bongo Cat</small></div>
+        </div>
+        <p class="esquema__nota" data-t="p.demoNota"></p>
+      </div>
+      <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.oledText"></p>
+    </div>
+  </section>
+
+  <!-- ============ 4 · CAPAS ============ -->
+  <section class="escena escena--noche">
+    <div class="env centro" style="display:grid;gap:clamp(30px,6svh,64px);justify-items:center">
+      <div class="centro">
+        <span class="rotulo entra entra--rotulo" data-t="p.capasLabel"></span>
+        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.capasTitle"></h2>
+      </div>
+      <div class="esquema entra entra--pieza" style="--d:2">
+        <div class="capas">
+          <div id="capasFila" aria-hidden="true"></div>
+          <p class="capas__pie" aria-hidden="true">
+            <span data-t="p.capasLabel"></span><b><span>1</span><span>2</span></b>
+          </p>
+        </div>
+        <p class="esquema__nota" data-t="p.demoNota"></p>
+      </div>
+      <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.capasText"></p>
+    </div>
+  </section>
+
+  <!-- ============ 5 · HOTSWAP ============ -->
+  <section class="escena escena--noche">
+    <div class="env centro" style="display:grid;gap:clamp(30px,6svh,64px);justify-items:center">
+      <div class="centro">
+        <span class="rotulo entra entra--rotulo" data-t="p.hotLabel"></span>
+        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.hotTitle"></h2>
+      </div>
+      <div class="esquema entra entra--pieza" style="--d:2">
+        <div class="hot" aria-hidden="true">
+          <div class="hot__col">
+            <span class="hot__hueco">
+              <span class="hot__socket"><i></i><i></i></span>
+              <span class="hot__sw"></span>
+            </span>
+            <span class="hot__et">Choc Red</span>
+          </div>
+          <div class="hot__col">
+            <span class="hot__hueco">
+              <span class="hot__socket"><i></i><i></i></span>
+              <span class="hot__sw hot__sw--marron" style="animation-delay:calc(var(--loop-tecla) / 2)"></span>
+            </span>
+            <span class="hot__et">MMD Holy Panda</span>
+          </div>
+        </div>
+        <p class="esquema__nota" data-t="p.demoNota"></p>
+      </div>
+      <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.hotText"></p>
+    </div>
+  </section>
+
+  <!-- ============ 6 · LOS CINCO ============
+       Carril horizontal con las fotos apoyadas, sin tarjetas. -->
+  <section class="escena escena--carta" id="cinco">
+    <div class="env">
+      <div class="centro">
+        <span class="rotulo entra entra--rotulo" data-t="p.losCinco"></span>
+        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t="p.catalogoTitle"></h2>
+      </div>
+    </div>
+    <div class="env" style="margin-top:clamp(30px,5svh,56px)">
+      <div class="carril entra entra--pieza" style="--d:2" id="carril"></div>
+      <div class="acciones" style="margin-top:22px">
+        <a class="btn" href="a.html" data-t="p.verTodo"></a>
+        <a class="btn btn--suave" href="b.html" data-t="p.verComparador"></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7 · KEYMAP STUDIO ============ -->
+  <section class="escena">
+    <div class="env centro" style="display:grid;gap:26px;justify-items:center">
+      <div class="centro">
         <span class="rotulo entra entra--rotulo">Keymap Studio</span>
-        <h2 class="entra entra--titulo" style="--d:1" data-t-html="studio.title"></h2>
-        <p class="entra entra--texto" style="--d:2" data-t="p.studioText"></p>
+        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="studio.title"></h2>
       </div>
-      <div class="hero__acciones entra entra--texto" style="--d:3">
-        <a class="btn btn--solido" href="../keymap-studio/" data-t="studio.cta"></a>
-        <span class="nota" style="align-self:center;margin:0" data-t="p.repos"></span>
+      <p class="bajada centro entra entra--texto" style="--d:2" data-t="p.studioText"></p>
+      <div class="acciones entra entra--texto" style="--d:3">
+        <a class="btn" href="../keymap-studio/" data-t="studio.cta"></a>
       </div>
+      <p class="rotulo entra entra--rotulo" style="--d:4" data-t="p.repos"></p>
     </div>
   </section>
 
-  <!-- ============ CONFIANZA ============ -->
-  <section class="region">
-    <div class="envoltura">
-      <div class="confianza" id="confianza"></div>
+  <!-- ============ 8 · CONFIANZA ============ -->
+  <section class="escena escena--carta">
+    <div class="env">
+      <div class="cuatro" id="confianza"></div>
     </div>
   </section>
 </main>
 
-<footer class="envoltura">
+<footer class="env">
   <div class="pie">
     <p class="nota" id="nota"></p>
     <p data-t="footer.copy"></p>
@@ -218,16 +197,14 @@
 (() => {
   const $ = s => document.querySelector(s);
 
-  /* El esquema del teclado: seis columnas por mitad, cuatro filas. Es un
-     dibujo, no un mapa exacto — por eso lleva rotulo de esquema. */
+  /* Esquema de la placa: seis columnas por mitad. Es un dibujo, y por eso
+     lleva su rotulo debajo. */
   function dibujarPlaca() {
     const mitad = () => `<div class="kb__mitad">${
       Array.from({ length: 24 }, () => `<span class="kb__tecla"></span>`).join("")}</div>`;
     $("#kbPlaca").innerHTML = mitad() + mitad();
   }
 
-  /* Las capas: seis teclas con dos juegos de leyendas que se alternan.
-     La primera es la que se mantiene pulsada para saltar de capa. */
   const LEYENDAS = [
     [["Q","1"],["W","2"],["E","3"],["R","4"],["T","5"],["Y","6"]],
     [["⇧","⇧"],["A","←"],["S","↓"],["D","↑"],["F","→"],["G","⌫"]],
@@ -243,37 +220,32 @@
   function pintar() {
     const productos = CK.productos();
     const destacado = productos.find(p => p.featured) || productos[0];
+    const est = CK.stock(destacado);
 
     $("#tienda").href = CK.tiendaURL;
     $("#nota").textContent = CK.notaPrecios();
 
-    /* Las cifras del heroe salen del catalogo, no escritas a mano: si
-       manana entra un sexto modelo, el numero cambia solo. */
-    const conStock = productos.filter(p => p.stock > 0).length;
-    $("#cifras").innerHTML = [
-      [productos.length, CK.t("nav.models")],
-      [conStock, CK.t("p.enStock")],
-      ["ZMK", CK.t("trust.firmware")],
-      ["3", CK.t("p.idiomas")],
-    ].map(([n, t]) => `<div><b>${CK.escapar(n)}</b><span>${CK.escapar(t)}</span></div>`).join("");
-
-    const est = CK.stock(destacado);
     $("#heroFoto").innerHTML = `
-      <div class="marco__foto">
-        <img src="${CK.foto(destacado)}" alt="${CK.escapar(destacado.name)}" width="1200" height="900">
-      </div>
-      <figcaption class="marco__pie">
+      <img src="${CK.foto(destacado)}" alt="${CK.escapar(destacado.name)}" width="1200" height="900">
+      <figcaption>
         <span><b>${CK.escapar(destacado.name)}</b> · ${CK.escapar(destacado.version || "")}</span>
-        <span>${CK.precio(destacado.priceFrom ?? destacado.priceFull)} · ${CK.escapar(est.txt)}</span>
+        <span>${CK.precio(destacado.priceFrom ?? destacado.priceFull)}</span>
+        <span>${CK.escapar(est.txt)}</span>
       </figcaption>`;
 
-    $("#tira").innerHTML = productos.map(p => `
-      <a href="../modelo.html?id=${p.id}">
-        <span class="tira__foto"><img src="${CK.foto(p, true)}" alt="${CK.escapar(p.name)}" loading="lazy" width="600" height="450"></span>
-        <b>${CK.escapar(p.title?.model || p.name)}</b>
-        <span>${CK.escapar(p.title?.trait || p.version || "")}</span>
-        <span class="tira__precio mono">${CK.precio(p.priceFrom ?? p.priceFull)}</span>
-      </a>`).join("");
+    $("#carril").innerHTML = productos.map(p => {
+      const e = CK.stock(p);
+      return `
+        <a href="../modelo.html?id=${p.id}">
+          <img src="${CK.foto(p)}" alt="${CK.escapar(p.name)}" loading="lazy" width="1200" height="900">
+          <div>
+            <h3>${CK.escapar(p.title?.model || p.name)}
+              <small>${CK.escapar(p.title?.trait || p.version || "")}</small></h3>
+            <p class="precio">${CK.precio(p.priceFrom ?? p.priceFull)}</p>
+            <p class="estado ${e.clase}">${CK.escapar(e.txt)}</p>
+          </div>
+        </a>`;
+    }).join("");
 
     $("#confianza").innerHTML = [
       ["trust.shipping","trust.shippingText"],["trust.warranty","trust.warrantyText"],
@@ -283,12 +255,13 @@
     dibujarPlaca();
     dibujarCapas();
 
-    /* Los marcos de foto entran aparte: el marco se queda quieto y lo
-       que se asienta es la imagen de dentro. */
-    const ioFoto = new IntersectionObserver(es => {
-      for (const e of es) if (e.isIntersecting) { e.target.classList.add("dentro"); ioFoto.unobserve(e.target); }
-    }, { threshold: 0.12 });
-    document.querySelectorAll(".marco, .tira a").forEach(m => ioFoto.observe(m));
+    /* El argumento que esta a la altura de los ojos se enciende y los
+       demas se apagan. Sin escuchar el scroll: lo resuelve el observador
+       con un margen que deja activa solo la banda central. */
+    const ioPaso = new IntersectionObserver(es => {
+      for (const e of es) e.target.classList.toggle("viva", e.isIntersecting);
+    }, { rootMargin: "-42% 0px -42% 0px" });
+    document.querySelectorAll(".paso").forEach(p => ioPaso.observe(p));
 
     CK.observarEntradas();
   }

@@ -1,324 +1,358 @@
 /* ============================================================
-   PORTADA — la tienda que explica lo que vende
+   PORTADA — una idea por pantalla
    ------------------------------------------------------------
-   Tres reglas que vienen de Ernesto y de haber medido ergodox-ez.com
-   con el navegador, no de memoria:
+   La version anterior era, con sus palabras, "un cuadro encima de
+   otro": cada foto en su marco, cada demo en su recuadro, cada
+   enlace en su tarjeta. Todo con borde. Eso es lo contrario de lo
+   que pedia.
 
-   1. NINGUNA FOTO A SANGRE. Toda imagen va dentro de un marco con
-      aire alrededor. En ergodox solo 4 de 24 regiones llevan imagen
-      a sangre; el resto es producto enmarcado sobre fondo plano, y
-      funciona. Aqui: cero.
+   Tres decisiones, y las tres van contra el diseno anterior:
 
-   2. LAS ANIMACIONES DEMUESTRAN EL PRODUCTO. Las doce que tiene
-      ergodox son todas demostraciones — el brillo RGB (12 s), las
-      capas (15 s), las teclas que se pulsan solas (2 s) — y ninguna
-      es decorativa. Aqui hay cuatro bucles y los cuatro ensenan algo
-      que este teclado hace y otro no: el degradado que cruza las dos
-      mitades, las cuatro vistas del OLED, las capas y el hotswap.
-      Son ESQUEMAS dibujados con CSS, rotulados como tales: las fotos
-      de producto son fotos, y no se generan ni se simulan.
+   1. NO HAY CAJAS. Cero bordes de tarjeta, cero marcos. El producto
+      se apoya en el suelo de la pagina con una sombra de contacto,
+      como esta sobre una mesa. Lo que separa una region de otra es
+      el aire y el cambio de suelo, no una linea.
 
-   3. Fondos alternos claros, seccion a seccion, como la referencia.
-      Sin fondo negro: fue lo primero que rechazo.
+   2. UNA IDEA POR PANTALLA. Cada region ocupa el alto completo y
+      dice una sola cosa, en grande y centrada. Antes habia dos
+      columnas apretadas con texto y demo peleandose el sitio.
 
-   Movimiento: dos duraciones y una curva para lo que responde al
-   dedo. Los bucles llevan su propia duracion, declarada abajo y
-   justificada uno a uno — un bucle no es una transicion.
+   3. EL PRODUCTO SE QUEDA, EL TEXTO PASA. La region del RGB fija el
+      teclado con `position: sticky` mientras los argumentos suben a
+      su lado y se van encendiendo. Es el recurso que hace que una
+      pagina se sienta conducida en vez de hojeada, y funciona en
+      Safari de iPhone, que es donde el la va a mirar.
+
+   Lo que NO cambia, porque es suyo y esta decidido:
+     - Ninguna imagen a sangre. Grandes, si; tocando el borde, no.
+     - Los bucles demuestran el producto o no existen.
+     - Dos duraciones y una curva para lo que responde al dedo.
    ============================================================ */
 
 :root{
-  --papel:#f4f4f1;
+  --papel:#f2f2ef;
   --carta:#ffffff;
-  --tinta:#15171a;
-  --gris:#686e76;
+  --tinta:#111316;
+  --gris:#6b7178;
   --tenue:#9ba1a8;
-  --filete:rgba(21,23,26,.12);
-  --regla:rgba(21,23,26,.26);
+  --filete:rgba(17,19,22,.10);
   --marca:#1d7a4f;
-  --placa:#1b1d21;          /* el cuerpo de los esquemas de teclado */
+  --noche:#0d0f12;          /* suelo oscuro de las regiones de demo */
   --grad:linear-gradient(90deg,#ff992a,#ff39c0 40%,#2a3dff 75%,#1be8ff);
-  /* Rampa ciclica: empieza y acaba en el mismo naranja para que el
-     bucle no tenga costura visible al reiniciarse. */
   --grad-ciclo:linear-gradient(90deg,#ff992a,#ff39c0,#2a3dff,#1be8ff,#2a3dff,#ff39c0,#ff992a);
 
   --sans:"Archivo","Helvetica Neue",Arial,sans-serif;
   --display:"Archivo Black","Archivo",Arial,sans-serif;
   --mono:"Martian Mono",ui-monospace,"SFMono-Regular",monospace;
 
-  /* Lo que responde al dedo: dos duraciones, una curva. */
   --t-tap:180ms;
   --t-enter:420ms;
   --ease:cubic-bezier(.16,1,.3,1);
   --paso:60ms;
 
-  /* Bucles de demostracion. Cada uno con su porque:
-     --loop-luz    el RGB recorriendo la placa. Lento para que se lea
-                   como luz y no como parpadeo. linear: un ciclo sin
-                   principio ni fin da un tiron con cualquier curva.
-     --loop-vista  las cuatro vistas del OLED. Cuatro fases de 4 s da
-                   tiempo a leer cada una sin quedarse esperando.
-     --loop-capa   el salto de capa. Igual de lento, misma razon.
-     --loop-tecla  el switch saliendo y entrando. Corto porque es un
-                   gesto, no un estado. */
-  --loop-luz:9s;
-  --loop-vista:16s;
-  --loop-capa:12s;
-  --loop-tecla:3.2s;
-  --loop-gato:.34s;   /* las patas del Bongo Cat: rapido, es un golpe */
+  /* Bucles de demostracion, cada uno con su motivo. */
+  --loop-luz:9s;      /* el RGB recorriendo la placa; lento, es luz */
+  --loop-vista:16s;   /* cuatro vistas del OLED, 4 s cada una */
+  --loop-capa:12s;    /* el salto de capa */
+  --loop-tecla:3.2s;  /* el switch saliendo: es un gesto, va corto */
+  --loop-gato:.34s;   /* las patas del Bongo Cat: un golpe */
 
-  --col:1240px;
-  --canal:clamp(18px,4vw,56px);
+  --col:1180px;
+  --canal:clamp(20px,5vw,64px);
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-body{font-family:var(--sans);background:var(--papel);color:var(--tinta);line-height:1.55;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--papel);color:var(--tinta);line-height:1.5;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
 img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 ul{list-style:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-:focus-visible{outline:2px solid var(--tinta);outline-offset:3px}
+:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.envoltura{max-width:var(--col);margin-inline:auto;padding-inline:var(--canal)}
+/* `width:100%` no sobra: un hijo de grid con `margin-inline:auto` deja de
+   estirarse y pasa a medir su contenido (fit-content). Sin esta linea, la
+   envoltura de la region del carril media 1180 px dentro de una pista de
+   390 y la pagina se salia a lo ancho en el movil. */
+.env{width:100%;max-width:var(--col);margin-inline:auto;padding-inline:var(--canal)}
+.centro{text-align:center;margin-inline:auto}
 
-/* ---------- cabecera ---------- */
-.top{position:sticky;top:0;z-index:50;background:rgba(244,244,241,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--filete)}
-.top__in{display:flex;align-items:center;gap:16px;height:60px}
-.marca{font-family:var(--display);font-size:1rem;letter-spacing:-.02em}
+/* ---------- cabecera: una linea fina que no compite ---------- */
+.top{position:sticky;top:0;z-index:60;background:rgba(242,242,239,.82);
+  backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid var(--filete)}
+.top__in{display:flex;align-items:center;gap:14px;height:52px}
+.marca{font-family:var(--display);font-size:.92rem;letter-spacing:-.02em}
 .marca i{font-style:normal;color:var(--gris)}
-.top__nav{display:flex;gap:18px;margin-left:22px}
-.top__nav a{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);
-  transition:color var(--t-tap) var(--ease)}
+.top__nav{display:flex;gap:20px;margin-left:24px}
+.top__nav a{font-size:.76rem;color:var(--gris);transition:color var(--t-tap) var(--ease)}
 .top__nav a:hover{color:var(--tinta)}
 .top__sp{flex:1}
-.idiomas{display:flex;gap:2px;border:1px solid var(--filete);border-radius:3px;padding:2px}
-.idiomas button{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;padding:.38em .62em;border-radius:2px;color:var(--gris);
-  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease)}
-.idiomas button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;font-family:var(--mono);
-  font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;padding:.85em 1.25em;border-radius:3px;
-  border:1px solid var(--tinta);white-space:nowrap;
-  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),border-color var(--t-tap) var(--ease)}
-.btn--solido{background:var(--tinta);color:var(--papel)}
-.btn--solido:hover{background:#000}
-.btn--linea{border-color:var(--regla);color:var(--gris)}
-.btn--linea:hover{border-color:var(--tinta);color:var(--tinta)}
-.top .btn{padding:.62em 1em}
+.idiomas{display:flex;gap:1px}
+.idiomas button{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;padding:.4em .55em;
+  border-radius:99px;color:var(--tenue);transition:color var(--t-tap) var(--ease)}
+.idiomas button[aria-pressed="true"]{color:var(--tinta)}
+.idiomas button:hover{color:var(--tinta)}
 
-/* ---------- regiones: fondos alternos, un solo ritmo ---------- */
-.region{padding-block:clamp(54px,8vw,110px);border-top:1px solid var(--filete)}
-.region--carta{background:var(--carta)}
-.region__cab{max-width:56ch;margin-bottom:clamp(28px,4vw,46px)}
-.rotulo{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gris);display:block;margin-bottom:12px}
-h2{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.08;letter-spacing:-.035em}
-h2 em{font-style:normal;color:var(--gris)}
-.region__cab p{color:var(--gris);margin-top:14px;font-size:clamp(.93rem,1.3vw,1.03rem)}
+/* Boton de pildora, sin caja dura: el acento es el relleno, no el borde. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+  font-size:.86rem;font-weight:500;letter-spacing:-.01em;padding:.72em 1.4em;border-radius:99px;
+  background:var(--tinta);color:var(--papel);white-space:nowrap;
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),
+             opacity var(--t-tap) var(--ease)}
+.btn:hover{background:#000}
+.btn--suave{background:rgba(17,19,22,.07);color:var(--tinta)}
+.btn--suave:hover{background:rgba(17,19,22,.13)}
+.btn--claro{background:rgba(255,255,255,.14);color:#fff}
+.btn--claro:hover{background:rgba(255,255,255,.24)}
+.top .btn{padding:.5em 1.05em;font-size:.78rem}
+.enlace{font-size:.86rem;color:var(--gris);display:inline-flex;align-items:center;gap:.35em;
+  transition:color var(--t-tap) var(--ease)}
+.enlace:hover{color:var(--tinta)}
+.enlace::after{content:"›";font-size:1.1em;line-height:0}
+
+/* ---------- escenas: una idea, una pantalla ---------- */
+.escena{
+  min-height:100svh;display:grid;grid-template-columns:minmax(0,1fr);align-content:center;
+  padding-block:clamp(56px,10svh,110px);position:relative;
+}
+/* Un hijo de grid no encoge por debajo de su contenido salvo que se le
+   diga. Sin esto, el carril de cinco fotos (1180 px) arrastraba a toda la
+   escena y la pagina se salia a lo ancho en el movil. */
+.escena>*,.hero>*,.fijada__in>*{min-width:0}
+.escena--noche{background:var(--noche);color:#fff}
+.escena--carta{background:var(--carta)}
+.rotulo{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gris);display:block}
+.escena--noche .rotulo{color:rgba(255,255,255,.5)}
+
+/* La tipografia es la mitad del asunto: grande, apretada, centrada. */
+.titular{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(2rem,5.6vw,4.4rem);line-height:1;letter-spacing:-.04em;
+  text-wrap:balance;
+  /* La medida se limita en `em`, o sea en relacion al propio titular, no
+     en `ch`: a 70 px de cuerpo, 20ch son cuatro palabras y el titular se
+     parte en seis lineas. Con `em` la caja crece con la letra. */
+  max-width:15em;margin-inline:auto;
+}
+.titular em{font-style:normal;color:var(--gris)}
+.escena--noche .titular em{color:rgba(255,255,255,.45)}
+.bajada{font-size:clamp(1rem,1.9vw,1.35rem);color:var(--gris);max-width:44ch;line-height:1.45;
+  text-wrap:pretty}
+.escena--noche .bajada{color:rgba(255,255,255,.62)}
+.acciones{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 
 /* ---------- HERO ---------- */
-.hero{padding-block:clamp(36px,6vw,78px) clamp(40px,6vw,84px)}
-.hero__in{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(28px,5vw,72px);align-items:center}
-.hero h1{font-family:var(--display);font-weight:400;font-size:clamp(2.1rem,5.4vw,3.7rem);line-height:1.02;letter-spacing:-.04em;margin-top:14px}
-.hero h1 em{font-style:normal;color:var(--gris)}
-.hero__texto{color:var(--gris);max-width:48ch;margin-top:18px;font-size:clamp(.95rem,1.4vw,1.08rem)}
-.hero__acciones{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
-.hero__cifras{display:flex;gap:clamp(18px,3vw,40px);margin-top:30px;padding-top:22px;border-top:1px solid var(--filete);flex-wrap:wrap}
-.hero__cifras div{display:flex;flex-direction:column;gap:2px}
-.hero__cifras b{font-family:var(--mono);font-size:1.15rem;letter-spacing:-.02em}
-.hero__cifras span{font-family:var(--mono);font-size:.58rem;letter-spacing:.09em;text-transform:uppercase;color:var(--gris)}
+.hero{min-height:100svh;display:grid;grid-template-columns:minmax(0,1fr);align-content:center;gap:clamp(26px,4svh,48px);
+  padding-block:clamp(40px,7svh,80px)}
+.hero .rotulo{margin-bottom:18px}
+.hero .bajada{margin-top:20px}
+.hero .acciones{margin-top:28px}
 
-/* REGLA 1: la foto va enmarcada, con aire. Nunca toca el borde. */
-.marco{
-  position:relative;background:var(--carta);border:1px solid var(--filete);
-  border-radius:6px;padding:clamp(12px,1.6vw,22px);
+/* REGLA: la foto no lleva marco ni borde. Se apoya en el suelo con una
+   sombra de contacto, como el teclado sobre la mesa. El aire alrededor
+   es lo que la presenta; un recuadro solo la encierra. */
+.pieza{position:relative;width:min(100%,900px);margin-inline:auto}
+.pieza img{
+  width:100%;border-radius:14px;
+  /* Recorte apaisado y centrado algo por debajo: la foto original es casi
+     cuadrada y la mitad de arriba es mesa vacia. Asi lo que asoma por el
+     pliegue es el teclado, no el fondo. */
+  aspect-ratio:16/10;object-fit:cover;object-position:center 60%;
+  box-shadow:0 40px 80px -46px rgba(17,19,22,.55), 0 4px 16px -8px rgba(17,19,22,.18);
 }
-.marco__foto{aspect-ratio:4/3;overflow:hidden;border-radius:3px;background:#ecece8}
-.marco__foto img{width:100%;height:100%;object-fit:cover;object-position:center 48%}
-.marco__pie{display:flex;justify-content:space-between;gap:12px;margin-top:11px;font-family:var(--mono);font-size:.58rem;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--gris);flex-wrap:wrap}
-.marco__pie b{color:var(--tinta);font-weight:400}
+.pieza figcaption{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:18px;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris)}
+.pieza figcaption b{color:var(--tinta);font-weight:400}
 
-/* tira de modelos bajo el heroe */
-.tira{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:clamp(26px,4vw,44px)}
-.tira a{display:block;background:var(--carta);border:1px solid var(--filete);border-radius:5px;padding:8px;
-  transition:border-color var(--t-tap) var(--ease),transform var(--t-tap) var(--ease)}
-.tira a:hover{border-color:var(--regla);transform:translateY(-2px)}
-.tira__foto{aspect-ratio:4/3;overflow:hidden;border-radius:2px;background:#ecece8}
-.tira__foto img{width:100%;height:100%;object-fit:cover;object-position:center 48%}
-.tira b{display:block;font-size:.76rem;margin-top:8px;letter-spacing:-.01em}
-.tira span{display:block;font-size:.66rem;color:var(--gris);margin-top:2px;line-height:1.3}
-.tira .tira__precio{font-family:var(--mono);font-size:.62rem;color:var(--tinta);margin-top:5px}
-
-/* ---------- VENTAJAS: un demo por ventaja ---------- */
-.ventaja{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,5vw,70px);align-items:center;
-  padding-block:clamp(34px,5vw,62px);border-top:1px solid var(--filete)}
-.ventaja:first-of-type{border-top:0}
-.ventaja--giro .ventaja__demo{order:2}
-.ventaja__texto h3{font-family:var(--display);font-weight:400;font-size:clamp(1.3rem,2.8vw,2rem);line-height:1.1;letter-spacing:-.035em;margin-top:10px}
-.ventaja__texto h3 em{font-style:normal;color:var(--gris)}
-.ventaja__texto p{color:var(--gris);margin-top:14px;max-width:44ch;font-size:clamp(.9rem,1.3vw,1rem)}
-.nota{font-family:var(--mono);font-size:.55rem;letter-spacing:.07em;color:var(--tenue);margin-top:14px;display:block}
-
-/* El lienzo de los esquemas: mismo marco que las fotos, para que se
-   lea que ocupan el mismo sitio en la pagina. */
-.demo{background:#101215;border:1px solid var(--filete);border-radius:6px;padding:clamp(16px,2.4vw,30px);
-  position:relative;overflow:hidden;aspect-ratio:4/3;display:grid;place-items:center}
-.demo__et{position:absolute;top:10px;left:12px;font-family:var(--mono);font-size:.52rem;letter-spacing:.12em;
-  text-transform:uppercase;color:rgba(255,255,255,.42)}
-
-/* --- demo 1: RGB que cruza las dos mitades --- */
-.kb{position:relative;width:100%;max-width:420px}
-.kb__luz{
-  position:absolute;inset:-14% -6%;border-radius:24px;
-  background:var(--grad-ciclo);background-size:220% 100%;
-  filter:blur(16px);opacity:.95;
-  animation:fluye var(--loop-luz) linear infinite;
+/* Donde el navegador lo soporta, la foto crece un poco al entrar: el
+   scroll conduce el movimiento en vez de dispararlo y olvidarse. */
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion:no-preference){
+    .pieza img{animation:crece linear both;animation-timeline:view();animation-range:entry 10% cover 45%}
+    @keyframes crece{from{transform:scale(.94)}to{transform:scale(1)}}
+  }
 }
-.kb__placa{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,4vw,34px)}
-.kb__mitad{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
-.kb__tecla{aspect-ratio:1;border-radius:3px;background:var(--placa);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
-.kb__tecla--ancha{grid-column:span 2}
-/* Un ciclo sin costura: la rampa vuelve al mismo color con el que empieza. */
+
+/* ---------- region fijada: el producto se queda, el texto pasa ------
+   Este es el recurso que hace que la pagina se sienta conducida. El
+   teclado se ancla con `sticky` y los argumentos suben a su lado,
+   encendiendose de uno en uno. Nada de esto necesita JavaScript de
+   scroll: sticky lo resuelve el navegador, y el encendido es un
+   IntersectionObserver. Funciona en Safari de iPhone. */
+.fijada{background:var(--noche);color:#fff}
+.fijada__in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,5vw,80px);align-items:start}
+.fijada__lienzo{position:sticky;top:0;height:100svh;display:grid;place-items:center;align-content:center;gap:22px}
+.fijada__pasos{padding-block:26svh}
+.paso{min-height:62svh;display:flex;align-items:center}
+.paso p{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(1.5rem,3.4vw,2.6rem);line-height:1.08;letter-spacing:-.04em;
+  color:rgba(255,255,255,.26);
+  transition:color var(--t-enter) var(--ease);
+}
+.paso.viva p{color:#fff}
+
+/* ---------- los esquemas ------------------------------------------
+   Sin recuadro: se apoyan en el suelo oscuro de su escena. Un borde
+   aqui solo diria "esto es un widget". */
+.esquema{display:grid;place-items:center;gap:clamp(26px,4vh,44px);width:100%}
+.esquema__nota{font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;
+  color:rgba(255,255,255,.34);text-align:center}
+.escena--carta .esquema__nota,.escena:not(.escena--noche) .esquema__nota{color:var(--tenue)}
+
+/* --- el degradado que cruza las dos mitades --- */
+.kb{position:relative;width:min(100%,520px)}
+.kb__luz{position:absolute;inset:-16% clamp(0px,-8%,0px);border-radius:40px;
+  background:var(--grad-ciclo);background-size:220% 100%;filter:blur(22px);opacity:.95;
+  animation:fluye var(--loop-luz) linear infinite}
+.kb__placa{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,5vw,44px)}
+.kb__mitad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.kb__tecla{aspect-ratio:1;border-radius:4px;background:#16181c;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
 @keyframes fluye{from{background-position:0% 50%}to{background-position:-220% 50%}}
 
-/* --- demo 2: OLED con cuatro vistas --- */
-.oled{width:min(100%,420px);aspect-ratio:2.1/1;background:#05070a;border:1px solid rgba(255,255,255,.18);
-  border-radius:5px;position:relative;overflow:hidden;box-shadow:0 0 34px rgba(120,190,255,.14)}
-.oled__v{position:absolute;inset:0;display:grid;place-content:center;gap:6px;justify-items:center;
+/* --- OLED --- */
+.oled{width:min(100%,520px);aspect-ratio:2.1/1;background:#04060a;border-radius:10px;
+  position:relative;overflow:hidden;box-shadow:0 0 64px rgba(120,190,255,.20), inset 0 0 0 1px rgba(255,255,255,.1)}
+.oled__v{position:absolute;inset:0;display:grid;place-content:center;gap:8px;justify-items:center;
   font-family:var(--mono);color:#cfe9ff;opacity:0;
   animation:vistas var(--loop-vista) steps(1,end) infinite}
-/* Cuatro fases iguales; cada vista entra en la suya. `steps` porque un
-   OLED monocromo cambia de golpe, no se funde. */
 .oled__v:nth-child(1){animation-delay:calc(var(--loop-vista) * 0)}
 .oled__v:nth-child(2){animation-delay:calc(var(--loop-vista) * -0.75)}
 .oled__v:nth-child(3){animation-delay:calc(var(--loop-vista) * -0.5)}
 .oled__v:nth-child(4){animation-delay:calc(var(--loop-vista) * -0.25)}
 @keyframes vistas{0%,24.9%{opacity:1}25%,100%{opacity:0}}
-.oled b{font-size:2.1rem;letter-spacing:-.02em;font-weight:700}
-.oled small{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(207,233,255,.55)}
-.oled__bar{width:150px;height:11px;border:1px solid rgba(207,233,255,.5);border-radius:2px;padding:1.5px}
+.oled b{font-size:clamp(2rem,5vw,3.1rem);letter-spacing:-.03em;font-weight:700;line-height:1}
+.oled small{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(207,233,255,.55)}
+.oled__bar{width:180px;height:13px;border:1px solid rgba(207,233,255,.5);border-radius:3px;padding:2px}
 .oled__bar i{display:block;height:100%;width:82%;background:#cfe9ff;border-radius:1px}
-/* Bongo Cat. Dos patas sueltas no se leian como un gato, asi que lleva
-   cabeza, orejas y una mesa: es la vista que mas cariño le tiene la
-   gente y merece entenderse de un vistazo. */
-.gato{position:relative;width:132px;height:58px}
-.gato__cara{position:absolute;left:50%;top:0;transform:translateX(-50%);width:54px;height:36px;
-  border:2px solid #cfe9ff;border-radius:16px 16px 12px 12px;background:#05070a}
-.gato__cara::before,.gato__cara::after{content:"";position:absolute;top:-9px;width:0;height:0;
-  border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:11px solid #cfe9ff}
-.gato__cara::before{left:5px}
-.gato__cara::after{right:5px}
-.gato__ojo{position:absolute;top:14px;width:4px;height:4px;border-radius:50%;background:#cfe9ff}
-.gato__ojo--i{left:14px}
-.gato__ojo--d{right:14px}
-.gato__mesa{position:absolute;left:0;right:0;bottom:0;height:2px;background:#cfe9ff;opacity:.65}
-.gato i{position:absolute;bottom:2px;width:22px;height:14px;background:#cfe9ff;border-radius:4px 4px 2px 2px;
+.gato{position:relative;width:160px;height:68px}
+.gato__cara{position:absolute;left:50%;top:0;transform:translateX(-50%);width:64px;height:42px;
+  border:2px solid #cfe9ff;border-radius:19px 19px 14px 14px;background:#04060a}
+.gato__cara::before,.gato__cara::after{content:"";position:absolute;top:-11px;width:0;height:0;
+  border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:13px solid #cfe9ff}
+.gato__cara::before{left:6px}
+.gato__cara::after{right:6px}
+.gato__ojo{position:absolute;top:17px;width:4px;height:4px;border-radius:50%;background:#cfe9ff}
+.gato__ojo--i{left:17px}
+.gato__ojo--d{right:17px}
+.gato__mesa{position:absolute;left:0;right:0;bottom:0;height:2px;background:#cfe9ff;opacity:.6}
+.gato i{position:absolute;bottom:2px;width:26px;height:16px;background:#cfe9ff;border-radius:5px 5px 2px 2px;
   transform-origin:bottom center;animation:golpea var(--loop-gato) ease-in-out infinite}
-.gato i:nth-of-type(1){left:14px}
-.gato i:nth-of-type(2){right:14px;animation-delay:calc(var(--loop-gato) / 2)}
-@keyframes golpea{0%,100%{transform:translateY(-15px) rotate(-8deg)}50%{transform:translateY(0) rotate(0)}}
+.gato i:nth-of-type(1){left:16px}
+.gato i:nth-of-type(2){right:16px;animation-delay:calc(var(--loop-gato) / 2)}
+@keyframes golpea{0%,100%{transform:translateY(-17px) rotate(-8deg)}50%{transform:translateY(0) rotate(0)}}
 
-/* --- demo 3: capas --- */
-.capas{width:min(100%,460px)}
-.capas__fila{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
-.capas__fila+.capas__fila{margin-top:7px}
-.capas__t{aspect-ratio:1;border-radius:3px;background:var(--placa);display:grid;place-items:center;position:relative;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
-.capas__t span{position:absolute;font-family:var(--mono);font-size:.82rem;color:#e7e9ec;
+/* --- capas --- */
+.capas{width:min(100%,560px)}
+.capas__fila{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.capas__fila+.capas__fila{margin-top:8px}
+.capas__t{aspect-ratio:1;border-radius:5px;background:#16181c;display:grid;place-items:center;position:relative;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.capas__t span{position:absolute;font-family:var(--mono);font-size:clamp(.72rem,1.6vw,1rem);color:#e7e9ec;
   animation:capaA var(--loop-capa) steps(1,end) infinite}
 .capas__t span+span{color:#ffb457;animation-name:capaB}
 @keyframes capaA{0%,49.9%{opacity:1}50%,100%{opacity:0}}
 @keyframes capaB{0%,49.9%{opacity:0}50%,100%{opacity:1}}
-/* La tecla que se mantiene pulsada: se hunde cuando cambia la capa. */
-.capas__t--hold{background:#2a2f36}
-.capas__t--hold::after{content:"";position:absolute;inset:0;border-radius:3px;border:1px solid #ffb457;opacity:0;
-  animation:pulsada var(--loop-capa) steps(1,end) infinite}
+.capas__t--hold{background:#262b32}
+.capas__t--hold::after{content:"";position:absolute;inset:0;border-radius:5px;box-shadow:inset 0 0 0 2px #ffb457;
+  opacity:0;animation:pulsada var(--loop-capa) steps(1,end) infinite}
 @keyframes pulsada{0%,49.9%{opacity:0}50%,100%{opacity:1}}
-.capas__pie{display:flex;gap:8px;align-items:center;margin-top:14px;font-family:var(--mono);font-size:.58rem;
-  letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5)}
-.capas__pie b{color:#ffb457;font-weight:400;position:relative;display:inline-grid}
+.capas__pie{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.capas__pie b{color:#ffb457;font-weight:400;display:inline-grid}
 .capas__pie b span{grid-area:1/1;animation:capaA var(--loop-capa) steps(1,end) infinite}
 .capas__pie b span+span{animation-name:capaB}
 
-/* --- demo 4: hotswap --- */
-.hot{display:flex;gap:clamp(24px,5vw,54px);align-items:flex-end}
-.hot__col{display:grid;justify-items:center;gap:11px}
-/* El zocalo es el sitio fijo; el switch vive DENTRO y sale de ahi. Antes
-   flotaba por encima con un hueco fijo y no se leia el "sale tirando". */
-.hot__hueco{position:relative;width:76px;height:76px}
-.hot__socket{position:absolute;inset:0;border-radius:5px;background:#0a0c0f;border:1px solid rgba(255,255,255,.14);
-  display:grid;place-items:center;gap:7px;grid-auto-flow:column}
-.hot__socket i{width:9px;height:9px;border-radius:50%;border:1px solid rgba(255,255,255,.3)}
-.hot__sw{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;
-  border-radius:5px;background:#e0e3e6;box-shadow:0 6px 14px rgba(0,0,0,.5);
+/* --- hotswap --- */
+.hot{display:flex;gap:clamp(30px,7vw,74px);align-items:flex-end;justify-content:center}
+.hot__col{display:grid;justify-items:center;gap:14px}
+.hot__hueco{position:relative;width:96px;height:96px}
+.hot__socket{position:absolute;inset:0;border-radius:7px;background:#04060a;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);display:grid;place-items:center;gap:10px;grid-auto-flow:column}
+.hot__socket i{width:11px;height:11px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.34)}
+.hot__sw{position:absolute;left:50%;top:50%;width:68px;height:68px;margin:-34px 0 0 -34px;
+  border-radius:7px;background:#e4e7ea;box-shadow:0 10px 22px rgba(0,0,0,.55);
   animation:saca var(--loop-tecla) var(--ease) infinite}
-.hot__sw::after{content:"";position:absolute;inset:15px;border-radius:2px;background:#c23a3a}
-.hot__sw--rojo::after{background:#c23a3a}
+.hot__sw::after{content:"";position:absolute;inset:19px;border-radius:3px;background:#c23a3a}
 .hot__sw--marron::after{background:#7a5236}
-/* Sale, se queda un momento fuera y vuelve a entrar. Es un gesto: corto. */
 @keyframes saca{
   0%,10%{transform:translateY(0) rotate(0)}
-  40%,60%{transform:translateY(-46px) rotate(-8deg)}
+  40%,60%{transform:translateY(-58px) rotate(-8deg)}
   90%,100%{transform:translateY(0) rotate(0)}
 }
-.hot__et{font-family:var(--mono);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.hot__et{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.45)}
 
-/* ---------- catalogo y comparador ---------- */
-.dos{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.4vw,26px)}
-.puerta{background:var(--carta);border:1px solid var(--filete);border-radius:6px;padding:clamp(20px,3vw,34px);
-  display:flex;flex-direction:column;transition:border-color var(--t-tap) var(--ease)}
-.puerta:hover{border-color:var(--regla)}
-.puerta h3{font-family:var(--display);font-weight:400;font-size:clamp(1.1rem,2.2vw,1.5rem);letter-spacing:-.03em}
-.puerta p{color:var(--gris);font-size:.88rem;margin-top:10px;flex:1}
-.puerta .btn{margin-top:20px;align-self:flex-start}
+/* ---------- los cinco: un carril, no una rejilla de fichas ---------- */
+.carril{
+  min-width:0;
+  display:flex;gap:clamp(16px,2.4vw,32px);overflow-x:auto;scroll-snap-type:x mandatory;
+  padding-inline:var(--canal);padding-block:8px 28px;margin-inline:calc(var(--canal) * -1);
+  scrollbar-width:none;
+}
+.carril::-webkit-scrollbar{display:none}
+.carril a{flex:0 0 clamp(230px,26vw,320px);scroll-snap-align:center;display:grid;gap:14px;
+  transition:opacity var(--t-tap) var(--ease)}
+.carril a:hover{opacity:.72}
+/* Sin tarjeta: la foto se apoya, y el texto vive debajo sobre el suelo. */
+.carril img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center 50%;border-radius:12px;
+  box-shadow:0 26px 48px -32px rgba(17,19,22,.5)}
+.carril h3{font-size:1rem;letter-spacing:-.02em}
+.carril h3 small{display:block;font-weight:400;font-size:.82rem;color:var(--gris);margin-top:3px}
+.carril .precio{font-family:var(--mono);font-size:.84rem;margin-top:2px}
+.carril .estado{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--gris);margin-top:4px}
+.carril .estado.hay,.carril .estado.ultima{color:var(--marca)}
 
-/* ---------- confianza y pie ---------- */
-.confianza{display:grid;gap:clamp(18px,2.4vw,34px);grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
-.confianza h3{font-size:.92rem;margin-bottom:5px}
-.confianza p{color:var(--gris);font-size:.83rem;line-height:1.5}
-.pie{border-top:1px solid var(--filete);padding-block:22px 32px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.pie p{font-family:var(--mono);font-size:.58rem;color:var(--gris);letter-spacing:.04em}
-.pie .nota{flex:1;min-width:270px;margin:0}
+/* ---------- confianza: cuatro frases, sin cajas ---------- */
+.cuatro{display:grid;gap:clamp(26px,4vw,54px);grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  text-align:left}
+.cuatro h3{font-size:.95rem;margin-bottom:6px}
+.cuatro p{color:var(--gris);font-size:.86rem;line-height:1.5}
 
-/* ---------- entradas: por papel ---------- */
+.pie{border-top:1px solid var(--filete);padding-block:26px 40px;display:flex;gap:16px;flex-wrap:wrap}
+.pie p{font-family:var(--mono);font-size:.58rem;color:var(--tenue);letter-spacing:.04em}
+.pie .nota{flex:1;min-width:260px}
+
+/* ---------- entradas: por papel, sin fuegos artificiales ---------- */
 .entra{opacity:0}
 .entra.dentro{opacity:1;animation-duration:var(--t-enter);animation-timing-function:var(--ease);
   animation-fill-mode:backwards;animation-delay:calc(var(--d,0) * var(--paso))}
 .entra--rotulo.dentro{animation-name:e-aparece}
 .entra--titulo.dentro{animation-name:e-asienta}
 .entra--texto.dentro {animation-name:e-sube}
-.entra--demo.dentro  {animation-name:e-escala}
-.entra--dato.dentro  {animation-name:e-izq}
+.entra--pieza.dentro {animation-name:e-escala}
 @keyframes e-aparece{from{opacity:0}}
-@keyframes e-asienta{from{opacity:0;transform:translateY(10px)}}
-@keyframes e-sube   {from{opacity:0;transform:translateY(16px)}}
-@keyframes e-escala {from{opacity:0;transform:scale(.985)}}
-@keyframes e-izq    {from{opacity:0;transform:translateX(-14px)}}
-/* El marco de una foto no se mueve: entra la imagen de dentro. */
-.marco__foto img,.tira__foto img{opacity:0}
-.marco.dentro .marco__foto img,.tira a.dentro .tira__foto img{
-  opacity:1;animation:e-foto var(--t-enter) var(--ease) backwards}
-@keyframes e-foto{from{opacity:0;transform:scale(1.03)}}
+@keyframes e-asienta{from{opacity:0;transform:translateY(12px)}}
+@keyframes e-sube   {from{opacity:0;transform:translateY(18px)}}
+@keyframes e-escala {from{opacity:0;transform:scale(.97)}}
 
 @media (prefers-reduced-motion:reduce){
   .entra{opacity:1}.entra.dentro{animation:none}
-  .marco__foto img,.tira__foto img{opacity:1}
-  .marco.dentro .marco__foto img,.tira a.dentro .tira__foto img{animation:none}
-  /* Los esquemas se paran en un fotograma legible en vez de desaparecer:
-     la ventaja se sigue entendiendo sin movimiento. */
   .kb__luz,.oled__v,.gato i,.capas__t span,.capas__t--hold::after,.capas__pie b span,.hot__sw{animation:none}
   .oled__v:nth-child(1){opacity:1}
   .capas__t span+span,.capas__pie b span+span{opacity:0}
+  .paso p{color:#fff}
   html{scroll-behavior:auto}
+  .carril{scroll-snap-type:none}
 }
 
-@media (max-width:880px){
-  .hero__in,.ventaja{grid-template-columns:1fr;gap:24px}
-  .ventaja--giro .ventaja__demo{order:0}
-  .dos{grid-template-columns:1fr}
-  .tira{grid-template-columns:repeat(2,1fr)}
+/* En estrecho el halo no sobresale a los lados: 8 px bastaban para que
+   el documento midiera mas que la pantalla. */
+@media (max-width:560px){ .kb__luz{inset:-14% 0} }
+
+@media (max-width:900px){
+  .fijada__in{grid-template-columns:minmax(0,1fr);gap:0}
+  /* En movil el teclado se ancla arriba y el texto pasa por debajo. */
+  .fijada__lienzo{height:52svh;top:52px;background:var(--noche);z-index:2;padding-block:12px}
+  .fijada__pasos{padding-block:8svh 20svh}
+  .paso{min-height:46svh}
   .top__nav{display:none}
+  .escena{min-height:auto;padding-block:clamp(64px,12svh,96px)}
+  .hero{min-height:auto}
 }
 @media (max-width:520px){
-  .top__in{height:54px}
-  .hero__acciones .btn{flex:1}
+  .acciones .btn{flex:1}
 }

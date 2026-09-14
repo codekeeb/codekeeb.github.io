@@ -222,7 +222,15 @@ async function main() {
                  asi que en frances, con el texto mas largo, empieza donde
                  le toca aunque mida mas de media region. */
               if (/^inline/.test(cs.display)) return false;
-              return e.getBoundingClientRect().width > anchoSec * 0.5;
+              /* Y tampoco cuenta lo que esta centrado a proposito: si el
+                 hueco de la izquierda y el de la derecha son iguales, el
+                 bloque no se ha escapado de la columna, esta centrado
+                 dentro de ella. Es lo que hace una foto mas estrecha que
+                 su region. */
+              const r = e.getBoundingClientRect(), sr = sec.getBoundingClientRect();
+              const izq = r.left - sr.left, der = sr.right - r.right;
+              if (Math.abs(izq - der) <= 2) return false;
+              return r.width > anchoSec * 0.5;
             });
             if (bloques.length < 2) continue;
             const izq = bloques.map(e => Math.round(e.getBoundingClientRect().left));

@@ -209,7 +209,15 @@ const CK_I18N = {
     "p.repos": "17 repositorios públicos con el firmware de cada teclado",
     "p.navVentajas": "Ventajas",
     "p.idiomas": "idiomas",
-    "p.enStock": "en stock"
+    "p.enStock": "en stock",
+    "p.paso1": "Diez modos de iluminación.",
+    "p.paso2": "El color no se corta al llegar al cable.",
+    "p.paso3": "Las dos mitades comparten la misma rampa.",
+    "p.paso4": "Escrito en el firmware. No viene con la placa.",
+    "p.mira": "Míralo",
+    "p.losCinco": "Los cinco",
+    "p.desliza": "Desliza",
+    "p.verTodo": "Ver los cinco con precio y stock"
   },
 
   en: {
@@ -415,7 +423,15 @@ const CK_I18N = {
     "p.repos": "17 public repositories with the firmware of every keyboard",
     "p.navVentajas": "Why ours",
     "p.idiomas": "languages",
-    "p.enStock": "in stock"
+    "p.enStock": "in stock",
+    "p.paso1": "Ten lighting modes.",
+    "p.paso2": "The colour does not stop at the cable.",
+    "p.paso3": "Both halves share the same ramp.",
+    "p.paso4": "Written into the firmware. It does not come with the PCB.",
+    "p.mira": "Watch it",
+    "p.losCinco": "All five",
+    "p.desliza": "Swipe",
+    "p.verTodo": "See all five with price and stock"
   },
 
   fr: {
@@ -621,6 +637,14 @@ const CK_I18N = {
     "p.repos": "17 dépôts publics avec le firmware de chaque clavier",
     "p.navVentajas": "Avantages",
     "p.idiomas": "langues",
-    "p.enStock": "en stock"
+    "p.enStock": "en stock",
+    "p.paso1": "Dix modes d'éclairage.",
+    "p.paso2": "La couleur ne s'arrête pas au câble.",
+    "p.paso3": "Les deux moitiés partagent la même rampe.",
+    "p.paso4": "Écrit dans le firmware. Ça ne vient pas avec le PCB.",
+    "p.mira": "Regarde",
+    "p.losCinco": "Les cinq",
+    "p.desliza": "Fais glisser",
+    "p.verTodo": "Voir les cinq avec prix et stock"
   }
 };
