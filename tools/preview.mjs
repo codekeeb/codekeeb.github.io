@@ -123,7 +123,7 @@ async function main() {
      normal, pero pasan exactamente los mismos controles cuando se piden. */
   if (args.includes("--direcciones")) {
     paginas.length = 0;
-    for (const d of ["a", "b", "c"]) paginas.push({ id: `dir-${d}`, url: `/direcciones/${d}.html` });
+    for (const d of ["portada", "a", "b", "c"]) paginas.push({ id: `dir-${d}`, url: `/direcciones/${d}.html` });
   }
   if (args.includes("--all")) {
     const data = await readFile(join(RAIZ, "js", "data.js"), "utf8");

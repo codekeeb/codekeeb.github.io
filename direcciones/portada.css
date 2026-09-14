@@ -1,0 +1,324 @@
+/* ============================================================
+   PORTADA — la tienda que explica lo que vende
+   ------------------------------------------------------------
+   Tres reglas que vienen de Ernesto y de haber medido ergodox-ez.com
+   con el navegador, no de memoria:
+
+   1. NINGUNA FOTO A SANGRE. Toda imagen va dentro de un marco con
+      aire alrededor. En ergodox solo 4 de 24 regiones llevan imagen
+      a sangre; el resto es producto enmarcado sobre fondo plano, y
+      funciona. Aqui: cero.
+
+   2. LAS ANIMACIONES DEMUESTRAN EL PRODUCTO. Las doce que tiene
+      ergodox son todas demostraciones — el brillo RGB (12 s), las
+      capas (15 s), las teclas que se pulsan solas (2 s) — y ninguna
+      es decorativa. Aqui hay cuatro bucles y los cuatro ensenan algo
+      que este teclado hace y otro no: el degradado que cruza las dos
+      mitades, las cuatro vistas del OLED, las capas y el hotswap.
+      Son ESQUEMAS dibujados con CSS, rotulados como tales: las fotos
+      de producto son fotos, y no se generan ni se simulan.
+
+   3. Fondos alternos claros, seccion a seccion, como la referencia.
+      Sin fondo negro: fue lo primero que rechazo.
+
+   Movimiento: dos duraciones y una curva para lo que responde al
+   dedo. Los bucles llevan su propia duracion, declarada abajo y
+   justificada uno a uno — un bucle no es una transicion.
+   ============================================================ */
+
+:root{
+  --papel:#f4f4f1;
+  --carta:#ffffff;
+  --tinta:#15171a;
+  --gris:#686e76;
+  --tenue:#9ba1a8;
+  --filete:rgba(21,23,26,.12);
+  --regla:rgba(21,23,26,.26);
+  --marca:#1d7a4f;
+  --placa:#1b1d21;          /* el cuerpo de los esquemas de teclado */
+  --grad:linear-gradient(90deg,#ff992a,#ff39c0 40%,#2a3dff 75%,#1be8ff);
+  /* Rampa ciclica: empieza y acaba en el mismo naranja para que el
+     bucle no tenga costura visible al reiniciarse. */
+  --grad-ciclo:linear-gradient(90deg,#ff992a,#ff39c0,#2a3dff,#1be8ff,#2a3dff,#ff39c0,#ff992a);
+
+  --sans:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --display:"Archivo Black","Archivo",Arial,sans-serif;
+  --mono:"Martian Mono",ui-monospace,"SFMono-Regular",monospace;
+
+  /* Lo que responde al dedo: dos duraciones, una curva. */
+  --t-tap:180ms;
+  --t-enter:420ms;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --paso:60ms;
+
+  /* Bucles de demostracion. Cada uno con su porque:
+     --loop-luz    el RGB recorriendo la placa. Lento para que se lea
+                   como luz y no como parpadeo. linear: un ciclo sin
+                   principio ni fin da un tiron con cualquier curva.
+     --loop-vista  las cuatro vistas del OLED. Cuatro fases de 4 s da
+                   tiempo a leer cada una sin quedarse esperando.
+     --loop-capa   el salto de capa. Igual de lento, misma razon.
+     --loop-tecla  el switch saliendo y entrando. Corto porque es un
+                   gesto, no un estado. */
+  --loop-luz:9s;
+  --loop-vista:16s;
+  --loop-capa:12s;
+  --loop-tecla:3.2s;
+  --loop-gato:.34s;   /* las patas del Bongo Cat: rapido, es un golpe */
+
+  --col:1240px;
+  --canal:clamp(18px,4vw,56px);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--papel);color:var(--tinta);line-height:1.55;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--tinta);outline-offset:3px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.envoltura{max-width:var(--col);margin-inline:auto;padding-inline:var(--canal)}
+
+/* ---------- cabecera ---------- */
+.top{position:sticky;top:0;z-index:50;background:rgba(244,244,241,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--filete)}
+.top__in{display:flex;align-items:center;gap:16px;height:60px}
+.marca{font-family:var(--display);font-size:1rem;letter-spacing:-.02em}
+.marca i{font-style:normal;color:var(--gris)}
+.top__nav{display:flex;gap:18px;margin-left:22px}
+.top__nav a{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);
+  transition:color var(--t-tap) var(--ease)}
+.top__nav a:hover{color:var(--tinta)}
+.top__sp{flex:1}
+.idiomas{display:flex;gap:2px;border:1px solid var(--filete);border-radius:3px;padding:2px}
+.idiomas button{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;padding:.38em .62em;border-radius:2px;color:var(--gris);
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease)}
+.idiomas button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;font-family:var(--mono);
+  font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;padding:.85em 1.25em;border-radius:3px;
+  border:1px solid var(--tinta);white-space:nowrap;
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),border-color var(--t-tap) var(--ease)}
+.btn--solido{background:var(--tinta);color:var(--papel)}
+.btn--solido:hover{background:#000}
+.btn--linea{border-color:var(--regla);color:var(--gris)}
+.btn--linea:hover{border-color:var(--tinta);color:var(--tinta)}
+.top .btn{padding:.62em 1em}
+
+/* ---------- regiones: fondos alternos, un solo ritmo ---------- */
+.region{padding-block:clamp(54px,8vw,110px);border-top:1px solid var(--filete)}
+.region--carta{background:var(--carta)}
+.region__cab{max-width:56ch;margin-bottom:clamp(28px,4vw,46px)}
+.rotulo{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gris);display:block;margin-bottom:12px}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.08;letter-spacing:-.035em}
+h2 em{font-style:normal;color:var(--gris)}
+.region__cab p{color:var(--gris);margin-top:14px;font-size:clamp(.93rem,1.3vw,1.03rem)}
+
+/* ---------- HERO ---------- */
+.hero{padding-block:clamp(36px,6vw,78px) clamp(40px,6vw,84px)}
+.hero__in{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(28px,5vw,72px);align-items:center}
+.hero h1{font-family:var(--display);font-weight:400;font-size:clamp(2.1rem,5.4vw,3.7rem);line-height:1.02;letter-spacing:-.04em;margin-top:14px}
+.hero h1 em{font-style:normal;color:var(--gris)}
+.hero__texto{color:var(--gris);max-width:48ch;margin-top:18px;font-size:clamp(.95rem,1.4vw,1.08rem)}
+.hero__acciones{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+.hero__cifras{display:flex;gap:clamp(18px,3vw,40px);margin-top:30px;padding-top:22px;border-top:1px solid var(--filete);flex-wrap:wrap}
+.hero__cifras div{display:flex;flex-direction:column;gap:2px}
+.hero__cifras b{font-family:var(--mono);font-size:1.15rem;letter-spacing:-.02em}
+.hero__cifras span{font-family:var(--mono);font-size:.58rem;letter-spacing:.09em;text-transform:uppercase;color:var(--gris)}
+
+/* REGLA 1: la foto va enmarcada, con aire. Nunca toca el borde. */
+.marco{
+  position:relative;background:var(--carta);border:1px solid var(--filete);
+  border-radius:6px;padding:clamp(12px,1.6vw,22px);
+}
+.marco__foto{aspect-ratio:4/3;overflow:hidden;border-radius:3px;background:#ecece8}
+.marco__foto img{width:100%;height:100%;object-fit:cover;object-position:center 48%}
+.marco__pie{display:flex;justify-content:space-between;gap:12px;margin-top:11px;font-family:var(--mono);font-size:.58rem;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--gris);flex-wrap:wrap}
+.marco__pie b{color:var(--tinta);font-weight:400}
+
+/* tira de modelos bajo el heroe */
+.tira{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:clamp(26px,4vw,44px)}
+.tira a{display:block;background:var(--carta);border:1px solid var(--filete);border-radius:5px;padding:8px;
+  transition:border-color var(--t-tap) var(--ease),transform var(--t-tap) var(--ease)}
+.tira a:hover{border-color:var(--regla);transform:translateY(-2px)}
+.tira__foto{aspect-ratio:4/3;overflow:hidden;border-radius:2px;background:#ecece8}
+.tira__foto img{width:100%;height:100%;object-fit:cover;object-position:center 48%}
+.tira b{display:block;font-size:.76rem;margin-top:8px;letter-spacing:-.01em}
+.tira span{display:block;font-size:.66rem;color:var(--gris);margin-top:2px;line-height:1.3}
+.tira .tira__precio{font-family:var(--mono);font-size:.62rem;color:var(--tinta);margin-top:5px}
+
+/* ---------- VENTAJAS: un demo por ventaja ---------- */
+.ventaja{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,5vw,70px);align-items:center;
+  padding-block:clamp(34px,5vw,62px);border-top:1px solid var(--filete)}
+.ventaja:first-of-type{border-top:0}
+.ventaja--giro .ventaja__demo{order:2}
+.ventaja__texto h3{font-family:var(--display);font-weight:400;font-size:clamp(1.3rem,2.8vw,2rem);line-height:1.1;letter-spacing:-.035em;margin-top:10px}
+.ventaja__texto h3 em{font-style:normal;color:var(--gris)}
+.ventaja__texto p{color:var(--gris);margin-top:14px;max-width:44ch;font-size:clamp(.9rem,1.3vw,1rem)}
+.nota{font-family:var(--mono);font-size:.55rem;letter-spacing:.07em;color:var(--tenue);margin-top:14px;display:block}
+
+/* El lienzo de los esquemas: mismo marco que las fotos, para que se
+   lea que ocupan el mismo sitio en la pagina. */
+.demo{background:#101215;border:1px solid var(--filete);border-radius:6px;padding:clamp(16px,2.4vw,30px);
+  position:relative;overflow:hidden;aspect-ratio:4/3;display:grid;place-items:center}
+.demo__et{position:absolute;top:10px;left:12px;font-family:var(--mono);font-size:.52rem;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.42)}
+
+/* --- demo 1: RGB que cruza las dos mitades --- */
+.kb{position:relative;width:100%;max-width:420px}
+.kb__luz{
+  position:absolute;inset:-14% -6%;border-radius:24px;
+  background:var(--grad-ciclo);background-size:220% 100%;
+  filter:blur(16px);opacity:.95;
+  animation:fluye var(--loop-luz) linear infinite;
+}
+.kb__placa{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,4vw,34px)}
+.kb__mitad{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.kb__tecla{aspect-ratio:1;border-radius:3px;background:var(--placa);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+.kb__tecla--ancha{grid-column:span 2}
+/* Un ciclo sin costura: la rampa vuelve al mismo color con el que empieza. */
+@keyframes fluye{from{background-position:0% 50%}to{background-position:-220% 50%}}
+
+/* --- demo 2: OLED con cuatro vistas --- */
+.oled{width:min(100%,420px);aspect-ratio:2.1/1;background:#05070a;border:1px solid rgba(255,255,255,.18);
+  border-radius:5px;position:relative;overflow:hidden;box-shadow:0 0 34px rgba(120,190,255,.14)}
+.oled__v{position:absolute;inset:0;display:grid;place-content:center;gap:6px;justify-items:center;
+  font-family:var(--mono);color:#cfe9ff;opacity:0;
+  animation:vistas var(--loop-vista) steps(1,end) infinite}
+/* Cuatro fases iguales; cada vista entra en la suya. `steps` porque un
+   OLED monocromo cambia de golpe, no se funde. */
+.oled__v:nth-child(1){animation-delay:calc(var(--loop-vista) * 0)}
+.oled__v:nth-child(2){animation-delay:calc(var(--loop-vista) * -0.75)}
+.oled__v:nth-child(3){animation-delay:calc(var(--loop-vista) * -0.5)}
+.oled__v:nth-child(4){animation-delay:calc(var(--loop-vista) * -0.25)}
+@keyframes vistas{0%,24.9%{opacity:1}25%,100%{opacity:0}}
+.oled b{font-size:2.1rem;letter-spacing:-.02em;font-weight:700}
+.oled small{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(207,233,255,.55)}
+.oled__bar{width:150px;height:11px;border:1px solid rgba(207,233,255,.5);border-radius:2px;padding:1.5px}
+.oled__bar i{display:block;height:100%;width:82%;background:#cfe9ff;border-radius:1px}
+/* Bongo Cat. Dos patas sueltas no se leian como un gato, asi que lleva
+   cabeza, orejas y una mesa: es la vista que mas cariño le tiene la
+   gente y merece entenderse de un vistazo. */
+.gato{position:relative;width:132px;height:58px}
+.gato__cara{position:absolute;left:50%;top:0;transform:translateX(-50%);width:54px;height:36px;
+  border:2px solid #cfe9ff;border-radius:16px 16px 12px 12px;background:#05070a}
+.gato__cara::before,.gato__cara::after{content:"";position:absolute;top:-9px;width:0;height:0;
+  border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:11px solid #cfe9ff}
+.gato__cara::before{left:5px}
+.gato__cara::after{right:5px}
+.gato__ojo{position:absolute;top:14px;width:4px;height:4px;border-radius:50%;background:#cfe9ff}
+.gato__ojo--i{left:14px}
+.gato__ojo--d{right:14px}
+.gato__mesa{position:absolute;left:0;right:0;bottom:0;height:2px;background:#cfe9ff;opacity:.65}
+.gato i{position:absolute;bottom:2px;width:22px;height:14px;background:#cfe9ff;border-radius:4px 4px 2px 2px;
+  transform-origin:bottom center;animation:golpea var(--loop-gato) ease-in-out infinite}
+.gato i:nth-of-type(1){left:14px}
+.gato i:nth-of-type(2){right:14px;animation-delay:calc(var(--loop-gato) / 2)}
+@keyframes golpea{0%,100%{transform:translateY(-15px) rotate(-8deg)}50%{transform:translateY(0) rotate(0)}}
+
+/* --- demo 3: capas --- */
+.capas{width:min(100%,460px)}
+.capas__fila{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.capas__fila+.capas__fila{margin-top:7px}
+.capas__t{aspect-ratio:1;border-radius:3px;background:var(--placa);display:grid;place-items:center;position:relative;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+.capas__t span{position:absolute;font-family:var(--mono);font-size:.82rem;color:#e7e9ec;
+  animation:capaA var(--loop-capa) steps(1,end) infinite}
+.capas__t span+span{color:#ffb457;animation-name:capaB}
+@keyframes capaA{0%,49.9%{opacity:1}50%,100%{opacity:0}}
+@keyframes capaB{0%,49.9%{opacity:0}50%,100%{opacity:1}}
+/* La tecla que se mantiene pulsada: se hunde cuando cambia la capa. */
+.capas__t--hold{background:#2a2f36}
+.capas__t--hold::after{content:"";position:absolute;inset:0;border-radius:3px;border:1px solid #ffb457;opacity:0;
+  animation:pulsada var(--loop-capa) steps(1,end) infinite}
+@keyframes pulsada{0%,49.9%{opacity:0}50%,100%{opacity:1}}
+.capas__pie{display:flex;gap:8px;align-items:center;margin-top:14px;font-family:var(--mono);font-size:.58rem;
+  letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.capas__pie b{color:#ffb457;font-weight:400;position:relative;display:inline-grid}
+.capas__pie b span{grid-area:1/1;animation:capaA var(--loop-capa) steps(1,end) infinite}
+.capas__pie b span+span{animation-name:capaB}
+
+/* --- demo 4: hotswap --- */
+.hot{display:flex;gap:clamp(24px,5vw,54px);align-items:flex-end}
+.hot__col{display:grid;justify-items:center;gap:11px}
+/* El zocalo es el sitio fijo; el switch vive DENTRO y sale de ahi. Antes
+   flotaba por encima con un hueco fijo y no se leia el "sale tirando". */
+.hot__hueco{position:relative;width:76px;height:76px}
+.hot__socket{position:absolute;inset:0;border-radius:5px;background:#0a0c0f;border:1px solid rgba(255,255,255,.14);
+  display:grid;place-items:center;gap:7px;grid-auto-flow:column}
+.hot__socket i{width:9px;height:9px;border-radius:50%;border:1px solid rgba(255,255,255,.3)}
+.hot__sw{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;
+  border-radius:5px;background:#e0e3e6;box-shadow:0 6px 14px rgba(0,0,0,.5);
+  animation:saca var(--loop-tecla) var(--ease) infinite}
+.hot__sw::after{content:"";position:absolute;inset:15px;border-radius:2px;background:#c23a3a}
+.hot__sw--rojo::after{background:#c23a3a}
+.hot__sw--marron::after{background:#7a5236}
+/* Sale, se queda un momento fuera y vuelve a entrar. Es un gesto: corto. */
+@keyframes saca{
+  0%,10%{transform:translateY(0) rotate(0)}
+  40%,60%{transform:translateY(-46px) rotate(-8deg)}
+  90%,100%{transform:translateY(0) rotate(0)}
+}
+.hot__et{font-family:var(--mono);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+
+/* ---------- catalogo y comparador ---------- */
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.4vw,26px)}
+.puerta{background:var(--carta);border:1px solid var(--filete);border-radius:6px;padding:clamp(20px,3vw,34px);
+  display:flex;flex-direction:column;transition:border-color var(--t-tap) var(--ease)}
+.puerta:hover{border-color:var(--regla)}
+.puerta h3{font-family:var(--display);font-weight:400;font-size:clamp(1.1rem,2.2vw,1.5rem);letter-spacing:-.03em}
+.puerta p{color:var(--gris);font-size:.88rem;margin-top:10px;flex:1}
+.puerta .btn{margin-top:20px;align-self:flex-start}
+
+/* ---------- confianza y pie ---------- */
+.confianza{display:grid;gap:clamp(18px,2.4vw,34px);grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
+.confianza h3{font-size:.92rem;margin-bottom:5px}
+.confianza p{color:var(--gris);font-size:.83rem;line-height:1.5}
+.pie{border-top:1px solid var(--filete);padding-block:22px 32px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.pie p{font-family:var(--mono);font-size:.58rem;color:var(--gris);letter-spacing:.04em}
+.pie .nota{flex:1;min-width:270px;margin:0}
+
+/* ---------- entradas: por papel ---------- */
+.entra{opacity:0}
+.entra.dentro{opacity:1;animation-duration:var(--t-enter);animation-timing-function:var(--ease);
+  animation-fill-mode:backwards;animation-delay:calc(var(--d,0) * var(--paso))}
+.entra--rotulo.dentro{animation-name:e-aparece}
+.entra--titulo.dentro{animation-name:e-asienta}
+.entra--texto.dentro {animation-name:e-sube}
+.entra--demo.dentro  {animation-name:e-escala}
+.entra--dato.dentro  {animation-name:e-izq}
+@keyframes e-aparece{from{opacity:0}}
+@keyframes e-asienta{from{opacity:0;transform:translateY(10px)}}
+@keyframes e-sube   {from{opacity:0;transform:translateY(16px)}}
+@keyframes e-escala {from{opacity:0;transform:scale(.985)}}
+@keyframes e-izq    {from{opacity:0;transform:translateX(-14px)}}
+/* El marco de una foto no se mueve: entra la imagen de dentro. */
+.marco__foto img,.tira__foto img{opacity:0}
+.marco.dentro .marco__foto img,.tira a.dentro .tira__foto img{
+  opacity:1;animation:e-foto var(--t-enter) var(--ease) backwards}
+@keyframes e-foto{from{opacity:0;transform:scale(1.03)}}
+
+@media (prefers-reduced-motion:reduce){
+  .entra{opacity:1}.entra.dentro{animation:none}
+  .marco__foto img,.tira__foto img{opacity:1}
+  .marco.dentro .marco__foto img,.tira a.dentro .tira__foto img{animation:none}
+  /* Los esquemas se paran en un fotograma legible en vez de desaparecer:
+     la ventaja se sigue entendiendo sin movimiento. */
+  .kb__luz,.oled__v,.gato i,.capas__t span,.capas__t--hold::after,.capas__pie b span,.hot__sw{animation:none}
+  .oled__v:nth-child(1){opacity:1}
+  .capas__t span+span,.capas__pie b span+span{opacity:0}
+  html{scroll-behavior:auto}
+}
+
+@media (max-width:880px){
+  .hero__in,.ventaja{grid-template-columns:1fr;gap:24px}
+  .ventaja--giro .ventaja__demo{order:0}
+  .dos{grid-template-columns:1fr}
+  .tira{grid-template-columns:repeat(2,1fr)}
+  .top__nav{display:none}
+}
+@media (max-width:520px){
+  .top__in{height:54px}
+  .hero__acciones .btn{flex:1}
+}
