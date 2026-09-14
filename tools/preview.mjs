@@ -11,6 +11,7 @@
      node tools/preview.mjs              # index, 3 idiomas, 2 tamanos
      node tools/preview.mjs --all        # + la pagina de cada producto
      node tools/preview.mjs --lang es    # solo un idioma
+     node tools/preview.mjs --direcciones # los prototipos de direccion
 
    Requiere Playwright. Si no lo tienes:  npm i -D playwright
    Las capturas van a tools/.preview/ (ignorado por git).
@@ -118,6 +119,12 @@ async function main() {
     : ["es", "en", "fr"];
 
   const paginas = [{ id: "home", url: "/index.html" }];
+  /* Las direcciones son prototipos, no la web: no entran en la tanda
+     normal, pero pasan exactamente los mismos controles cuando se piden. */
+  if (args.includes("--direcciones")) {
+    paginas.length = 0;
+    for (const d of ["a", "b", "c"]) paginas.push({ id: `dir-${d}`, url: `/direcciones/${d}.html` });
+  }
   if (args.includes("--all")) {
     const data = await readFile(join(RAIZ, "js", "data.js"), "utf8");
     const bloque = data.slice(data.indexOf("const CK_PRODUCTS"), data.indexOf("const CK_FLAVORS"));

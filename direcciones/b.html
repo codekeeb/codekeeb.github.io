@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codekeeb · Dirección B — La página es un comparador</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="b.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="top__in envoltura">
+    <a class="marca" href="index.html">CODE<i>/</i>KEEB</a>
+    <span class="top__sp"></span>
+    <div class="idiomas" role="group" aria-label="Idioma">
+      <button data-lang-btn="es">ES</button>
+      <button data-lang-btn="en">EN</button>
+      <button data-lang-btn="fr">FR</button>
+    </div>
+    <a class="btn btn--solido" id="tienda" href="#" data-t="nav.buy">Comprar</a>
+  </div>
+</header>
+
+<main>
+  <section class="intro envoltura">
+    <h1 class="entra entra--titulo" data-t="d.compare">Compara los cinco</h1>
+    <p class="entra entra--texto" style="--d:1" data-t="d.compareLede"></p>
+  </section>
+
+  <section class="envoltura">
+    <div class="mandos entra entra--texto" style="--d:2">
+      <button class="interruptor" id="soloDif" aria-pressed="false">
+        <span class="luz" aria-hidden="true"></span>
+        <span id="soloDifTxt">Solo lo que cambia</span>
+      </button>
+      <button class="btn btn--linea" id="reset">Todos</button>
+      <span class="cuenta" id="cuenta"></span>
+    </div>
+    <div class="marco entra entra--tabla" style="--d:3">
+      <table id="tabla"><thead id="cabeza"></thead><tbody id="cuerpo"></tbody></table>
+    </div>
+    <p class="vacio" id="vacio" hidden></p>
+  </section>
+</main>
+
+<footer class="cierre">
+  <div class="envoltura"><div class="confianza" id="confianza"></div></div>
+  <div class="envoltura"><div class="pie">
+    <p class="nota" id="nota"></p>
+    <p data-t="footer.copy"></p>
+  </div></div>
+</footer>
+
+<script src="../js/data.js"></script>
+<script src="../js/i18n.js"></script>
+<script src="comun.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  /* Que modelos estan encendidos. Apagar uno es la accion principal de
+     esta pagina: se compara descartando, no anadiendo. */
+  let encendidos = new Set(CK.productos().map(p => p.id));
+  let soloDiferencias = false;
+
+  const ETIQUETAS = {
+    es: { dif: "Solo lo que cambia", todos: "Encender todos", apagar: "quitar" },
+    en: { dif: "Only what differs",  todos: "Show all",       apagar: "remove" },
+    fr: { dif: "Seulement ce qui change", todos: "Tout afficher", apagar: "retirer" },
+  };
+
+  function columnaCabeza(p) {
+    const est = CK.stock(p);
+    return `
+      <th scope="col">
+        <div class="col__foto"><img src="${CK.foto(p)}" alt="${CK.escapar(p.name)}" loading="lazy" width="1200" height="900"></div>
+        <div class="col__nombre">${CK.rotulo(p)}</div>
+        <div class="col__precio">${CK.precio(p.priceFrom ?? p.priceFull)}${
+          p.priceOriginal ? `<s>${CK.precio(p.priceOriginal)}</s>` : ""}</div>
+        <div class="col__estado ${est.clase}">${CK.escapar(est.txt)}</div>
+        <div class="col__acciones">
+          <a class="btn btn--linea" href="../modelo.html?id=${p.id}">${CK.t("models.details")}</a>
+          <a class="btn btn--solido" href="${p.url}" target="_blank" rel="noopener">${CK.t("nav.buy")}</a>
+        </div>
+        <button class="col__apagar" data-apagar="${p.id}">− ${ETIQUETAS[CK.lang].apagar}</button>
+      </th>`;
+  }
+
+  function pintar() {
+    $("#tienda").href = CK.tiendaURL;
+    $("#nota").textContent = CK.notaPrecios();
+    $("#soloDifTxt").textContent = ETIQUETAS[CK.lang].dif;
+    $("#reset").textContent = ETIQUETAS[CK.lang].todos;
+    $("#soloDif").setAttribute("aria-pressed", String(soloDiferencias));
+
+    const lista = CK.productos().filter(p => encendidos.has(p.id));
+    $("#cuenta").textContent = `${lista.length} ${CK.t("d.of")} ${CK.productos().length}`;
+
+    const vacio = $("#vacio");
+    if (!lista.length) {
+      $("#tabla").hidden = true;
+      vacio.hidden = false;
+      vacio.textContent = CK.t("d.nomatch");
+      CK.observarEntradas();
+      return;
+    }
+    $("#tabla").hidden = false;
+    vacio.hidden = true;
+
+    $("#cabeza").innerHTML = `<tr><th class="etiqueta" scope="col">${CK.t("d.model")}</th>${lista.map(columnaCabeza).join("")}</tr>`;
+    $("#cabeza").querySelectorAll("[data-apagar]").forEach(b =>
+      b.onclick = () => { encendidos.delete(b.dataset.apagar); pintar(); });
+
+    /* Las filas salen del propio catalogo, no de una lista escrita a
+       mano: si manana un producto trae una ficha nueva, aparece sola. */
+    const filas = CK.etiquetasDeFicha(lista).map(clave => {
+      const celdas = lista.map(p => CK.spec(p, clave.es));
+      const presentes = celdas.filter(Boolean);
+      const difiere = new Set(presentes).size > 1 || presentes.length !== celdas.length;
+      if (soloDiferencias && !difiere) return "";
+      return `<tr class="${difiere ? "difiere" : ""}">
+        <td class="etiqueta">${CK.escapar(CK.L(clave))}</td>
+        ${celdas.map(v => `<td class="${v ? "" : "falta"}">${v ? CK.escapar(v) : "—"}</td>`).join("")}
+      </tr>`;
+    }).join("");
+
+    /* El precio va abajo tambien, como fila, porque es el dato que mas
+       se compara y arriba queda fuera de la vista al bajar. */
+    const filaPrecio = `<tr class="difiere">
+      <td class="etiqueta">${CK.t("d.priceCol")}</td>
+      ${lista.map(p => `<td><b class="mono">${CK.precio(p.priceFrom ?? p.priceFull)}</b>${
+        p.discountPct ? ` <span class="mono" style="font-size:.7em;color:var(--tenue)">−${p.discountPct}%</span>` : ""}</td>`).join("")}
+    </tr>`;
+
+    $("#cuerpo").innerHTML = filas + filaPrecio;
+
+    $("#confianza").innerHTML = [
+      ["trust.shipping","trust.shippingText"],["trust.warranty","trust.warrantyText"],
+      ["trust.custom","trust.customText"],["trust.firmware","trust.firmwareText"],
+    ].map(([a,b],i)=>`<div class="entra entra--texto" style="--d:${i}"><h3>${CK.t(a)}</h3><p>${CK.t(b)}</p></div>`).join("");
+
+    CK.observarEntradas();
+  }
+
+  $("#soloDif").onclick = () => { soloDiferencias = !soloDiferencias; pintar(); };
+  $("#reset").onclick = () => { encendidos = new Set(CK.productos().map(p => p.id)); pintar(); };
+
+  CK.pintarIdioma(pintar);
+  pintar();
+})();
+</script>
+</body>
+</html>

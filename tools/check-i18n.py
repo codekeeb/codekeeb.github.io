@@ -14,7 +14,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 I18N = ROOT / "js" / "i18n.js"
-HTML = ["index.html", "modelo.html"]  # keymap-studio lleva su propio I18N autocontenido
+# Todo el HTML del sitio menos keymap-studio, que lleva su propio I18N
+# autocontenido. Se busca solo, para que una pagina nueva quede cubierta
+# sin tener que acordarse de anadirla a esta lista.
+HTML = sorted(
+    str(r.relative_to(ROOT))
+    for r in ROOT.rglob("*.html")
+    if "keymap-studio" not in r.parts and ".preview" not in str(r)
+)
 
 # Una clave puede ir junto a otras en la misma linea:
 #     "f1.c1": "Perfil MA", "f1.c2": "EN / EN+IC / ES",
