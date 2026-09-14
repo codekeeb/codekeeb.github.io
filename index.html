@@ -44,7 +44,7 @@
       <a href="#caracteristicas" data-i18n="nav.features">Características</a>
       <a href="#specs" data-i18n="nav.specs">Specs</a>
       <a href="#sabores" data-i18n="nav.flavors">Sabores</a>
-      <a href="keymap-studio/">Keymap Studio</a>
+      <a href="#studio">Keymap Studio</a>
     </nav>
     <div class="nav__right">
       <div class="lang" role="group" aria-label="Idioma">
@@ -94,6 +94,54 @@
       </header>
       <div class="models__grid" id="modelsGrid"><!-- JS desde data.js --></div>
       <p class="price-note mono" id="priceNote"></p>
+    </section>
+
+
+    <!-- ============ KEYMAP STUDIO ============ -->
+    <section class="studio" id="studio">
+      <header class="section-head">
+        <h2 class="section-title reveal" data-i18n-html="studio.title">
+          Tu teclado se reprograma <em>en esta página</em>.
+        </h2>
+        <p class="studio__lede reveal" style="--d:.08s" data-i18n="studio.text">
+          Keymap Studio es un editor visual de ZMK que corre en el navegador.
+        </p>
+      </header>
+
+      <!-- Ficha de capacidades: termino + descripcion, como una hoja de datos.
+           Sin iconos y sin tarjetas iguales: la informacion es la estructura. -->
+      <dl class="studio__sheet">
+        <div class="studio__row reveal">
+          <dt data-i18n="studio.live">Edición en vivo por USB</dt>
+          <dd data-i18n="studio.liveText">Cambia una tecla y se aplica al momento.</dd>
+        </div>
+        <div class="studio__row reveal" style="--d:.06s">
+          <dt data-i18n="studio.layers">Capas, macros y combos</dt>
+          <dd data-i18n="studio.layersText">Y los dos encoders rotatorios.</dd>
+        </div>
+        <div class="studio__row reveal" style="--d:.12s">
+          <dt data-i18n="studio.sim">RGB y OLED simulados</dt>
+          <dd data-i18n="studio.simText">Ves el underglow antes de tocar el hardware.</dd>
+        </div>
+        <div class="studio__row reveal" style="--d:.18s">
+          <dt data-i18n="studio.export">Exporta tu .keymap</dt>
+          <dd data-i18n="studio.exportText">El archivo es tuyo.</dd>
+        </div>
+      </dl>
+
+      <!-- Las tres placas que define BOARDS en keymap-studio, con su numero
+           real de posiciones. Dato, no promesa. -->
+      <p class="studio__boardsLabel mono" data-i18n="studio.boards">Tres placas soportadas</p>
+      <ul class="studio__boards reveal" style="--d:.24s">
+        <li><strong>Sofle RGB</strong><span class="mono">60</span></li>
+        <li><strong>Corne</strong><span class="mono">42</span></li>
+        <li><strong>Totem</strong><span class="mono">38</span></li>
+      </ul>
+
+      <div class="studio__foot reveal" style="--d:.3s">
+        <a class="btn btn--primary btn--lg" href="keymap-studio/" data-i18n="studio.cta">Abrir Keymap Studio</a>
+        <p class="studio__note mono" data-i18n="studio.note">Funciona sin comprar nada.</p>
+      </div>
     </section>
 
     <!-- ============ MARQUEE ============ -->
@@ -417,7 +465,7 @@
         <a href="#specs" data-i18n="nav.specs">Specs</a>
         <a href="#sabores" data-i18n="nav.flavors">Sabores</a>
         <a href="#modelos" data-i18n="nav.models">Modelos</a>
-        <a href="keymap-studio/">Keymap Studio</a>
+        <a href="#studio">Keymap Studio</a>
       </nav>
       <nav class="footer__col">
         <h4 class="mono" data-i18n="footer.shop">Tienda</h4>
