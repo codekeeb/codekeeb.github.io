@@ -1,5 +1,13 @@
 # Portada (index.html)
 
+> **AVISO (14 sep 2026) — este contrato esta RECHAZADO.**
+> Describe la direccion de serigrafia de PCB (soldermask negro, cobre,
+> designadores). Ernesto la rechazo: "prefiero una version clara, como la
+> que tenia". El CSS de `claude/tienda-clara` ya no la sigue. Se deja aqui
+> por lo unico que sigue valiendo: las **restricciones de producto** del
+> final, que no dependen de la direccion. El contrato de la version clara
+> esta sin escribir y lo escribe el.
+
 Modo: Persuade.
 
 ## Direction contract

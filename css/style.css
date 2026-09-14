@@ -1,13 +1,18 @@
 /* ============================================================
-   CODEKEEB — serigrafia de PCB
+   CODEKEEB — hoja de estilo de la tienda
    ------------------------------------------------------------
-   El mundo visual es una placa real: soldermask negro mate como
-   campo que ocupa la pagina entera, cobre como unico metalico y
-   serigrafia blanca fina en versales. Los designadores (U1, SW14)
-   rotulan de verdad, no decoran.
+   Aviso: la cabecera anterior describia la direccion de
+   "serigrafia de PCB" (soldermask negro, cobre, designadores).
+   Esa direccion esta RECHAZADA y este archivo ya no la sigue:
+   el suelo es papel claro y la retorica de placa esta fuera.
+   Quedan algunos nombres de variable de entonces, marcados como
+   compatibilidad mas abajo. La direccion nueva esta sin escribir.
 
-   El degradado de marca naranja-rosa-azul sobrevive en un solo
-   sitio y con significado: donde el producto dice RGB.
+   Lo que si esta decidido y documentado aqui:
+     - el degradado de marca naranja-rosa-azul aparece en un solo
+       sitio y con significado: donde el producto dice RGB;
+     - el sistema de movimiento, dos duraciones y una curva, en el
+       bloque de variables. `tools/check-movimiento.py` lo vigila.
    ============================================================ */
 
 :root{
@@ -61,7 +66,31 @@
   --r-md:2px;
   --r-lg:3px;
   --pad:clamp(20px,5vw,64px);
+
+  /* --- movimiento: dos duraciones y una curva ----------------------
+     Antes habia nueve duraciones y la curva por defecto del navegador
+     en 29 sitios. El ojo no distingue .3s de .35s, pero si nota que
+     nada va acompasado. Asi que solo hay dos velocidades:
+
+     --t-tap    lo que responde al dedo o al raton: hover, foco, un
+                estado que cambia. Tiene que sentirse instantaneo.
+     --t-enter  lo que entra en escena: reveals, paneles, el carrusel.
+                Mas lento porque hay algo que leer mientras llega.
+
+     --ease     salida exponencial: sale disparado y aterriza sin
+                rebote. Es la unica curva del sitio.
+     --stagger  el unico escalon de retardo. Los elementos declaran
+                --d:1, --d:2... y aqui se convierte en tiempo; asi el
+                HTML dice "el segundo" y no "0,12 s".
+
+     Excepcion, una sola y rotulada donde ocurre: un bucle sin
+     principio ni fin (el degradado del boton de compra) va en
+     linear. Con una curva, la costura del bucle da un tiron.
+  ------------------------------------------------------------------- */
+  --t-tap:180ms;
+  --t-enter:420ms;
   --ease:cubic-bezier(.16,1,.3,1);
+  --stagger:60ms;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -102,11 +131,69 @@ a{text-underline-offset:.22em;text-decoration-thickness:1px}
 .progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:120}
 .progress span{display:block;height:100%;width:0;background:var(--grad)}
 
-/* ---------- reveals ---------- */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0s)}
-.reveal.is-in{opacity:1;transform:none}
+/* ---------- entradas ----------------------------------------------
+   Antes todo entraba igual: translateY(28px) en .9s, desde el rotulo
+   de tres letras hasta la foto de 600 px. Cuando todo se mueve igual,
+   el movimiento deja de significar nada y solo estorba al leer.
+
+   Ahora la duracion y la curva son las mismas para todos; lo que
+   cambia es DE DONDE viene cada cosa, segun el papel que hace:
+
+     --label   un rotulo no se mueve. Es una etiqueta pegada, no un
+               objeto que llega. Solo aparece.
+     --title   un titular se asienta: 10 px, lo justo para que se note
+               que ha llegado.
+     --text    el texto corrido sigue a su titular, con algo mas de
+               recorrido porque es el bloque que estas a punto de leer.
+     --media   una foto NO salta. El marco se queda quieto y la imagen
+               se asienta dentro; mover el marco descuadra la pagina.
+     --row     una fila de datos se rellena de izquierda a derecha,
+               que es como se lee una tabla.
+     --cta     lo que vas a pulsar ya esta donde va a estar. Aparece
+               y crece un pelo; no se te escapa hacia arriba.
+------------------------------------------------------------------- */
+/* La entrada va en @keyframes y no en transition, y no es un capricho:
+   la tarjeta de modelo entra Y ademas se levanta al pasar el raton. Con
+   transition las dos cosas comparten la misma propiedad y la ultima regla
+   del archivo gana — la tarjeta entraba en 180 ms porque su hover pisaba
+   la entrada. Una animacion de una sola pasada no toca `transition`, asi
+   que cada cosa conserva su velocidad. `backwards` mantiene el estado
+   inicial durante el retardo, y al acabar suelta el control para que el
+   hover pueda mover el elemento. */
+.reveal{opacity:0}
+.reveal.is-in{
+  opacity:1;
+  animation-duration:var(--t-enter);
+  animation-timing-function:var(--ease);
+  animation-fill-mode:backwards;
+  animation-delay:calc(var(--d,0) * var(--stagger));
+}
+.reveal--label.is-in{animation-name:ck-entra-rotulo}
+.reveal--title.is-in{animation-name:ck-entra-titular}
+.reveal--text.is-in {animation-name:ck-entra-texto}
+.reveal--row.is-in  {animation-name:ck-entra-fila}
+.reveal--cta.is-in  {animation-name:ck-entra-accion}
+
+@keyframes ck-entra-rotulo  {from{opacity:0}}
+@keyframes ck-entra-titular {from{opacity:0;transform:translateY(10px)}}
+@keyframes ck-entra-texto   {from{opacity:0;transform:translateY(16px)}}
+@keyframes ck-entra-fila    {from{opacity:0;transform:translateX(-14px)}}
+@keyframes ck-entra-accion  {from{opacity:0;transform:scale(.97)}}
+
+/* La foto: el <figure> se queda quieto en su sitio y lo que entra es la
+   imagen de dentro. Mover el marco descuadraria la rejilla de la seccion. */
+.reveal--media{opacity:1}
+.reveal--media img{opacity:0}
+.reveal--media.is-in img{
+  opacity:1;
+  animation:ck-entra-foto var(--t-enter) var(--ease) backwards;
+  animation-delay:calc(var(--d,0) * var(--stagger));
+}
+@keyframes ck-entra-foto{from{opacity:0;transform:scale(1.03)}}
+
 @media (prefers-reduced-motion: reduce){
-  .reveal{opacity:1;transform:none;transition:none}
+  .reveal,.reveal--media img{opacity:1}
+  .reveal.is-in,.reveal--media.is-in img{animation:none}
   *{animation-duration:.01s !important}
 }
 
@@ -115,16 +202,19 @@ a{text-underline-offset:.22em;text-decoration-thickness:1px}
   display:inline-flex;align-items:center;justify-content:center;gap:.5em;
   padding:.85em 1.7em;border-radius:999px;font-weight:600;font-size:.92rem;
   border:1px solid transparent;cursor:pointer;
-  transition:transform .35s var(--ease),box-shadow .35s var(--ease),background .35s;
+  transition:transform var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease),background var(--t-tap) var(--ease);
   position:relative;overflow:hidden;
 }
 .btn--primary{color:#fff;isolation:isolate;background:var(--ink)}
 .btn--primary,.btn--primary:hover{color:#fff}
-/* fondo RGB cíclico: oculto en reposo, aparece y se anima solo al pasar el cursor */
+/* Fondo RGB ciclico: oculto en reposo, aparece y se anima solo al pasar el
+   cursor. Es la UNICA animacion en bucle que queda en el sitio, y se queda
+   porque dice algo del producto: este teclado lleva RGB. Va en linear a
+   proposito — con una curva, la costura del bucle da un tiron visible. */
 .btn--primary::before{
   content:"";position:absolute;inset:0;z-index:-1;
   background:var(--grad-cycle);background-size:300% 100%;background-position:0% 50%;
-  opacity:0;transition:opacity .35s;
+  opacity:0;transition:opacity var(--t-tap) var(--ease);
 }
 .btn--primary:hover{transform:translateY(-2px);box-shadow:0 18px 36px -14px rgba(122,60,255,.5)}
 .btn--primary:hover::before{opacity:1;animation:btnCycle 2.4s linear infinite}
@@ -141,7 +231,7 @@ a{text-underline-offset:.22em;text-decoration-thickness:1px}
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;gap:24px;
   padding:18px var(--pad);
-  transition:background .4s,backdrop-filter .4s,box-shadow .4s,padding .4s;
+  transition:background var(--t-tap) var(--ease),backdrop-filter var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease),padding var(--t-tap) var(--ease);
 }
 .nav.is-scrolled{
   background:rgba(247,247,244,.78);
@@ -158,16 +248,16 @@ a{text-underline-offset:.22em;text-decoration-thickness:1px}
      keep the wordmark itself at the intended optical size */
   height:clamp(32px,3.4vw,40px);width:auto;display:block;
   margin:-6px 0;
-  transition:transform .4s var(--ease);
+  transition:transform var(--t-tap) var(--ease);
 }
 .nav__logo:hover img{transform:scale(1.03)}
 .nav__links{display:flex;gap:30px}
 .nav__links a{
-  font-size:.88rem;font-weight:500;color:var(--muted);position:relative;transition:color .3s;
+  font-size:.88rem;font-weight:500;color:var(--muted);position:relative;transition:color var(--t-tap) var(--ease);
 }
 .nav__links a::after{
   content:"";position:absolute;left:0;bottom:-5px;height:2px;width:0;
-  background:var(--grad);border-radius:2px;transition:width .35s var(--ease);
+  background:var(--grad);border-radius:2px;transition:width var(--t-tap) var(--ease);
 }
 .nav__links a:hover,.nav__links a.is-active{color:var(--ink)}
 .nav__links a:hover::after,.nav__links a.is-active::after{width:100%}
@@ -177,12 +267,12 @@ a{text-underline-offset:.22em;text-decoration-thickness:1px}
 .lang{display:flex;border:1px solid var(--hairline);border-radius:999px;padding:3px;background:rgba(255,255,255,.6)}
 .lang__btn{
   border:0;background:transparent;font:600 .72rem var(--font-mono);letter-spacing:.06em;
-  padding:.45em .8em;border-radius:999px;cursor:pointer;color:var(--muted);transition:all .3s;
+  padding:.45em .8em;border-radius:999px;cursor:pointer;color:var(--muted);transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease);
 }
 .lang__btn.is-active{background:var(--ink);color:#fff}
 
 .nav__burger{display:none;flex-direction:column;gap:6px;background:none;border:0;cursor:pointer;padding:6px}
-.nav__burger span{width:24px;height:2px;background:var(--ink);transition:transform .35s var(--ease),opacity .3s}
+.nav__burger span{width:24px;height:2px;background:var(--ink);transition:transform var(--t-tap) var(--ease),opacity var(--t-tap) var(--ease)}
 body.menu-open .nav__burger span:first-child{transform:translateY(4px) rotate(45deg)}
 body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-45deg)}
 
@@ -200,16 +290,12 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
     radial-gradient(34% 30% at 40% 24%, rgba(255,57,192,.16), transparent 70%),
     radial-gradient(34% 30% at 78% 40%, rgba(42,61,255,.16), transparent 70%),
     radial-gradient(40% 34% at 88% 84%, rgba(27,232,255,.18), transparent 70%);
-  animation:aura 18s ease-in-out infinite alternate;
-}
-@keyframes aura{
-  0%{transform:translate3d(0,0,0) scale(1)}
-  100%{transform:translate3d(3%,-4%,0) scale(1.08)}
+  /* Sin vaiven: el lavado de color viste el fondo, no tiene que moverse. */
 }
 /* ---------- carrusel ---------- */
 .carousel{position:relative;max-width:1320px;width:100%;margin:0 auto;outline:none}
 .carousel__viewport{overflow:hidden}
-.carousel__track{display:flex;transition:transform .7s var(--ease);will-change:transform}
+.carousel__track{display:flex;transition:transform var(--t-enter) var(--ease);will-change:transform}
 
 .slide{
   flex:0 0 100%;display:grid;grid-template-columns:1.05fr .95fr;
@@ -237,9 +323,7 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
 .slide__card{
   position:relative;border-radius:var(--r-lg);overflow:hidden;
   box-shadow:0 40px 80px -40px rgba(20,22,27,.35), 0 0 0 1px var(--hairline);
-  animation:float 7s ease-in-out infinite;
 }
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 .slide__card img{width:100%;height:100%;display:block;object-fit:cover;object-position:center}
 /* Marco de proporcion fija. Las fotos van de 0.67 (una vertical) a 1.55,
    asi que con height:auto cada slide medía distinto y la pagina daba un
@@ -248,14 +332,16 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
 .slide__cap{margin-top:16px;text-align:right}
 
 /* entrada escalonada del slide activo */
-.slide__copy>*,.slide__figure{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.slide__copy>*,.slide__figure{opacity:0;transition:opacity var(--t-enter) var(--ease),transform var(--t-enter) var(--ease)}
 .slide.is-active .slide__copy>*,.slide.is-active .slide__figure{opacity:1;transform:none}
-.slide.is-active .slide__copy>*:nth-child(1){transition-delay:.05s}
-.slide.is-active .slide__copy>*:nth-child(2){transition-delay:.12s}
-.slide.is-active .slide__copy>*:nth-child(3){transition-delay:.19s}
-.slide.is-active .slide__copy>*:nth-child(4){transition-delay:.26s}
-.slide.is-active .slide__copy>*:nth-child(5){transition-delay:.33s}
-.slide.is-active .slide__figure{transition-delay:.18s}
+/* El mismo escalon que el resto del sitio, contado en pasos. */
+.slide.is-active .slide__copy>*:nth-child(1){transition-delay:calc(0 * var(--stagger))}
+.slide.is-active .slide__copy>*:nth-child(2){transition-delay:calc(1 * var(--stagger))}
+.slide.is-active .slide__copy>*:nth-child(3){transition-delay:calc(2 * var(--stagger))}
+.slide.is-active .slide__copy>*:nth-child(4){transition-delay:calc(3 * var(--stagger))}
+.slide.is-active .slide__copy>*:nth-child(5){transition-delay:calc(4 * var(--stagger))}
+/* La foto llega con el titular, no detras de todo el texto. */
+.slide.is-active .slide__figure{transition-delay:calc(1 * var(--stagger))}
 
 /* flechas */
 .carousel__arrow{
@@ -263,7 +349,7 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
   width:46px;height:46px;border-radius:50%;border:1px solid var(--hairline);
   background:rgba(255,255,255,.7);backdrop-filter:blur(10px);color:var(--ink);
   display:grid;place-items:center;cursor:pointer;
-  transition:background .3s,transform .3s var(--ease),box-shadow .3s,border-color .3s;
+  transition:background var(--t-tap) var(--ease),transform var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease),border-color var(--t-tap) var(--ease);
 }
 .carousel__arrow svg{width:22px;height:22px}
 .carousel__arrow:hover{background:var(--ink);color:#fff;border-color:var(--ink);box-shadow:0 12px 24px -12px rgba(20,22,27,.5)}
@@ -274,7 +360,7 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
 .carousel__dots{display:flex;justify-content:center;gap:10px;margin-top:30px}
 .carousel__dot{
   width:9px;height:9px;border-radius:50%;border:0;padding:0;cursor:pointer;
-  background:var(--hairline);transition:width .35s var(--ease),background .35s;
+  background:var(--hairline);transition:width var(--t-tap) var(--ease),background var(--t-tap) var(--ease);
 }
 .carousel__dot.is-active{width:30px;border-radius:5px;background:var(--grad)}
 
@@ -283,8 +369,7 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
 .hero__scrollcue{
   position:absolute;bottom:30px;left:var(--pad);display:flex;align-items:center;gap:14px;
 }
-.hero__line{width:64px;height:1px;background:var(--ink);transform-origin:left;animation:pulseline 2.4s var(--ease) infinite}
-@keyframes pulseline{0%{transform:scaleX(0)}50%{transform:scaleX(1)}100%{transform:scaleX(0);transform-origin:right}}
+.hero__line{width:64px;height:1px;background:var(--rule)}
 
 /* mirillas decorativas */
 .cross{position:absolute;width:22px;height:22px;pointer-events:none}
@@ -295,26 +380,13 @@ body.menu-open .nav__burger span:last-child{transform:translateY(-4px) rotate(-4
 .cross--br{bottom:14px;right:14px}
 figure .cross{mix-blend-mode:multiply}
 
-/* ---------- marquee ---------- */
-.marquee{
-  border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);
-  overflow:hidden;padding:18px 0;background:var(--surface);
-}
-.marquee__track{
-  display:flex;white-space:nowrap;width:max-content;
-  animation:marquee 30s linear infinite;
-  font:700 .8rem var(--font-mono);letter-spacing:.3em;text-transform:uppercase;color:var(--muted);
-}
-@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-
 /* ---------- manifiesto ---------- */
 .manifesto{
   padding:clamp(110px,16vh,190px) var(--pad);text-align:center;
   max-width:1000px;margin:0 auto;
 }
 .crosshair-icon{display:inline-flex;width:44px;height:44px;color:var(--ink);margin-bottom:26px}
-.crosshair-icon svg{width:100%;height:100%;animation:spin 24s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+.crosshair-icon svg{width:100%;height:100%}
 .manifesto__label{margin-bottom:18px}
 .manifesto__text{
   font:400 clamp(1.7rem,3.6vw,2.9rem)/1.35 var(--font-sans);letter-spacing:-.02em;font-weight:500;
@@ -339,8 +411,8 @@ figure .cross{mix-blend-mode:multiply}
   width:clamp(72px,7.5vw,92px);aspect-ratio:1;display:grid;place-items:center;
   border:1.5px solid var(--ink);border-radius:30%;
   color:var(--ink);background:var(--surface);
-  transition:background .35s var(--ease),color .35s var(--ease),
-             transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s;
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),
+             transform var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease),border-color var(--t-tap) var(--ease);
 }
 .glance__box svg{
   width:54%;height:54%;fill:none;stroke:currentColor;stroke-width:1.75;
@@ -371,7 +443,7 @@ figure .cross{mix-blend-mode:multiply}
 .feature__media img{
   border-radius:var(--r-lg);
   box-shadow:0 30px 70px -45px rgba(20,22,27,.4), 0 0 0 1px var(--hairline);
-  transition:transform .8s var(--ease);
+  transition:transform var(--t-enter) var(--ease);
 }
 .feature__media:hover img{transform:scale(1.015)}
 .feature__index{
@@ -385,7 +457,7 @@ figure .cross{mix-blend-mode:multiply}
 .chips li{
   font:700 .68rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase;
   padding:.65em 1.1em;border:1px solid var(--hairline);border-radius:999px;background:var(--surface);
-  transition:border-color .3s,transform .3s;
+  transition:border-color var(--t-tap) var(--ease),transform var(--t-tap) var(--ease);
 }
 .chips li:hover{border-color:var(--c-magenta);transform:translateY(-2px)}
 
@@ -400,7 +472,7 @@ figure .cross{mix-blend-mode:multiply}
 }
 .specs__cell{
   padding:26px 24px;border-right:1px solid var(--hairline);border-bottom:1px solid var(--hairline);
-  transition:background .3s;position:relative;overflow:hidden;
+  transition:background var(--t-tap) var(--ease);position:relative;overflow:hidden;
 }
 .specs__cell:hover{background:var(--bg)}
 .specs__cell dt{font:700 .66rem var(--font-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
@@ -417,7 +489,7 @@ figure .cross{mix-blend-mode:multiply}
 .flavor-card{
   flex:1;min-width:200px;padding:22px;border-radius:var(--r-md);
   border:1px solid var(--hairline);background:var(--surface);
-  transition:transform .4s var(--ease),box-shadow .4s var(--ease);
+  transition:transform var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease);
 }
 .flavor-card:hover{transform:translateY(-4px);box-shadow:0 24px 44px -28px rgba(20,22,27,.3)}
 .flavor-card__dots{display:flex;gap:6px;margin-bottom:14px}
@@ -436,11 +508,11 @@ figure .cross{mix-blend-mode:multiply}
 }
 .model-card{
   border:1px solid var(--hairline);border-radius:var(--r-lg);overflow:hidden;background:var(--bg);
-  display:flex;flex-direction:column;transition:transform .5s var(--ease),box-shadow .5s var(--ease);
+  display:flex;flex-direction:column;transition:transform var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease);
 }
 .model-card:hover{transform:translateY(-6px);box-shadow:0 36px 70px -40px rgba(20,22,27,.35)}
 .model-card__media{aspect-ratio:4/3;overflow:hidden;position:relative;background:#e9e9e6}
-.model-card__media img{width:100%;height:100%;object-fit:cover;object-position:center 40%;transition:transform .8s var(--ease)}
+.model-card__media img{width:100%;height:100%;object-fit:cover;object-position:center 40%;transition:transform var(--t-enter) var(--ease)}
 .model-card:hover .model-card__media img{transform:scale(1.05)}
 .model-card__badge{
   position:absolute;top:14px;left:14px;z-index:2;
@@ -488,7 +560,7 @@ figure .cross{mix-blend-mode:multiply}
     radial-gradient(26% 38% at 46% 46%, rgba(255,57,192,.18), transparent 70%),
     radial-gradient(26% 38% at 66% 54%, rgba(42,61,255,.18), transparent 70%),
     radial-gradient(28% 40% at 84% 50%, rgba(27,232,255,.22), transparent 70%);
-  animation:aura 14s ease-in-out infinite alternate;
+
 }
 .cta__title{position:relative;font:600 clamp(2.4rem,6vw,4.6rem)/1.05 var(--font-sans);letter-spacing:-.04em}
 .cta__title em{font-weight:400}
@@ -505,7 +577,7 @@ figure .cross{mix-blend-mode:multiply}
 .footer__tag{color:var(--muted);font-size:.9rem;margin-top:18px;max-width:30ch}
 .footer__col{display:flex;flex-direction:column;gap:12px}
 .footer__col h4{margin-bottom:6px}
-.footer__col a{color:var(--muted);font-size:.92rem;transition:color .3s;width:fit-content}
+.footer__col a{color:var(--muted);font-size:.92rem;transition:color var(--t-tap) var(--ease);width:fit-content}
 .footer__col a:hover{color:var(--ink)}
 .footer__bottom{
   max-width:1320px;margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
@@ -530,7 +602,7 @@ figure .cross{mix-blend-mode:multiply}
   .nav__links{
     position:fixed;inset:0;background:rgba(247,247,244,.96);backdrop-filter:blur(20px);
     flex-direction:column;align-items:center;justify-content:center;gap:34px;
-    opacity:0;pointer-events:none;transition:opacity .4s;z-index:-1;
+    opacity:0;pointer-events:none;transition:opacity var(--t-tap) var(--ease);z-index:-1;
   }
   .nav__links a{font-size:1.4rem}
   body.menu-open .nav__links{opacity:1;pointer-events:auto;z-index:99}
@@ -635,7 +707,7 @@ figure .cross{mix-blend-mode:multiply}
 
 .pdp__thumbs{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
 .pdp__thumb{width:78px;height:60px;padding:0;border-radius:10px;overflow:hidden;cursor:pointer;
-  border:1px solid var(--hairline2);background:var(--surface);transition:border-color .25s}
+  border:1px solid var(--hairline2);background:var(--surface);transition:border-color var(--t-tap) var(--ease)}
 .pdp__thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .pdp__thumb.on{border-color:var(--ink)}
 
@@ -775,8 +847,8 @@ main > section + section{border-top:1px solid var(--hairline)}
 .btn{
   font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;
   text-transform:uppercase;border-radius:2px;
-  transition:background .25s var(--ease),color .25s var(--ease),
-             border-color .25s var(--ease),opacity .25s var(--ease);
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),
+             border-color var(--t-tap) var(--ease),opacity var(--t-tap) var(--ease);
 }
 .btn--primary{background:var(--ink);color:var(--paper);border:1px solid var(--ink);box-shadow:none}
 .btn--primary:hover{background:#000;transform:none;box-shadow:none}
@@ -820,7 +892,7 @@ main > section + section{border-top:1px solid var(--hairline)}
   counter-increment:ref;background:var(--surface);
   border:1px solid var(--hairline);border-radius:var(--r-md);
   clip-path:none;
-  transition:border-color .25s var(--ease);
+  transition:border-color var(--t-tap) var(--ease);
 }
 .model-card:hover{border-color:var(--rule);transform:none;box-shadow:none}
 .model-card__body::before{content:"U" counter(ref);color:var(--muted)}

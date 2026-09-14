@@ -87,8 +87,8 @@
     <!-- ============ MODELS ============ -->
     <section class="models" id="modelos">
       <header class="section-head">
-        <p class="kicker reveal" data-i18n="models.label">Modelos</p>
-        <h2 class="section-title reveal" style="--d:.08s" data-i18n-html="models.title">
+        <p class="kicker reveal reveal--label" data-i18n="models.label">Modelos</p>
+        <h2 class="section-title reveal reveal--title" style="--d:1" data-i18n-html="models.title">
           Una familia <em>que crece</em>.
         </h2>
       </header>
@@ -100,10 +100,10 @@
     <!-- ============ KEYMAP STUDIO ============ -->
     <section class="studio" id="studio">
       <header class="section-head">
-        <h2 class="section-title reveal" data-i18n-html="studio.title">
+        <h2 class="section-title reveal reveal--title" data-i18n-html="studio.title">
           Tu teclado se reprograma <em>en esta página</em>.
         </h2>
-        <p class="studio__lede reveal" style="--d:.08s" data-i18n="studio.text">
+        <p class="studio__lede reveal reveal--text" style="--d:1" data-i18n="studio.text">
           Keymap Studio es un editor visual de ZMK que corre en el navegador.
         </p>
       </header>
@@ -111,19 +111,19 @@
       <!-- Ficha de capacidades: termino + descripcion, como una hoja de datos.
            Sin iconos y sin tarjetas iguales: la informacion es la estructura. -->
       <dl class="studio__sheet">
-        <div class="studio__row reveal">
+        <div class="studio__row reveal reveal--row">
           <dt data-i18n="studio.live">Edición en vivo por USB</dt>
           <dd data-i18n="studio.liveText">Cambia una tecla y se aplica al momento.</dd>
         </div>
-        <div class="studio__row reveal" style="--d:.06s">
+        <div class="studio__row reveal reveal--row" style="--d:1">
           <dt data-i18n="studio.layers">Capas, macros y combos</dt>
           <dd data-i18n="studio.layersText">Y los dos encoders rotatorios.</dd>
         </div>
-        <div class="studio__row reveal" style="--d:.12s">
+        <div class="studio__row reveal reveal--row" style="--d:2">
           <dt data-i18n="studio.sim">RGB y OLED simulados</dt>
           <dd data-i18n="studio.simText">Ves el underglow antes de tocar el hardware.</dd>
         </div>
-        <div class="studio__row reveal" style="--d:.18s">
+        <div class="studio__row reveal reveal--row" style="--d:3">
           <dt data-i18n="studio.export">Exporta tu .keymap</dt>
           <dd data-i18n="studio.exportText">El archivo es tuyo.</dd>
         </div>
@@ -132,13 +132,13 @@
       <!-- Las tres placas que define BOARDS en keymap-studio, con su numero
            real de posiciones. Dato, no promesa. -->
       <p class="studio__boardsLabel mono" data-i18n="studio.boards">Tres placas soportadas</p>
-      <ul class="studio__boards reveal" style="--d:.24s">
+      <ul class="studio__boards reveal reveal--row" style="--d:4">
         <li><strong>Sofle RGB</strong><span class="mono">60</span></li>
         <li><strong>Corne</strong><span class="mono">42</span></li>
         <li><strong>Totem</strong><span class="mono">38</span></li>
       </ul>
 
-      <div class="studio__foot reveal" style="--d:.3s">
+      <div class="studio__foot reveal reveal--text" style="--d:5">
         <a class="btn btn--primary btn--lg" href="keymap-studio/" data-i18n="studio.cta">Abrir Keymap Studio</a>
         <p class="studio__note mono" data-i18n="studio.note">Funciona sin comprar nada.</p>
       </div>
@@ -198,28 +198,28 @@
     <!-- ============ FEATURES ============ -->
     <section class="features" id="caracteristicas">
       <header class="section-head">
-        <p class="kicker reveal" data-i18n="features.label">El teclado</p>
-        <h2 class="section-title reveal" style="--d:.08s" data-i18n-html="features.title">
+        <p class="kicker reveal reveal--label" data-i18n="features.label">El teclado</p>
+        <h2 class="section-title reveal reveal--title" style="--d:1" data-i18n-html="features.title">
           Cada detalle, <em>bajo la mirilla</em>.
         </h2>
       </header>
 
       <!-- 01 Keycaps + OLED -->
       <article class="feature">
-        <figure class="feature__media reveal">
+        <figure class="feature__media reveal reveal--media">
           <img data-i18n-img="feature-keycaps.jpg" src="assets/img/es/feature-keycaps.jpg" loading="lazy"
                alt="Keycaps perfil MA y pantallas OLED" width="720" height="1080">
         </figure>
         <div class="feature__body">
-          <p class="feature__index mono reveal">01</p>
-          <p class="kicker reveal" data-i18n="f1.kicker">Keycaps · OLED</p>
-          <h3 class="feature__title reveal" style="--d:.08s" data-i18n-html="f1.title">Perfil MA, sabor <em>Retro</em>.</h3>
-          <p class="feature__text reveal" style="--d:.14s" data-i18n="f1.text">
+          <p class="feature__index mono reveal reveal--label">01</p>
+          <p class="kicker reveal reveal--label" data-i18n="f1.kicker">Keycaps · OLED</p>
+          <h3 class="feature__title reveal reveal--title" style="--d:1" data-i18n-html="f1.title">Perfil MA, sabor <em>Retro</em>.</h3>
+          <p class="feature__text reveal reveal--text" style="--d:2" data-i18n="f1.text">
             58 teclas con keycaps perfil MA en acabado retro y leyendas en EN, EN+IC o ES.
             Dos pantallas OLED custom muestran en todo momento la capa activa, WPM,
             batería y perfil Bluetooth.
           </p>
-          <ul class="chips reveal" style="--d:.2s">
+          <ul class="chips reveal reveal--row" style="--d:3">
             <li data-i18n="f1.c1">Perfil MA</li>
             <li data-i18n="f1.c2">EN / EN+IC / ES</li>
             <li data-i18n="f1.c3">OLED ×2 custom</li>
@@ -229,20 +229,20 @@
 
       <!-- 02 Case -->
       <article class="feature feature--flip">
-        <figure class="feature__media reveal">
+        <figure class="feature__media reveal reveal--media">
           <img data-i18n-img="feature-case.jpg" src="assets/img/es/feature-case.jpg" loading="lazy"
                alt="Case custom con frame impreso en 3D y switches hotswap" width="720" height="1080">
         </figure>
         <div class="feature__body">
-          <p class="feature__index mono reveal">02</p>
-          <p class="kicker reveal" data-i18n="f2.kicker">Case custom · Hotswap</p>
-          <h3 class="feature__title reveal" style="--d:.08s" data-i18n-html="f2.title">Un case <em>custom</em>, abierto por diseño.</h3>
-          <p class="feature__text reveal" style="--d:.14s" data-i18n="f2.text">
+          <p class="feature__index mono reveal reveal--label">02</p>
+          <p class="kicker reveal reveal--label" data-i18n="f2.kicker">Case custom · Hotswap</p>
+          <h3 class="feature__title reveal reveal--title" style="--d:1" data-i18n-html="f2.title">Un case <em>custom</em>, abierto por diseño.</h3>
+          <p class="feature__text reveal reveal--text" style="--d:2" data-i18n="f2.text">
             Frame impreso en 3D en PLA blanco hueso con acrílico transparente.
             Sockets hotswap Kailh compatibles MX — con switches MMD Holy Panda incluidos —
             y dos encoders rotatorios pulsables, personalizables vía ZMK Studio.
           </p>
-          <ul class="chips reveal" style="--d:.2s">
+          <ul class="chips reveal reveal--row" style="--d:3">
             <li data-i18n="f2.c1">Acrílico + PLA</li>
             <li data-i18n="f2.c2">Hotswap Kailh MX</li>
             <li data-i18n="f2.c3">2× encoders</li>
@@ -252,19 +252,19 @@
 
       <!-- 03 RGB -->
       <article class="feature">
-        <figure class="feature__media reveal">
+        <figure class="feature__media reveal reveal--media">
           <img data-i18n-img="feature-rgb.jpg" src="assets/img/es/feature-rgb.jpg" loading="lazy"
                alt="RGB per-key y underglow" width="720" height="1080">
         </figure>
         <div class="feature__body">
-          <p class="feature__index mono reveal">03</p>
-          <p class="kicker reveal" data-i18n="f3.kicker">RGB personalizable</p>
-          <h3 class="feature__title reveal" style="--d:.08s" data-i18n-html="f3.title">Luz <em>per-key</em> + underglow.</h3>
-          <p class="feature__text reveal" style="--d:.14s" data-i18n="f3.text">
+          <p class="feature__index mono reveal reveal--label">03</p>
+          <p class="kicker reveal reveal--label" data-i18n="f3.kicker">RGB personalizable</p>
+          <h3 class="feature__title reveal reveal--title" style="--d:1" data-i18n-html="f3.title">Luz <em>per-key</em> + underglow.</h3>
+          <p class="feature__text reveal reveal--text" style="--d:2" data-i18n="f3.text">
             Retroiluminación RGB direccionable en cada tecla y underglow perimetral.
             Efectos, brillo y color se configuran desde el propio teclado o desde ZMK Studio.
           </p>
-          <ul class="chips reveal" style="--d:.2s">
+          <ul class="chips reveal reveal--row" style="--d:3">
             <li data-i18n="f3.c1">Per-key</li>
             <li data-i18n="f3.c2">Underglow</li>
             <li data-i18n="f3.c3">ZMK Studio</li>
@@ -274,19 +274,19 @@
 
       <!-- 04 Wireless -->
       <article class="feature feature--flip">
-        <figure class="feature__media reveal">
+        <figure class="feature__media reveal reveal--media">
           <img data-i18n-img="feature-bluetooth.jpg" src="assets/img/es/feature-bluetooth.jpg" loading="lazy"
                alt="Conectividad Bluetooth" width="720" height="1080">
         </figure>
         <div class="feature__body">
-          <p class="feature__index mono reveal">04</p>
-          <p class="kicker reveal" data-i18n="f4.kicker">Conectividad</p>
-          <h3 class="feature__title reveal" style="--d:.08s" data-i18n-html="f4.title">Bluetooth <em>de verdad</em>.</h3>
-          <p class="feature__text reveal" style="--d:.14s" data-i18n="f4.text">
+          <p class="feature__index mono reveal reveal--label">04</p>
+          <p class="kicker reveal reveal--label" data-i18n="f4.kicker">Conectividad</p>
+          <h3 class="feature__title reveal reveal--title" style="--d:1" data-i18n-html="f4.title">Bluetooth <em>de verdad</em>.</h3>
+          <p class="feature__text reveal reveal--text" style="--d:2" data-i18n="f4.text">
             Hasta 5 perfiles Bluetooth para saltar entre ordenador, tablet y móvil
             sin emparejar de nuevo. ¿Prefieres cable? USB-C con latencia cero.
           </p>
-          <ul class="chips reveal" style="--d:.2s">
+          <ul class="chips reveal reveal--row" style="--d:3">
             <li data-i18n="f4.c1">BT · 5 perfiles</li>
             <li data-i18n="f4.c2">USB-C</li>
             <li data-i18n="f4.c3">Latencia cero</li>
@@ -296,20 +296,20 @@
 
       <!-- 05 Battery + MCU -->
       <article class="feature">
-        <figure class="feature__media reveal">
+        <figure class="feature__media reveal reveal--media">
           <img data-i18n-img="feature-battery.jpg" src="assets/img/es/feature-battery.jpg" loading="lazy"
                alt="Batería 1200 mAh Li-ion y MCU NRF52840" width="720" height="1080">
         </figure>
         <div class="feature__body">
-          <p class="feature__index mono reveal">05</p>
-          <p class="kicker reveal" data-i18n="f5.kicker">Batería · MCU</p>
-          <h3 class="feature__title reveal" style="--d:.08s" data-i18n-html="f5.title">1200 mAh. <em>Semanas</em> de uso.</h3>
-          <p class="feature__text reveal" style="--d:.14s" data-i18n="f5.text">
+          <p class="feature__index mono reveal reveal--label">05</p>
+          <p class="kicker reveal reveal--label" data-i18n="f5.kicker">Batería · MCU</p>
+          <h3 class="feature__title reveal reveal--title" style="--d:1" data-i18n-html="f5.title">1200 mAh. <em>Semanas</em> de uso.</h3>
+          <p class="feature__text reveal reveal--text" style="--d:2" data-i18n="f5.text">
             Batería Li-ion de 1200 mAh con conector JST intercambiable e interruptor
             físico ON/OFF en cada mitad. Y el cerebro, un NRF52840 en socket:
             sustituible y actualizable sin soldar.
           </p>
-          <ul class="chips reveal" style="--d:.2s">
+          <ul class="chips reveal reveal--row" style="--d:3">
             <li data-i18n="f5.c1">1200 mAh Li-ion</li>
             <li data-i18n="f5.c2">JST intercambiable</li>
             <li data-i18n="f5.c3">NRF52840 en socket</li>
@@ -321,8 +321,8 @@
     <!-- ============ SPECS ============ -->
     <section class="specs" id="specs">
       <header class="section-head">
-        <p class="kicker reveal" data-i18n="specs.label">Ficha técnica</p>
-        <h2 class="section-title reveal" style="--d:.08s" data-i18n-html="specs.title">
+        <p class="kicker reveal reveal--label" data-i18n="specs.label">Ficha técnica</p>
+        <h2 class="section-title reveal reveal--title" style="--d:1" data-i18n-html="specs.title">
           Specs, <em>sin letra pequeña</em>.
         </h2>
       </header>
@@ -333,18 +333,18 @@
     <section class="flavors" id="sabores">
       <div class="flavors__inner">
         <div class="flavors__copy">
-          <p class="kicker reveal" data-i18n="flavors.label">Sabores</p>
-          <h2 class="section-title reveal" style="--d:.08s" data-i18n-html="flavors.title">
+          <p class="kicker reveal reveal--label" data-i18n="flavors.label">Sabores</p>
+          <h2 class="section-title reveal reveal--title" style="--d:1" data-i18n-html="flavors.title">
             Hoy, <em>Retro</em>.<br>Mañana, más.
           </h2>
-          <p class="flavors__text reveal" style="--d:.14s" data-i18n="flavors.text">
+          <p class="flavors__text reveal reveal--text" style="--d:2" data-i18n="flavors.text">
             Cada Sofle se sirve en un sabor: una combinación de keycaps, acentos y
             carácter. El primero es Retro — crema, gris y un toque de verde salvia.
             Los siguientes ya están en el taller.
           </p>
-          <div class="flavors__cards reveal" style="--d:.2s" id="flavorCards"><!-- JS --></div>
+          <div class="flavors__cards reveal reveal--row" style="--d:3" id="flavorCards"><!-- JS --></div>
         </div>
-        <figure class="flavors__media reveal" style="--d:.1s">
+        <figure class="flavors__media reveal reveal--media" style="--d:1">
           <img src="assets/img/shared/keycaps-tray.jpg" loading="lazy"
                alt="Keycaps sabor Retro" width="720" height="1080">
           <span class="cross cross--tl" aria-hidden="true"></span>
@@ -356,22 +356,22 @@
     <!-- ============ CONFIANZA (vendedor) ============ -->
     <section class="seller" id="confianza">
       <header class="section-head">
-        <h2 class="section-title reveal" data-i18n="trust.title">Hecho a mano, uno a uno</h2>
+        <h2 class="section-title reveal reveal--title" data-i18n="trust.title">Hecho a mano, uno a uno</h2>
       </header>
       <ul class="seller__grid">
-        <li class="reveal">
+        <li class="reveal reveal--row">
           <h3 data-i18n="trust.shipping">Envío desde España</h3>
           <p data-i18n="trust.shippingText">Preparado y enviado por mí, con seguimiento.</p>
         </li>
-        <li class="reveal" style="--d:.08s">
+        <li class="reveal reveal--row" style="--d:1">
           <h3 data-i18n="trust.warranty">Garantía y soporte</h3>
           <p data-i18n="trust.warrantyText">Si algo falla, lo arreglo.</p>
         </li>
-        <li class="reveal" style="--d:.16s">
+        <li class="reveal reveal--row" style="--d:2">
           <h3 data-i18n="trust.custom">Personalizable</h3>
           <p data-i18n="trust.customText">Colores, switches, keycaps y layout a medida.</p>
         </li>
-        <li class="reveal" style="--d:.24s">
+        <li class="reveal reveal--row" style="--d:3">
           <h3 data-i18n="trust.firmware">Firmware abierto</h3>
           <p data-i18n="trust.firmwareText">ZMK y QMK. Remapea cuando quieras.</p>
         </li>
@@ -381,9 +381,9 @@
     <!-- ============ CTA ============ -->
     <section class="cta">
       <div class="cta__aura" aria-hidden="true"></div>
-      <h2 class="cta__title reveal" data-i18n-html="cta.title">¿Listo para <em>escribir mejor</em>?</h2>
-      <p class="cta__sub reveal" style="--d:.08s" data-i18n="cta.sub">Sofle RGB v3.2 — presoldado, inalámbrico, tuyo.</p>
-      <a class="btn btn--primary btn--lg reveal" style="--d:.16s" href="#" data-shop data-i18n="cta.buy">Comprar en Etsy</a>
+      <h2 class="cta__title reveal reveal--title" data-i18n-html="cta.title">¿Listo para <em>escribir mejor</em>?</h2>
+      <p class="cta__sub reveal reveal--text" style="--d:1" data-i18n="cta.sub">Sofle RGB v3.2 — presoldado, inalámbrico, tuyo.</p>
+      <a class="btn btn--primary btn--lg reveal reveal--cta" style="--d:2" href="#" data-shop data-i18n="cta.buy">Comprar en Etsy</a>
     </section>
   </main>
 

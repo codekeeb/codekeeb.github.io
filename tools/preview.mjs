@@ -21,11 +21,12 @@ import { readFile, mkdir, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { extname, join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { execSync } from "node:child_process";
+import { execSync, spawn } from "node:child_process";
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SALIDA = join(RAIZ, "tools", ".preview");
 const PUERTO = 8099;
+const PUERTO_CDP = 9411;
 
 /* Playwright puede estar instalado en el proyecto o a nivel global
    (en el contenedor de Claude viene global). Lo buscamos en los dos. */
@@ -64,6 +65,39 @@ function servidor() {
   });
 }
 
+/* Chromium tras el proxy del contenedor, para que Google Fonts cargue de
+   verdad y las capturas sean fieles. Dos detalles que cuestan una tarde:
+   el proxy corta el ClientHello grande de TLS 1.3 que manda Chromium (hay
+   que capar a TLS 1.2), y los argumentos por omision de Playwright vuelven
+   a romperlo, asi que lanzamos el navegador a mano y nos conectamos por
+   CDP. Si algo de esto falla, arrancamos normal: las capturas salen con
+   tipografia de respaldo, pero salen. */
+async function abrirNavegador(chromium) {
+  const proxy = process.env.HTTPS_PROXY || process.env.https_proxy;
+  const binario = process.env.PLAYWRIGHT_BROWSERS_PATH
+    ? join(process.env.PLAYWRIGHT_BROWSERS_PATH, "chromium")
+    : null;
+  if (proxy && binario && existsSync(binario)) {
+    try {
+      const proc = spawn(binario, [
+        "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage",
+        `--user-data-dir=${join(SALIDA, ".chrome")}`,
+        `--proxy-server=${proxy}`,
+        "--ssl-version-max=tls1.2",
+        `--remote-debugging-port=${PUERTO_CDP}`,
+        "--hide-scrollbars",
+      ], { stdio: "ignore" });
+      await new Promise(r => setTimeout(r, 3500));
+      const navegador = await chromium.connectOverCDP(`http://127.0.0.1:${PUERTO_CDP}`);
+      return { navegador, fieles: true, cerrar: async () => { await navegador.close(); proc.kill(); } };
+    } catch {
+      console.warn("Aviso: no pude abrir Chromium tras el proxy; sigo sin el.");
+    }
+  }
+  const navegador = await chromium.launch();
+  return { navegador, fieles: false, cerrar: () => navegador.close() };
+}
+
 const VISTAS = [
   { nombre: "movil", width: 390, height: 844, dsf: 3, movil: true },
   { nombre: "escritorio", width: 1440, height: 900, dsf: 2, movil: false },
@@ -95,7 +129,7 @@ async function main() {
 
   const srv = servidor();
   await new Promise(r => srv.listen(PUERTO, r));
-  const navegador = await chromium.launch();
+  const { navegador, cerrar, fieles } = await abrirNavegador(chromium);
   const problemas = [];
   let capturas = 0;
 
@@ -175,11 +209,12 @@ async function main() {
     }
   }
 
-  await navegador.close();
+  await cerrar();
   srv.close();
 
   const unicos = [...new Set(problemas)];
-  console.log(`\n${capturas} capturas en tools/.preview/`);
+  console.log(`\n${capturas} capturas en tools/.preview/` +
+    (fieles ? "  (con las tipografias reales)" : "  (con tipografias de respaldo)"));
   if (unicos.length) {
     console.log(`\n${unicos.length} problema(s):`);
     for (const p of unicos) console.log("  " + p);

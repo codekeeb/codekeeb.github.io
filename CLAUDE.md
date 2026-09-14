@@ -50,9 +50,10 @@ actualizala. Si esta a mas de dos semanas, avisa.
 ## Antes de dar nada por bueno
 
 ```bash
-python3 tools/check-i18n.py     # los 3 idiomas siguen cuadrando
-node tools/preview.mjs          # capturas movil + escritorio, 3 idiomas
-node tools/preview.mjs --all    # + la pagina de cada producto
+python3 tools/check-i18n.py        # los 3 idiomas siguen cuadrando
+python3 tools/check-movimiento.py  # dos duraciones, una curva, bucles justificados
+node tools/preview.mjs             # capturas movil + escritorio, 3 idiomas
+node tools/preview.mjs --all       # + la pagina de cada producto
 ```
 
 `preview.mjs` deja las capturas en `tools/.preview/` y avisa de
@@ -60,10 +61,19 @@ desbordamientos horizontales, errores de JavaScript, recursos que no cargan
 y textos sin traducir. **Manda las capturas** antes de decir que algo
 funciona: Ernesto suele revisar desde el movil.
 
-Aviso sobre las capturas: en el contenedor de Claude, Google Fonts esta
-bloqueado por el proxy de red. Las capturas salen con tipografias de
-respaldo, asi que no juzgues el interletrado ni la altura de linea a partir
-de ellas. Todo lo demas es fiel.
+Las capturas salen ya con las **tipografias reales**: `preview.mjs` lanza
+Chromium tras el proxy del contenedor y lo capa a TLS 1.2, que es lo que
+hace falta para que Google Fonts cargue (el relay corta el ClientHello
+grande de TLS 1.3, y los argumentos por omision de Playwright lo vuelven a
+romper, por eso el navegador se lanza a mano y se conduce por CDP). Si algo
+de eso falla lo dice al final: "(con tipografias de respaldo)", y entonces
+no juzgues el interletrado a partir de ellas.
+
+`check-movimiento.py` es la red que evita que el sistema de movimiento se
+deshaga solo. El acuerdo es **dos duraciones** (`--t-tap` para lo que
+responde al dedo, `--t-enter` para lo que entra en escena) y **una curva**
+(`--ease`). Si necesitas un bucle, tiene que ensenar algo del teclado y
+hay que apuntarlo en `BUCLES_PERMITIDOS` con su motivo.
 
 ## Como se trabaja
 

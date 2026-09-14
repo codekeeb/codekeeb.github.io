@@ -188,7 +188,7 @@ function priceBlock(p){
     if (!grid) return;
     const items = CK_I18N[lang]["specs.items"] || CK_I18N.es["specs.items"];
     grid.innerHTML = items.map(([dt, dd], i) => `
-      <div class="specs__cell reveal" style="--d:${(i % 4) * 0.06}s">
+      <div class="specs__cell reveal reveal--row" style="--d:${i % 4}">
         <dt>${dt}</dt><dd>${dd}</dd>
       </div>`).join("");
   }
@@ -252,7 +252,7 @@ function priceBlock(p){
       /* La tarjeta entera lleva a su pagina; el boton va directo a Etsy
          para quien ya lo tiene decidido. */
       return `
-      <article class="model-card reveal" style="--d:${i * 0.08}s">
+      <article class="model-card reveal reveal--cta" style="--d:${i}">
         <a class="model-card__link" href="modelo.html?id=${p.id}"
            aria-label="${p.name} ${p.version}"></a>
         <div class="model-card__media">
@@ -281,7 +281,7 @@ function priceBlock(p){
     });
     // tarjeta fantasma: escalabilidad visible
     cards.push(`
-      <article class="model-card model-card--ghost reveal" style="--d:${CK_PRODUCTS.length * 0.08}s">
+      <article class="model-card model-card--ghost reveal reveal--cta" style="--d:${CK_PRODUCTS.length}">
         <span class="crosshair-icon" aria-hidden="true">
           <svg viewBox="0 0 512 512" fill="none" stroke="currentColor" stroke-width="26" stroke-linecap="round">
             <path d="M256 28v160M256 324v160M28 256h160M324 256h160"/>
@@ -398,19 +398,6 @@ function priceBlock(p){
 
     startAuto();
   }
-
-  /* ---------- marquee: duplicar para bucle perfecto ---------- */
-  function buildMarquee() {
-    const track = $("#marqueeTrack");
-    if (!track) return;
-    const span = track.querySelector("span");
-    // limpiar duplicados previos (cambio de idioma) y re-duplicar
-    track.innerHTML = "";
-    for (let i = 0; i < 6; i++) track.appendChild(span.cloneNode(true));
-  }
-  // el contenido del span cambia con i18n: reconstruir tras cada applyLang
-  const _applyLang = applyLang;
-  applyLang = function () { _applyLang(); buildMarquee(); };
 
   /* ---------- menú móvil ---------- */
   $("#burger").addEventListener("click", () =>
