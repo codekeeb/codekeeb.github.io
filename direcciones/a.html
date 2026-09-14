@@ -21,7 +21,7 @@
       <button data-lang-btn="en">EN</button>
       <button data-lang-btn="fr">FR</button>
     </div>
-    <a class="btn btn--solido" id="tienda" href="#"><span data-t="nav.buy">Comprar</span></a>
+    <a class="btn btn--solido" href="b.html"><span data-t="d.compare">Compara los cinco</span></a>
   </div>
 </header>
 
@@ -85,7 +85,8 @@
     return `
       <article class="ficha entra entra--ficha" style="--d:${Math.min(i, 4)}">
         <div class="ficha__foto">
-          <img src="${CK.foto(p)}" alt="${CK.escapar(p.name)}" loading="${i < 2 ? "eager" : "lazy"}" width="1200" height="900">
+          <img src="${CK.foto(p)}" alt="${CK.escapar(p.name)}" data-foco="${p.foco ?? 50}"
+               loading="${i < 2 ? "eager" : "lazy"}">
           <span class="ficha__ref mono">${String(i + 1).padStart(2, "0")}</span>
         </div>
         <div class="ficha__cuerpo">
@@ -108,7 +109,6 @@
   }
 
   function pintar() {
-    $("#tienda").href = CK.tiendaURL;
     $("#nota").textContent = CK.notaPrecios();
 
     $("#filtros").innerHTML = FILTROS
@@ -128,6 +128,7 @@
       ["trust.custom","trust.customText"],["trust.firmware","trust.firmwareText"],
     ].map(([a,b],i)=>`<div class="entra entra--texto" style="--d:${i}"><h3>${CK.t(a)}</h3><p>${CK.t(b)}</p></div>`).join("");
 
+    CK.encuadrarTodo();
     CK.observarEntradas();
   }
 

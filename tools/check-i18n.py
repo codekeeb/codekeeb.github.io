@@ -80,7 +80,12 @@ def main():
         if not ruta.exists():
             continue
         texto = ruta.read_text(encoding="utf-8")
+        # `data-i18n` es la web; `data-t` es el motor de las direcciones.
+        # Los dos acaban buscando la misma clave en el mismo i18n.js, asi
+        # que los dos tienen que estar cubiertos o un prototipo puede
+        # ensenar la clave cruda sin que nadie se entere.
         usadas.update(re.findall(r'data-i18n(?:-html)?="([^"]+)"', texto))
+        usadas.update(re.findall(r'data-t(?:-html)?="([^"]+)"', texto))
         imagenes.update(re.findall(r'data-i18n-img="([^"]+)"', texto))
 
     # data-i18n-img no es una clave: es un archivo que debe existir en los 3 idiomas

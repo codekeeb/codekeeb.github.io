@@ -21,7 +21,7 @@
       <button data-lang-btn="en">EN</button>
       <button data-lang-btn="fr">FR</button>
     </div>
-    <a class="btn btn--solido" id="tienda" href="#" data-t="nav.buy">Comprar</a>
+    <a class="btn btn--solido" href="a.html" data-t="d.choose">Elige tu split</a>
   </div>
 </header>
 
@@ -70,7 +70,8 @@
       <section class="ficha" id="m${i + 1}" aria-label="${CK.escapar(p.name)}">
         <div class="ficha__in envoltura">
           <figure class="ficha__foto">
-            <img src="${CK.foto(p)}" alt="${CK.escapar(p.name)}" loading="${i < 1 ? "eager" : "lazy"}" width="1200" height="900">
+            <img src="${CK.foto(p)}" alt="${CK.escapar(p.name)}" data-foco="${p.foco ?? 50}"
+                 loading="${i < 1 ? "eager" : "lazy"}">
             <figcaption class="ficha__num">${String(i + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}</figcaption>
           </figure>
           <div class="ficha__datos">
@@ -95,7 +96,6 @@
 
   function pintar() {
     const lista = CK.productos();
-    $("#tienda").href = CK.tiendaURL;
     $("#nota").textContent = CK.notaPrecios();
     $("#carril").innerHTML = lista.map((p, i) => ficha(p, i, lista.length)).join("");
 
@@ -124,6 +124,7 @@
     }, { rootMargin: "-45% 0px -45% 0px" });
     document.querySelectorAll(".ficha").forEach(f => ioIdx.observe(f));
 
+    CK.encuadrarTodo();
     CK.observarEntradas();
   }
 

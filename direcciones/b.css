@@ -20,7 +20,10 @@
   --carta:#ffffff;
   --tinta:#15171a;
   --gris:#6a7078;
-  --tenue:#9aa0a7;
+  /* Medido sobre el papel de esta direccion, no elegido a ojo: el tenue
+     anterior daba 2,4:1, o sea que la cuenta de modelos y la nota de
+     precios no llegaban ni a la mitad del minimo legible. */
+  --tenue:#676d74;
   --filete:rgba(21,23,26,.12);
   --regla:rgba(21,23,26,.26);
   --marca:#1d7a4f;
@@ -45,7 +48,10 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{font-family:var(--sans);background:var(--papel);color:var(--tinta);line-height:1.5;-webkit-font-smoothing:antialiased}
-img{display:block;max-width:100%}
+/* `height:auto` no es adorno: los atributos width/height del HTML se
+   convierten en CSS y ganan a `aspect-ratio`, asi que sin esta linea
+   cada foto se dibujaba con su alto real (900 px) y salia vertical. */
+img{display:block;max-width:100%;height:auto}
 a{color:inherit;text-decoration:none}
 ul{list-style:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -120,7 +126,7 @@ thead th{
 }
 thead th.etiqueta{z-index:4;vertical-align:top;padding-top:14px}
 .col__foto{aspect-ratio:4/3;background:#f1f1ee;border:1px solid var(--filete);border-radius:3px;overflow:hidden;margin-bottom:9px}
-.col__foto img{width:100%;height:100%;object-fit:cover;object-position:center 48%}
+.col__foto img{width:100%;height:100%;object-fit:cover}
 .col__nombre{font-size:.9rem;line-height:1.25;letter-spacing:-.01em}
 .col__nombre b{font-family:var(--display);font-weight:400}
 .col__nombre i{font-style:normal;color:var(--gris);font-weight:500;font-size:.82rem}
@@ -128,6 +134,10 @@ thead th.etiqueta{z-index:4;vertical-align:top;padding-top:14px}
   -webkit-background-clip:text;background-clip:text;color:transparent}
 .col__precio{font-family:var(--mono);font-size:.92rem;font-weight:700;margin-top:8px;letter-spacing:-.02em}
 .col__precio s{font-weight:400;font-size:.68rem;color:var(--tenue);margin-left:5px}
+/* El "desde": el numero que se ensena es la opcion mas barata, no el
+   teclado montado. Sin esa palabra delante, la tabla miente. */
+.col__precio small,td small{font-family:var(--sans);font-weight:400;font-size:.7rem;
+  color:var(--gris);letter-spacing:0;text-transform:none}
 .col__estado{font-family:var(--mono);font-size:.57rem;letter-spacing:.06em;color:var(--gris);margin-top:4px}
 .col__estado.hay,.col__estado.ultima{color:var(--marca)}
 .col__acciones{display:flex;gap:6px;margin-top:10px}

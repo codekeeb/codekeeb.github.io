@@ -177,14 +177,33 @@ async function main() {
 
         await page.goto(`http://127.0.0.1:${PUERTO}${pagina.url}`, { waitUntil: "networkidle" });
         await page.waitForTimeout(900);
-        /* Bajar del todo para disparar las animaciones al entrar en vista. */
+        /* Bajar del todo para disparar las animaciones al entrar en vista.
+           A saltos de media pantalla y esperando un fotograma de verdad:
+           con saltos de 600 px cada 50 ms el IntersectionObserver no
+           llegaba a disparar y la captura completa salia con la mitad de
+           la pagina en blanco — un fallo de la captura, no de la web,
+           que es la peor clase de fallo porque parece real. */
         await page.evaluate(async () => {
-          for (let y = 0; y < document.body.scrollHeight; y += 600) {
-            window.scrollTo(0, y); await new Promise(r => setTimeout(r, 50));
+          /* `behavior: "instant"` es lo que hacia falta: la portada lleva
+             `html{scroll-behavior:smooth}`, asi que cada `scrollTo` abria
+             una animacion y la siguiente llamada la reiniciaba antes de
+             llegar. La pagina se quedaba arriba y el observador no veia
+             pasar nada. */
+          const cuadro = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+          const paso = Math.round(innerHeight / 2);
+          for (let y = 0; y < document.body.scrollHeight; y += paso) {
+            window.scrollTo({ top: y, behavior: "instant" });
+            await cuadro();
+            await new Promise(r => setTimeout(r, 60));
           }
-          window.scrollTo(0, 0);
+          window.scrollTo({ top: 0, behavior: "instant" });
         });
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(900);
+        /* Si algo se quedo invisible, es que la entrada no llego a
+           dispararse: mejor decirlo que mandar una captura en blanco. */
+        const sinEntrar = await page.evaluate(() =>
+          document.querySelectorAll(".entra:not(.dentro),.reveal:not(.is-in)").length);
+        if (sinEntrar) problemas.push(`${etiqueta}  ${sinEntrar} elemento(s) sin entrar en vista`);
 
         const base = `${pagina.id}-${idioma}-${vista.nombre}`;
         await page.screenshot({ path: join(SALIDA, `${base}.png`) });

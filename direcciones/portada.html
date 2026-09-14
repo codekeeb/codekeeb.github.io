@@ -26,26 +26,32 @@
       <button data-lang-btn="en">EN</button>
       <button data-lang-btn="fr">FR</button>
     </div>
-    <a class="btn" id="tienda" href="#" data-t="nav.buy">Comprar</a>
+    <a class="btn" href="a.html" data-t="d.choose">Elige tu split</a>
   </div>
 </header>
 
 <main>
 
   <!-- ============ 1 · HERO ============
-       Titular grande y centrado, y el teclado apoyado debajo sin marco.
-       Nada mas en la pantalla: es la idea de esta pantalla. -->
+       Una sola foto, enmarcada (nunca a sangre), del modelo destacado, y
+       el texto encima apoyado en la banda de mesa vacia de arriba. El
+       recorte lo calcula `CK.encuadrarTodo()` con el `foco` medido de la
+       foto; ver el comentario del heroe en portada.css.
+
+       Sin rotulo sobre el titular: el titular se sostiene solo. -->
   <section class="hero env">
-    <div class="centro">
-      <span class="rotulo entra entra--rotulo" data-t="p.heroKicker"></span>
-      <h1 class="titular entra entra--titulo" style="--d:1" data-t-html="p.heroTitle"></h1>
-    </div>
-    <p class="bajada centro entra entra--texto" style="--d:2" data-t="p.heroText"></p>
-    <div class="acciones entra entra--texto" style="--d:3">
-      <a class="btn" href="a.html" data-t="p.heroCta"></a>
-      <a class="btn btn--suave" href="b.html" data-t="p.heroCta2"></a>
-    </div>
-    <figure class="pieza entra entra--pieza" style="--d:4" id="heroFoto"></figure>
+    <figure class="escenario entra entra--pieza">
+      <img id="heroImg" alt="" width="1200" height="838" data-foco="63" data-encaje="60" fetchpriority="high">
+      <figcaption class="escenario__texto">
+        <h1 class="titular entra entra--titulo" style="--d:1" data-t-html="p.heroTitle"></h1>
+        <p class="bajada entra entra--texto" style="--d:2" data-t="p.heroText"></p>
+        <span class="acciones entra entra--texto" style="--d:3">
+          <a class="btn" href="a.html" data-t="p.heroCta"></a>
+          <a class="btn btn--claro" href="b.html" data-t="p.heroCta2"></a>
+        </span>
+      </figcaption>
+      <a class="chapa" id="chapa" target="_blank" rel="noopener"></a>
+    </figure>
   </section>
 
   <!-- ============ 2 · RGB, con el teclado fijado ============
@@ -219,29 +225,40 @@
 
   function pintar() {
     const productos = CK.productos();
-    const destacado = productos.find(p => p.featured) || productos[0];
+    /* Los cinco estan marcados como `featured`, asi que `find` devolvia
+       siempre el primero. El heroe ensena el Retro a proposito: es el
+       unico con rotulo serigrafiado y el que mejor se lee en foto. */
+    const destacado = productos.find(p => p.id === "sofle-retro") || productos[0];
     const est = CK.stock(destacado);
 
-    $("#tienda").href = CK.tiendaURL;
     $("#nota").textContent = CK.notaPrecios();
 
-    $("#heroFoto").innerHTML = `
-      <img src="${CK.foto(destacado)}" alt="${CK.escapar(destacado.name)}" width="1200" height="900">
-      <figcaption>
-        <span><b>${CK.escapar(destacado.name)}</b> · ${CK.escapar(destacado.version || "")}</span>
-        <span>${CK.precio(destacado.priceFrom ?? destacado.priceFull)}</span>
-        <span>${CK.escapar(est.txt)}</span>
-      </figcaption>`;
+    const foto = $("#heroImg");
+    foto.src = CK.foto(destacado);
+    foto.alt = `${destacado.name} ${destacado.version || ""}`.trim();
 
+    /* La chapa dice el nombre en tres niveles, el precio DE ENTRADA con su
+       "desde" delante, y el stock. Y lleva al anuncio concreto. */
+    $("#chapa").href = CK.enlaceCompra(destacado);
+    $("#chapa").innerHTML = `
+      <span>${CK.rotulo(destacado)}</span>
+      <span class="chapa__sep" aria-hidden="true"></span>
+      <span>${CK.precioHTML(destacado)}</span>
+      <span class="chapa__sep" aria-hidden="true"></span>
+      <em>${CK.escapar(est.txt)}</em>`;
+
+    /* Sin `loading="lazy"`: las cinco fotos viven dentro de un carril con
+       `overflow-x:auto`, y ahi el navegador considera que las cuatro que
+       no se ven estan fuera de pantalla y no las carga nunca. Son cinco
+       imagenes pequenas; cargarlas es mas barato que el fallo. */
     $("#carril").innerHTML = productos.map(p => {
       const e = CK.stock(p);
       return `
         <a href="../modelo.html?id=${p.id}">
-          <img src="${CK.foto(p)}" alt="${CK.escapar(p.name)}" loading="lazy" width="1200" height="900">
+          <img src="${CK.foto(p, true)}" alt="${CK.escapar(p.name)}" data-foco="${p.foco ?? 50}">
           <div>
-            <h3>${CK.escapar(p.title?.model || p.name)}
-              <small>${CK.escapar(p.title?.trait || p.version || "")}</small></h3>
-            <p class="precio">${CK.precio(p.priceFrom ?? p.priceFull)}</p>
+            <h3>${CK.rotulo(p)}</h3>
+            <p class="precio">${CK.precioHTML(p)}</p>
             <p class="estado ${e.clase}">${CK.escapar(e.txt)}</p>
           </div>
         </a>`;
@@ -254,6 +271,7 @@
 
     dibujarPlaca();
     dibujarCapas();
+    CK.encuadrarTodo();
 
     /* El argumento que esta a la altura de los ojos se enciende y los
        demas se apagan. Sin escuchar el scroll: lo resuelve el observador

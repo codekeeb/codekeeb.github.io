@@ -125,6 +125,84 @@ const CK = (() => {
   const foto = (p, pequena) =>
     `../assets/img/products/${pequena && p.img ? p.img.replace(/\.jpg$/, "-sm.jpg") : p.img}`;
 
+  /* El precio que se ensena es `priceFrom`, que es la opcion mas barata
+     (muchas veces la PCB suelta, no el teclado montado). Ensenarlo a secas
+     es mentir por omision: 26 € no compra un Totem. Asi que cuando hay dos
+     precios, el numero va precedido de "desde". */
+  function precioDe(p) {
+    const n = p.priceFrom ?? p.priceFull;
+    const desde = p.priceFrom != null && p.priceFull != null && p.priceFrom < p.priceFull;
+    return { txt: precio(n), desde };
+  }
+  const precioHTML = p => {
+    const { txt, desde } = precioDe(p);
+    return desde ? `<small>${t("price.from")}</small> ${txt}` : txt;
+  };
+
+  /* Comprar SIEMPRE lleva al anuncio concreto. La tienda generica obliga a
+     buscar el modelo otra vez entre los cinco, y ahi es donde se perdia la
+     venta; `js/data.js` lo deja escrito. `CK_SHOP_URL` solo es el ultimo
+     recurso si algun dia falta el enlace. */
+  const enlaceCompra = p => (p && p.url) || CK_SHOP_URL;
+
+  /* --- encuadre ----------------------------------------------------
+     `object-fit: cover` recorta, y por omision recorta por el centro. En
+     las cinco fotos del catalogo sobra mesa por arriba (entre un 11% y un
+     33%), asi que el centro cae en el mantel y el teclado se va por abajo.
+
+     `foco` dice donde esta el teclado dentro de la foto. Pero no se puede
+     pasar tal cual a `object-position`: ese porcentaje alinea el punto P
+     de la foto con el punto P del marco, no "ensename P". Con el marco
+     recortando en vertical, la ventana visible va de P(1-v) a P(1-v)+v,
+     donde v es la fraccion de alto que sobrevive. Despejando para que el
+     foco caiga en el centro de la ventana:
+
+         P = (foco - encaje*v) / (1 - v)
+
+     donde `encaje` es donde queremos el teclado dentro del marco (0,5 =
+     centrado).
+
+     Ejemplo real: el Sofle Carbon tiene el teclado al 58% y en el marco
+     16/10 del heroe solo sobrevive el 72% del alto, asi que P sale 79% y
+     no 58%. Ponerle 58 a pelo lo dejaba igual de descentrado. */
+  function encuadrar(img) {
+    const foco = Number(img.dataset.foco);
+    if (!Number.isFinite(foco)) return;
+    /* `encaje` dice en que punto del MARCO queremos que caiga el teclado.
+       Por omision en el centro; en el heroe se baja al 62% para que el
+       texto tenga arriba mesa vacia y no se coma el producto. */
+    const encaje = Number(img.dataset.encaje);
+    const q = Number.isFinite(encaje) ? encaje / 100 : 0.5;
+    const ajustar = () => {
+      const r = img.getBoundingClientRect();
+      if (!img.naturalWidth || !r.width || !r.height) return;
+      const alturaFoto = img.naturalHeight / img.naturalWidth;
+      const alturaMarco = r.height / r.width;
+      if (alturaMarco >= alturaFoto) { img.style.objectPosition = "center center"; return; }
+      const v = alturaMarco / alturaFoto;          /* alto que sobrevive */
+      const p = (foco / 100 - q * v) / (1 - v);
+      img.style.objectPosition = `center ${(Math.min(1, Math.max(0, p)) * 100).toFixed(1)}%`;
+    };
+    if (img.complete && img.naturalWidth) ajustar();
+    else img.addEventListener("load", ajustar, { once: true });
+    encuadrar._todas.push(ajustar);
+  }
+  encuadrar._todas = [];
+
+  /* Al cambiar el ancho cambia la proporcion del marco, y con ella el
+     recorte. Se recalcula al final del redimensionado, no durante. */
+  let temporizador;
+  addEventListener("resize", () => {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(() => encuadrar._todas.forEach(f => f()), 120);
+  }, { passive: true });
+
+  /* Encuadra todo lo que lleve data-foco dentro de un trozo de pagina. */
+  function encuadrarTodo(raiz = document) {
+    encuadrar._todas.length = 0;
+    raiz.querySelectorAll("img[data-foco]").forEach(encuadrar);
+  }
+
   /* --- idioma en la pagina --------------------------------------- */
 
   function pintarIdioma(alCambiar) {
@@ -160,7 +238,8 @@ const CK = (() => {
   const productos = () => CK_PRODUCTS;
   const escapar = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-  return { get lang() { return lang; }, t, L, precio, notaPrecios, spec, etiquetasDeFicha,
+  return { get lang() { return lang; }, t, L, precio, notaPrecios, spec, etiquetasDeFicha, encuadrarTodo,
+           precioDe, precioHTML, enlaceCompra,
            rasgos, FILTROS, stock, rotulo, foto, pintarIdioma, observarEntradas, productos,
            escapar, tiendaURL: CK_SHOP_URL };
 })();

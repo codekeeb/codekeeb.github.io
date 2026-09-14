@@ -181,7 +181,6 @@ const CK_I18N = {
     "d.handmade": "Montado y probado a mano antes de salir del taller.",
     "d.backToAll": "Ver las tres direcciones",
     /* --- portada nueva (direcciones/portada.html) --- */
-    "p.heroKicker": "Split ergonómicos · montados a mano · desde 2024",
     "p.heroTitle": "El teclado es tuyo <em>hasta el fondo</em>.",
     "p.heroText": "Cinco modelos split, presoldados y probados antes de salir del taller. Firmware abierto, todo reemplazable, y un editor propio para reprogramarlo sin instalar nada.",
     "p.heroCta": "Ver los cinco modelos",
@@ -395,7 +394,6 @@ const CK_I18N = {
     "d.handmade": "Assembled and tested by hand before it leaves the workshop.",
     "d.backToAll": "See the three directions",
     /* --- new home page (direcciones/portada.html) --- */
-    "p.heroKicker": "Ergonomic splits · built by hand · since 2024",
     "p.heroTitle": "The keyboard is yours <em>all the way down</em>.",
     "p.heroText": "Five split models, presoldered and tested before they leave the workshop. Open firmware, everything replaceable, and our own editor to reprogram it without installing a thing.",
     "p.heroCta": "See all five models",
@@ -609,7 +607,6 @@ const CK_I18N = {
     "d.handmade": "Monté et testé à la main avant de quitter l'atelier.",
     "d.backToAll": "Voir les trois directions",
     /* --- nouvelle page d'accueil (direcciones/portada.html) --- */
-    "p.heroKicker": "Splits ergonomiques · montés à la main · depuis 2024",
     "p.heroTitle": "Le clavier est tien <em>jusqu'au bout</em>.",
     "p.heroText": "Cinq modèles split, présoudés et testés avant de quitter l'atelier. Firmware ouvert, tout remplaçable, et notre propre éditeur pour le reprogrammer sans rien installer.",
     "p.heroCta": "Voir les cinq modèles",

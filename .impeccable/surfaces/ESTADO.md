@@ -260,3 +260,88 @@ Son decisiones suyas, no mias:
 El entorno `home` paso a acceso **Completo** el 14 sep. Las sesiones
 anteriores a ese cambio no lo tienen. En una sesion nueva ergodox-ez.com
 deberia abrirse; conviene comprobarlo antes de opinar sobre esa web.
+
+---
+
+# 14 sep · la portada, revisada con las skills
+
+Las tres skills que pidio que usara: `impeccable` y `emil-design-eng`
+estan instaladas en `.claude/skills/`. **`taste` no esta instalada**, ni
+como skill del proyecto ni como plugin. Lo que sigue sale de las dos que
+si estan, mas medicion en navegador.
+
+## La foto vertical: la causa era una linea que falta
+
+Las cuatro hojas de las direcciones tenian el reinicio de imagen a medias:
+
+```css
+img{display:block;max-width:100%}          /* direcciones/*.css */
+img{display:block;max-width:100%;height:auto}   /* css/style.css */
+```
+
+Los atributos `width="1200" height="900"` del HTML **se traducen a CSS** y
+ganan a `aspect-ratio` si nadie pone `height:auto`. O sea que cada foto del
+carril se dibujaba de 320x900 — vertical, con el teclado convertido en una
+franja — y ademas `encuadrar()` se rendia, porque el marco le salia mas
+alto que la foto y en ese caso no hay recorte que calcular. No era el
+encuadre: era el reinicio.
+
+## Lo demas que se ha corregido en el mismo lote
+
+- **El heroe.** Foto del Retro enmarcada (aire a los cuatro lados), marco
+  16/10 y el texto encima, apoyado en la banda de mesa de arriba. El
+  recorte sale del `foco` medido (63%) por la formula de `encuadrar()`,
+  no a ojo. En movil la foto va entera, sin recortar, y el texto pasa
+  debajo dentro de la misma pieza: la foto es apaisada (1,43) y cualquier
+  marco vertical se come una mitad del teclado a lo ancho.
+- **Nada de rotulo sobre el titular.** `craft-floor.md` lo prohibe sin
+  excepciones. Se ha quitado `p.heroKicker` de los tres idiomas.
+- **Comprar lleva al anuncio.** El boton de cabecera apuntaba a
+  `CK_SHOP_URL` (la tienda generica) en las cuatro paginas, justo lo que
+  `js/data.js` dice que perdia la venta. Ahora la chapa del heroe lleva al
+  anuncio del modelo que se ve, y las cabeceras llevan al catalogo o al
+  comparador, que es lo que de verdad hacen.
+- **El precio dice "desde".** Se ensenaba `priceFrom`, que muchas veces es
+  la PCB suelta: 26 € no compra un Totem. `CK.precioHTML()` pone la
+  palabra delante cuando hay dos precios.
+- **Contraste.** `--gris` daba 4,40:1 y `--tenue` 2,32:1 sobre el papel.
+  Medidos y corregidos a 5,50:1 y 4,60:1 en la portada, y a 4,9/4,7 en el
+  comparador y en la ficha por pantalla. Los cuatro argumentos apagados de
+  la region RGB pasan de 2,28:1 a 5,3:1 y el encendido a blanco se sigue
+  notando igual.
+- **El anillo de foco era invisible en 5 de 20 botones**: `currentColor`
+  sobre un boton oscuro dibuja papel claro encima de papel claro. Ahora lo
+  pone el suelo.
+- **Cuatro tamanos de rotulo (.56/.58/.60/.62rem) pasan a uno** de 11 px.
+- **Los tres botones de idioma median 25x21 px**; ahora 40x44.
+- **`loading="lazy"` dentro de un `overflow-x:auto`**: cuatro de las cinco
+  fotos del carril no se cargaban nunca, y lo mismo en la cabecera del
+  comparador. Fuera.
+- **El halo azul de 64 px sin desplazamiento de la OLED**, fuera: la luz
+  cae hacia algun lado o no es luz.
+- **`check-i18n.py` no miraba las direcciones**: usan `data-t`, no
+  `data-i18n`, asi que un prototipo podia ensenar la clave cruda sin que
+  nadie se enterase. Ya mira las dos.
+
+## Un fallo de la herramienta, no de la web
+
+`preview.mjs` mandaba capturas completas con media pagina en blanco. La
+causa: la portada lleva `html{scroll-behavior:smooth}`, asi que cada
+`window.scrollTo(0,y)` del recorrido abria una animacion y la llamada
+siguiente la reiniciaba antes de llegar. La pagina no se movia, el
+`IntersectionObserver` no veia pasar nada y los 24 elementos con entrada se
+quedaban en `opacity:0`. Ahora el recorrido usa `behavior:"instant"` y, por
+si acaso, la herramienta cuenta los elementos que no han entrado y lo
+avisa: una captura en blanco que parece un fallo real es la peor clase de
+fallo.
+
+## Lo que sigue abierto (no lo he tocado por mi cuenta)
+
+- La pagina mide **9.700 px**: once pantallas. Tres de ellas —OLED, capas
+  y hotswap— son la misma composicion (rotulo, titular centrado, demo,
+  parrafo) repetida, casi 2.700 px de meseta. Si lo del "scroll infinito"
+  le sigue molestando, ahi es donde esta.
+- **"17 repositorios publicos"** se afirma y no se enlaza.
+- Las fotos de Keymap Studio que menciono estan en `X:\ADEUKB\...`, una
+  ruta de su Windows: desde este contenedor no existe. Tienen que entrar al
+  repositorio o pegarlas en el chat.

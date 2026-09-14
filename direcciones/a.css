@@ -45,7 +45,10 @@ body{
   font-family:var(--sans);background:var(--papel);color:var(--tinta);
   line-height:1.55;-webkit-font-smoothing:antialiased;
 }
-img{display:block;max-width:100%}
+/* `height:auto` no es adorno: los atributos width/height del HTML se
+   convierten en CSS y ganan a `aspect-ratio`, asi que sin esta linea
+   cada foto se dibujaba con su alto real (900 px) y salia vertical. */
+img{display:block;max-width:100%;height:auto}
 a{color:inherit;text-decoration:none}
 ul,ol{list-style:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -118,7 +121,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   aspect-ratio:4/3;background:#f1f1ee;position:relative;overflow:hidden;
   border-bottom:1px solid var(--filete);
 }
-.ficha__foto img{width:100%;height:100%;object-fit:cover;object-position:center 48%}
+.ficha__foto img{width:100%;height:100%;object-fit:cover}
 .ficha__ref{
   position:absolute;top:10px;left:10px;font-family:var(--mono);font-size:.58rem;
   letter-spacing:.12em;color:var(--gris);background:rgba(255,255,255,.82);

@@ -21,7 +21,7 @@
       <button data-lang-btn="en">EN</button>
       <button data-lang-btn="fr">FR</button>
     </div>
-    <a class="btn btn--solido" id="tienda" href="#" data-t="nav.buy">Comprar</a>
+    <a class="btn btn--solido" href="a.html" data-t="d.choose">Elige tu split</a>
   </div>
 </header>
 
@@ -76,9 +76,9 @@
     const est = CK.stock(p);
     return `
       <th scope="col">
-        <div class="col__foto"><img src="${CK.foto(p)}" alt="${CK.escapar(p.name)}" loading="lazy" width="1200" height="900"></div>
+        <div class="col__foto"><img src="${CK.foto(p, true)}" alt="${CK.escapar(p.name)}" data-foco="${p.foco ?? 50}"></div>
         <div class="col__nombre">${CK.rotulo(p)}</div>
-        <div class="col__precio">${CK.precio(p.priceFrom ?? p.priceFull)}${
+        <div class="col__precio">${CK.precioHTML(p)}${
           p.priceOriginal ? `<s>${CK.precio(p.priceOriginal)}</s>` : ""}</div>
         <div class="col__estado ${est.clase}">${CK.escapar(est.txt)}</div>
         <div class="col__acciones">
@@ -90,7 +90,6 @@
   }
 
   function pintar() {
-    $("#tienda").href = CK.tiendaURL;
     $("#nota").textContent = CK.notaPrecios();
     $("#soloDifTxt").textContent = ETIQUETAS[CK.lang].dif;
     $("#reset").textContent = ETIQUETAS[CK.lang].todos;
@@ -131,7 +130,7 @@
        se compara y arriba queda fuera de la vista al bajar. */
     const filaPrecio = `<tr class="difiere">
       <td class="etiqueta">${CK.t("d.priceCol")}</td>
-      ${lista.map(p => `<td><b class="mono">${CK.precio(p.priceFrom ?? p.priceFull)}</b>${
+      ${lista.map(p => `<td><b class="mono">${CK.precioHTML(p)}</b>${
         p.discountPct ? ` <span class="mono" style="font-size:.7em;color:var(--tenue)">−${p.discountPct}%</span>` : ""}</td>`).join("")}
     </tr>`;
 
@@ -142,6 +141,7 @@
       ["trust.custom","trust.customText"],["trust.firmware","trust.firmwareText"],
     ].map(([a,b],i)=>`<div class="entra entra--texto" style="--d:${i}"><h3>${CK.t(a)}</h3><p>${CK.t(b)}</p></div>`).join("");
 
+    CK.encuadrarTodo();
     CK.observarEntradas();
   }
 
