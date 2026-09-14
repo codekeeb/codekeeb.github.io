@@ -101,6 +101,9 @@ async function abrirNavegador(chromium) {
 const VISTAS = [
   { nombre: "movil", width: 390, height: 844, dsf: 3, movil: true },
   { nombre: "escritorio", width: 1440, height: 900, dsf: 2, movil: false },
+  /* Por encima de 1448 px la pagina ya no la limita el canalon sino
+     --maxw, y ahi se ven fallos de columna que a 1440 no existen. */
+  { nombre: "ancho", width: 1920, height: 1080, dsf: 1, movil: false },
 ];
 
 /* Estos dominios externos estan bloqueados en el contenedor de Claude.
@@ -194,6 +197,41 @@ async function main() {
         if (desb) {
           problemas.push(`${etiqueta}  se sale a lo ancho: ${desb.ancho}px en ${desb.visible}px  (${desb.culpables.join(", ") || "?"})`);
         }
+
+        /* Todo bloque de una region tiene que empezar en el mismo sitio.
+           `main > section > *` les da `margin-inline:auto`, pero basta un
+           `margin` en atajo (`margin:0`, `margin:18px 0 36px`) en una regla
+           posterior para anularlo, y el bloque se va al canalon sin que
+           nadie se entere. Paso tres veces. */
+        const fugas = await page.evaluate(() => {
+          const avisos = [];
+          for (const sec of document.querySelectorAll("main > section")) {
+            const anchoSec = sec.getBoundingClientRect().width;
+            const bloques = [...sec.children].filter(e => {
+              const cs = getComputedStyle(e);
+              if (cs.display === "none" || cs.position === "absolute" || cs.position === "fixed") return false;
+              /* Solo los elementos de bloque: la columna se los reparte a
+                 ellos. Un boton es inline-flex y lo coloca el text-align,
+                 asi que en frances, con el texto mas largo, empieza donde
+                 le toca aunque mida mas de media region. */
+              if (/^inline/.test(cs.display)) return false;
+              return e.getBoundingClientRect().width > anchoSec * 0.5;
+            });
+            if (bloques.length < 2) continue;
+            const izq = bloques.map(e => Math.round(e.getBoundingClientRect().left));
+            const comun = izq.sort((a, b) =>
+              izq.filter(v => v === b).length - izq.filter(v => v === a).length)[0];
+            for (const e of bloques) {
+              const x = Math.round(e.getBoundingClientRect().left);
+              if (Math.abs(x - comun) > 1) {
+                avisos.push(`${sec.className.split(" ")[0] || sec.id} > ${e.className.split(" ")[0] || e.tagName.toLowerCase()}`
+                  + ` empieza en ${x}px y el resto de la region en ${comun}px`);
+              }
+            }
+          }
+          return avisos;
+        });
+        for (const f of fugas) problemas.push(`${etiqueta}  fuera de la columna: ${f}`);
 
         /* Un texto sin traducir aparece como la clave cruda: "nav.features". */
         const crudas = await page.evaluate(() =>
