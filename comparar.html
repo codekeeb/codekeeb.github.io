@@ -108,7 +108,7 @@
     const est = CK.stock(p);
     return `
       <th scope="col">
-        <div class="col__foto"><img src="${CK.foto(p, true)}" alt="${CK.escapar(p.name)}" data-foco="${p.foco ?? 50}"></div>
+        <div class="col__foto"><img src="${CK.foto(p, true)}" alt="${CK.escapar((p.name + " " + (p.version || "")).trim())}" data-foco="${p.foco ?? 50}"></div>
         <div class="col__nombre">${CK.rotulo(p)}</div>
         <div class="col__precio">${CK.precioHTML(p)}${
           p.priceOriginal ? `<s>${CK.precio(p.priceOriginal)}</s>` : ""}</div>

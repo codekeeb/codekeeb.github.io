@@ -117,7 +117,7 @@
     return `
       <article class="ficha entra entra--ficha" style="--d:${Math.min(i, 4)}">
         <div class="ficha__foto">
-          <img src="${CK.foto(p)}" alt="${CK.escapar(p.name)}" data-foco="${p.foco ?? 50}"
+          <img src="${CK.foto(p)}" alt="${CK.escapar((p.name + " " + (p.version || "")).trim())}" data-foco="${p.foco ?? 50}"
                loading="${i < 2 ? "eager" : "lazy"}">
           <span class="ficha__ref mono">${String(i + 1).padStart(2, "0")}</span>
         </div>

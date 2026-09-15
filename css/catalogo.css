@@ -30,6 +30,12 @@
   --mono:"Martian Mono",ui-monospace,"SFMono-Regular",monospace;
 
   /* Movimiento: dos duraciones y una curva, como quedo acordado. */
+  /* Suelo de 11 px para el texto funcional. Habia siete tamanos por debajo
+     (hasta 8,8 px en los botones de la tabla): a esa medida la Martian Mono
+     deja de leerse en una pantalla de mucha densidad, y son etiquetas de
+     ficha y botones, no letra pequena legal. */
+  --label:.7rem;
+
   --t-tap:180ms;
   --t-enter:420ms;
   --ease:cubic-bezier(.16,1,.3,1);
@@ -64,6 +70,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 }
 .top__in{display:flex;align-items:center;gap:20px;height:60px}
 .top__sp{flex:1}
+/* ---------- objetivos de dedo -------------------------------------
+   Medido: los enlaces de la cabecera median 19 px de alto y el logotipo
+   26. El texto no tiene que crecer; lo que crece es la caja que se pulsa,
+   que es lo que falla. WCAG 2.2 pide 24x24 como minimo (2.5.8); aqui se
+   va a 44 en todo lo que vive en la cabecera, que es donde sobra sitio. */
+.top__nav a{display:inline-flex;align-items:center;min-height:44px}
+.marca{min-height:44px}
 /* ---------- cabecera: logotipo real y un solo boton de idioma -------
    El logotipo dejo de ser texto imitando la marca y pasa a ser la marca:
    `assets/brand/logo-horizontal-dark.png` es tinta oscura sobre
@@ -104,8 +117,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.5em;
-  font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
-  padding:.85em 1.3em;border-radius:3px;border:1px solid var(--tinta);
+  font-family:var(--mono);font-size:var(--label);letter-spacing:.1em;text-transform:uppercase;
+  padding:.85em 1.3em;min-height:40px;border-radius:3px;border:1px solid var(--tinta);
   transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),border-color var(--t-tap) var(--ease);
 }
 .btn--solido{background:var(--tinta);color:var(--papel)}
@@ -125,13 +138,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 .filtros{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
 .filtros button{
-  font-family:var(--mono);font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;
+  font-family:var(--mono);font-size:var(--label);letter-spacing:.09em;text-transform:uppercase;
   padding:.62em 1.05em;border:1px solid var(--filete);border-radius:999px;color:var(--gris);
   transition:border-color var(--t-tap) var(--ease),color var(--t-tap) var(--ease),background var(--t-tap) var(--ease);
 }
 .filtros button:hover{border-color:var(--regla);color:var(--tinta)}
 .filtros button[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--papel)}
-.cuenta{font-family:var(--mono);font-size:.64rem;color:var(--gris);align-self:center;margin-left:6px}
+.cuenta{font-family:var(--mono);font-size:var(--label);color:var(--gris);align-self:center;margin-left:6px}
 
 /* ---------- la rejilla: esto es la portada ---------- */
 .rejilla{
@@ -151,7 +164,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 }
 .ficha__foto img{width:100%;height:100%;object-fit:cover}
 .ficha__ref{
-  position:absolute;top:10px;left:10px;font-family:var(--mono);font-size:.58rem;
+  position:absolute;top:10px;left:10px;font-family:var(--mono);font-size:var(--label);
   letter-spacing:.12em;color:var(--gris);background:rgba(255,255,255,.82);
   padding:.35em .6em;border-radius:2px;
 }
@@ -169,12 +182,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* Precio: la cifra manda, el tachado y el descuento la acompanan. */
 .precio{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:14px}
-.precio__desde{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gris)}
+.precio__desde{font-family:var(--mono);font-size:var(--label);letter-spacing:.12em;text-transform:uppercase;color:var(--gris)}
 .precio__n{font-family:var(--mono);font-size:1.16rem;font-weight:700;letter-spacing:-.02em}
 .precio__antes{font-family:var(--mono);font-size:.76rem;color:var(--gris);text-decoration:line-through}
-.precio__off{font-family:var(--mono);font-size:.6rem;border:1px solid var(--regla);border-radius:2px;padding:.2em .45em}
+.precio__off{font-family:var(--mono);font-size:var(--label);border:1px solid var(--regla);border-radius:2px;padding:.2em .45em}
 
-.estado{display:flex;align-items:center;gap:6px;margin-top:9px;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;color:var(--gris)}
+.estado{display:flex;align-items:center;gap:6px;margin-top:9px;font-family:var(--mono);font-size:var(--label);letter-spacing:.06em;color:var(--gris)}
 .estado::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
 .estado.hay,.estado.ultima{color:var(--hay)}
 .estado.encargo,.estado.pronto{color:var(--gris)}
@@ -183,10 +196,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
    de un vistazo sin abrir nada. */
 .datos{margin-top:14px;border-top:1px solid var(--filete)}
 .datos div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--filete);font-size:.76rem}
-.datos dt{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);white-space:nowrap}
+.datos dt{font-family:var(--mono);font-size:var(--label);letter-spacing:.1em;text-transform:uppercase;color:var(--gris);white-space:nowrap}
 .datos dd{text-align:right;color:var(--tinta)}
 .acciones{display:flex;gap:8px;margin-top:15px}
-.acciones .btn{flex:1;padding:.72em .6em;font-size:.62rem}
+.acciones .btn{flex:1;padding:.72em .6em;font-size:var(--label)}
 
 /* ---------- pie: lo que da confianza, en una linea cada cosa ---------- */
 .cierre{border-top:1px solid var(--filete);background:var(--carta)}
@@ -205,7 +218,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .herramienta h2 em{font-style:normal;color:var(--gris)}
 .herramienta p{color:var(--gris);font-size:.82rem;width:100%}
 .pie{border-top:1px solid var(--filete);padding-block:22px 30px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.pie p{font-family:var(--mono);font-size:.6rem;color:var(--gris);letter-spacing:.04em}
+.pie p{font-family:var(--mono);font-size:var(--label);color:var(--gris);letter-spacing:.04em}
 .pie .nota{flex:1;min-width:280px}
 
 /* ---------- entradas: por papel, no todas igual ---------- */
@@ -228,4 +241,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   .top .btn span{display:none}
   .rejilla{grid-template-columns:1fr}
   .acciones{flex-direction:column}
+}
+
+@media (max-width:620px){
+  /* Mismo caso que en la portada: la marca, el idioma y una etiqueta
+     larga no caben en 390 px (en frances se sale 5 px), y recortar la
+     etiqueta hasta que quepa la deja sin decir nada. La navegacion de
+     arriba ya lleva al mismo sitio. */
+  .top .btn{display:none}
 }

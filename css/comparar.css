@@ -34,6 +34,12 @@
   --display:"Archivo Black","Archivo",Arial,sans-serif;
   --mono:"Martian Mono",ui-monospace,"SFMono-Regular",monospace;
 
+  /* Suelo de 11 px para el texto funcional. Habia siete tamanos por debajo
+     (hasta 8,8 px en los botones de la tabla): a esa medida la Martian Mono
+     deja de leerse en una pantalla de mucha densidad, y son etiquetas de
+     ficha y botones, no letra pequena legal. */
+  --label:.7rem;
+
   --t-tap:180ms;
   --t-enter:420ms;
   --ease:cubic-bezier(.16,1,.3,1);
@@ -62,6 +68,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .top{position:sticky;top:0;z-index:40;background:rgba(247,247,244,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--filete)}
 .top__in{display:flex;align-items:center;gap:16px;height:56px}
 .top__sp{flex:1}
+/* ---------- objetivos de dedo -------------------------------------
+   Medido: los enlaces de la cabecera median 19 px de alto y el logotipo
+   26. El texto no tiene que crecer; lo que crece es la caja que se pulsa,
+   que es lo que falla. WCAG 2.2 pide 24x24 como minimo (2.5.8); aqui se
+   va a 44 en todo lo que vive en la cabecera, que es donde sobra sitio. */
+.top__nav a{display:inline-flex;align-items:center;min-height:44px}
+.marca{min-height:44px}
 /* ---------- cabecera: logotipo real y un solo boton de idioma -------
    El logotipo dejo de ser texto imitando la marca y pasa a ser la marca:
    `assets/brand/logo-horizontal-dark.png` es tinta oscura sobre
@@ -101,7 +114,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 @media (prefers-reduced-motion:reduce){ .idiomas__m{animation:none} }
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;font-family:var(--mono);
-  font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;padding:.7em 1em;border-radius:3px;
+  font-size:var(--label);letter-spacing:.09em;text-transform:uppercase;padding:.7em 1em;min-height:34px;border-radius:3px;
   border:1px solid var(--tinta);transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),border-color var(--t-tap) var(--ease)}
 .btn--solido{background:var(--tinta);color:var(--papel)}
 .btn--solido:hover{background:#000}
@@ -114,7 +127,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .intro p{color:var(--gris);max-width:60ch;margin-top:12px;font-size:clamp(.92rem,1.3vw,1.02rem)}
 
 .mandos{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:16px}
-.interruptor{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.63rem;
+.interruptor{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:var(--label);
   letter-spacing:.08em;text-transform:uppercase;color:var(--gris);border:1px solid var(--filete);
   border-radius:999px;padding:.5em .95em;transition:border-color var(--t-tap) var(--ease),color var(--t-tap) var(--ease)}
 .interruptor:hover{border-color:var(--regla);color:var(--tinta)}
@@ -125,7 +138,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   background:var(--carta);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform var(--t-tap) var(--ease)}
 .interruptor[aria-pressed="true"] .luz{background:var(--marca)}
 .interruptor[aria-pressed="true"] .luz::after{transform:translateX(10px)}
-.cuenta{font-family:var(--mono);font-size:.62rem;color:var(--tenue);margin-left:auto}
+.cuenta{font-family:var(--mono);font-size:var(--label);color:var(--tenue);margin-left:auto}
 
 /* ---------- la tabla: el cuerpo entero de la pagina ---------- */
 .marco{
@@ -141,7 +154,7 @@ table{border-collapse:collapse;width:100%;min-width:max-content}
 th.etiqueta,td.etiqueta{
   position:sticky;left:0;z-index:2;background:var(--carta);
   width:var(--w-etiqueta);min-width:var(--w-etiqueta);text-align:left;
-  font-family:var(--mono);font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;
+  font-family:var(--mono);font-size:var(--label);letter-spacing:.09em;text-transform:uppercase;
   color:var(--gris);font-weight:400;padding:11px 14px;
   border-right:1px solid var(--filete);border-bottom:1px solid var(--filete);
 }
@@ -165,16 +178,19 @@ thead th.etiqueta{z-index:4;vertical-align:top;padding-top:14px}
 .col__nombre u{text-decoration:none;font-family:var(--display);background:var(--grad);
   -webkit-background-clip:text;background-clip:text;color:transparent}
 .col__precio{font-family:var(--mono);font-size:.92rem;font-weight:700;margin-top:8px;letter-spacing:-.02em}
-.col__precio s{font-weight:400;font-size:.68rem;color:var(--tenue);margin-left:5px}
+.col__precio s{font-weight:400;font-size:var(--label);color:var(--tenue);margin-left:5px}
 /* El "desde": el numero que se ensena es la opcion mas barata, no el
    teclado montado. Sin esa palabra delante, la tabla miente. */
 .col__precio small,td small{font-family:var(--sans);font-weight:400;font-size:.7rem;
   color:var(--gris);letter-spacing:0;text-transform:none}
-.col__estado{font-family:var(--mono);font-size:.57rem;letter-spacing:.06em;color:var(--gris);margin-top:4px}
+.col__estado{font-family:var(--mono);font-size:var(--label);letter-spacing:.06em;color:var(--gris);margin-top:4px}
 .col__estado.hay,.col__estado.ultima{color:var(--marca)}
 .col__acciones{display:flex;gap:6px;margin-top:10px}
-.col__acciones .btn{flex:1;padding:.55em .3em;font-size:.55rem}
-.col__apagar{font-family:var(--mono);font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;
+.col__acciones .btn{flex:1;padding:.55em .3em;font-size:var(--label)}
+/* Medido: 61x17 px. WCAG 2.2 pide 24x24 (2.5.8) y este es el control que
+   apaga una columna entera de la comparacion, no un adorno. */
+.col__apagar{display:inline-flex;align-items:center;min-height:28px;padding-inline:2px;
+  font-family:var(--mono);font-size:var(--label);letter-spacing:.08em;text-transform:uppercase;
   color:var(--tenue);margin-top:8px;display:block;transition:color var(--t-tap) var(--ease)}
 .col__apagar:hover{color:var(--tinta)}
 
@@ -197,7 +213,7 @@ td.falta{color:var(--tenue)}
 .confianza h3{font-size:.88rem;margin-bottom:5px}
 .confianza p{color:var(--gris);font-size:.8rem;line-height:1.5}
 .pie{border-top:1px solid var(--filete);padding-block:20px 26px;display:flex;gap:14px;flex-wrap:wrap}
-.pie p{font-family:var(--mono);font-size:.58rem;color:var(--gris);letter-spacing:.04em}
+.pie p{font-family:var(--mono);font-size:var(--label);color:var(--gris);letter-spacing:.04em}
 .pie .nota{flex:1;min-width:270px}
 
 .entra{opacity:0}
@@ -216,4 +232,12 @@ td.falta{color:var(--tenue)}
   .top__in{height:52px}
   :root{--w-etiqueta:118px;--w-modelo:168px}
   .intro{padding-block:24px 12px}
+}
+
+@media (max-width:620px){
+  /* Mismo caso que en la portada: la marca, el idioma y una etiqueta
+     larga no caben en 390 px (en frances se sale 5 px), y recortar la
+     etiqueta hasta que quepa la deja sin decir nada. La navegacion de
+     arriba ya lleva al mismo sitio. */
+  .top .btn{display:none}
 }

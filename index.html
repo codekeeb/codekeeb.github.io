@@ -69,7 +69,14 @@
        El recorte lo sigue calculando `CK.encuadrarTodo()` con el `foco`
        medido de la foto (63%); ver el comentario del heroe en portada.css. -->
   <section class="hero">
-    <img class="hero__foto" id="heroImg" alt="" data-foco="63" data-encaje="62" fetchpriority="high">
+    <!-- El `src` va en el HTML y no lo pone el script: sin el, la pagina
+           sale con una imagen rota hasta que cargan tres archivos de JS, y
+           ademas el navegador no puede empezar a bajarla hasta entonces.
+           El modelo del heroe esta fijado (el Retro), asi que no es un dato
+           que cambie solo. -->
+      <img class="hero__foto" id="heroImg" fetchpriority="high"
+           src="assets/img/products/sofle-retro.jpg" alt="Sofle Choc Retro"
+           data-foco="63" data-encaje="62">
     <div class="hero__velo" aria-hidden="true"></div>
     <div class="hero__texto env">
       <h1 class="titular entra entra--titulo" data-t-html="p.heroTitle"></h1>
@@ -343,9 +350,9 @@
 
     $("#nota").textContent = CK.notaPrecios();
 
-    const foto = $("#heroImg");
-    foto.src = CK.foto(destacado);
-    foto.alt = `${destacado.name} ${destacado.version || ""}`.trim();
+    /* El `src` ya viene en el HTML; aqui solo se ajusta el texto
+       alternativo al idioma del catalogo. */
+    $("#heroImg").alt = `${destacado.name} ${destacado.version || ""}`.trim();
 
     /* La chapa dice el nombre en tres niveles, el precio DE ENTRADA con su
        "desde" delante, y el stock. Y lleva al anuncio concreto. */
@@ -365,7 +372,7 @@
       const e = CK.stock(p);
       return `
         <a href="modelo.html?id=${p.id}">
-          <img src="${CK.foto(p, true)}" alt="${CK.escapar(p.name)}" data-foco="${p.foco ?? 50}">
+          <img src="${CK.foto(p, true)}" alt="${CK.escapar((p.name + " " + (p.version || "")).trim())}" data-foco="${p.foco ?? 50}">
           <div>
             <h3>${CK.rotulo(p)}</h3>
             <p class="precio">${CK.precioHTML(p)}</p>
