@@ -1,0 +1,203 @@
+/* ============================================================
+   DIRECCION A — "El catalogo es la portada"
+   ------------------------------------------------------------
+   Apuesta: el visitante ya sabe lo que es un split. No hay que
+   convencerle de nada, hay que ensenarle los cinco y dejarle
+   comparar. Asi que no hay heroe: la primera pantalla es la
+   rejilla, con precio, stock y ficha a la vista.
+
+   Lo sostiene el principio 3 de PRODUCT.md — "el catalogo primero,
+   lo que vendes se ve antes que lo que opinas" — que la portada
+   actual incumple: alli el catalogo es la segunda region y el 44%
+   de la pagina habla de un solo teclado.
+
+   Suelo claro, una sola columna de medida, un solo acento. El
+   degradado de marca aparece SOLO donde el nombre dice RGB.
+   ============================================================ */
+
+:root{
+  --papel:#fbfbf9;
+  --carta:#ffffff;
+  --tinta:#16181b;
+  --gris:#6b7178;
+  --filete:rgba(22,24,27,.13);
+  --regla:rgba(22,24,27,.24);
+  --hay:#1d7a4f;          /* solo para stock: es un dato, no un adorno */
+  --grad:linear-gradient(90deg,#ff992a,#ff39c0 40%,#2a3dff 75%,#1be8ff);
+
+  --sans:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --display:"Archivo Black","Archivo",Arial,sans-serif;
+  --mono:"Martian Mono",ui-monospace,"SFMono-Regular",monospace;
+
+  /* Movimiento: dos duraciones y una curva, como quedo acordado. */
+  --t-tap:180ms;
+  --t-enter:420ms;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --paso:60ms;
+
+  --col:1240px;
+  --canal:clamp(18px,4vw,52px);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--sans);background:var(--papel);color:var(--tinta);
+  line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+/* `height:auto` no es adorno: los atributos width/height del HTML se
+   convierten en CSS y ganan a `aspect-ratio`, asi que sin esta linea
+   cada foto se dibujaba con su alto real (900 px) y salia vertical. */
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--tinta);outline-offset:3px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+.envoltura{max-width:var(--col);margin-inline:auto;padding-inline:var(--canal)}
+
+/* ---------- cabecera: fina, pegajosa, sin ruido ---------- */
+.top{
+  position:sticky;top:0;z-index:20;background:rgba(251,251,249,.9);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--filete);
+}
+.top__in{display:flex;align-items:center;gap:20px;height:60px}
+.marca{font-family:var(--display);font-size:1rem;letter-spacing:-.02em}
+.marca i{font-style:normal;color:var(--gris)}
+.top__sp{flex:1}
+.idiomas{display:flex;gap:2px;border:1px solid var(--filete);border-radius:3px;padding:2px}
+.idiomas button{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;padding:.4em .7em;
+  border-radius:2px;color:var(--gris);transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease);
+}
+.idiomas button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.idiomas button:hover{color:var(--tinta)}
+.idiomas button[aria-pressed="true"]:hover{color:var(--papel)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.85em 1.3em;border-radius:3px;border:1px solid var(--tinta);
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),border-color var(--t-tap) var(--ease);
+}
+.btn--solido{background:var(--tinta);color:var(--papel)}
+.btn--solido:hover{background:#000}
+.btn--linea{border-color:var(--regla);color:var(--tinta)}
+.btn--linea:hover{border-color:var(--tinta)}
+.top .btn{padding:.6em 1em}
+
+/* ---------- entrada: titulo, lede y filtros. Nada mas. ---------- */
+.entrada{padding-block:clamp(38px,6vw,70px) clamp(22px,3vw,32px)}
+.entrada h1{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(1.9rem,4.6vw,3.1rem);line-height:1.04;letter-spacing:-.035em;
+  max-width:14ch;
+}
+.entrada p{color:var(--gris);max-width:56ch;margin-top:14px;font-size:clamp(.95rem,1.4vw,1.05rem)}
+
+.filtros{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.filtros button{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;
+  padding:.62em 1.05em;border:1px solid var(--filete);border-radius:999px;color:var(--gris);
+  transition:border-color var(--t-tap) var(--ease),color var(--t-tap) var(--ease),background var(--t-tap) var(--ease);
+}
+.filtros button:hover{border-color:var(--regla);color:var(--tinta)}
+.filtros button[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--papel)}
+.cuenta{font-family:var(--mono);font-size:.64rem;color:var(--gris);align-self:center;margin-left:6px}
+
+/* ---------- la rejilla: esto es la portada ---------- */
+.rejilla{
+  display:grid;gap:clamp(14px,1.6vw,22px);
+  grid-template-columns:repeat(auto-fill,minmax(285px,1fr));
+  padding-bottom:clamp(40px,6vw,72px);
+}
+.ficha{
+  display:flex;flex-direction:column;background:var(--carta);
+  border:1px solid var(--filete);border-radius:4px;overflow:hidden;
+  transition:border-color var(--t-tap) var(--ease);
+}
+.ficha:hover{border-color:var(--regla)}
+.ficha__foto{
+  aspect-ratio:4/3;background:#f1f1ee;position:relative;overflow:hidden;
+  border-bottom:1px solid var(--filete);
+}
+.ficha__foto img{width:100%;height:100%;object-fit:cover}
+.ficha__ref{
+  position:absolute;top:10px;left:10px;font-family:var(--mono);font-size:.58rem;
+  letter-spacing:.12em;color:var(--gris);background:rgba(255,255,255,.82);
+  padding:.35em .6em;border-radius:2px;
+}
+.ficha__cuerpo{padding:16px 16px 18px;display:flex;flex-direction:column;flex:1}
+
+/* El rotulo en tres niveles, igual que el logotipo. */
+.nombre{font-size:1.06rem;line-height:1.25;letter-spacing:-.015em}
+.nombre b{font-family:var(--display);font-weight:400}
+.nombre i{font-style:normal;color:var(--gris);font-weight:500}
+.nombre u{
+  text-decoration:none;font-family:var(--display);
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--gris);font-size:.86rem;margin-top:7px;flex:1}
+
+/* Precio: la cifra manda, el tachado y el descuento la acompanan. */
+.precio{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:14px}
+.precio__desde{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gris)}
+.precio__n{font-family:var(--mono);font-size:1.16rem;font-weight:700;letter-spacing:-.02em}
+.precio__antes{font-family:var(--mono);font-size:.76rem;color:var(--gris);text-decoration:line-through}
+.precio__off{font-family:var(--mono);font-size:.6rem;border:1px solid var(--regla);border-radius:2px;padding:.2em .45em}
+
+.estado{display:flex;align-items:center;gap:6px;margin-top:9px;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;color:var(--gris)}
+.estado::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.estado.hay,.estado.ultima{color:var(--hay)}
+.estado.encargo,.estado.pronto{color:var(--gris)}
+
+/* Cuatro datos, los mismos en todas las fichas, para poder comparar
+   de un vistazo sin abrir nada. */
+.datos{margin-top:14px;border-top:1px solid var(--filete)}
+.datos div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--filete);font-size:.76rem}
+.datos dt{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);white-space:nowrap}
+.datos dd{text-align:right;color:var(--tinta)}
+.acciones{display:flex;gap:8px;margin-top:15px}
+.acciones .btn{flex:1;padding:.72em .6em;font-size:.62rem}
+
+/* ---------- pie: lo que da confianza, en una linea cada cosa ---------- */
+.cierre{border-top:1px solid var(--filete);background:var(--carta)}
+.confianza{
+  display:grid;gap:clamp(18px,2.4vw,34px);
+  grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+  padding-block:clamp(36px,5vw,58px);
+}
+.confianza h3{font-size:.92rem;margin-bottom:5px}
+.confianza p{color:var(--gris);font-size:.83rem;line-height:1.5}
+.herramienta{
+  border-top:1px solid var(--filete);padding-block:clamp(30px,4vw,46px);
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+}
+.herramienta h2{font-family:var(--display);font-weight:400;font-size:clamp(1.1rem,2vw,1.45rem);letter-spacing:-.03em;flex:1;min-width:260px}
+.herramienta h2 em{font-style:normal;color:var(--gris)}
+.herramienta p{color:var(--gris);font-size:.82rem;width:100%}
+.pie{border-top:1px solid var(--filete);padding-block:22px 30px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.pie p{font-family:var(--mono);font-size:.6rem;color:var(--gris);letter-spacing:.04em}
+.pie .nota{flex:1;min-width:280px}
+
+/* ---------- entradas: por papel, no todas igual ---------- */
+.entra{opacity:0}
+.entra.dentro{
+  opacity:1;animation-duration:var(--t-enter);animation-timing-function:var(--ease);
+  animation-fill-mode:backwards;animation-delay:calc(var(--d,0) * var(--paso));
+}
+.entra--titulo.dentro{animation-name:sube-poco}
+.entra--texto.dentro {animation-name:sube}
+.entra--ficha.dentro {animation-name:asienta}
+@keyframes sube-poco{from{opacity:0;transform:translateY(9px)}}
+@keyframes sube     {from{opacity:0;transform:translateY(15px)}}
+/* La tarjeta no salta: ya esta donde vas a pulsar. */
+@keyframes asienta  {from{opacity:0;transform:scale(.985)}}
+@media (prefers-reduced-motion:reduce){.entra{opacity:1}.entra.dentro{animation:none}}
+
+@media (max-width:560px){
+  .top__in{height:54px;gap:12px}
+  .top .btn span{display:none}
+  .rejilla{grid-template-columns:1fr}
+  .acciones{flex-direction:column}
+}

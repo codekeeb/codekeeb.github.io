@@ -35,6 +35,17 @@ const CK_PRICES_UPDATED = "2026-08-14";
       accent → degradado    (solo cuando lleva RGB)
     Si falta, se cae a name + version en negro.
 */
+/*
+  foco: donde esta el teclado dentro de la foto, en % del alto. Es un dato
+  de la imagen, no del diseno, y por eso vive aqui: lo usan la portada, el
+  catalogo y el comparador para recortar sin cortar el producto.
+
+  Medido, no estimado: se dibuja cada foto en un canvas y se busca la banda
+  de filas con mas varianza de brillo — el teclado tiene teclas y sombras,
+  la mesa es un degradado liso. En las cinco fotos sobra mesa por arriba
+  (entre un 11% y un 33%), asi que recortar por el centro cortaba el
+  teclado y ensenaba el mantel.
+*/
 const CK_PRODUCTS = [
   {
     id: "sofle-carbon",
@@ -45,6 +56,7 @@ const CK_PRODUCTS = [
     name: "Sofle Choc",
     version: "Space Black",
     img: "sofle-carbon.jpg",
+    foco: 58,   // el teclado ocupa del 33% al 84%
     heroImg: "sofle-carbon.jpg",
     gallery: ["sofle-carbon.jpg", "sofle-carbon-2.jpg"],
     titleImg: null,   // el SVG rotulado dice "RETRO": solo vale para ese
@@ -99,6 +111,7 @@ const CK_PRODUCTS = [
     name: "Sofle Choc",
     version: "Retro",
     img: "sofle-retro.jpg",
+    foco: 63,   // del 27% al 99%
     heroImg: "sofle-retro.jpg",
     gallery: ["sofle-retro.jpg", "sofle-retro-2.jpg"],
     titleImg: "title-sofle.svg",   // el rotulo dice SOFLE RGB v3.2 RETRO
@@ -152,6 +165,7 @@ const CK_PRODUCTS = [
     name: "Totem",
     version: "38 teclas",
     img: "totem.jpg",
+    foco: 61,   // del 29% al 93%
     heroImg: "totem.jpg",
     gallery: ["totem.jpg", "totem-2.jpg"],
     titleImg: null,
@@ -204,6 +218,7 @@ const CK_PRODUCTS = [
     name: "Corne RGB",
     version: "v4 MX",
     img: "corne-v4.jpg",
+    foco: 48,   // del 11% al 86%
     heroImg: "corne-v4.jpg",
     gallery: ["corne-v4.jpg", "corne-v4-2.jpg"],
     titleImg: null,
@@ -254,6 +269,7 @@ const CK_PRODUCTS = [
     name: "Corne RGB",
     version: "v3 MX",
     img: "corne-v3.jpg",
+    foco: 56,   // del 13% al 99%
     heroImg: "corne-v3.jpg",
     gallery: ["corne-v3.jpg", "corne-v3-2.jpg"],
     titleImg: null,
