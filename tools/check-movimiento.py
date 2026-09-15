@@ -26,7 +26,7 @@ import sys
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
-HOJAS = [RAIZ / "css" / "style.css", *sorted((RAIZ / "direcciones").glob("*.css"))]
+HOJAS = sorted((RAIZ / "css").glob("*.css"))
 
 # Cada bucle, con por que existe. Si no esta aqui, no pasa.
 BUCLES = {

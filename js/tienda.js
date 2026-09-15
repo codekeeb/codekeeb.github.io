@@ -123,7 +123,7 @@ const CK = (() => {
   }
 
   const foto = (p, pequena) =>
-    `../assets/img/products/${pequena && p.img ? p.img.replace(/\.jpg$/, "-sm.jpg") : p.img}`;
+    `assets/img/products/${pequena && p.img ? p.img.replace(/\.jpg$/, "-sm.jpg") : p.img}`;
 
   /* El precio que se ensena es `priceFrom`, que es la opcion mas barata
      (muchas veces la PCB suelta, no el teclado montado). Ensenarlo a secas

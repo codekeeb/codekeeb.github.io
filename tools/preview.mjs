@@ -8,10 +8,9 @@
      - imagenes o recursos que no cargan
 
    Uso:
-     node tools/preview.mjs              # index, 3 idiomas, 2 tamanos
+     node tools/preview.mjs              # portada, catalogo y comparador
      node tools/preview.mjs --all        # + la pagina de cada producto
      node tools/preview.mjs --lang es    # solo un idioma
-     node tools/preview.mjs --direcciones # los prototipos de direccion
 
    Requiere Playwright. Si no lo tienes:  npm i -D playwright
    Las capturas van a tools/.preview/ (ignorado por git).
@@ -118,13 +117,14 @@ async function main() {
     ? [args[args.indexOf("--lang") + 1]]
     : ["es", "en", "fr"];
 
-  const paginas = [{ id: "home", url: "/index.html" }];
-  /* Las direcciones son prototipos, no la web: no entran en la tanda
-     normal, pero pasan exactamente los mismos controles cuando se piden. */
-  if (args.includes("--direcciones")) {
-    paginas.length = 0;
-    for (const d of ["portada", "a", "b", "c"]) paginas.push({ id: `dir-${d}`, url: `/direcciones/${d}.html` });
-  }
+  /* Las tres paginas de la tienda. Dejaron de ser prototipos el 15 de
+     septiembre: la portada es `/`, y el catalogo y el comparador cuelgan
+     de ella, asi que las tres entran en la tanda normal. */
+  const paginas = [
+    { id: "portada",   url: "/index.html" },
+    { id: "catalogo",  url: "/catalogo.html" },
+    { id: "comparar",  url: "/comparar.html" },
+  ];
   if (args.includes("--all")) {
     const data = await readFile(join(RAIZ, "js", "data.js"), "utf8");
     const bloque = data.slice(data.indexOf("const CK_PRODUCTS"), data.indexOf("const CK_FLAVORS"));

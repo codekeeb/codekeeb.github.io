@@ -3,25 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Codekeeb · Dirección B — La página es un comparador</title>
-<meta name="robots" content="noindex">
+<title>Comparar los cinco — Codekeeb</title>
+<meta name="description" content="La misma ficha técnica para los cinco teclados split de Codekeeb, fila a fila, con lo que cambia resaltado.">
+<link rel="canonical" href="https://codekeeb.github.io/comparar.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://codekeeb.github.io/comparar.html">
+<meta property="og:site_name" content="Codekeeb">
+<meta property="og:title" content="Comparar los cinco — Codekeeb">
+<meta property="og:description" content="La misma ficha técnica para los cinco teclados split de Codekeeb, fila a fila, con lo que cambia resaltado.">
+<meta property="og:image" content="https://codekeeb.github.io/assets/img/products/totem.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Comparar los cinco — Codekeeb">
+<meta name="twitter:description" content="La misma ficha técnica para los cinco teclados split de Codekeeb, fila a fila, con lo que cambia resaltado.">
+<meta name="twitter:image" content="https://codekeeb.github.io/assets/img/products/totem.jpg">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#f7f7f4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="b.css">
+<link rel="stylesheet" href="css/comparar.css">
 </head>
 <body>
 
 <header class="top">
   <div class="top__in envoltura">
-    <a class="marca" href="index.html">CODE<i>/</i>KEEB</a>
+    <a class="marca" href="/">CODE<i>/</i>KEEB</a>
     <span class="top__sp"></span>
     <div class="idiomas" role="group" aria-label="Idioma">
       <button data-lang-btn="es">ES</button>
       <button data-lang-btn="en">EN</button>
       <button data-lang-btn="fr">FR</button>
     </div>
-    <a class="btn btn--solido" href="a.html" data-t="d.choose">Elige tu split</a>
+    <a class="btn btn--solido" href="catalogo.html" data-t="d.choose">Elige tu split</a>
   </div>
 </header>
 
@@ -55,9 +73,9 @@
   </div></div>
 </footer>
 
-<script src="../js/data.js"></script>
-<script src="../js/i18n.js"></script>
-<script src="comun.js"></script>
+<script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/tienda.js"></script>
 <script>
 (() => {
   const $ = s => document.querySelector(s);
@@ -82,7 +100,7 @@
           p.priceOriginal ? `<s>${CK.precio(p.priceOriginal)}</s>` : ""}</div>
         <div class="col__estado ${est.clase}">${CK.escapar(est.txt)}</div>
         <div class="col__acciones">
-          <a class="btn btn--linea" href="../modelo.html?id=${p.id}">${CK.t("models.details")}</a>
+          <a class="btn btn--linea" href="modelo.html?id=${p.id}">${CK.t("models.details")}</a>
           <a class="btn btn--solido" href="${p.url}" target="_blank" rel="noopener">${CK.t("nav.buy")}</a>
         </div>
         <button class="col__apagar" data-apagar="${p.id}">− ${ETIQUETAS[CK.lang].apagar}</button>

@@ -1,433 +1,310 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Codekeeb — Sofle RGB · Teclados split ergonómicos hechos a mano</title>
-  <meta name="description" content="Sofle RGB v3.2: teclado split ergonómico 60%, presoldado, inalámbrico (BT+5), hotswap total y firmware ZMK. Hecho a mano por Codekeeb.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://codekeeb.github.io/">
-  <meta property="og:site_name" content="Codekeeb">
-  <meta property="og:title" content="Codekeeb — Sofle RGB">
-  <meta property="og:description" content="Teclado split ergonómico 60%, presoldado e inalámbrico. Hecho a mano.">
-  <meta property="og:image" content="https://codekeeb.github.io/assets/img/products/sofle-carbon.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Codekeeb — Sofle RGB">
-  <meta name="twitter:description" content="Teclado split ergonómico 60%, presoldado e inalámbrico. Hecho a mano.">
-  <meta name="twitter:image" content="https://codekeeb.github.io/assets/img/products/sofle-carbon.jpg">
-  <link rel="icon" href="/assets/favicon.ico" sizes="any">
-  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
-  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#fafaf8">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=5">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codekeeb — Teclados split ergonómicos hechos a mano</title>
+<meta name="description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Presoldados, hotswap, firmware abierto y un editor propio para reprogramarlos sin instalar nada.">
+<link rel="canonical" href="https://codekeeb.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://codekeeb.github.io/">
+<meta property="og:site_name" content="Codekeeb">
+<meta property="og:title" content="Codekeeb — Teclados split ergonómicos">
+<meta property="og:description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Presoldados, hotswap, firmware abierto y un editor propio para reprogramarlos sin instalar nada.">
+<meta property="og:image" content="https://codekeeb.github.io/assets/img/products/sofle-retro.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Codekeeb — Teclados split ergonómicos">
+<meta name="twitter:description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Presoldados, hotswap, firmware abierto y un editor propio para reprogramarlos sin instalar nada.">
+<meta name="twitter:image" content="https://codekeeb.github.io/assets/img/products/sofle-retro.jpg">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#f2f2ef">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/portada.css">
 </head>
-<body data-lang="es">
+<body>
 
-  <!-- Scroll progress -->
-  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
-
-  <!-- ============ NAV ============ -->
-  <header class="nav" id="nav">
-    <a class="nav__logo" href="#top" aria-label="Codekeeb">
-      <img src="assets/brand/logo-horizontal-dark.png"
-           srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
-           alt="Codekeeb" width="160" height="56">
-    </a>
-    <nav class="nav__links" id="navLinks">
-      <a href="#modelos" data-i18n="nav.models">Modelos</a>
-      <a href="#caracteristicas" data-i18n="nav.features">Características</a>
-      <a href="#specs" data-i18n="nav.specs">Specs</a>
-      <a href="#sabores" data-i18n="nav.flavors">Sabores</a>
-      <a href="#studio">Keymap Studio</a>
+<header class="top">
+  <div class="top__in env">
+    <a class="marca" href="/">CODE<i>/</i>KEEB</a>
+    <nav class="top__nav">
+      <a href="#rgb" data-t="p.navVentajas">Ventajas</a>
+      <a href="#cinco" data-t="p.losCinco">Los cinco</a>
+      <a href="comparar.html" data-t="d.compare">Comparar</a>
     </nav>
-    <div class="nav__right">
-      <div class="lang" role="group" aria-label="Idioma">
-        <button class="lang__btn is-active" data-setlang="es">ES</button>
-        <button class="lang__btn" data-setlang="en">EN</button>
-        <button class="lang__btn" data-setlang="fr">FR</button>
-      </div>
-      <a class="btn btn--primary nav__cta" href="#" data-shop data-i18n="nav.buy">Comprar</a>
-      <button class="nav__burger" id="burger" aria-label="Menú"><span></span><span></span></button>
+    <span class="top__sp"></span>
+    <div class="idiomas" role="group" aria-label="Idioma">
+      <button data-lang-btn="es">ES</button>
+      <button data-lang-btn="en">EN</button>
+      <button data-lang-btn="fr">FR</button>
     </div>
-  </header>
+    <a class="btn" href="catalogo.html" data-t="d.choose">Elige tu split</a>
+  </div>
+</header>
 
-  <main id="top">
+<main>
 
-    <!-- ============ HERO ============ -->
-    <section class="hero">
-      <div class="hero__aura" aria-hidden="true"></div>
+  <!-- ============ 1 · HERO ============
+       Una sola foto, enmarcada (nunca a sangre), del modelo destacado, y
+       el texto encima apoyado en la banda de mesa vacia de arriba. El
+       recorte lo calcula `CK.encuadrarTodo()` con el `foco` medido de la
+       foto; ver el comentario del heroe en portada.css.
 
-      <div class="carousel" id="carousel" tabindex="0" aria-roledescription="carrusel" aria-label="Modelos disponibles">
-        <div class="carousel__viewport">
-          <div class="carousel__track" id="carouselTrack"><!-- slides desde data.js --></div>
+       Sin rotulo sobre el titular: el titular se sostiene solo. -->
+  <section class="hero env">
+    <figure class="escenario entra entra--pieza">
+      <img id="heroImg" alt="" width="1200" height="838" data-foco="63" data-encaje="60" fetchpriority="high">
+      <figcaption class="escenario__texto">
+        <h1 class="titular entra entra--titulo" style="--d:1" data-t-html="p.heroTitle"></h1>
+        <p class="bajada entra entra--texto" style="--d:2" data-t="p.heroText"></p>
+        <span class="acciones entra entra--texto" style="--d:3">
+          <a class="btn" href="catalogo.html" data-t="p.heroCta"></a>
+          <a class="btn btn--claro" href="comparar.html" data-t="p.heroCta2"></a>
+        </span>
+      </figcaption>
+      <a class="chapa" id="chapa" target="_blank" rel="noopener"></a>
+    </figure>
+  </section>
+
+  <!-- ============ 2 · RGB, con el teclado fijado ============
+       El producto se queda quieto y los argumentos pasan a su lado,
+       encendiendose de uno en uno. Es el momento conducido de la pagina. -->
+  <section class="fijada" id="rgb">
+    <div class="fijada__in env">
+      <div class="fijada__lienzo">
+        <div class="esquema">
+          <div class="kb">
+            <div class="kb__luz" aria-hidden="true"></div>
+            <div class="kb__placa" id="kbPlaca" aria-hidden="true"></div>
+          </div>
+          <p class="esquema__nota" data-t="p.demoNota"></p>
         </div>
-
-        <button class="carousel__arrow carousel__arrow--prev" id="carPrev" aria-label="Anterior">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
-        </button>
-        <button class="carousel__arrow carousel__arrow--next" id="carNext" aria-label="Siguiente">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-        </button>
-
-        <div class="carousel__dots" id="carouselDots" role="tablist"><!-- puntos desde JS --></div>
       </div>
-
-      <a class="hero__scrollcue" href="#modelos" aria-label="Ver los modelos">
-        <span class="mono" data-i18n="hero.scroll">scroll</span>
-        <span class="hero__line"></span>
-      </a>
-    </section>
-
-    <!-- ============ MODELS ============ -->
-    <section class="models" id="modelos">
-      <header class="section-head">
-        <p class="kicker reveal reveal--label" data-i18n="models.label">Modelos</p>
-        <h2 class="section-title reveal reveal--title" style="--d:1" data-i18n-html="models.title">
-          Una familia <em>que crece</em>.
-        </h2>
-      </header>
-      <div class="models__grid" id="modelsGrid"><!-- JS desde data.js --></div>
-      <p class="price-note mono" id="priceNote"></p>
-    </section>
-
-
-    <!-- ============ KEYMAP STUDIO ============ -->
-    <section class="studio" id="studio">
-      <header class="section-head">
-        <h2 class="section-title reveal reveal--title" data-i18n-html="studio.title">
-          Tu teclado se reprograma <em>en esta página</em>.
-        </h2>
-        <p class="studio__lede reveal reveal--text" style="--d:1" data-i18n="studio.text">
-          Keymap Studio es un editor visual de ZMK que corre en el navegador.
-        </p>
-      </header>
-
-      <!-- Ficha de capacidades: termino + descripcion, como una hoja de datos.
-           Sin iconos y sin tarjetas iguales: la informacion es la estructura. -->
-      <dl class="studio__sheet">
-        <div class="studio__row reveal reveal--row">
-          <dt data-i18n="studio.live">Edición en vivo por USB</dt>
-          <dd data-i18n="studio.liveText">Cambia una tecla y se aplica al momento.</dd>
-        </div>
-        <div class="studio__row reveal reveal--row" style="--d:1">
-          <dt data-i18n="studio.layers">Capas, macros y combos</dt>
-          <dd data-i18n="studio.layersText">Y los dos encoders rotatorios.</dd>
-        </div>
-        <div class="studio__row reveal reveal--row" style="--d:2">
-          <dt data-i18n="studio.sim">RGB y OLED simulados</dt>
-          <dd data-i18n="studio.simText">Ves el underglow antes de tocar el hardware.</dd>
-        </div>
-        <div class="studio__row reveal reveal--row" style="--d:3">
-          <dt data-i18n="studio.export">Exporta tu .keymap</dt>
-          <dd data-i18n="studio.exportText">El archivo es tuyo.</dd>
-        </div>
-      </dl>
-
-      <!-- Las tres placas que define BOARDS en keymap-studio, con su numero
-           real de posiciones. Dato, no promesa. -->
-      <p class="studio__boardsLabel mono" data-i18n="studio.boards">Tres placas soportadas</p>
-      <ul class="studio__boards reveal reveal--row" style="--d:4">
-        <li><strong>Sofle RGB</strong><span class="mono">60</span></li>
-        <li><strong>Corne</strong><span class="mono">42</span></li>
-        <li><strong>Totem</strong><span class="mono">38</span></li>
-      </ul>
-
-      <div class="studio__foot reveal reveal--text" style="--d:5">
-        <a class="btn btn--primary btn--lg" href="keymap-studio/" data-i18n="studio.cta">Abrir Keymap Studio</a>
-        <p class="studio__note mono" data-i18n="studio.note">Funciona sin comprar nada.</p>
-      </div>
-    </section>
-
-    <!-- Iconos: Tabler Icons (MIT) — https://tabler.io/icons -->
-    <svg style="display:none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <symbol id="ic-split" viewBox="0 0 24 24">
-            <path d="M2 6m0 2a2 2 0 0 1 2 -2h16a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2z"/>
-            <path d="M6 10l0 .01"/><path d="M10 10l0 .01"/><path d="M14 10l0 .01"/><path d="M18 10l0 .01"/>
-            <path d="M6 14l0 .01"/><path d="M18 14l0 .01"/><path d="M10 14l4 .01"/>
-          </symbol>
-          <symbol id="ic-hotswap" viewBox="0 0 24 24">
-            <path d="M3 3m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/>
-            <path d="M15 15m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/>
-            <path d="M21 11v-3a2 2 0 0 0 -2 -2h-6l3 3m0 -6l-3 3"/>
-            <path d="M3 13v3a2 2 0 0 0 2 2h6l-3 -3m0 6l3 -3"/>
-          </symbol>
-          <symbol id="ic-wireless" viewBox="0 0 24 24">
-            <path d="M7 8l10 8l-5 4l0 -16l5 4l-10 8"/>
-          </symbol>
-          <symbol id="ic-oled" viewBox="0 0 24 24">
-            <path d="M3 5a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1v-10z"/>
-            <path d="M7 20h10"/><path d="M9 16v4"/><path d="M15 16v4"/>
-          </symbol>
-          <symbol id="ic-rgb" viewBox="0 0 24 24">
-            <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25"/>
-            <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
-            <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
-            <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
-          </symbol>
-          <symbol id="ic-battery" viewBox="0 0 24 24">
-            <path d="M16 7h1a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-2"/>
-            <path d="M8 7h-2a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h1"/>
-            <path d="M12 8l-2 4h3l-2 4"/>
-          </symbol>
-          <symbol id="ic-encoder" viewBox="0 0 24 24">
-            <path d="M4.05 11a8 8 0 1 1 .5 4m-.5 5v-5h5"/>
-          </symbol>
-          <symbol id="ic-mcu" viewBox="0 0 24 24">
-            <path d="M5 5m0 1a1 1 0 0 1 1 -1h12a1 1 0 0 1 1 1v12a1 1 0 0 1 -1 1h-12a1 1 0 0 1 -1 -1z"/>
-            <path d="M9 9h6v6h-6z"/>
-            <path d="M3 10h2"/><path d="M3 14h2"/><path d="M10 3v2"/><path d="M14 3v2"/>
-            <path d="M21 10h-2"/><path d="M21 14h-2"/><path d="M14 21v-2"/><path d="M10 21v-2"/>
-          </symbol>
-          <symbol id="ic-zmk" viewBox="0 0 24 24">
-            <path d="M7 8l-4 4l4 4"/><path d="M17 8l4 4l-4 4"/><path d="M14 4l-4 16"/>
-          </symbol>
-          <symbol id="ic-soldered" viewBox="0 0 24 24">
-            <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/>
-            <path d="M9 12l2 2l4 -4"/>
-          </symbol>
-        </defs>
-      </svg>
-
-    <!-- ============ FEATURES ============ -->
-    <section class="features" id="caracteristicas">
-      <header class="section-head">
-        <p class="kicker reveal reveal--label" data-i18n="features.label">El teclado</p>
-        <h2 class="section-title reveal reveal--title" style="--d:1" data-i18n-html="features.title">
-          Cada detalle, <em>bajo la mirilla</em>.
-        </h2>
-      </header>
-
-      <!-- 01 Keycaps + OLED -->
-      <article class="feature">
-        <figure class="feature__media reveal reveal--media">
-          <img data-i18n-img="feature-keycaps.jpg" src="assets/img/es/feature-keycaps.jpg" loading="lazy"
-               alt="Keycaps perfil MA y pantallas OLED" width="720" height="1080">
-        </figure>
-        <div class="feature__body">
-          <p class="feature__index mono reveal reveal--label">01</p>
-          <p class="kicker reveal reveal--label" data-i18n="f1.kicker">Keycaps · OLED</p>
-          <h3 class="feature__title reveal reveal--title" style="--d:1" data-i18n-html="f1.title">Perfil MA, sabor <em>Retro</em>.</h3>
-          <p class="feature__text reveal reveal--text" style="--d:2" data-i18n="f1.text">
-            58 teclas con keycaps perfil MA en acabado retro y leyendas en EN, EN+IC o ES.
-            Dos pantallas OLED custom muestran en todo momento la capa activa, WPM,
-            batería y perfil Bluetooth.
-          </p>
-          <ul class="chips reveal reveal--row" style="--d:3">
-            <li data-i18n="f1.c1">Perfil MA</li>
-            <li data-i18n="f1.c2">EN / EN+IC / ES</li>
-            <li data-i18n="f1.c3">OLED ×2 custom</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- 02 Case -->
-      <article class="feature feature--flip">
-        <figure class="feature__media reveal reveal--media">
-          <img data-i18n-img="feature-case.jpg" src="assets/img/es/feature-case.jpg" loading="lazy"
-               alt="Case custom con frame impreso en 3D y switches hotswap" width="720" height="1080">
-        </figure>
-        <div class="feature__body">
-          <p class="feature__index mono reveal reveal--label">02</p>
-          <p class="kicker reveal reveal--label" data-i18n="f2.kicker">Case custom · Hotswap</p>
-          <h3 class="feature__title reveal reveal--title" style="--d:1" data-i18n-html="f2.title">Un case <em>custom</em>, abierto por diseño.</h3>
-          <p class="feature__text reveal reveal--text" style="--d:2" data-i18n="f2.text">
-            Frame impreso en 3D en PLA blanco hueso con acrílico transparente.
-            Sockets hotswap Kailh compatibles MX — con switches MMD Holy Panda incluidos —
-            y dos encoders rotatorios pulsables, personalizables vía ZMK Studio.
-          </p>
-          <ul class="chips reveal reveal--row" style="--d:3">
-            <li data-i18n="f2.c1">Acrílico + PLA</li>
-            <li data-i18n="f2.c2">Hotswap Kailh MX</li>
-            <li data-i18n="f2.c3">2× encoders</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- 03 RGB -->
-      <article class="feature">
-        <figure class="feature__media reveal reveal--media">
-          <img data-i18n-img="feature-rgb.jpg" src="assets/img/es/feature-rgb.jpg" loading="lazy"
-               alt="RGB per-key y underglow" width="720" height="1080">
-        </figure>
-        <div class="feature__body">
-          <p class="feature__index mono reveal reveal--label">03</p>
-          <p class="kicker reveal reveal--label" data-i18n="f3.kicker">RGB personalizable</p>
-          <h3 class="feature__title reveal reveal--title" style="--d:1" data-i18n-html="f3.title">Luz <em>per-key</em> + underglow.</h3>
-          <p class="feature__text reveal reveal--text" style="--d:2" data-i18n="f3.text">
-            Retroiluminación RGB direccionable en cada tecla y underglow perimetral.
-            Efectos, brillo y color se configuran desde el propio teclado o desde ZMK Studio.
-          </p>
-          <ul class="chips reveal reveal--row" style="--d:3">
-            <li data-i18n="f3.c1">Per-key</li>
-            <li data-i18n="f3.c2">Underglow</li>
-            <li data-i18n="f3.c3">ZMK Studio</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- 04 Wireless -->
-      <article class="feature feature--flip">
-        <figure class="feature__media reveal reveal--media">
-          <img data-i18n-img="feature-bluetooth.jpg" src="assets/img/es/feature-bluetooth.jpg" loading="lazy"
-               alt="Conectividad Bluetooth" width="720" height="1080">
-        </figure>
-        <div class="feature__body">
-          <p class="feature__index mono reveal reveal--label">04</p>
-          <p class="kicker reveal reveal--label" data-i18n="f4.kicker">Conectividad</p>
-          <h3 class="feature__title reveal reveal--title" style="--d:1" data-i18n-html="f4.title">Bluetooth <em>de verdad</em>.</h3>
-          <p class="feature__text reveal reveal--text" style="--d:2" data-i18n="f4.text">
-            Hasta 5 perfiles Bluetooth para saltar entre ordenador, tablet y móvil
-            sin emparejar de nuevo. ¿Prefieres cable? USB-C con latencia cero.
-          </p>
-          <ul class="chips reveal reveal--row" style="--d:3">
-            <li data-i18n="f4.c1">BT · 5 perfiles</li>
-            <li data-i18n="f4.c2">USB-C</li>
-            <li data-i18n="f4.c3">Latencia cero</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- 05 Battery + MCU -->
-      <article class="feature">
-        <figure class="feature__media reveal reveal--media">
-          <img data-i18n-img="feature-battery.jpg" src="assets/img/es/feature-battery.jpg" loading="lazy"
-               alt="Batería 1200 mAh Li-ion y MCU NRF52840" width="720" height="1080">
-        </figure>
-        <div class="feature__body">
-          <p class="feature__index mono reveal reveal--label">05</p>
-          <p class="kicker reveal reveal--label" data-i18n="f5.kicker">Batería · MCU</p>
-          <h3 class="feature__title reveal reveal--title" style="--d:1" data-i18n-html="f5.title">1200 mAh. <em>Semanas</em> de uso.</h3>
-          <p class="feature__text reveal reveal--text" style="--d:2" data-i18n="f5.text">
-            Batería Li-ion de 1200 mAh con conector JST intercambiable e interruptor
-            físico ON/OFF en cada mitad. Y el cerebro, un NRF52840 en socket:
-            sustituible y actualizable sin soldar.
-          </p>
-          <ul class="chips reveal reveal--row" style="--d:3">
-            <li data-i18n="f5.c1">1200 mAh Li-ion</li>
-            <li data-i18n="f5.c2">JST intercambiable</li>
-            <li data-i18n="f5.c3">NRF52840 en socket</li>
-          </ul>
-        </div>
-      </article>
-    </section>
-
-    <!-- ============ SPECS ============ -->
-    <section class="specs" id="specs">
-      <header class="section-head">
-        <p class="kicker reveal reveal--label" data-i18n="specs.label">Ficha técnica</p>
-        <h2 class="section-title reveal reveal--title" style="--d:1" data-i18n-html="specs.title">
-          Specs, <em>sin letra pequeña</em>.
-        </h2>
-      </header>
-      <dl class="specs__grid" id="specsGrid"><!-- JS --></dl>
-    </section>
-
-    <!-- ============ FLAVORS ============ -->
-    <section class="flavors" id="sabores">
-      <div class="flavors__inner">
-        <div class="flavors__copy">
-          <p class="kicker reveal reveal--label" data-i18n="flavors.label">Sabores</p>
-          <h2 class="section-title reveal reveal--title" style="--d:1" data-i18n-html="flavors.title">
-            Hoy, <em>Retro</em>.<br>Mañana, más.
-          </h2>
-          <p class="flavors__text reveal reveal--text" style="--d:2" data-i18n="flavors.text">
-            Cada Sofle se sirve en un sabor: una combinación de keycaps, acentos y
-            carácter. El primero es Retro — crema, gris y un toque de verde salvia.
-            Los siguientes ya están en el taller.
-          </p>
-          <div class="flavors__cards reveal reveal--row" style="--d:3" id="flavorCards"><!-- JS --></div>
-        </div>
-        <figure class="flavors__media reveal reveal--media" style="--d:1">
-          <img src="assets/img/shared/keycaps-tray.jpg" loading="lazy"
-               alt="Keycaps sabor Retro" width="720" height="1080">
-          <span class="cross cross--tl" aria-hidden="true"></span>
-        </figure>
-      </div>
-    </section>
-
-
-    <!-- ============ CONFIANZA (vendedor) ============ -->
-    <section class="seller" id="confianza">
-      <header class="section-head">
-        <h2 class="section-title reveal reveal--title" data-i18n="trust.title">Hecho a mano, uno a uno</h2>
-      </header>
-      <ul class="seller__grid">
-        <li class="reveal reveal--row">
-          <h3 data-i18n="trust.shipping">Envío desde España</h3>
-          <p data-i18n="trust.shippingText">Preparado y enviado por mí, con seguimiento.</p>
-        </li>
-        <li class="reveal reveal--row" style="--d:1">
-          <h3 data-i18n="trust.warranty">Garantía y soporte</h3>
-          <p data-i18n="trust.warrantyText">Si algo falla, lo arreglo.</p>
-        </li>
-        <li class="reveal reveal--row" style="--d:2">
-          <h3 data-i18n="trust.custom">Personalizable</h3>
-          <p data-i18n="trust.customText">Colores, switches, keycaps y layout a medida.</p>
-        </li>
-        <li class="reveal reveal--row" style="--d:3">
-          <h3 data-i18n="trust.firmware">Firmware abierto</h3>
-          <p data-i18n="trust.firmwareText">ZMK y QMK. Remapea cuando quieras.</p>
-        </li>
-      </ul>
-    </section>
-
-    <!-- ============ CTA ============ -->
-    <section class="cta">
-      <div class="cta__aura" aria-hidden="true"></div>
-      <h2 class="cta__title reveal reveal--title" data-i18n-html="cta.title">¿Listo para <em>escribir mejor</em>?</h2>
-      <p class="cta__sub reveal reveal--text" style="--d:1" data-i18n="cta.sub">Sofle RGB v3.2 — presoldado, inalámbrico, tuyo.</p>
-      <a class="btn btn--primary btn--lg reveal reveal--cta" style="--d:2" href="#" data-shop data-i18n="cta.buy">Comprar en Etsy</a>
-    </section>
-  </main>
-
-  <!-- ============ FOOTER ============ -->
-  <footer class="footer" id="contacto">
-    <div class="footer__top">
-      <div class="footer__brand">
-        <img src="assets/brand/logo-stacked-dark.png"
-             srcset="assets/brand/logo-stacked-dark.png 1x, assets/brand/logo-stacked-dark@2x.png 2x"
-             alt="Codekeeb" class="footer__logo" width="200" height="106">
-        <p class="footer__tag" data-i18n="footer.tag">Teclados split ergonómicos, hechos con mirilla.</p>
-      </div>
-      <nav class="footer__col">
-        <h4 class="mono" data-i18n="footer.explore">Explorar</h4>
-        <a href="#caracteristicas" data-i18n="nav.features">Características</a>
-        <a href="#specs" data-i18n="nav.specs">Specs</a>
-        <a href="#sabores" data-i18n="nav.flavors">Sabores</a>
-        <a href="#modelos" data-i18n="nav.models">Modelos</a>
-        <a href="#studio">Keymap Studio</a>
-      </nav>
-      <nav class="footer__col">
-        <h4 class="mono" data-i18n="footer.shop">Tienda</h4>
-        <a href="#" data-shop>Etsy</a>
-        <a href="mailto:codekeeb@gmail.com">codekeeb@gmail.com</a>
-      </nav>
-      <div class="footer__col">
-        <h4 class="mono" data-i18n="footer.lang">Idioma</h4>
-        <div class="lang lang--footer">
-          <button class="lang__btn is-active" data-setlang="es">ES</button>
-          <button class="lang__btn" data-setlang="en">EN</button>
-          <button class="lang__btn" data-setlang="fr">FR</button>
-        </div>
+      <div class="fijada__pasos">
+        <div class="paso"><p data-t-html="p.rgbTitle"></p></div>
+        <div class="paso"><p data-t="p.paso1"></p></div>
+        <div class="paso"><p data-t="p.paso2"></p></div>
+        <div class="paso"><p data-t="p.paso3"></p></div>
+        <div class="paso"><p data-t="p.paso4"></p></div>
       </div>
     </div>
-    <div class="footer__bottom">
-      <p class="mono" data-i18n="footer.copy">© 2026 Codekeeb — Diseñado y montado a mano.</p>
-      <p class="mono">SOFLE RGB · V3.2</p>
-    </div>
-  </footer>
+  </section>
 
-  <!-- ?v= : sube el numero al cambiar catalogo o precios. Sin esto, quien
-       ya visito la web sigue viendo el data.js viejo en su cache. -->
-  <script src="js/i18n.js?v=5"></script>
-  <script src="js/data.js?v=5"></script>
-  <script src="js/main.js?v=5"></script>
+  <!-- ============ 3 · OLED ============ -->
+  <section class="escena escena--noche">
+    <div class="env centro" style="display:grid;gap:clamp(30px,6svh,64px);justify-items:center">
+      <div class="centro">
+        <span class="rotulo entra entra--rotulo" data-t="p.oledLabel"></span>
+        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.oledTitle"></h2>
+      </div>
+      <div class="esquema entra entra--pieza" style="--d:2">
+        <div class="oled" aria-hidden="true">
+          <div class="oled__v"><small>Bat</small><b>82%</b><span class="oled__bar"><i></i></span></div>
+          <div class="oled__v"><small>Capa</small><b>2</b></div>
+          <div class="oled__v"><small>WPM</small><b>96</b></div>
+          <div class="oled__v"><span class="gato"><span class="gato__cara"><i class="gato__ojo gato__ojo--i"></i><i class="gato__ojo gato__ojo--d"></i></span><i></i><i></i><span class="gato__mesa"></span></span><small>Bongo Cat</small></div>
+        </div>
+        <p class="esquema__nota" data-t="p.demoNota"></p>
+      </div>
+      <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.oledText"></p>
+    </div>
+  </section>
+
+  <!-- ============ 4 · CAPAS ============ -->
+  <section class="escena escena--noche">
+    <div class="env centro" style="display:grid;gap:clamp(30px,6svh,64px);justify-items:center">
+      <div class="centro">
+        <span class="rotulo entra entra--rotulo" data-t="p.capasLabel"></span>
+        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.capasTitle"></h2>
+      </div>
+      <div class="esquema entra entra--pieza" style="--d:2">
+        <div class="capas">
+          <div id="capasFila" aria-hidden="true"></div>
+          <p class="capas__pie" aria-hidden="true">
+            <span data-t="p.capasLabel"></span><b><span>1</span><span>2</span></b>
+          </p>
+        </div>
+        <p class="esquema__nota" data-t="p.demoNota"></p>
+      </div>
+      <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.capasText"></p>
+    </div>
+  </section>
+
+  <!-- ============ 5 · HOTSWAP ============ -->
+  <section class="escena escena--noche">
+    <div class="env centro" style="display:grid;gap:clamp(30px,6svh,64px);justify-items:center">
+      <div class="centro">
+        <span class="rotulo entra entra--rotulo" data-t="p.hotLabel"></span>
+        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.hotTitle"></h2>
+      </div>
+      <div class="esquema entra entra--pieza" style="--d:2">
+        <div class="hot" aria-hidden="true">
+          <div class="hot__col">
+            <span class="hot__hueco">
+              <span class="hot__socket"><i></i><i></i></span>
+              <span class="hot__sw"></span>
+            </span>
+            <span class="hot__et">Choc Red</span>
+          </div>
+          <div class="hot__col">
+            <span class="hot__hueco">
+              <span class="hot__socket"><i></i><i></i></span>
+              <span class="hot__sw hot__sw--marron" style="animation-delay:calc(var(--loop-tecla) / 2)"></span>
+            </span>
+            <span class="hot__et">MMD Holy Panda</span>
+          </div>
+        </div>
+        <p class="esquema__nota" data-t="p.demoNota"></p>
+      </div>
+      <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.hotText"></p>
+    </div>
+  </section>
+
+  <!-- ============ 6 · LOS CINCO ============
+       Carril horizontal con las fotos apoyadas, sin tarjetas. -->
+  <section class="escena escena--carta" id="cinco">
+    <div class="env">
+      <div class="centro">
+        <span class="rotulo entra entra--rotulo" data-t="p.losCinco"></span>
+        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t="p.catalogoTitle"></h2>
+      </div>
+    </div>
+    <div class="env" style="margin-top:clamp(30px,5svh,56px)">
+      <div class="carril entra entra--pieza" style="--d:2" id="carril"></div>
+      <div class="acciones" style="margin-top:22px">
+        <a class="btn" href="catalogo.html" data-t="p.verTodo"></a>
+        <a class="btn btn--suave" href="comparar.html" data-t="p.verComparador"></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7 · KEYMAP STUDIO ============ -->
+  <section class="escena">
+    <div class="env centro" style="display:grid;gap:26px;justify-items:center">
+      <div class="centro">
+        <span class="rotulo entra entra--rotulo">Keymap Studio</span>
+        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="studio.title"></h2>
+      </div>
+      <p class="bajada centro entra entra--texto" style="--d:2" data-t="p.studioText"></p>
+      <div class="acciones entra entra--texto" style="--d:3">
+        <a class="btn" href="keymap-studio/" data-t="studio.cta"></a>
+      </div>
+      <p class="rotulo entra entra--rotulo" style="--d:4" data-t="p.repos"></p>
+    </div>
+  </section>
+
+  <!-- ============ 8 · CONFIANZA ============ -->
+  <section class="escena escena--carta">
+    <div class="env">
+      <div class="cuatro" id="confianza"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="env">
+  <div class="pie">
+    <p class="nota" id="nota"></p>
+    <p data-t="footer.copy"></p>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/tienda.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+
+  /* Esquema de la placa: seis columnas por mitad. Es un dibujo, y por eso
+     lleva su rotulo debajo. */
+  function dibujarPlaca() {
+    const mitad = () => `<div class="kb__mitad">${
+      Array.from({ length: 24 }, () => `<span class="kb__tecla"></span>`).join("")}</div>`;
+    $("#kbPlaca").innerHTML = mitad() + mitad();
+  }
+
+  const LEYENDAS = [
+    [["Q","1"],["W","2"],["E","3"],["R","4"],["T","5"],["Y","6"]],
+    [["⇧","⇧"],["A","←"],["S","↓"],["D","↑"],["F","→"],["G","⌫"]],
+  ];
+  function dibujarCapas() {
+    $("#capasFila").innerHTML = LEYENDAS.map((fila, f) =>
+      `<div class="capas__fila">${fila.map(([a, b], i) =>
+        `<span class="capas__t${f === 1 && i === 0 ? " capas__t--hold" : ""}">
+           <span>${a}</span><span>${b}</span>
+         </span>`).join("")}</div>`).join("");
+  }
+
+  function pintar() {
+    const productos = CK.productos();
+    /* Los cinco estan marcados como `featured`, asi que `find` devolvia
+       siempre el primero. El heroe ensena el Retro a proposito: es el
+       unico con rotulo serigrafiado y el que mejor se lee en foto. */
+    const destacado = productos.find(p => p.id === "sofle-retro") || productos[0];
+    const est = CK.stock(destacado);
+
+    $("#nota").textContent = CK.notaPrecios();
+
+    const foto = $("#heroImg");
+    foto.src = CK.foto(destacado);
+    foto.alt = `${destacado.name} ${destacado.version || ""}`.trim();
+
+    /* La chapa dice el nombre en tres niveles, el precio DE ENTRADA con su
+       "desde" delante, y el stock. Y lleva al anuncio concreto. */
+    $("#chapa").href = CK.enlaceCompra(destacado);
+    $("#chapa").innerHTML = `
+      <span>${CK.rotulo(destacado)}</span>
+      <span class="chapa__sep" aria-hidden="true"></span>
+      <span>${CK.precioHTML(destacado)}</span>
+      <span class="chapa__sep" aria-hidden="true"></span>
+      <em>${CK.escapar(est.txt)}</em>`;
+
+    /* Sin `loading="lazy"`: las cinco fotos viven dentro de un carril con
+       `overflow-x:auto`, y ahi el navegador considera que las cuatro que
+       no se ven estan fuera de pantalla y no las carga nunca. Son cinco
+       imagenes pequenas; cargarlas es mas barato que el fallo. */
+    $("#carril").innerHTML = productos.map(p => {
+      const e = CK.stock(p);
+      return `
+        <a href="modelo.html?id=${p.id}">
+          <img src="${CK.foto(p, true)}" alt="${CK.escapar(p.name)}" data-foco="${p.foco ?? 50}">
+          <div>
+            <h3>${CK.rotulo(p)}</h3>
+            <p class="precio">${CK.precioHTML(p)}</p>
+            <p class="estado ${e.clase}">${CK.escapar(e.txt)}</p>
+          </div>
+        </a>`;
+    }).join("");
+
+    $("#confianza").innerHTML = [
+      ["trust.shipping","trust.shippingText"],["trust.warranty","trust.warrantyText"],
+      ["trust.custom","trust.customText"],["trust.firmware","trust.firmwareText"],
+    ].map(([a,b],i)=>`<div class="entra entra--texto" style="--d:${i}"><h3>${CK.t(a)}</h3><p>${CK.t(b)}</p></div>`).join("");
+
+    dibujarPlaca();
+    dibujarCapas();
+    CK.encuadrarTodo();
+
+    /* El argumento que esta a la altura de los ojos se enciende y los
+       demas se apagan. Sin escuchar el scroll: lo resuelve el observador
+       con un margen que deja activa solo la banda central. */
+    const ioPaso = new IntersectionObserver(es => {
+      for (const e of es) e.target.classList.toggle("viva", e.isIntersecting);
+    }, { rootMargin: "-42% 0px -42% 0px" });
+    document.querySelectorAll(".paso").forEach(p => ioPaso.observe(p));
+
+    CK.observarEntradas();
+  }
+
+  CK.pintarIdioma(pintar);
+  pintar();
+})();
+</script>
 </body>
 </html>

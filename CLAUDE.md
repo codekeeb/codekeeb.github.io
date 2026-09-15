@@ -17,18 +17,37 @@ carencia.
 
 | Archivo | Que es |
 |---|---|
-| `index.html` | Portada |
+| `index.html` | **Portada de la tienda.** Heroe con foto, las cuatro ventajas funcionando y el carril de los cinco |
+| `catalogo.html` | Rejilla de los cinco con precio, stock y filtros |
+| `comparar.html` | Los cinco en columnas, fila a fila |
 | `modelo.html` | Plantilla **generica** de producto, se abre como `modelo.html?id=<id>` |
 | `js/data.js` | **Catalogo: la unica fuente de verdad.** Productos, precios, acabados |
 | `js/i18n.js` | Los textos, en es / en / fr |
-| `js/main.js` | Portada: idioma, animaciones, render |
+| `js/tienda.js` | Motor comun de portada, catalogo y comparador: idioma, precios, encuadre de fotos |
 | `js/product.js` | Logica de `modelo.html` |
-| `css/style.css` | Sistema de diseno completo |
+| `css/portada.css` · `css/catalogo.css` · `css/comparar.css` | Una hoja por pagina, independientes |
+| `css/style.css` | Sistema de diseno de la web anterior. **Hoy solo lo usa `modelo.html`** |
+| `js/main.js` | **Muerto**: movia la landing de un producto que ya no existe. Ver abajo |
 | `assets/img/{es,en,fr}/` | Fotos con texto, una por idioma, **mismo nombre** |
 | `assets/img/shared/` | Fotos sin texto |
 | `keymap-studio/` | Aplicacion aparte, con su propio i18n. No comparte nada |
 
-Anadir un producto a `js/data.js` le da su pagina sin tocar `modelo.html`.
+Anadir un producto a `js/data.js` le da su pagina sin tocar `modelo.html`, y
+aparece solo en la portada, el catalogo y el comparador.
+
+### Restos de la landing anterior (15 sep 2026)
+
+La portada dejo de ser una landing de un solo producto. Al sustituirla
+quedaron tres cosas colgando, y **ninguna se ha borrado**: hay que decidirlas.
+
+- `js/main.js` ya no lo carga nadie. Es el unico que leia `CK_FLAVORS`, o
+  sea que **los sabores de keycaps no se ensenan en ninguna parte**.
+- 120 de las 188 claves de `js/i18n.js` no las usa ningun HTML: son las de
+  las secciones viejas (`f1.*` a `f4.*`, `specs.*`, `flavors.*`) y las de
+  los prototipos (`d.proto*`, `d.backToAll`).
+- `assets/img/{es,en,fr}/` son cinco fotos rotuladas por idioma que solo
+  usaba la landing. Son **fotos reales de producto**: no se tiran sin que
+  Ernesto lo diga.
 
 ## Las tres reglas que se rompen solas
 
@@ -52,7 +71,7 @@ actualizala. Si esta a mas de dos semanas, avisa.
 ```bash
 python3 tools/check-i18n.py        # los 3 idiomas siguen cuadrando
 python3 tools/check-movimiento.py  # dos duraciones, una curva, bucles justificados
-node tools/preview.mjs             # capturas movil + escritorio, 3 idiomas
+node tools/preview.mjs             # portada, catalogo y comparador, 3 idiomas
 node tools/preview.mjs --all       # + la pagina de cada producto
 ```
 
