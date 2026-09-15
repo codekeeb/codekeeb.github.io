@@ -112,29 +112,42 @@
     </div>
   </section>
 
-  <!-- ============ 3 · OLED ============ -->
+  <!-- ============ 3 · LAS DOS OLED ============
+       Dos pantallas separadas, no una caja con textos: es lo que lleva el
+       teclado y cada una hace una cosa distinta. Los mapas de bits son los
+       del firmware (`js/oled-datos.js`) y la composicion es la misma que
+       usa el editor (`js/oled.js`). -->
   <section class="escena escena--noche">
-    <div class="env centro" style="display:grid;gap:clamp(30px,6svh,64px);justify-items:center">
+    <div class="env centro pila">
       <div class="centro">
         <span class="rotulo entra entra--rotulo" data-t="p.oledLabel"></span>
         <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.oledTitle"></h2>
       </div>
       <div class="esquema entra entra--pieza" style="--d:2">
-        <div class="oled" aria-hidden="true">
-          <div class="oled__v"><small>Bat</small><b>82%</b><span class="oled__bar"><i></i></span></div>
-          <div class="oled__v"><small>Capa</small><b>2</b></div>
-          <div class="oled__v"><small>WPM</small><b>96</b></div>
-          <div class="oled__v"><span class="gato"><span class="gato__cara"><i class="gato__ojo gato__ojo--i"></i><i class="gato__ojo gato__ojo--d"></i></span><i></i><i></i><span class="gato__mesa"></span></span><small>Bongo Cat</small></div>
+        <div class="oleds">
+          <figure class="oled">
+            <div class="oled__marco"><canvas id="oledIzq" width="68" height="160" aria-hidden="true"></canvas></div>
+            <figcaption data-t="p.oledIzq"></figcaption>
+          </figure>
+          <figure class="oled">
+            <div class="oled__marco"><canvas id="oledDer" width="68" height="160" aria-hidden="true"></canvas></div>
+            <figcaption data-t="p.oledDer"></figcaption>
+          </figure>
         </div>
-        <p class="esquema__nota" data-t="p.demoNota"></p>
+        <p class="esquema__nota" data-t="p.oledReal"></p>
       </div>
       <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.oledText"></p>
     </div>
   </section>
 
-  <!-- ============ 4 · CAPAS ============ -->
+  <!-- ============ 4 · CAPAS Y EL EDITOR ============
+       La demo de capas se queda (ensena que las teclas cambian de
+       significado), y debajo va lo que el editor hace de verdad, sacado
+       de sus propias funciones: hold-tap, encoders por capa, macros
+       guardadas en el teclado, unicode y la lista de behaviors que el
+       firmware declara por USB. -->
   <section class="escena escena--noche">
-    <div class="env centro" style="display:grid;gap:clamp(30px,6svh,64px);justify-items:center">
+    <div class="env centro pila">
       <div class="centro">
         <span class="rotulo entra entra--rotulo" data-t="p.capasLabel"></span>
         <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.capasTitle"></h2>
@@ -149,12 +162,25 @@
         <p class="esquema__nota" data-t="p.demoNota"></p>
       </div>
       <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.capasText"></p>
+
+      <ul class="editor entra entra--texto" style="--d:4">
+        <li><h3 data-t="p.edCapas"></h3><p data-t="p.edCapasT"></p></li>
+        <li><h3 data-t="p.edHold"></h3><p data-t="p.edHoldT"></p></li>
+        <li><h3 data-t="p.edEnc"></h3><p data-t="p.edEncT"></p></li>
+        <li><h3 data-t="p.edMacros"></h3><p data-t="p.edMacrosT"></p></li>
+        <li><h3 data-t="p.edUnicode"></h3><p data-t="p.edUnicodeT"></p></li>
+        <li><h3 data-t="p.edBehav"></h3><p data-t="p.edBehavT"></p></li>
+      </ul>
+      <div class="entra entra--texto pila pila--junta" style="--d:5">
+        <a class="btn btn--claro" href="keymap-studio/" data-t="studio.cta"></a>
+        <p class="rotulo" data-t="p.edNota"></p>
+      </div>
     </div>
   </section>
 
   <!-- ============ 5 · HOTSWAP ============ -->
   <section class="escena escena--noche">
-    <div class="env centro" style="display:grid;gap:clamp(30px,6svh,64px);justify-items:center">
+    <div class="env centro pila">
       <div class="centro">
         <span class="rotulo entra entra--rotulo" data-t="p.hotLabel"></span>
         <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.hotTitle"></h2>
@@ -251,7 +277,7 @@
 
   <!-- ============ 7 · KEYMAP STUDIO ============ -->
   <section class="escena">
-    <div class="env centro" style="display:grid;gap:26px;justify-items:center">
+    <div class="env centro pila pila--junta">
       <div class="centro">
         <span class="rotulo entra entra--rotulo">Keymap Studio</span>
         <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="studio.title"></h2>
@@ -284,6 +310,8 @@
 <script src="js/tienda.js"></script>
 <script src="js/sofle.js"></script>
 <script src="js/rgb.js"></script>
+<script src="js/oled-datos.js"></script>
+<script src="js/oled.js"></script>
 <script>
 (() => {
   const $ = s => document.querySelector(s);
@@ -303,6 +331,7 @@
   /* El teclado se monta una sola vez: cambiar de idioma no cambia la
      forma del Sofle, y remontarlo perderia el efecto en curso. */
   const teclado = CK_RGB.montar(document.getElementById("kb"));
+  CK_OLED.montar(document.getElementById("oledIzq"), document.getElementById("oledDer"));
 
   function pintar() {
     const productos = CK.productos();
