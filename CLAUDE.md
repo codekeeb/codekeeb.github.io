@@ -96,8 +96,14 @@ hay que apuntarlo en `BUCLES_PERMITIDOS` con su motivo.
 
 ## Como se trabaja
 
-`main` es produccion: se publica sola. **No empujes a `main` directamente.**
-Rama, capturas, revision, y la fusion la hace Ernesto desde la web de GitHub.
+`main` es produccion: se publica sola. **Desde el 15 sep 2026 se trabaja
+directamente sobre `main`**, por decision expresa de Ernesto: quiere ver
+cada cambio en la pagina de verdad en vez de en capturas. Antes la regla
+era la contraria; si vuelve a cambiar, se cambia aqui.
+
+Eso quita la red de la revision, asi que la pone el que empuja:
+**los tres validadores en verde y las capturas mandadas ANTES de empujar.**
+Nada de empujar a ver que pasa.
 
 Escribe los comentarios de codigo en castellano, como el resto del proyecto,
 y explica el *porque*, no el *que*.
