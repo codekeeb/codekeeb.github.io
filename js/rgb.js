@@ -1,181 +1,218 @@
 /* ============================================================
-   CODEKEEB — los modos de iluminacion, sobre el teclado real
+   CODEKEEB — los modos de iluminacion, portados del firmware
    ------------------------------------------------------------
-   Antes esta region ensenaba una rejilla ortogonal de cuadraditos con un
-   degradado borroso detras. No era el Sofle: no tenia splay, ni caida de
-   menique, ni pulgares. Ahora dibuja `CK_SOFLE`, que es la geometria del
-   shield, y le corre por encima los efectos que lleva el firmware.
+   La primera version de este archivo calculaba un color por tecla a
+   partir de su posicion x,y. Estaba mal, y se veia: el Sofle no lleva un
+   LED por tecla, lleva **30 de underglow por mitad** y varias teclas
+   comparten LED (ver `js/sofle-led.js`). Sesenta valores independientes
+   convertian un degradado en confeti.
 
-   Los cinco modos, sus colores y sus duraciones salen del array `FX` de
-   `keymap-studio/index.html`, que es lo que la placa ejecuta de verdad.
-   Se han elegido los cinco que menos se parecen entre si; los otros cinco
-   (sparkle, solid, ocean, sparkle oro, ripple rosa) se nombran en el
-   texto sin animarse, para no repetir cinco veces lo mismo.
+   Asi que esto ya no es una aproximacion: es el mismo algoritmo que corre
+   el editor, `fxFrame`, con sus mismas constantes — 30 fotogramas por
+   segundo, las mismas coordenadas de LED, la misma interpolacion en HSL y
+   los mismos colores y duraciones del array FX del firmware.
 
-   El color por tecla se calcula en JavaScript y no en CSS a proposito:
-   `ripple` y `heatmap` dependen de que tecla se pulsa, y eso no se puede
-   escribir como un @keyframes. El bucle solo corre cuando la region esta
-   en pantalla.
+   Y lo que se dibuja tambien cambia: un LED apagado NO pinta halo. Antes
+   un ripple fuera de la onda dibujaba un resplandor negro alrededor de la
+   tecla; ahora simplemente no hay luz, que es lo que hace que las teclas
+   se vean negras como el fondo.
    ============================================================ */
 
 const CK_RGB = (() => {
-  /* Los cinco efectos, copiados del firmware. `tipo` dice como se calcula:
-       lg = rampa lineal que recorre el teclado en un angulo
-       rp = onda circular desde la tecla pulsada
-       hm = mapa de calor: la tecla se enciende al pulsarla y se enfria  */
+  const FPS = 30;                       /* el firmware va a 30, no a 60 */
+
+  /* Los cinco efectos, copiados del array FX del Studio. */
   const FX = [
-    { id: "gradient", tipo: "lg", colores: [[160,100,50],[280,100,50],[20,100,50]], angulo: 15, dur: 8,   ancho: 255 },
-    { id: "ripple",   tipo: "rp", colores: [[200,100,50]],                          dur: 800, ancho: 30 },
-    { id: "fire",     tipo: "lg", colores: [[0,100,45],[25,100,50],[45,100,55]],    angulo: 90, dur: 4,  ancho: 255 },
-    { id: "sunset",   tipo: "lg", colores: [[25,100,50],[355,100,50],[330,100,50],[285,100,50],[235,100,50]], angulo: 0, dur: 0, ancho: 300 },
-    { id: "heatmap",  tipo: "hm", colores: [[190,100,55]],                          dur: 1200 },
+    { id: "gradient", tipo: "lg", cols: [[160,100,50],[280,100,50],[20,100,50]], ang: 15, dur: 8,   w: 255 },
+    { id: "ripple",   tipo: "rp", cols: [[200,100,50]],                          dur: 800, w: 30 },
+    { id: "fire",     tipo: "lg", cols: [[0,100,45],[25,100,50],[45,100,55]],    ang: 90, dur: 4,   w: 255 },
+    { id: "sunset",   tipo: "lg", cols: [[25,100,50],[355,100,50],[330,100,50],[285,100,50],[235,100,50]], ang: 0, dur: 0, w: 300 },
+    { id: "heatmap",  tipo: "hm", cols: [[190,100,55]],                          dur: 1200 },
   ];
   const porId = Object.fromEntries(FX.map(f => [f.id, f]));
 
-  /* --- dibujo ------------------------------------------------------
-     Cada mitad es una caja girada; las teclas van dentro con su propia
-     rotacion. Es exactamente como lo monta el Studio, para que la forma
-     no se vaya separando de la del editor. */
+  const lim = (v, a, b) => Math.min(b, Math.max(a, v));
+  /* Interpola en HSL por el camino corto del tono: por el largo pasaria
+     por el gris y el degradado se ensuciaria en el medio. */
+  function lerp(c0, c1, t) {
+    let dh = c1[0] - c0[0];
+    if (dh > 180) dh -= 360;
+    if (dh < -180) dh += 360;
+    return [c0[0] + dh * t, c0[1] + (c1[1] - c0[1]) * t, c0[2] + (c1[2] - c0[2]) * t];
+  }
+  function hsl2rgb(h, s, l) {
+    h = ((h % 360) + 360) % 360; s = lim(s, 0, 100) / 100; l = lim(l, 0, 100) / 100;
+    const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = l - c / 2;
+    let r, g, b;
+    if (h < 60) { r = c; g = x; b = 0; } else if (h < 120) { r = x; g = c; b = 0; }
+    else if (h < 180) { r = 0; g = c; b = x; } else if (h < 240) { r = 0; g = x; b = c; }
+    else if (h < 300) { r = x; g = 0; b = c; } else { r = c; g = 0; b = x; }
+    return [(r + m) * 255, (g + m) * 255, (b + m) * 255];
+  }
+
+  /* --- dibujo del teclado ------------------------------------------- */
   function dibujar(destino) {
     const S = CK_SOFLE;
     destino.innerHTML = "";
-    const escenario = document.createElement("div");
-    escenario.className = "kb__escena";
-    escenario.style.width = S.ESCENARIO.w + "px";
-    escenario.style.height = S.ESCENARIO.h + "px";
-
+    const escena = document.createElement("div");
+    escena.className = "kb__escena";
+    escena.style.width = S.ESCENARIO.w + "px";
+    escena.style.height = S.ESCENARIO.h + "px";
     const mitades = S.MITADES.map(m => {
       const d = document.createElement("div");
       d.className = "kb__mitad";
       d.style.cssText = `left:${m.x}px;top:${m.y}px;width:${m.w}px;height:${m.h}px;transform:rotate(${m.rot}deg)`;
-      escenario.appendChild(d);
+      escena.appendChild(d);
       return d;
     });
-
-    const teclas = [];
-    S.TECLAS.forEach((g, i) => {
-      if (!g) { teclas.push(null); return; }           /* los dos encoders */
+    /* Un elemento por posicion del keymap, con hueco para los dos clicks
+       de encoder, que ocupan posicion pero no son teclas. Sin encoders
+       dibujados: no aportan nada a lo que cuenta esta region. */
+    const teclas = S.TECLAS.map((g, i) => {
+      if (!g) return null;
       const [mitad, x, y, rot, ancho] = g;
       const el = document.createElement("i");
       el.className = "kb__tecla";
       el.style.cssText = `left:${x}px;top:${y}px;width:${ancho || S.KEY}px;height:${S.KEY}px`
         + (rot ? `;transform:rotate(${rot}deg)` : "");
       mitades[mitad].appendChild(el);
-      /* El centro en coordenadas del escenario: hace falta para las
-         rampas y las ondas, que no saben de mitades. */
-      const m = S.MITADES[mitad], a = m.rot * Math.PI / 180;
-      const cx = x + (ancho || S.KEY) / 2, cy = y + S.KEY / 2;
-      teclas.push({
-        el, i,
-        X: m.x + cx * Math.cos(a) - cy * Math.sin(a),
-        Y: m.y + cx * Math.sin(a) + cy * Math.cos(a),
-      });
+      return { el, mitad, led: (mitad ? CK_LED.KP_R : CK_LED.KP_L)[i] };
     });
-
-    S.ENCODERS.forEach((e, n) => {
-      const d = document.createElement("i");
-      d.className = "kb__encoder";
-      d.style.cssText = `left:${e.x + 7}px;top:${e.y + 7}px`;
-      mitades[n].appendChild(d);
-    });
-
-    destino.appendChild(escenario);
-    return { escenario, teclas: teclas.filter(Boolean) };
+    destino.appendChild(escena);
+    return { escena, teclas: teclas.filter(Boolean) };
   }
 
-  /* --- color -------------------------------------------------------- */
-  const hsl = (h, s, l, a) => `hsl(${h.toFixed(0)} ${s}% ${l}% / ${a.toFixed(2)})`;
+  /* --- el motor de efectos, portado de fxFrame ----------------------- */
+  const estadoMitad = () => ({ off: 0, evs: [], calor: new Float32Array(30) });
 
-  /* Interpola la lista de colores del efecto en la posicion 0..1 de la
-     rampa, dando la vuelta al final para que el bucle no de un tirón. */
-  function rampa(cols, t) {
-    const n = cols.length, p = ((t % 1) + 1) % 1 * n;
-    const a = cols[Math.floor(p) % n], b = cols[(Math.floor(p) + 1) % n], f = p % 1;
-    /* el tono se interpola por el camino corto, si no pasa por el gris */
-    let dh = b[0] - a[0];
-    if (dh > 180) dh -= 360; if (dh < -180) dh += 360;
-    return [a[0] + dh * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
-  }
-
-  /* --- el bucle ------------------------------------------------------ */
   function montar(destino) {
-    const { escenario, teclas } = dibujar(destino);
+    const { escena, teclas } = dibujar(destino);
     const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let fx = FX[0], t0 = performance.now(), rid = 0, visible = false;
-    let ondas = [], calor = new Float32Array(teclas.length), proxima = 0;
+    let fx = null, est = [estadoMitad(), estadoMitad()];
+    let visible = false, rid = 0, ultimo = 0, proxima = 0;
+    const ultimoColor = new Array(teclas.length).fill("");
 
-    const diagonal = Math.hypot(CK_SOFLE.ESCENARIO.w, CK_SOFLE.ESCENARIO.h);
-
-    function pinta(ahora) {
-      const t = (ahora - t0) / 1000;
-
-      /* Pulsaciones simuladas: ripple y heatmap no existen sin alguien
-         escribiendo, asi que se teclea a un ritmo humano (unas 6 por
-         segundo) en teclas al azar. */
-      if ((fx.tipo === "rp" || fx.tipo === "hm") && ahora > proxima) {
-        proxima = ahora + 110 + Math.random() * 90;
-        const k = teclas[(Math.random() * teclas.length) | 0];
-        if (fx.tipo === "rp") { ondas.push({ x: k.X, y: k.Y, t: ahora }); if (ondas.length > 5) ondas.shift(); }
-        else calor[k.i] = 1;
-      }
-      ondas = ondas.filter(o => ahora - o.t < fx.dur * 2.2);
-
-      const ang = (fx.angulo || 0) * Math.PI / 180;
-      const ux = Math.cos(ang), uy = Math.sin(ang);
-
-      for (const k of teclas) {
-        let h, s, l, a = 1;
+    function fotograma() {
+      const salida = [[], []];
+      for (let m = 0; m < 2; m++) {
+        const s = est[m], PIX = m ? CK_LED.PIX_R : CK_LED.PIX_L, C = salida[m], n = PIX.length;
         if (fx.tipo === "lg") {
-          const d = (k.X * ux + k.Y * uy) / fx.ancho;
-          const avance = fx.dur ? t / fx.dur : 0;
-          [h, s, l] = rampa(fx.colores, d - avance);
-        } else if (fx.tipo === "rp") {
-          [h, s, l] = fx.colores[0]; a = 0.08;
-          for (const o of ondas) {
-            const edad = (ahora - o.t) / fx.dur;
-            const radio = edad * diagonal * 0.55;
-            const dist = Math.abs(Math.hypot(k.X - o.x, k.Y - o.y) - radio);
-            if (dist < fx.ancho * 3) a = Math.max(a, (1 - dist / (fx.ancho * 3)) * (1 - edad));
+          const a = fx.ang * Math.PI / 180, cos = Math.cos(a), sin = Math.sin(a);
+          const gw = fx.w, nc = fx.cols.length, cw = gw / nc;
+          if (fx.dur > 0) s.off = (s.off + gw / (fx.dur * FPS)) % gw;
+          for (let i = 0; i < n; i++) {
+            const x = PIX[i][0] * cos + PIX[i][1] * sin;
+            const d = ((gw + x - s.off) % gw + gw) % gw;
+            const desde = Math.floor(d / cw) % nc, paso = (d - Math.floor(d / cw) * cw) / cw;
+            C[i] = lerp(fx.cols[desde], fx.cols[(desde + 1) % nc], paso);
           }
-        } else {                                     /* heatmap */
-          calor[k.i] = Math.max(0, calor[k.i] - 16 / fx.dur);
-          const c = calor[k.i];
-          h = fx.colores[0][0] - c * 190;            /* de cian a rojo */
-          s = 100; l = 30 + c * 30; a = 0.1 + c * 0.9;
+        } else if (fx.tipo === "rp") {
+          const dpf = (255 * 1000 / fx.dur) / FPS, rw = fx.w / 2, marco = Math.round(255 / dpf);
+          for (let i = 0; i < n; i++) C[i] = null;
+          s.evs.forEach(ev => {
+            if (ev.f >= marco) return;
+            const ed = dpf * ev.f, p = PIX[ev.led];
+            for (let i = 0; i < n; i++) {
+              const dx = PIX[i][0] - p[0], dy = PIX[i][1] - p[1];
+              const dif = Math.abs(Math.sqrt(dx * dx + dy * dy) - ed);
+              if (dif < rw) {
+                const base = C[i] || [fx.cols[0][0], fx.cols[0][1], 0];
+                C[i] = [base[0], base[1], Math.min(100, base[2] + fx.cols[0][2] * (1 - dif / rw))];
+              }
+            }
+            ev.f++;
+          });
+          s.evs = s.evs.filter(ev => ev.f < marco);
+          for (let i = 0; i < n; i++) if (!C[i]) C[i] = [fx.cols[0][0], fx.cols[0][1], 0];
+        } else {                                        /* heatmap */
+          const baja = (1000 / FPS) / fx.dur;
+          for (let i = 0; i < n; i++) {
+            s.calor[i] = Math.max(0, s.calor[i] - baja);
+            C[i] = [fx.cols[0][0], fx.cols[0][1], fx.cols[0][2] * s.calor[i]];
+          }
         }
-        k.el.style.setProperty("--luz", hsl(h, s, l, a));
       }
-      if (!quieto && visible) rid = requestAnimationFrame(pinta);
+      return salida;
     }
 
-    /* Solo corre lo que se ve: cinco teclados animandose a la vez fuera
-       de pantalla es gastar bateria para nada. */
-    new IntersectionObserver(es => {
-      visible = es[0].isIntersecting;
-      if (visible && !quieto) { rid = requestAnimationFrame(pinta); }
-      else { cancelAnimationFrame(rid); }
-    }, { rootMargin: "120px" }).observe(destino);
+    /* Ripple y heatmap no existen sin alguien escribiendo, asi que se
+       teclea a un ritmo humano en teclas al azar. */
+    function tecleaAlgo(ahora) {
+      if (!fx || (fx.tipo !== "rp" && fx.tipo !== "hm") || ahora < proxima) return;
+      proxima = ahora + 130 + Math.random() * 120;
+      const k = teclas[(Math.random() * teclas.length) | 0];
+      const s = est[k.mitad];
+      if (fx.tipo === "rp") { s.evs.push({ led: k.led, f: 0 }); if (s.evs.length > 6) s.evs.shift(); }
+      else s.calor[k.led] = 1;
+    }
 
-    /* El escenario mide 1520x666 fijos, que son las unidades del layout.
-       Se escala entero en vez de recalcular cada tecla: asi las
-       coordenadas siguen siendo las del shield y no se deforman. */
+    function apaga(k, i) {
+      if (ultimoColor[i] === "") return;
+      ultimoColor[i] = "";
+      k.el.style.removeProperty("--luz");
+      k.el.style.boxShadow = "";
+    }
+
+    function pinta(ahora) {
+      /* A 30 fotogramas por segundo, que es a lo que corre el firmware:
+         a 60 los efectos irian al doble de velocidad que en el teclado. */
+      if (ahora - ultimo >= 1000 / FPS) {
+        ultimo = ahora;
+        if (!fx) { teclas.forEach(apaga); }
+        else {
+          tecleaAlgo(ahora);
+          const cols = fotograma();
+          teclas.forEach((k, i) => {
+            const hsl = cols[k.mitad][k.led];
+            const [r, g, b] = hsl2rgb(hsl[0], hsl[1], Math.min(62, hsl[2] * 1.08));
+            /* Un LED apagado no pinta nada. Pintarlo igual dibujaba un
+               halo NEGRO alrededor de la tecla; lo correcto es que no
+               haya luz y la tecla se quede del color del fondo. */
+            const lum = Math.max(r, g, b) / 255;
+            if (lum < 0.02) return apaga(k, i);
+            const col = `${r | 0},${g | 0},${b | 0}`;
+            if (col === ultimoColor[i]) return;
+            ultimoColor[i] = col;
+            /* El resplandor sale FUERA del keycap: el `spread` negativo
+               impide que el difuminado se meta hacia dentro y se coma la
+               tecla, que es lo que la volvia un cuadrado de color. */
+            k.el.style.setProperty("--luz", `rgb(${col})`);
+            k.el.style.boxShadow =
+              `inset 0 2px 0 rgba(255,255,255,.06), inset 0 -4px 7px rgba(0,0,0,.7)`
+              + `,0 20px 30px -12px rgba(${col},${(0.5 * lum).toFixed(2)})`
+              + `,0 0 26px -9px rgba(${col},${(0.72 * lum).toFixed(2)})`
+              + `,0 0 46px -16px rgba(${col},${(0.5 * lum).toFixed(2)})`;
+          });
+        }
+      }
+      if (visible && !quieto) rid = requestAnimationFrame(pinta);
+    }
+
     function escalar() {
       const w = destino.clientWidth;
-      if (w) escenario.style.transform = `scale(${w / CK_SOFLE.ESCENARIO.w})`;
+      if (w) escena.style.transform = `scale(${w / CK_SOFLE.ESCENARIO.w})`;
     }
     escalar();
     let temp;
     addEventListener("resize", () => { clearTimeout(temp); temp = setTimeout(escalar, 120); }, { passive: true });
 
+    new IntersectionObserver(es => {
+      visible = es[0].isIntersecting;
+      if (visible && !quieto) rid = requestAnimationFrame(pinta);
+      else cancelAnimationFrame(rid);
+    }, { rootMargin: "120px" }).observe(destino);
+
     pinta(performance.now());
 
     return {
-      escenario,
-      /* cambiar de modo reinicia el reloj: si no, un efecto lento entra
-         por la mitad y parece que se ha saltado el principio */
+      /* `null` apaga el RGB del todo y deja las teclas negras, que es como
+         empieza la region: primero el teclado, y luego la luz. */
       modo(id) {
-        if (!porId[id] || fx === porId[id]) return;
-        fx = porId[id]; t0 = performance.now(); ondas = []; calor.fill(0);
+        const nuevo = id ? porId[id] : null;
+        if (nuevo === fx) return;
+        fx = nuevo;
+        est = [estadoMitad(), estadoMitad()];
+        ultimo = 0;
         if (quieto || !visible) pinta(performance.now());
       },
     };

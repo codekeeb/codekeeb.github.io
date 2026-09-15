@@ -103,7 +103,7 @@
         </div>
       </div>
       <div class="fijada__pasos">
-        <div class="paso paso--titular"><p data-t-html="p.rgbTitle"></p></div>
+        <div class="paso paso--titular" data-fx=""><p data-t-html="p.rgbTitle"></p></div>
         <div class="paso" data-fx="gradient">
           <b class="paso__n">gradient</b><p data-t="p.fx1Text"></p></div>
         <div class="paso" data-fx="ripple">
@@ -316,6 +316,7 @@
 <script src="js/i18n.js"></script>
 <script src="js/tienda.js"></script>
 <script src="js/sofle.js"></script>
+<script src="js/sofle-led.js"></script>
 <script src="js/rgb.js"></script>
 <script src="js/oled-datos.js"></script>
 <script src="js/oled.js"></script>
@@ -396,7 +397,9 @@
     const ioPaso = new IntersectionObserver(es => {
       for (const e of es) {
         e.target.classList.toggle("viva", e.isIntersecting);
-        if (e.isIntersecting && e.target.dataset.fx) teclado.modo(e.target.dataset.fx);
+        /* `data-fx` vacio = RGB apagado. El primer paso ensena el teclado
+           negro, sin luz, que es como esta cuando lo sacas de la caja. */
+        if (e.isIntersecting && e.target.dataset.fx !== undefined) teclado.modo(e.target.dataset.fx || null);
       }
     }, { rootMargin: "-42% 0px -42% 0px" });
     document.querySelectorAll(".paso").forEach(p => ioPaso.observe(p));
