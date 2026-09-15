@@ -63,17 +63,45 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   backdrop-filter:blur(10px);border-bottom:1px solid var(--filete);
 }
 .top__in{display:flex;align-items:center;gap:20px;height:60px}
-.marca{font-family:var(--display);font-size:1rem;letter-spacing:-.02em}
-.marca i{font-style:normal;color:var(--gris)}
 .top__sp{flex:1}
-.idiomas{display:flex;gap:2px;border:1px solid var(--filete);border-radius:3px;padding:2px}
-.idiomas button{
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;padding:.4em .7em;
-  border-radius:2px;color:var(--gris);transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease);
+/* ---------- cabecera: logotipo real y un solo boton de idioma -------
+   El logotipo dejo de ser texto imitando la marca y pasa a ser la marca:
+   `assets/brand/logo-horizontal-dark.png` es tinta oscura sobre
+   transparente, o sea que es el que va en fondo claro (el `-light` es el
+   de fondo oscuro, no al reves).
+
+   El idioma era tres botones fijos de 25x21 px que gastaban ancho para
+   ensenar dos idiomas que no estas usando. Ahora es uno con el actual y
+   un desplegable con los tres, y el objetivo mide 44. */
+.marca{display:flex;align-items:center;flex:0 0 auto}
+.marca img{height:26px;width:auto}
+.top__studio{white-space:nowrap}
+.idiomas{position:relative}
+.idiomas__d{display:inline-flex;align-items:center;gap:.45em;min-height:44px;padding:0 .7em;
+  border-radius:99px;font-family:var(--mono);font-size:var(--label,.7rem);letter-spacing:.1em;
+  color:var(--gris);transition:color var(--t-tap) var(--ease),background var(--t-tap) var(--ease)}
+.idiomas__d svg{opacity:.7;transition:transform var(--t-tap) var(--ease)}
+.idiomas__d[aria-expanded="true"]{color:var(--tinta)}
+.idiomas__d[aria-expanded="true"] svg{transform:rotate(180deg)}
+.idiomas__m{position:absolute;top:calc(100% + 6px);right:0;z-index:70;min-width:150px;
+  display:grid;padding:5px;border-radius:12px;background:var(--carta);
+  box-shadow:0 1px 0 var(--filete) inset, 0 18px 40px -22px rgba(17,19,22,.5), 0 0 0 1px var(--filete);
+  animation:despliega var(--t-tap) var(--ease)}
+/* Entra desde arriba, que es de donde sale: un menu que crece desde su
+   propio disparador se lee como una consecuencia del clic. */
+@keyframes despliega{from{opacity:0;transform:translateY(-4px) scale(.98)}}
+.idiomas__m button{display:flex;align-items:center;min-height:40px;padding:0 .8em;border-radius:8px;
+  font-size:.86rem;text-align:left;color:var(--gris);
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease)}
+.idiomas__m button[aria-checked="true"]{color:var(--tinta);font-weight:500}
+.idiomas__m button[aria-checked="true"]::after{content:"";width:5px;height:5px;border-radius:50%;
+  background:var(--marca,var(--tinta));margin-left:auto}
+@media (hover:hover) and (pointer:fine){
+  .idiomas__d:hover{color:var(--tinta);background:rgba(17,19,22,.05)}
+  .idiomas__m button:hover{background:rgba(17,19,22,.05);color:var(--tinta)}
 }
-.idiomas button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
-.idiomas button:hover{color:var(--tinta)}
-.idiomas button[aria-pressed="true"]:hover{color:var(--papel)}
+@media (prefers-reduced-motion:reduce){ .idiomas__m{animation:none} }
+
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.5em;
   font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;

@@ -32,12 +32,26 @@
 
 <header class="top">
   <div class="top__in envoltura">
-    <a class="marca" href="/">CODE<i>/</i>KEEB</a>
+    <a class="marca" href="/" aria-label="Codekeeb">
+      <img src="assets/brand/logo-horizontal-dark.png"
+           srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
+           width="640" height="224" alt="CODE/KEEB">
+    </a>
+    <nav class="top__nav">
+      <a href="comparar.html" data-t="d.compare">Comparar</a>
+      <a class="top__studio" href="keymap-studio/">Keymap Studio</a>
+    </nav>
     <span class="top__sp"></span>
-    <div class="idiomas" role="group" aria-label="Idioma">
-      <button data-lang-btn="es">ES</button>
-      <button data-lang-btn="en">EN</button>
-      <button data-lang-btn="fr">FR</button>
+    <div class="idiomas">
+      <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false"
+              aria-label="Idioma"><span data-lang-actual>ES</span><svg viewBox="0 0 10 6" aria-hidden="true"
+              width="10" height="6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"
+              stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="idiomas__m" data-lang-menu role="menu" hidden>
+        <button data-lang-btn="es">Español</button>
+        <button data-lang-btn="en">English</button>
+        <button data-lang-btn="fr">Français</button>
+      </div>
     </div>
     <a class="btn btn--solido" href="comparar.html"><span data-t="d.compare">Compara los cinco</span></a>
   </div>
@@ -150,6 +164,7 @@
     CK.observarEntradas();
   }
 
+  CK.montarSelectorIdioma();
   CK.pintarIdioma(pintar);
   pintar();
 })();

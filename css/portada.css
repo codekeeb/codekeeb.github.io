@@ -61,7 +61,6 @@
   --label:.7rem;
 
   /* Bucles de demostracion, cada uno con su motivo. */
-  --loop-luz:9s;      /* el RGB recorriendo la placa; lento, es luz */
   --loop-vista:16s;   /* cuatro vistas del OLED, 4 s cada una */
   --loop-capa:12s;    /* el salto de capa */
   --loop-tecla:3.2s;  /* el switch saliendo: es un gesto, va corto */
@@ -110,22 +109,53 @@ html{caret-color:var(--tinta);scrollbar-color:rgba(17,19,22,.28) transparent;scr
 .top{position:sticky;top:0;z-index:60;background:rgba(242,242,239,.82);
   backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid var(--filete)}
 .top__in{display:flex;align-items:center;gap:14px;height:56px}
-.marca{font-family:var(--display);font-size:1rem;letter-spacing:-.02em}
-.marca i{font-style:normal;color:var(--gris)}
 .top__nav{display:flex;gap:20px;margin-left:24px}
 .top__nav a{font-size:.8rem;color:var(--gris);transition:color var(--t-tap) var(--ease)}
 .top__nav a:hover{color:var(--tinta)}
 .top__sp{flex:1}
-.idiomas{display:flex;gap:1px}
-/* 25x21 px era el tamano real de estos tres botones. Ahora miden 44 de
-   alto, que es el dedo, sin que la cabecera crezca mas de cuatro pixeles. */
-.idiomas button{font-family:var(--mono);font-size:var(--label);letter-spacing:.1em;
-  min-width:40px;min-height:44px;display:grid;place-items:center;
-  border-radius:99px;color:var(--tenue);transition:color var(--t-tap) var(--ease)}
-.idiomas button[aria-pressed="true"]{color:var(--tinta)}
-.idiomas button:hover{color:var(--tinta)}
 
 /* Boton de pildora, sin caja dura: el acento es el relleno, no el borde. */
+/* ---------- cabecera: logotipo real y un solo boton de idioma -------
+   El logotipo dejo de ser texto imitando la marca y pasa a ser la marca:
+   `assets/brand/logo-horizontal-dark.png` es tinta oscura sobre
+   transparente, o sea que es el que va en fondo claro (el `-light` es el
+   de fondo oscuro, no al reves).
+
+   El idioma era tres botones fijos de 25x21 px que gastaban ancho para
+   ensenar dos idiomas que no estas usando. Ahora es uno con el actual y
+   un desplegable con los tres, y el objetivo mide 44. */
+.marca{display:flex;align-items:center;flex:0 0 auto}
+.marca img{height:26px;width:auto}
+.top__studio{white-space:nowrap}
+.idiomas{position:relative}
+.idiomas__d{display:inline-flex;align-items:center;gap:.45em;min-height:44px;padding:0 .7em;
+  border-radius:99px;font-family:var(--mono);font-size:var(--label,.7rem);letter-spacing:.1em;
+  color:var(--gris);transition:color var(--t-tap) var(--ease),background var(--t-tap) var(--ease)}
+.idiomas__d svg{opacity:.7;transition:transform var(--t-tap) var(--ease)}
+.idiomas__d[aria-expanded="true"]{color:var(--tinta)}
+.idiomas__d[aria-expanded="true"] svg{transform:rotate(180deg)}
+/* `display:grid` gana a la regla `[hidden]{display:none}` del navegador,
+   asi que sin esta linea el desplegable sale abierto al cargar. */
+.idiomas__m[hidden]{display:none}
+.idiomas__m{position:absolute;top:calc(100% + 6px);right:0;z-index:70;min-width:150px;
+  display:grid;padding:5px;border-radius:12px;background:var(--carta);
+  box-shadow:0 1px 0 var(--filete) inset, 0 18px 40px -22px rgba(17,19,22,.5), 0 0 0 1px var(--filete);
+  animation:despliega var(--t-tap) var(--ease)}
+/* Entra desde arriba, que es de donde sale: un menu que crece desde su
+   propio disparador se lee como una consecuencia del clic. */
+@keyframes despliega{from{opacity:0;transform:translateY(-4px) scale(.98)}}
+.idiomas__m button{display:flex;align-items:center;min-height:40px;padding:0 .8em;border-radius:8px;
+  font-size:.86rem;text-align:left;color:var(--gris);
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease)}
+.idiomas__m button[aria-checked="true"]{color:var(--tinta);font-weight:500}
+.idiomas__m button[aria-checked="true"]::after{content:"";width:5px;height:5px;border-radius:50%;
+  background:var(--marca,var(--tinta));margin-left:auto}
+@media (hover:hover) and (pointer:fine){
+  .idiomas__d:hover{color:var(--tinta);background:rgba(17,19,22,.05)}
+  .idiomas__m button:hover{background:rgba(17,19,22,.05);color:var(--tinta)}
+}
+@media (prefers-reduced-motion:reduce){ .idiomas__m{animation:none} }
+
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;
   font-size:.86rem;font-weight:500;letter-spacing:-.01em;padding:.72em 1.4em;border-radius:99px;
   background:var(--tinta);color:var(--papel);white-space:nowrap;min-height:44px;
@@ -186,65 +216,59 @@ html{caret-color:var(--tinta);scrollbar-color:rgba(17,19,22,.28) transparent;scr
 .escena--noche .bajada{color:rgba(255,255,255,.62)}
 .acciones{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 
-/* ---------- HERO: una foto enmarcada y el texto encima ----------
-   Lo que pidio: foto sin sangre nada mas abrir, del Retro, con texto
-   encima, y que el texto "puede taparlo un poco".
+/* ---------- HERO: a sangre ------------------------------------------
+   Cambio de criterio del 15 sep: la foto toca los cuatro bordes. Antes
+   iba enmarcada porque la regla era "ninguna imagen a sangre"; ahora la
+   regla es esta, y el marco era justo lo que le sobraba.
 
    El encuadre no es a ojo. La foto del Retro mide 1200x838 y el teclado
    ocupa del 27% al 99% del alto (medido, esta en `js/data.js` como
-   `foco`). En un marco 16/10 sobrevive el 89,5% del alto, asi que la
-   ventana se puede colocar entre el 9,5% y el 27% y aun asi cabe el
-   teclado entero. Puesta en el 9,5%, arriba quedan unos 130 px de mesa
-   vacia: el rotulo y la primera linea del titular caen ahi y el resto se
-   apoya sobre el borde superior del teclado. Eso es el "un poco".
+   `foco`). En una ventana de escritorio (1440x900 = 0,625 de proporcion)
+   sobrevive el 89,5% del alto de la foto, asi que hay sitio para poner la
+   ventana entre el 9,5% y el 27% y que el teclado siga entero. Lo calcula
+   `CK.encuadrarTodo()` y lo rehace al cambiar el ancho.
 
-   El calculo lo hace `CK.encuadrarTodo()` a partir de `data-foco` y
-   `data-encaje`, y lo rehace al cambiar el ancho, porque al cambiar la
-   proporcion del marco cambia el recorte. */
-.hero{min-height:100svh;display:grid;grid-template-columns:minmax(0,1fr);align-content:center;
-  padding-block:clamp(72px,10svh,110px) clamp(40px,7svh,80px)}
-.escenario{position:relative;width:100%;border-radius:clamp(12px,1.6vw,20px);overflow:hidden;
-  background:var(--noche);isolation:isolate;
-  box-shadow:0 50px 90px -50px rgba(17,19,22,.55), 0 6px 20px -12px rgba(17,19,22,.22)}
-.escenario img{width:100%;aspect-ratio:16/10;object-fit:cover}
-/* El velo va de arriba abajo y se acaba antes de la mitad: lo que oscurece
-   es la mesa, no el producto. Sin el, el titular blanco sobre un mantel
-   claro no llegaba ni a 3:1. */
-.escenario::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(to bottom,
-    rgba(8,9,11,.86) 0%, rgba(8,9,11,.72) 24%, rgba(8,9,11,.44) 42%,
-    rgba(8,9,11,.12) 60%, rgba(8,9,11,0) 74%)}
-.escenario__texto{position:absolute;left:0;right:0;top:0;z-index:2;
-  padding:clamp(24px,3.6vw,52px);display:grid;justify-items:start;gap:clamp(12px,1.6vh,20px)}
-.escenario__texto .rotulo{color:rgba(255,255,255,.7)}
-.escenario__texto .titular{color:#fff;margin-inline:0;text-align:left;max-width:11em}
-.escenario__texto .titular em{color:rgba(255,255,255,.66)}
-.escenario__texto .bajada{color:rgba(255,255,255,.9);text-align:left;margin-inline:0;max-width:40ch;
+   En vertical no: un movil es mas alto que ancho y la foto es apaisada,
+   asi que `cover` recortaria a lo ancho y partiria el split por la mitad.
+   Ahi la foto va a sangre solo de lado a lado, con su alto natural, y el
+   texto baja debajo. */
+.hero{position:relative;min-height:100svh;display:grid;align-content:end;
+  padding-block:clamp(90px,14svh,150px) clamp(40px,7svh,74px);isolation:isolate;
+  background:var(--noche)}
+.hero__foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+/* El velo sube desde abajo, que es donde esta el texto, y se acaba antes
+   de la mitad: lo que oscurece es la mesa, no el producto. */
+.hero__velo{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(to top,
+    rgba(8,9,11,.88) 0%, rgba(8,9,11,.74) 22%, rgba(8,9,11,.46) 40%,
+    rgba(8,9,11,.14) 58%, rgba(8,9,11,0) 74%)}
+.hero__texto{position:relative;z-index:2;display:grid;justify-items:start;gap:clamp(14px,2vh,22px)}
+.hero .titular{color:#fff;margin-inline:0;text-align:left;max-width:11em}
+.hero .titular em{color:rgba(255,255,255,.68)}
+.hero .bajada{color:rgba(255,255,255,.9);text-align:left;margin-inline:0;max-width:40ch;
   font-size:clamp(.95rem,1.4vw,1.15rem)}
-.escenario__texto .acciones{justify-content:flex-start;margin-top:clamp(2px,.8vh,8px)}
+.hero .acciones{justify-content:flex-start}
 /* Sobre la foto el boton oscuro desaparece, asi que el principal se
-   invierte y el segundo es un cristal: dos pesos distintos, no dos
-   botones iguales uno al lado del otro. */
-.escenario .btn{background:#fff;color:var(--tinta)}
-.escenario .btn--claro{background:rgba(255,255,255,.14);color:#fff;
+   invierte y el segundo es un cristal: dos pesos, no dos botones iguales. */
+.hero .btn{background:#fff;color:var(--tinta)}
+.hero .btn--claro{background:rgba(255,255,255,.14);color:#fff;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.34)}
 @media (hover:hover) and (pointer:fine){
-  .escenario .btn:hover{background:#e9eaec}
-  .escenario .btn--claro:hover{background:rgba(255,255,255,.26)}
+  .hero .btn:hover{background:#e9eaec}
+  .hero .btn--claro:hover{background:rgba(255,255,255,.26)}
 }
 
-/* La chapa: nombre, precio de entrada y stock del modelo que se ve. Va
-   abajo a la derecha, sobre la parte de la foto que no lleva velo, y es
-   el enlace directo al anuncio: la tienda generica obliga a buscar otra
+/* La chapa: nombre, precio de entrada y stock del modelo que se ve, y es
+   el enlace directo al anuncio. La tienda generica obliga a buscar otra
    vez el modelo entre los cinco. */
-.chapa{position:absolute;bottom:0;right:0;z-index:2;margin:clamp(14px,2vw,24px);
+.chapa{position:absolute;bottom:clamp(18px,3vh,34px);right:clamp(16px,3vw,40px);z-index:2;
   display:flex;align-items:center;gap:12px;min-height:44px;padding:.5em 1em;border-radius:99px;
-  background:rgba(10,11,14,.66);backdrop-filter:blur(16px);color:#fff;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);
+  background:rgba(10,11,14,.6);backdrop-filter:blur(16px);color:#fff;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
   font-family:var(--mono);font-size:var(--label);letter-spacing:.06em;
   transition:background var(--t-tap) var(--ease),transform var(--t-press) var(--ease)}
 .chapa:active{transform:scale(.97)}
-@media (hover:hover) and (pointer:fine){ .chapa:hover{background:rgba(10,11,14,.82)} }
+@media (hover:hover) and (pointer:fine){ .chapa:hover{background:rgba(10,11,14,.8)} }
 .chapa b{font-weight:400}
 .chapa i,.chapa em{font-style:normal;color:rgba(255,255,255,.62)}
 .chapa u{text-decoration:none;background:var(--grad);-webkit-background-clip:text;
@@ -260,13 +284,18 @@ html{caret-color:var(--tinta);scrollbar-color:rgba(17,19,22,.28) transparent;scr
    scroll: sticky lo resuelve el navegador, y el encendido es un
    IntersectionObserver. Funciona en Safari de iPhone. */
 .fijada{background:var(--noche);color:#fff}
-.fijada__in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,5vw,80px);align-items:start}
+/* El teclado se lleva la parte ancha: es lo que hay que mirar. La
+   columna de texto pasa a ser una banda de lectura, no media pantalla. */
+.fijada__in{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr);gap:clamp(24px,4vw,64px);align-items:start}
 .fijada__lienzo{position:sticky;top:0;height:100svh;display:grid;place-items:center;align-content:center;gap:22px}
 .fijada__pasos{padding-block:26svh}
-.paso{min-height:62svh;display:flex;align-items:center}
+/* En columna: el nombre del modo va ENCIMA de su frase, no a su lado.
+   Y la frase baja de cuerpo: estos textos son cinco veces mas largos que
+   los cuatro lemas que habia antes, y a 2,6rem llenaban la pantalla. */
+.paso{min-height:62svh;display:flex;flex-direction:column;align-items:flex-start;
+  justify-content:center}
 .paso p{
-  font-family:var(--display);font-weight:400;
-  font-size:clamp(1.5rem,3.4vw,2.6rem);line-height:1.08;letter-spacing:-.04em;
+  font-size:clamp(1.05rem,1.7vw,1.35rem);line-height:1.5;max-width:34ch;
   /* Apagado, pero legible: al 26% daba 2,28:1 y los cuatro argumentos
      que aun no estan a la altura de los ojos no se leian. Al 52% dan
      5,3:1 y el encendido a blanco puro (18:1) se sigue notando igual. */
@@ -274,6 +303,21 @@ html{caret-color:var(--tinta);scrollbar-color:rgba(17,19,22,.28) transparent;scr
   transition:color var(--t-enter) var(--ease);
 }
 .paso.viva p{color:#fff}
+/* El nombre del modo es el identificador del firmware, no una etiqueta
+   traducida: `gradient` se llama `gradient` en las tres versiones. */
+.paso__n{display:block;font-family:var(--mono);font-size:var(--label);letter-spacing:.16em;
+  text-transform:uppercase;font-weight:400;color:rgba(255,255,255,.4);margin-bottom:14px;
+  transition:color var(--t-enter) var(--ease)}
+.paso.viva .paso__n{color:#ffb457}
+/* El titular de la region si conserva el cuerpo grande: es el titulo. */
+.paso--titular p{font-family:var(--display);font-weight:400;
+  font-size:clamp(1.8rem,3.6vw,2.9rem);line-height:1.06;letter-spacing:-.04em;max-width:13em}
+.paso--titular{min-height:46svh}
+.paso--cola{min-height:34svh;align-items:flex-start}
+/* `.paso p` (0,1,1) le ganaba a `.rotulo` (0,1,0) y esta coletilla salia
+   a 19 px en versales. Es un pie, no un argumento. */
+.paso--cola .rotulo{font-size:var(--label);line-height:1.9;max-width:30ch;
+  color:rgba(255,255,255,.52)}
 
 /* ---------- los esquemas ------------------------------------------
    Sin recuadro: se apoyan en el suelo oscuro de su escena. Un borde
@@ -285,16 +329,42 @@ html{caret-color:var(--tinta);scrollbar-color:rgba(17,19,22,.28) transparent;scr
   color:rgba(255,255,255,.52);text-align:center;max-width:46ch}
 .escena--carta .esquema__nota,.escena:not(.escena--noche) .esquema__nota{color:var(--tenue)}
 
-/* --- el degradado que cruza las dos mitades --- */
-.kb{position:relative;width:min(100%,520px)}
-.kb__luz{position:absolute;inset:-16% clamp(0px,-8%,0px);border-radius:40px;
-  background:var(--grad-ciclo);background-size:220% 100%;filter:blur(22px);opacity:.95;
-  animation:fluye var(--loop-luz) linear infinite}
-.kb__placa{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,5vw,44px)}
-.kb__mitad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.kb__tecla{aspect-ratio:1;border-radius:4px;background:#16181c;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
-@keyframes fluye{from{background-position:0% 50%}to{background-position:-220% 50%}}
+/* --- el Sofle de verdad, con la luz encima ------------------------
+   La forma sale de `js/sofle.js` (coordenadas del shield) y el color por
+   tecla lo pone `js/rgb.js` en la variable --luz.
+
+   Las teclas son negras porque el producto es negro: el color lo pone el
+   LED que hay debajo del keycap, no el keycap. Por eso cada tecla lleva
+   la luz como un resplandor que sale de su base y una pizca de tinte en
+   la superficie, en vez de pintarse entera del color del efecto. */
+.kb{position:relative;width:min(100%,780px);aspect-ratio:1520/666}
+.kb__escena{position:absolute;left:0;top:0;transform-origin:0 0}
+.kb__mitad{position:absolute}
+.kb__tecla{
+  position:absolute;border-radius:7px;background:#0d0f12;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.06), inset 0 -4px 7px rgba(0,0,0,.7),
+             0 2px 4px rgba(0,0,0,.6);
+}
+/* El halo: el LED esta BAJO la tecla, asi que la luz se escapa por el
+   contorno y tine la cara de arriba. Un `box-shadow` de color sin
+   desplazamiento seria un adorno; aqui es lo que hace el keycap. */
+/* El halo se escapa MAS por abajo que por arriba, porque el LED esta en
+   la placa y el keycap le tapa la cara superior. Esa asimetria es lo que
+   distingue una tecla negra iluminada de una tecla pintada de color. */
+.kb__tecla::before{
+  content:"";position:absolute;inset:-5px -6px -12px;border-radius:14px;z-index:-1;
+  background:var(--luz,transparent);filter:blur(9px);
+}
+/* Y en la cara de arriba solo queda un tinte: el keycap es negro. */
+.kb__tecla::after{
+  content:"";position:absolute;inset:0;border-radius:7px;
+  background:var(--luz,transparent);opacity:.16;mix-blend-mode:screen;
+}
+.kb__encoder{
+  position:absolute;width:96px;height:96px;border-radius:50%;
+  background:radial-gradient(circle at 42% 34%,#2b3038,#101216 68%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.1), 0 3px 8px rgba(0,0,0,.6);
+}
 
 /* --- OLED --- */
 /* Antes llevaba un halo azul de 64 px sin desplazamiento alrededor de la
@@ -355,24 +425,30 @@ html{caret-color:var(--tinta);scrollbar-color:rgba(17,19,22,.28) transparent;scr
 .capas__pie b span{grid-area:1/1;animation:capaA var(--loop-capa) steps(1,end) infinite}
 .capas__pie b span+span{animation-name:capaB}
 
-/* --- hotswap --- */
-.hot{display:flex;gap:clamp(30px,7vw,74px);align-items:flex-end;justify-content:center}
-.hot__col{display:grid;justify-items:center;gap:14px}
-.hot__hueco{position:relative;width:96px;height:96px}
-.hot__socket{position:absolute;inset:0;border-radius:7px;background:#04060a;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);display:grid;place-items:center;gap:10px;grid-auto-flow:column}
-.hot__socket i{width:11px;height:11px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.34)}
-.hot__sw{position:absolute;left:50%;top:50%;width:68px;height:68px;margin:-34px 0 0 -34px;
-  border-radius:7px;background:#e4e7ea;box-shadow:0 10px 22px rgba(0,0,0,.55);
-  animation:saca var(--loop-tecla) var(--ease) infinite}
-.hot__sw::after{content:"";position:absolute;inset:19px;border-radius:3px;background:#c23a3a}
-.hot__sw--marron::after{background:#7a5236}
+/* --- hotswap ------------------------------------------------------
+   Antes eran dos cuadrados con un cuadradito de color saliendo. Ahora los
+   dos switches tienen su forma: el Choc es bajo y de vastago plano, el MX
+   es alto y de cruz, y esa diferencia es exactamente la que se nota al
+   escribir. Debajo va el zocalo Kailh sobre la placa, que es lo que hace
+   que se puedan sacar tirando.
+
+   Siguen siendo dibujos: no hay fotografia de estos switches en el
+   repositorio, y generarla seria inventarse el producto. El rotulo de
+   debajo lo dice. */
+.hot{display:flex;gap:clamp(30px,7vw,84px);align-items:flex-end;justify-content:center}
+.hot__col{display:grid;justify-items:center;gap:4px}
+.hot__sw{width:clamp(132px,19vw,190px);height:auto;overflow:visible}
+/* Sale del zocalo y vuelve: el gesto entero es el argumento. */
+.hot__pieza{animation:saca var(--loop-tecla) var(--ease) infinite;transform-origin:50% 70%}
+.hot__col--2 .hot__pieza{animation-delay:calc(var(--loop-tecla) / 2)}
 @keyframes saca{
   0%,10%{transform:translateY(0) rotate(0)}
-  40%,60%{transform:translateY(-58px) rotate(-8deg)}
+  40%,60%{transform:translateY(-46px) rotate(-7deg)}
   90%,100%{transform:translateY(0) rotate(0)}
 }
-.hot__et{font-family:var(--mono);font-size:var(--label);letter-spacing:.12em;text-transform:uppercase;
+.hot__et{font-family:var(--mono);font-size:var(--label);letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.82);margin-top:12px}
+.hot__dato{font-family:var(--mono);font-size:var(--label);letter-spacing:.1em;
   color:rgba(255,255,255,.52)}
 
 /* ---------- los cinco: un carril, no una rejilla de fichas ---------- */
@@ -429,7 +505,7 @@ html{caret-color:var(--tinta);scrollbar-color:rgba(17,19,22,.28) transparent;scr
 
 @media (prefers-reduced-motion:reduce){
   .entra{opacity:1}.entra.dentro{animation:none}
-  .kb__luz,.oled__v,.gato i,.capas__t span,.capas__t--hold::after,.capas__pie b span,.hot__sw{animation:none}
+  .oled__v,.gato i,.capas__t span,.capas__t--hold::after,.capas__pie b span,.hot__pieza{animation:none}
   .oled__v:nth-child(1){opacity:1}
   .capas__t span+span,.capas__pie b span+span{opacity:0}
   .paso p{color:#fff}
@@ -437,33 +513,27 @@ html{caret-color:var(--tinta);scrollbar-color:rgba(17,19,22,.28) transparent;scr
   .carril{scroll-snap-type:none}
 }
 
-/* En estrecho el halo no sobresale a los lados: 8 px bastaban para que
-   el documento midiera mas que la pantalla. */
-@media (max-width:560px){ .kb__luz{inset:-14% 0} }
-
 @media (max-width:760px){
-  /* En vertical no hay recorte que valga: la foto es apaisada (1,43) y
-     cualquier marco mas alto empieza a comerse una mitad del teclado a lo
-     ancho, que es justo lo que no puede pasar en un split. Asi que en
-     movil la foto va entera y el texto baja debajo, dentro de la misma
-     pieza: sigue siendo una sola tarjeta, con la foto tocando sus tres
-     bordes, no un cuadro encima de otro. */
-  /* `minmax(0,1fr)` y `min-width:0`: sin eso la columna del grid crece
-     hasta el contenido mas ancho — los dos botones con `nowrap` median
-     409 px en frances — y la foto se estiraba con ella y sacaba la pagina
-     de la pantalla. */
-  .escenario{display:grid;grid-template-columns:minmax(0,1fr)}
-  .escenario__texto{min-width:0}
-  .escenario img{aspect-ratio:auto}
-  .escenario::after{display:none}
-  .escenario__texto{position:static;padding:clamp(24px,6vw,34px) clamp(24px,6vw,34px) 0}
-  .escenario__texto .titular{max-width:none}
-  /* Uno debajo del otro: en 350 px de ancho dos botones con etiqueta
-     larga no caben, y partir la etiqueta a la mitad se lee peor. */
-  .escenario__texto .acciones{width:100%;flex-direction:column;align-items:stretch}
-  .escenario .btn{width:100%;white-space:normal;text-align:center}
-  .chapa{position:static;justify-self:start;background:rgba(255,255,255,.1);
-    margin:clamp(16px,4vw,24px) clamp(24px,6vw,34px) clamp(24px,6vw,34px)}
+  /* En vertical la foto va a sangre de lado a lado pero con su alto
+     natural: recortarla a lo alto partiria el split a lo ancho, que es
+     justo lo que no puede pasar en un teclado de dos mitades. El texto
+     pasa debajo, sobre el suelo oscuro que ya trae la seccion. */
+  .hero{min-height:0;align-content:start;padding-block:0 clamp(30px,6svh,48px);
+    grid-template-columns:minmax(0,1fr)}
+  /* Sin `margin-top`: la cabecera es `sticky`, o sea que ya ocupa su
+     sitio en el flujo. Separarla otra vez dejaba una banda negra de 56 px
+     entre la cabecera y la foto. */
+  .hero__foto{position:static;height:auto;aspect-ratio:auto}
+  .hero__velo{display:none}
+  .hero__texto{padding-top:clamp(26px,6vw,36px)}
+  .hero .titular{max-width:none}
+  .hero .acciones{width:100%;flex-direction:column;align-items:stretch}
+  .hero .btn{width:100%;white-space:normal;text-align:center}
+  .chapa{position:static;justify-self:stretch;flex-wrap:wrap;gap:6px 10px;
+    margin:clamp(18px,4vw,26px) 0 0;background:rgba(255,255,255,.08)}
+  /* En dos lineas los separadores verticales quedan sueltos en medio. */
+  .chapa .chapa__sep{display:none}
+  .chapa em{margin-left:auto}
 }
 
 @media (max-width:900px){

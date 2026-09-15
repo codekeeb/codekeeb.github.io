@@ -208,16 +208,59 @@ const CK = (() => {
   function pintarIdioma(alCambiar) {
     document.documentElement.lang = lang;
     document.querySelectorAll("[data-lang-btn]").forEach(b => {
-      b.setAttribute("aria-pressed", String(b.dataset.langBtn === lang));
+      const activo = b.dataset.langBtn === lang;
+      b.setAttribute("aria-checked", String(activo));
+      b.setAttribute("role", "menuitemradio");
       b.onclick = () => {
         lang = b.dataset.langBtn;
         localStorage.setItem("ck-lang", lang);
+        cerrarIdiomas();
         pintarIdioma(alCambiar);
         alCambiar();
       };
     });
+    document.querySelectorAll("[data-lang-actual]").forEach(e => { e.textContent = lang.toUpperCase(); });
     document.querySelectorAll("[data-t]").forEach(e => { e.textContent = t(e.dataset.t); });
     document.querySelectorAll("[data-t-html]").forEach(e => { e.innerHTML = t(e.dataset.tHtml); });
+  }
+
+  /* --- selector de idioma: un boton, no tres -----------------------
+     Tres botones fijos gastan el ancho de la cabecera para ensenar dos
+     idiomas que no estas usando, y en el movil median 25x21 px. Un boton
+     con el idioma actual y un desplegable con los tres ocupa un sitio y
+     los objetivos caben en el dedo.
+
+     Se cierra con Escape, al pulsar fuera y al elegir; y devuelve el foco
+     al disparador, que es lo que espera quien navega con el teclado. */
+  function cerrarIdiomas() {
+    document.querySelectorAll("[data-lang-menu]").forEach(m => {
+      m.hidden = true;
+      const d = m.previousElementSibling;
+      if (d) d.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  function montarSelectorIdioma() {
+    const disp = document.querySelector("[data-lang-disparador]");
+    const menu = document.querySelector("[data-lang-menu]");
+    if (!disp || !menu) return;
+    menu.hidden = true;
+    disp.setAttribute("aria-expanded", "false");
+    disp.onclick = e => {
+      e.stopPropagation();
+      const abierto = !menu.hidden;
+      cerrarIdiomas();
+      if (abierto) return;
+      menu.hidden = false;
+      disp.setAttribute("aria-expanded", "true");
+      (menu.querySelector('[aria-checked="true"]') || menu.firstElementChild)?.focus();
+    };
+    addEventListener("click", e => { if (!menu.contains(e.target)) cerrarIdiomas(); });
+    addEventListener("keydown", e => {
+      if (e.key !== "Escape" || menu.hidden) return;
+      cerrarIdiomas();
+      disp.focus();
+    });
   }
 
   /* --- entradas ---------------------------------------------------
@@ -240,6 +283,7 @@ const CK = (() => {
 
   return { get lang() { return lang; }, t, L, precio, notaPrecios, spec, etiquetasDeFicha, encuadrarTodo,
            precioDe, precioHTML, enlaceCompra,
-           rasgos, FILTROS, stock, rotulo, foto, pintarIdioma, observarEntradas, productos,
+           rasgos, FILTROS, stock, rotulo, foto, pintarIdioma, montarSelectorIdioma,
+           observarEntradas, productos,
            escapar, tiendaURL: CK_SHOP_URL };
 })();

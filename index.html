@@ -32,17 +32,28 @@
 
 <header class="top">
   <div class="top__in env">
-    <a class="marca" href="/">CODE<i>/</i>KEEB</a>
+    <a class="marca" href="/" aria-label="Codekeeb">
+      <img src="assets/brand/logo-horizontal-dark.png"
+           srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
+           width="640" height="224" alt="CODE/KEEB">
+    </a>
     <nav class="top__nav">
       <a href="#rgb" data-t="p.navVentajas">Ventajas</a>
       <a href="#cinco" data-t="p.losCinco">Los cinco</a>
       <a href="comparar.html" data-t="d.compare">Comparar</a>
+      <a class="top__studio" href="keymap-studio/">Keymap Studio</a>
     </nav>
     <span class="top__sp"></span>
-    <div class="idiomas" role="group" aria-label="Idioma">
-      <button data-lang-btn="es">ES</button>
-      <button data-lang-btn="en">EN</button>
-      <button data-lang-btn="fr">FR</button>
+    <div class="idiomas">
+      <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false"
+              aria-label="Idioma"><span data-lang-actual>ES</span><svg viewBox="0 0 10 6" aria-hidden="true"
+              width="10" height="6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"
+              stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="idiomas__m" data-lang-menu role="menu" hidden>
+        <button data-lang-btn="es">Español</button>
+        <button data-lang-btn="en">English</button>
+        <button data-lang-btn="fr">Français</button>
+      </div>
     </div>
     <a class="btn" href="catalogo.html" data-t="d.choose">Elige tu split</a>
   </div>
@@ -51,47 +62,52 @@
 <main>
 
   <!-- ============ 1 · HERO ============
-       Una sola foto, enmarcada (nunca a sangre), del modelo destacado, y
-       el texto encima apoyado en la banda de mesa vacia de arriba. El
-       recorte lo calcula `CK.encuadrarTodo()` con el `foco` medido de la
-       foto; ver el comentario del heroe en portada.css.
+       A sangre: la foto toca los cuatro bordes de la ventana y el texto va
+       encima, dentro de la columna de la pagina. Es un cambio de criterio
+       respecto a "ninguna imagen a sangre", pedido el 15 sep.
 
-       Sin rotulo sobre el titular: el titular se sostiene solo. -->
-  <section class="hero env">
-    <figure class="escenario entra entra--pieza">
-      <img id="heroImg" alt="" width="1200" height="838" data-foco="63" data-encaje="60" fetchpriority="high">
-      <figcaption class="escenario__texto">
-        <h1 class="titular entra entra--titulo" style="--d:1" data-t-html="p.heroTitle"></h1>
-        <p class="bajada entra entra--texto" style="--d:2" data-t="p.heroText"></p>
-        <span class="acciones entra entra--texto" style="--d:3">
-          <a class="btn" href="catalogo.html" data-t="p.heroCta"></a>
-          <a class="btn btn--claro" href="comparar.html" data-t="p.heroCta2"></a>
-        </span>
-      </figcaption>
-      <a class="chapa" id="chapa" target="_blank" rel="noopener"></a>
-    </figure>
+       El recorte lo sigue calculando `CK.encuadrarTodo()` con el `foco`
+       medido de la foto (63%); ver el comentario del heroe en portada.css. -->
+  <section class="hero">
+    <img class="hero__foto" id="heroImg" alt="" data-foco="63" data-encaje="62" fetchpriority="high">
+    <div class="hero__velo" aria-hidden="true"></div>
+    <div class="hero__texto env">
+      <h1 class="titular entra entra--titulo" data-t-html="p.heroTitle"></h1>
+      <p class="bajada entra entra--texto" style="--d:1" data-t="p.heroText"></p>
+      <div class="acciones entra entra--texto" style="--d:2">
+        <a class="btn" href="catalogo.html" data-t="p.heroCta"></a>
+        <a class="btn btn--claro" href="comparar.html" data-t="p.heroCta2"></a>
+      </div>
+    </div>
+    <a class="chapa" id="chapa" target="_blank" rel="noopener"></a>
   </section>
 
-  <!-- ============ 2 · RGB, con el teclado fijado ============
-       El producto se queda quieto y los argumentos pasan a su lado,
-       encendiendose de uno en uno. Es el momento conducido de la pagina. -->
+  <!-- ============ 2 · LOS MODOS DE LUZ ============
+       El teclado se queda fijo y los modos pasan a su lado. No es un
+       dibujo: `js/sofle.js` trae la geometria del shield y `js/rgb.js`
+       los cinco efectos con los colores y las velocidades del firmware.
+       Los otros cinco se nombran abajo sin animarse. -->
   <section class="fijada" id="rgb">
     <div class="fijada__in env">
       <div class="fijada__lienzo">
         <div class="esquema">
-          <div class="kb">
-            <div class="kb__luz" aria-hidden="true"></div>
-            <div class="kb__placa" id="kbPlaca" aria-hidden="true"></div>
-          </div>
-          <p class="esquema__nota" data-t="p.demoNota"></p>
+          <div class="kb" id="kb"></div>
+          <p class="esquema__nota" data-t="p.rgbReal"></p>
         </div>
       </div>
       <div class="fijada__pasos">
-        <div class="paso"><p data-t-html="p.rgbTitle"></p></div>
-        <div class="paso"><p data-t="p.paso1"></p></div>
-        <div class="paso"><p data-t="p.paso2"></p></div>
-        <div class="paso"><p data-t="p.paso3"></p></div>
-        <div class="paso"><p data-t="p.paso4"></p></div>
+        <div class="paso paso--titular"><p data-t-html="p.rgbTitle"></p></div>
+        <div class="paso" data-fx="gradient">
+          <b class="paso__n">gradient</b><p data-t="p.fx1Text"></p></div>
+        <div class="paso" data-fx="ripple">
+          <b class="paso__n">ripple</b><p data-t="p.fx2Text"></p></div>
+        <div class="paso" data-fx="fire">
+          <b class="paso__n">fire</b><p data-t="p.fx3Text"></p></div>
+        <div class="paso" data-fx="sunset">
+          <b class="paso__n">sunset</b><p data-t="p.fx4Text"></p></div>
+        <div class="paso" data-fx="heatmap">
+          <b class="paso__n">heatmap</b><p data-t="p.fx5Text"></p></div>
+        <div class="paso paso--cola"><p class="rotulo" data-t="p.rgbOtros"></p></div>
       </div>
     </div>
   </section>
@@ -144,23 +160,72 @@
         <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.hotTitle"></h2>
       </div>
       <div class="esquema entra entra--pieza" style="--d:2">
-        <div class="hot" aria-hidden="true">
+        <!-- Dos switches dibujados con su forma real y su zocalo Kailh
+             debajo: el Choc es bajo y de vastago plano, el MX es alto y de
+             cruz, y esa diferencia es justamente la que decide el tacto.
+             Sigue siendo un esquema, y lo dice el rotulo de abajo: no hay
+             fotografia de estos switches en el repositorio. -->
+        <div class="hot">
           <div class="hot__col">
-            <span class="hot__hueco">
-              <span class="hot__socket"><i></i><i></i></span>
-              <span class="hot__sw"></span>
-            </span>
-            <span class="hot__et">Choc Red</span>
+            <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="Kailh Choc Red">
+              <g class="hot__pieza">
+                <!-- vastago: en el Choc es una placa plana con ranura -->
+                <rect x="47" y="34" width="46" height="22" rx="3" fill="#b8322c"/>
+                <rect x="47" y="34" width="46" height="7" rx="3" fill="#d2453e"/>
+                <rect x="66" y="38" width="8" height="14" rx="2" fill="#8d231e"/>
+                <!-- carcasa superior e inferior: baja y ancha -->
+                <rect x="20" y="54" width="100" height="16" rx="3" fill="#2a2d33"/>
+                <rect x="14" y="68" width="112" height="30" rx="4" fill="#15171b"/>
+                <rect x="14" y="68" width="112" height="4" rx="2" fill="#31353c"/>
+                <!-- dos patas metalicas y el poste central de plastico -->
+                <rect x="38" y="97" width="6" height="17" rx="1.5" fill="#cbb26a"/>
+                <rect x="96" y="97" width="6" height="17" rx="1.5" fill="#cbb26a"/>
+                <rect x="64" y="97" width="12" height="12" rx="2" fill="#23262b"/>
+              </g>
+              <!-- zocalo hotswap sobre la placa -->
+              <g class="hot__zocalo">
+                <rect x="10" y="126" width="120" height="16" rx="2" fill="#191c21" stroke="#343941" stroke-width="1.5"/>
+                <rect x="33" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+                <rect x="91" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+                <rect x="0" y="142" width="140" height="22" rx="2" fill="#401b47"/>
+                <rect x="0" y="142" width="140" height="3" fill="#6d2e78"/>
+              </g>
+            </svg>
+            <span class="hot__et">Kailh Choc Red</span>
+            <span class="hot__dato"><span data-t="p.swLineal"></span> · low profile</span>
           </div>
-          <div class="hot__col">
-            <span class="hot__hueco">
-              <span class="hot__socket"><i></i><i></i></span>
-              <span class="hot__sw hot__sw--marron" style="animation-delay:calc(var(--loop-tecla) / 2)"></span>
-            </span>
+          <div class="hot__col hot__col--2">
+            <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="MMD Holy Panda">
+              <g class="hot__pieza">
+                <!-- vastago en cruz, que es lo que distingue un MX -->
+                <rect x="63" y="14" width="14" height="34" rx="2" fill="#7a5236"/>
+                <rect x="53" y="26" width="34" height="11" rx="2" fill="#7a5236"/>
+                <rect x="63" y="14" width="14" height="5" rx="2" fill="#98683f"/>
+                <!-- carcasa superior clara, la que le da el nombre -->
+                <rect x="28" y="44" width="84" height="30" rx="4" fill="#e6e1d6"/>
+                <rect x="28" y="44" width="84" height="5" rx="2" fill="#f3efe7"/>
+                <rect x="36" y="40" width="68" height="6" rx="3" fill="#d8d2c4"/>
+                <!-- carcasa inferior negra, mas alta que la del Choc -->
+                <rect x="20" y="72" width="100" height="30" rx="4" fill="#15171b"/>
+                <rect x="20" y="72" width="100" height="4" rx="2" fill="#31353c"/>
+                <rect x="30" y="100" width="80" height="6" rx="2" fill="#0e1013"/>
+                <rect x="44" y="105" width="6" height="16" rx="1.5" fill="#cbb26a"/>
+                <rect x="90" y="105" width="6" height="16" rx="1.5" fill="#cbb26a"/>
+                <circle cx="70" cy="110" r="7" fill="#23262b"/>
+              </g>
+              <g class="hot__zocalo">
+                <rect x="10" y="126" width="120" height="16" rx="2" fill="#191c21" stroke="#343941" stroke-width="1.5"/>
+                <rect x="39" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+                <rect x="85" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+                <rect x="0" y="142" width="140" height="22" rx="2" fill="#401b47"/>
+                <rect x="0" y="142" width="140" height="3" fill="#6d2e78"/>
+              </g>
+            </svg>
             <span class="hot__et">MMD Holy Panda</span>
+            <span class="hot__dato"><span data-t="p.swTactil"></span> · MX</span>
           </div>
         </div>
-        <p class="esquema__nota" data-t="p.demoNota"></p>
+        <p class="esquema__nota" data-t="p.hotNota"></p>
       </div>
       <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.hotText"></p>
     </div>
@@ -217,17 +282,11 @@
 <script src="js/data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/tienda.js"></script>
+<script src="js/sofle.js"></script>
+<script src="js/rgb.js"></script>
 <script>
 (() => {
   const $ = s => document.querySelector(s);
-
-  /* Esquema de la placa: seis columnas por mitad. Es un dibujo, y por eso
-     lleva su rotulo debajo. */
-  function dibujarPlaca() {
-    const mitad = () => `<div class="kb__mitad">${
-      Array.from({ length: 24 }, () => `<span class="kb__tecla"></span>`).join("")}</div>`;
-    $("#kbPlaca").innerHTML = mitad() + mitad();
-  }
 
   const LEYENDAS = [
     [["Q","1"],["W","2"],["E","3"],["R","4"],["T","5"],["Y","6"]],
@@ -240,6 +299,10 @@
            <span>${a}</span><span>${b}</span>
          </span>`).join("")}</div>`).join("");
   }
+
+  /* El teclado se monta una sola vez: cambiar de idioma no cambia la
+     forma del Sofle, y remontarlo perderia el efecto en curso. */
+  const teclado = CK_RGB.montar(document.getElementById("kb"));
 
   function pintar() {
     const productos = CK.productos();
@@ -287,21 +350,25 @@
       ["trust.custom","trust.customText"],["trust.firmware","trust.firmwareText"],
     ].map(([a,b],i)=>`<div class="entra entra--texto" style="--d:${i}"><h3>${CK.t(a)}</h3><p>${CK.t(b)}</p></div>`).join("");
 
-    dibujarPlaca();
     dibujarCapas();
     CK.encuadrarTodo();
 
-    /* El argumento que esta a la altura de los ojos se enciende y los
-       demas se apagan. Sin escuchar el scroll: lo resuelve el observador
-       con un margen que deja activa solo la banda central. */
+    /* El modo que esta a la altura de los ojos se enciende, y el teclado
+       fijado cambia al efecto de ese modo. Sin escuchar el scroll: lo
+       resuelve el observador con un margen que deja activa solo la banda
+       central de la pantalla. */
     const ioPaso = new IntersectionObserver(es => {
-      for (const e of es) e.target.classList.toggle("viva", e.isIntersecting);
+      for (const e of es) {
+        e.target.classList.toggle("viva", e.isIntersecting);
+        if (e.isIntersecting && e.target.dataset.fx) teclado.modo(e.target.dataset.fx);
+      }
     }, { rootMargin: "-42% 0px -42% 0px" });
     document.querySelectorAll(".paso").forEach(p => ioPaso.observe(p));
 
     CK.observarEntradas();
   }
 
+  CK.montarSelectorIdioma();
   CK.pintarIdioma(pintar);
   pintar();
 })();

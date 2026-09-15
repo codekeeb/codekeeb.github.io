@@ -31,7 +31,6 @@ HOJAS = sorted((RAIZ / "css").glob("*.css"))
 # Cada bucle, con por que existe. Si no esta aqui, no pasa.
 BUCLES = {
     "btnCycle": "degradado RGB del boton de compra; solo con el raton encima",
-    "fluye":    "el degradado recorriendo las dos mitades: ensena el motor RGB propio",
     "vistas":   "las cuatro vistas del OLED: bateria, capa, WPM y Bongo Cat",
     "golpea":   "las patas del Bongo Cat, que es una de las cuatro vistas",
     "capaA":    "la capa 1 de las leyendas: ensena que las teclas cambian",

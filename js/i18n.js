@@ -188,7 +188,7 @@ const CK_I18N = {
     "p.ventajas": "Lo que no puedes comprar en otro sitio",
     "p.ventajasText": "Cuatro cosas que no son una especificación, sino código escrito aquí. Debajo no hay texto explicándolas: están funcionando.",
     "p.rgbLabel": "Motor RGB propio",
-    "p.rgbTitle": "Un degradado que <em>cruza las dos mitades</em>.",
+    "p.rgbTitle": "Diez modos de luz, y <em>ninguno se corta en el cable</em>.",
     "p.rgbText": "Diez modos, y el color no se corta al llegar al cable: las dos mitades comparten la misma rampa. Eso no viene en la placa, está escrito en el firmware.",
     "p.oledLabel": "OLED dual, firmware propio",
     "p.oledTitle": "Las pantallas dicen <em>algo útil</em>.",
@@ -216,7 +216,17 @@ const CK_I18N = {
     "p.mira": "Míralo",
     "p.losCinco": "Los cinco",
     "p.desliza": "Desliza",
-    "p.verTodo": "Ver los cinco con precio y stock"
+    "p.verTodo": "Ver los cinco con precio y stock",
+    "p.fx1Text": "La rampa entera recorre las dos mitades a la vez. El color no se parte al llegar al cable porque las dos comparten el mismo reloj: eso no viene con la placa, está escrito en el firmware.",
+    "p.fx2Text": "Cada pulsación lanza una onda desde su propia tecla. Es el modo que enseña a la vez dónde escribes y a qué ritmo.",
+    "p.fx3Text": "La rampa sube en vertical, de rojo a ámbar. En un teclado de columnas escalonadas se ve la caída del meñique como se vería una llama.",
+    "p.fx4Text": "Cinco tonos fijos de izquierda a derecha, sin movimiento. El modo para cuando el teclado tiene que estarse quieto.",
+    "p.fx5Text": "Cada tecla se enciende al pulsarla y se enfría sola. A los cinco minutos estás viendo tu propia manera de escribir.",
+    "p.rgbOtros": "Y otros cinco: sparkle, solid, ocean, sparkle oro y ripple rosa. Se cambian desde el teclado, sin tocar el ordenador.",
+    "p.rgbReal": "Forma real del Sofle Choc, el mismo layout que el editor. Los colores y las velocidades son los del firmware.",
+    "p.swLineal": "Lineal",
+    "p.swTactil": "Táctil",
+    "p.hotNota": "Esquema de un switch y su zócalo hotswap. No es una fotografía del producto."
   },
 
   en: {
@@ -401,7 +411,7 @@ const CK_I18N = {
     "p.ventajas": "What you cannot buy anywhere else",
     "p.ventajasText": "Four things that are not a spec but code written here. There is no text explaining them below: they are running.",
     "p.rgbLabel": "Custom RGB engine",
-    "p.rgbTitle": "A gradient that <em>crosses both halves</em>.",
+    "p.rgbTitle": "Ten lighting modes, and <em>none of them stops at the cable</em>.",
     "p.rgbText": "Ten modes, and the colour does not stop at the cable: both halves share one ramp. That does not come with the PCB — it is written into the firmware.",
     "p.oledLabel": "Dual OLED, custom firmware",
     "p.oledTitle": "The screens say <em>something useful</em>.",
@@ -429,7 +439,17 @@ const CK_I18N = {
     "p.mira": "Watch it",
     "p.losCinco": "All five",
     "p.desliza": "Swipe",
-    "p.verTodo": "See all five with price and stock"
+    "p.verTodo": "See all five with price and stock",
+    "p.fx1Text": "One ramp travels across both halves at once. The colour doesn't break at the cable because both halves share a clock — that doesn't come with the PCB, it's written into the firmware.",
+    "p.fx2Text": "Every keypress fires a wave from its own key. It's the mode that shows where you type and how fast, at the same time.",
+    "p.fx3Text": "The ramp climbs vertically, red to amber. On staggered columns you see the pinky drop the way you'd see a flame.",
+    "p.fx4Text": "Five fixed tones left to right, no movement. The mode for when the keyboard has to sit still.",
+    "p.fx5Text": "Each key lights on press and cools down on its own. Five minutes in, you're looking at your own typing.",
+    "p.rgbOtros": "And five more: sparkle, solid, ocean, gold sparkle and pink ripple. You switch them from the keyboard, without touching the computer.",
+    "p.rgbReal": "The real shape of the Sofle Choc, the same layout as the editor. Colours and speeds are the firmware's.",
+    "p.swLineal": "Linear",
+    "p.swTactil": "Tactile",
+    "p.hotNota": "Diagram of a switch and its hotswap socket. Not a photograph of the product."
   },
 
   fr: {
@@ -614,7 +634,7 @@ const CK_I18N = {
     "p.ventajas": "Ce que tu ne peux acheter ailleurs",
     "p.ventajasText": "Quatre choses qui ne sont pas une spécification mais du code écrit ici. Pas de texte pour les expliquer en dessous : elles tournent.",
     "p.rgbLabel": "Moteur RGB maison",
-    "p.rgbTitle": "Un dégradé qui <em>traverse les deux moitiés</em>.",
+    "p.rgbTitle": "Dix modes de lumière, et <em>aucun ne s'arrête au câble</em>.",
     "p.rgbText": "Dix modes, et la couleur ne s'arrête pas au câble : les deux moitiés partagent la même rampe. Ça ne vient pas avec le PCB, c'est écrit dans le firmware.",
     "p.oledLabel": "Double OLED, firmware maison",
     "p.oledTitle": "Les écrans disent <em>quelque chose d'utile</em>.",
@@ -642,6 +662,16 @@ const CK_I18N = {
     "p.mira": "Regarde",
     "p.losCinco": "Les cinq",
     "p.desliza": "Fais glisser",
-    "p.verTodo": "Voir les cinq avec prix et stock"
+    "p.verTodo": "Voir les cinq avec prix et stock",
+    "p.fx1Text": "Une seule rampe traverse les deux moitiés à la fois. La couleur ne se coupe pas au câble parce que les deux partagent la même horloge : ça ne vient pas avec le PCB, c'est écrit dans le firmware.",
+    "p.fx2Text": "Chaque frappe lance une onde depuis sa propre touche. C'est le mode qui montre à la fois où vous tapez et à quel rythme.",
+    "p.fx3Text": "La rampe monte à la verticale, du rouge à l'ambre. Sur des colonnes décalées, on voit la chute de l'auriculaire comme on verrait une flamme.",
+    "p.fx4Text": "Cinq tons fixes de gauche à droite, sans mouvement. Le mode pour quand le clavier doit rester tranquille.",
+    "p.fx5Text": "Chaque touche s'allume à la frappe et refroidit toute seule. Au bout de cinq minutes, vous regardez votre propre façon de taper.",
+    "p.rgbOtros": "Et cinq autres : sparkle, solid, ocean, sparkle or et ripple rose. On en change depuis le clavier, sans toucher à l'ordinateur.",
+    "p.rgbReal": "La forme réelle du Sofle Choc, le même layout que l'éditeur. Les couleurs et les vitesses sont celles du firmware.",
+    "p.swLineal": "Linéaire",
+    "p.swTactil": "Tactile",
+    "p.hotNota": "Schéma d'un switch et de son socket hotswap. Ce n'est pas une photo du produit."
   }
 };
