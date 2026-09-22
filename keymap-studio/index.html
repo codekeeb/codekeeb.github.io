@@ -26,7 +26,7 @@
    ============================================================ */
 :root{
   --bg:#f7f7f4; --surface:#ffffff; --ink:#14161b; --muted:#6e7480;
-  --hairline:rgba(20,22,27,.09); --hairline2:rgba(20,22,27,.16);
+  --hairline:rgba(var(--shadow-rgb),.09); --hairline2:rgba(var(--shadow-rgb),.16);
   --c-orange:#ff992a; --c-magenta:#ff39c0; --c-blue:#2a3dff; --c-cyan:#1be8ff;
   --grad:linear-gradient(90deg,#ff992a 0%,#ff39c0 38%,#2a3dff 72%,#1be8ff 100%);
   --grad-diag:linear-gradient(135deg,#ff992a 0%,#ff39c0 38%,#2a3dff 72%,#1be8ff 100%);
@@ -47,7 +47,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-siz
   line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:3;opacity:.5;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .03 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
-::selection{background:#cfe6ff;color:var(--ink)}
+::selection{background:var(--selection-bg);color:var(--ink)}
 button{font-family:var(--font-sans)}
 .mono,.tlabel,.kicker{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -59,11 +59,11 @@ button{font-family:var(--font-sans)}
   transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s,background .3s}
 .btn:hover{border-color:var(--ink);transform:translateY(-1px)}
 .btn.small{padding:.45em .95em;font-size:.76rem}
-.btn.danger{color:#c0392b;border-color:rgba(192,57,43,.3)}
-.btn.danger:hover{border-color:#c0392b;background:#fdf3f2}
-.btn.accent{color:#fff;border-color:transparent;background:var(--ink)}
-.btn.accent:hover{transform:translateY(-1px);box-shadow:0 10px 22px -12px rgba(20,22,27,.5);background:#23262e}
-.btn.on{border-color:var(--ink);background:var(--ink);color:#fff}
+.btn.danger{color:var(--danger);border-color:var(--danger-bd)}
+.btn.danger:hover{border-color:var(--danger);background:var(--danger-bg)}
+.btn.accent{color:var(--on-active);border-color:transparent;background:var(--active-fill)}
+.btn.accent:hover{transform:translateY(-1px);box-shadow:0 10px 22px -12px rgba(var(--shadow-rgb),.5);background:var(--accent-sink)}
+.btn.on{border-color:var(--ink);background:var(--active-fill);color:var(--on-active)}
 /* CODEKEEB: modo forma. */
 body.shaping .key{cursor:move}
 .key.shapeSel{outline:2px solid var(--c-blue);outline-offset:2px;z-index:5}
@@ -77,24 +77,24 @@ body.shaping .key{cursor:move}
 select{background:var(--surface);color:var(--ink);border:1px solid var(--hairline2);border-radius:999px;
   padding:.45em .9em;font-family:var(--font-mono);font-size:.74rem;cursor:pointer}
 select:hover{border-color:var(--ink)}
-.dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#c9ccd2;transition:background .2s}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:var(--dot-idle);transition:background .2s}
 .dot.unlocked{background:var(--c-orange);box-shadow:0 0 9px rgba(255,153,42,.8)}
 
 /* ---------- scrollbars / focus / sliders ---------- */
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#d8d9d4;border-radius:5px;border:2px solid var(--bg)}
-::-webkit-scrollbar-thumb:hover{background:#bcbeb8}
+::-webkit-scrollbar-thumb{background:var(--scroll-thumb);border-radius:5px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:var(--scroll-thumb-h)}
 :focus-visible{outline:2px solid var(--c-blue);outline-offset:2px;border-radius:8px}
-input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:#e2e3de;cursor:pointer}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:var(--surface-2);cursor:pointer}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:15px;height:15px;border-radius:50%;
-  background:var(--ink);border:3px solid #fff;box-shadow:0 1px 5px rgba(20,22,27,.3);transition:transform .12s}
+  background:var(--inverse-surface);border:3px solid var(--surface);box-shadow:0 1px 5px rgba(var(--shadow-rgb),.3);transition:transform .12s}
 input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
-input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--ink);border:3px solid #fff}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--inverse-surface);border:3px solid var(--surface)}
 
 /* ---------- header ---------- */
 #top{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;
-  padding:6px clamp(16px,3vw,40px);background:rgba(247,247,244,.82);
+  padding:6px clamp(16px,3vw,40px);background:var(--header-bg);
   backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);
   box-shadow:0 1px 0 var(--hairline);flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px;white-space:nowrap;
@@ -112,11 +112,11 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #connBadge{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;border:1px solid var(--hairline2);
   font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase}
 #connBadge.local{color:var(--muted);background:var(--surface)}
-#connBadge.online{color:#0d7a43;border-color:rgba(13,122,67,.35);background:#effaf3}
+#connBadge.online{color:var(--ok);border-color:var(--ok-bd);background:var(--ok-bg)}
 #connBadge .pulse{width:7px;height:7px;border-radius:50%;background:currentColor}
 #connBadge.online .pulse{animation:pl 1.6s infinite}
 @keyframes pl{0%,100%{opacity:1}50%{opacity:.25}}
-.lockdot{width:10px;height:10px;border-radius:50%;background:#c9ccd2}
+.lockdot{width:10px;height:10px;border-radius:50%;background:var(--dot-idle)}
 .lockdot.unlocked{background:var(--c-orange);box-shadow:0 0 10px rgba(255,153,42,.85)}
 #unsavedDot{display:none;color:var(--c-magenta);font-family:var(--font-mono);font-size:.62rem;letter-spacing:.1em}
 #topActions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -202,7 +202,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   font-size:.76rem;font-weight:600;letter-spacing:.08em;cursor:pointer;text-transform:uppercase;font-family:var(--font-mono);
   transition:border-color .25s,color .25s,transform .25s var(--ease)}
 .ltab:hover{border-color:var(--ink);color:var(--ink);transform:translateY(-1px)}
-.ltab.on{border-color:transparent;color:#fff;background:var(--ink)}
+.ltab.on{border-color:transparent;color:var(--on-active);background:var(--active-fill)}
 /* La capa activa se pinta con el color de SU tecla en el teclado: naranja
    para Lower (.key.mo) y fucsia para Raise (.key.mo2). Mismo gradiente. */
 .ltab.on.lay1{background:linear-gradient(180deg,#ff992a,#e07514 60%,#b35708);
@@ -216,7 +216,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 /* ---------- dock de keycodes (estilo Vial) ---------- */
 #dock{position:relative;z-index:5;max-width:1400px;margin:6px auto 4px;padding:0 clamp(10px,2vw,24px)}
 #dockCard{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-md);
-  box-shadow:0 24px 48px -32px rgba(20,22,27,.25);overflow:hidden}
+  box-shadow:0 24px 48px -32px rgba(var(--shadow-rgb),.25);overflow:hidden}
 .dockHead{display:flex;align-items:center;gap:12px;padding:8px 16px;border-bottom:1px solid var(--hairline);flex-wrap:wrap}
 .dockHead h2{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);font-weight:700}
 .dockHead small{font-family:var(--font-mono);font-size:.64rem;color:var(--muted)}
@@ -238,14 +238,14 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   transition:background .15s,border-color .15s,color .15s,transform .05s}
 .pmod:hover{border-color:var(--ink);color:var(--ink)}
 /* Pulsada de verdad: se hunde, como una tecla mantenida. */
-.pmod.on{background:var(--ink);border-color:var(--ink);color:#fff;
+.pmod.on{background:var(--active-fill);border-color:var(--ink);color:var(--on-active);
   border-bottom-width:1px;transform:translateY(1px)}
 .pmod:active{transform:translateY(1px)}
 /* Separacion izquierdos / derechos sin meter otra etiqueta. */
 .pmodGap{width:1px;align-self:stretch;margin:1px 4px;background:var(--hairline2)}
-.pmodClear{min-width:0;margin-left:auto;color:#c02a52;
+.pmodClear{min-width:0;margin-left:auto;color:var(--danger-alt);
   border-color:transparent;background:transparent;border-bottom-width:1px}
-.pmodClear:hover{border-color:rgba(192,42,82,.35);color:#c02a52}
+.pmodClear:hover{border-color:var(--danger-alt-bd);color:var(--danger-alt)}
 /* Vista previa: sin modificadores no hace falta decir nada. */
 .pmodOut{font:700 .62rem var(--font-mono);color:var(--c-blue);
   margin-left:auto;padding-right:4px;white-space:nowrap}
@@ -261,13 +261,13 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   .pmod{padding:8px 4px;font-size:.63rem;min-width:0;width:100%}
   .pmodOut{grid-column:1/-1;margin:1px 0 0;padding:0;text-align:center}
   .pmodClear{grid-column:1/-1;margin-left:0;width:100%;
-    border:1px solid rgba(192,42,82,.35)}
+    border:1px solid var(--danger-alt-bd)}
 }
 .pcat{background:transparent;border:1px solid var(--hairline2);color:var(--muted);border-radius:999px;padding:.35em 1em;
   font-family:var(--font-mono);font-size:.64rem;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;
   transition:border-color .2s,color .2s,background .2s}
 .pcat:hover{border-color:var(--ink);color:var(--ink)}
-.pcat.on{border-color:var(--ink);background:var(--ink);color:#fff}
+.pcat.on{border-color:var(--ink);background:var(--active-fill);color:var(--on-active)}
 /* Altura acotada + scroll propio: si el grid crece libremente, cada
    categoría deja el dock de una altura distinta y el teclado se reescala
    al cambiar de pestaña (muy visible en móvil). Con un alto estable el
@@ -278,10 +278,10 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .pk{background:var(--bg);border:1px solid var(--hairline2);border-radius:9px;padding:0 4px;text-align:center;cursor:pointer;
   display:flex;flex-direction:column;justify-content:center;height:38px;
   transition:transform .18s var(--ease),border-color .18s,box-shadow .18s,background .18s}
-.pk:hover{border-color:var(--ink);background:var(--surface);transform:translateY(-2px);box-shadow:0 8px 16px -8px rgba(20,22,27,.25)}
+.pk:hover{border-color:var(--ink);background:var(--surface);transform:translateY(-2px);box-shadow:0 8px 16px -8px rgba(var(--shadow-rgb),.25)}
 .pk .l{font-family:var(--font-mono);font-size:.72rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pk .d{display:none}
-.pk.cur{border-color:var(--c-magenta);box-shadow:0 0 0 1px var(--c-magenta);background:#fff5fc}
+.pk.cur{border-color:var(--c-magenta);box-shadow:0 0 0 1px var(--c-magenta);background:var(--pick-cur)}
 /* CODEKEEB: pestana Unicode. El glifo manda, asi que se pinta mas
    grande y con la fuente de texto (la mono no cubre bien acentos y
    flechas). El codepoint se muestra debajo, pequeno. */
@@ -297,8 +297,8 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .pkGroup::after{content:"";flex:1;height:1px;background:var(--hairline2)}
 .pkGroup:first-child{margin-top:0}
 .pkWarn{grid-column:1/-1;margin:0 0 6px;padding:7px 10px;border-radius:8px;
-  font-size:10px;line-height:1.5;color:#8a5a00;background:#fff6e5;
-  border:1px solid rgba(200,140,0,.3)}
+  font-size:10px;line-height:1.5;color:var(--warn);background:var(--warn-bg);
+  border:1px solid var(--warn-bd)}
 /* Barra de distribucion en la pestana de simbolos. */
 .symBar{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   margin:0 0 5px;font:600 .58rem var(--font-mono);letter-spacing:.1em;
@@ -307,7 +307,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   border:1px solid var(--hairline2);background:var(--surface);color:var(--ink);cursor:pointer}
 /* Tecla muerta: se marca distinto porque no es un caracter suelto,
    es un acento que espera a la siguiente letra. */
-.pk.dead{border-color:var(--c-blue);background:linear-gradient(180deg,#f5f9ff,var(--bg))}
+.pk.dead{border-color:var(--c-blue);background:linear-gradient(180deg,var(--dead-top),var(--bg))}
 .pk.dead .l{color:var(--c-blue);font-size:1.18rem;line-height:1.5;overflow:visible}
 /* line-height 1 recortaba por arriba justo lo que hay que ver aqui:
    el acento (^ ~ ') vive en la parte alta de la caja de texto. */
@@ -322,7 +322,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #drawer{position:fixed;top:0;right:0;width:min(460px,92vw);height:100%;background:var(--surface);
   border-left:1px solid var(--hairline);transform:translateX(100%);
   z-index:40;transition:transform .35s var(--ease);display:flex;flex-direction:column;
-  box-shadow:-24px 0 60px -30px rgba(20,22,27,.25)}
+  box-shadow:-24px 0 60px -30px rgba(var(--shadow-rgb),.25)}
 #drawer.open{transform:translateX(0)}
 #drawer .dhead{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hairline)}
 #drawer .dhead h2{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.16em;color:var(--ink);text-transform:uppercase}
@@ -355,7 +355,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
    width:66px en los sliders y los dejaban diminutos. */
 #rgbCtl{display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:20;
   width:250px;background:var(--surface);border:1px solid var(--hairline);border-radius:12px;
-  padding:9px 11px 10px;box-shadow:0 14px 34px -18px rgba(20,22,27,.42)}
+  padding:9px 11px 10px;box-shadow:0 14px 34px -18px rgba(var(--shadow-rgb),.42)}
 #rgbCtl.on{display:block}
 #rgbCtl select{width:100%;margin-bottom:8px}
 #rgbCtl .drow{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:10.5px;color:var(--muted)}
@@ -400,20 +400,20 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #proto::-webkit-scrollbar-thumb,#protoLog::-webkit-scrollbar-thumb{background:#2b2e35;border-color:#0d0e11}
 
 /* ---------- OSD / tooltip ---------- */
-#osd{position:fixed;left:50%;bottom:42px;transform:translateX(-50%) translateY(20px);z-index:80;background:var(--ink);
-  border-radius:999px;padding:12px 26px;font-size:13.5px;font-weight:600;color:#fff;
+#osd{position:fixed;left:50%;bottom:42px;transform:translateX(-50%) translateY(20px);z-index:80;background:var(--inverse-surface);
+  border-radius:999px;padding:12px 26px;font-size:13.5px;font-weight:600;color:var(--on-accent);
   opacity:0;pointer-events:none;transition:opacity .25s var(--ease),transform .25s var(--ease);text-align:center;min-width:210px;
-  box-shadow:0 18px 40px -16px rgba(20,22,27,.5)}
+  box-shadow:0 18px 40px -16px rgba(var(--shadow-rgb),.5)}
 #osd.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#osd .bar{height:3px;border-radius:2px;background:rgba(255,255,255,.18);margin-top:8px;overflow:hidden}
+#osd .bar{height:3px;border-radius:2px;background:var(--osd-track);margin-top:8px;overflow:hidden}
 #osd .bar i{display:block;height:100%;background:var(--grad);border-radius:2px}
-#tip{position:fixed;z-index:90;background:var(--ink);border-radius:12px;padding:8px 12px;font-size:11px;
-  color:#cfd3da;pointer-events:none;display:none;max-width:290px;line-height:1.5;box-shadow:0 12px 30px -12px rgba(20,22,27,.5)}
-#tip b{color:#fff}
+#tip{position:fixed;z-index:90;background:var(--inverse-surface);border-radius:12px;padding:8px 12px;font-size:11px;
+  color:var(--on-inverse-dim);pointer-events:none;display:none;max-width:290px;line-height:1.5;box-shadow:0 12px 30px -12px rgba(var(--shadow-rgb),.5)}
+#tip b{color:var(--on-accent)}
 
 /* ---------- menú contextual ---------- */
 #ctx{position:fixed;z-index:95;background:var(--surface);border:1px solid var(--hairline);border-radius:14px;
-  padding:5px;display:none;min-width:180px;box-shadow:0 24px 50px -20px rgba(20,22,27,.35);font-size:12.5px}
+  padding:5px;display:none;min-width:180px;box-shadow:0 24px 50px -20px rgba(var(--shadow-rgb),.35);font-size:12.5px}
 #ctx.open{display:block}
 #ctx button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:none;color:var(--ink);
   padding:9px 12px;border-radius:9px;cursor:pointer;font-size:12.5px}
@@ -423,17 +423,17 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 #ctx .k{margin-left:auto;color:var(--muted);font-family:var(--font-mono);font-size:.6rem}
 #ctx hr{border:none;border-top:1px solid var(--hairline);margin:4px 8px}
 #encCtx{position:fixed;z-index:95;background:var(--surface);border:1px solid var(--hairline);border-radius:14px;
-  padding:5px;display:none;min-width:200px;box-shadow:0 24px 50px -20px rgba(20,22,27,.35);font-size:12.5px}
+  padding:5px;display:none;min-width:200px;box-shadow:0 24px 50px -20px rgba(var(--shadow-rgb),.35);font-size:12.5px}
 #encCtx.open{display:block}
 #encCtx button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:none;color:var(--ink);
   padding:9px 12px;border-radius:9px;cursor:pointer;font-size:12.5px}
 #encCtx button:hover{background:var(--bg)}
 
 /* ---------- modal ayuda ---------- */
-#helpBk{position:fixed;inset:0;background:rgba(20,22,27,.35);backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center}
+#helpBk{position:fixed;inset:0;background:rgba(var(--shadow-rgb),.35);backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center}
 #helpBk.open{display:flex}
 #help{width:660px;max-width:94vw;max-height:84vh;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-md);
-  overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 90px -30px rgba(20,22,27,.45)}
+  overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 90px -30px rgba(var(--shadow-rgb),.45)}
 #help .phead{padding:16px 20px;border-bottom:1px solid var(--hairline);display:flex;align-items:center;gap:10px}
 #help .phead h2{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.14em;color:var(--ink);text-transform:uppercase}
 #help .hbody{overflow-y:auto;padding:18px 22px 24px;font-size:12.5px;line-height:1.7;color:var(--ink)}
@@ -464,13 +464,13 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   text-transform:uppercase;color:var(--faint);border:1px solid var(--hairline2);
   border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:1px}
 #help .hstep{display:flex;gap:9px;margin:7px 0;align-items:flex-start}
-#help .hstep i{flex:none;width:19px;height:19px;border-radius:50%;background:var(--ink);color:var(--surface);
+#help .hstep i{flex:none;width:19px;height:19px;border-radius:50%;background:var(--inverse-surface);color:var(--surface);
   font-family:var(--font-mono);font-size:10px;font-style:normal;display:flex;
   align-items:center;justify-content:center;margin-top:1px}
 @media (max-width:560px){#help td:first-child{width:auto}}
 
 /* ---------- OLED zoom overlay ---------- */
-#oledZoom{position:fixed;inset:0;background:rgba(20,22,27,.55);backdrop-filter:blur(8px);z-index:55;display:none;align-items:center;justify-content:center;gap:40px}
+#oledZoom{position:fixed;inset:0;background:rgba(var(--shadow-rgb),.55);backdrop-filter:blur(8px);z-index:55;display:none;align-items:center;justify-content:center;gap:40px}
 #oledZoom.open{display:flex}
 .ozPanel{display:flex;flex-direction:column;align-items:center;gap:12px}
 .ozPanel .oframe{border:1px solid #26292f;border-radius:14px;background:#000;padding:10px;box-shadow:0 30px 70px -20px rgba(0,0,0,.8)}
@@ -521,7 +521,131 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   #pickerGrid{height:100px}
 }
 
+
+/* Semantic tokens. The light values are exactly what these
+   surfaces were painted before, so "light" is unchanged by design. */
+:root{
+  --on-accent:#fff;   /* text on an inverted or accent fill */
+  --shadow-rgb:20,22,27;   /* shadows tint with the ink colour */
+  --selection-bg:#cfe6ff;   /* ::selection */
+  --header-bg:rgba(247,247,244,.82);   /* frosted header */
+  --surface-2:#e2e3de;   /* sunken track */
+  --dot-idle:#c9ccd2;   /* status dots, locked */
+  --scroll-thumb:#d8d9d4;   /* scrollbar */
+  --scroll-thumb-h:#bcbeb8;   /* scrollbar hover */
+  --danger:#c0392b;   /* destructive text and border */
+  --danger-bg:#fdf3f2;   /* destructive hover fill */
+  --danger-alt:#c02a52;   /* the clear-modifier control */
+  --ok:#0d7a43;   /* connected badge */
+  --ok-bg:#effaf3;   /* connected badge fill */
+  --warn:#8a5a00;   /* picker warning text */
+  --warn-bg:#fff6e5;   /* picker warning fill */
+  --pick-cur:#fff5fc;   /* current picker cell */
+  --inverse-surface:#14161b;   /* a fill that inverts against the page */
+  --on-inverse-dim:#cfd3da;   /* secondary text on an inverted surface */
+  --active-fill:#14161b;   /* selected tabs, pills and accent buttons */
+  --on-active:#fff;   /* text on an active control */
+  --accent-sink:#23262e;   /* an active control, pressed */
+  --osd-track:rgba(255,255,255,.18);   /* unfilled part of the OSD bar */
+  --dead-top:#f5f9ff;   /* top of the dead-key picker cell */
+  --danger-bd:rgba(192,57,43,.3);   /* destructive border */
+  --danger-alt-bd:rgba(192,42,82,.35);   /* clear-modifier border */
+  --ok-bd:rgba(13,122,67,.35);   /* connected badge border */
+  --warn-bd:rgba(200,140,0,.3);   /* picker warning border */
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#12151a; --surface:#181c22; --ink:#e6e9ef; --muted:#9aa3b0;
+  --faint:#7d8693;
+  --hairline:rgba(230,233,239,.12); --hairline2:rgba(230,233,239,.22);
+  --on-accent:#12151a;
+  --shadow-rgb:0,0,0;
+  --selection-bg:#2c3440;
+  --header-bg:rgba(18,21,26,.82);
+  --surface-2:#20252e;
+  --dot-idle:#4a525e;
+  --scroll-thumb:#3a414c;
+  --scroll-thumb-h:#525b68;
+  --danger:#ff6b6b;
+  --danger-bg:#2a1718;
+  --danger-alt:#ff7a96;
+  --ok:#5ad19b;
+  --ok-bg:#12271e;
+  --warn:#e8c46a;
+  --warn-bg:#2a2415;
+  --pick-cur:#2a1f28;
+  --inverse-surface:#e6e9ef;
+  --on-inverse-dim:#4a525e;
+  --active-fill:#2f3846;
+  --on-active:#e6e9ef;
+  --accent-sink:#3a4454;
+  --osd-track:rgba(0,0,0,.18);
+  --dead-top:#1b2331;
+  --danger-bd:rgba(255,107,107,.32);
+  --danger-alt-bd:rgba(255,122,150,.32);
+  --ok-bd:rgba(90,209,155,.32);
+  --warn-bd:rgba(232,196,106,.3);
+}
+
+/* Matches .iconlink exactly -- same border, radius, padding and icon size as
+   the GitHub control it sits beside -- so it reads as part of that row
+   rather than as a separate widget. */
+#themeToggle{display:inline-flex;align-items:center;justify-content:center;
+  flex:none;color:var(--muted);background:transparent;cursor:pointer;
+  border:1px solid var(--hairline2);border-radius:999px;padding:8px 10px;
+  transition:border-color .2s,color .2s;-webkit-tap-highlight-color:transparent}
+#themeToggle:hover{color:var(--ink);border-color:var(--ink)}
+#themeToggle:focus-visible{outline:2px solid var(--c-orange);outline-offset:2px}
+#themeToggle svg{width:14px;height:14px;display:block}
 </style>
+<!-- Runs in <head>, before first paint: with the stylesheet 330KB up the
+     page, applying the theme from the end of <body> flashes the light theme
+     on every load for anyone on dark. Mounting the button still waits for
+     the DOM; only the attribute is set this early. -->
+<script>
+/* Theme cycle. One button in the icon row, cycling light -> dark -> auto, where auto follows
+   prefers-color-scheme. The icon shows which of the three you are on. */
+(function(){
+  var KEY='ck-theme', ORDER=['light','dark','auto'];
+  var mq=window.matchMedia('(prefers-color-scheme: dark)');
+  var SUN=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 1.6v2.2M12 20.2v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M1.6 12h2.2M20.2 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg>`;
+  var MOON=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.2 14.6A8.6 8.6 0 0 1 9.4 3.8a8.6 8.6 0 1 0 10.8 10.8z"/></svg>`;
+  var AUTO=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/></svg>`;
+  var ICON={light:SUN,dark:MOON,auto:AUTO};
+  function mode(){ var v; try{ v=localStorage.getItem(KEY); }catch(e){}
+    return ORDER.indexOf(v)>=0 ? v : 'auto'; }
+  function resolved(m){ return m==='auto' ? (mq.matches?'dark':'light') : m; }
+  function apply(){
+    var m=mode();
+    var r=resolved(m);
+    document.documentElement.setAttribute('data-theme', r);
+    var meta=document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute('content', r==='dark' ? '#12151a' : '#f7f7f4');
+    var b=document.getElementById('themeToggle');
+    if(b){ b.innerHTML=ICON[m];
+           b.title = m==='auto' ? ('Theme: auto, following the system ('+r+')') : ('Theme: '+m);
+           b.setAttribute('aria-label', b.title); }
+  }
+  function cycle(){
+    try{ localStorage.setItem(KEY, ORDER[(ORDER.indexOf(mode())+1)%ORDER.length]); }catch(e){}
+    apply();
+  }
+  mq.addEventListener('change', function(){ if(mode()==='auto') apply(); });
+  function mount(){
+    var host=document.querySelector('#top');
+    if(!host||document.getElementById('themeToggle')) return;
+    var b=document.createElement('button');
+    b.id='themeToggle'; b.type='button';
+    b.addEventListener('click',cycle);
+    var gh=host.querySelector('.iconlink');
+    if(gh&&gh.parentNode) gh.parentNode.insertBefore(b,gh); else host.appendChild(b);
+    apply();
+  }
+  apply();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mount);
+  else mount();
+})();
+</script>
 </head>
 <body>
 <!-- ======================= HEADER ======================= -->
