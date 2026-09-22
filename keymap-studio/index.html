@@ -607,6 +607,18 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
       <p style="font-size:10px;color:var(--faint);margin-top:8px;line-height:1.5" data-i18n="lockHint">
         En LOCAL el desbloqueo es simulado. Conectado, envía set_lock real al firmware (o usa la tecla &studio_unlock de Lower).</p>
     </details>
+    <details class="dsec" id="secSleepBox">
+      <summary><span data-i18n="secSleep">Deep sleep (&amp;sleepcfg)</span> &mdash; <span id="sleepState" class="animName">30 min (sim)</span></summary>
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <input type="checkbox" id="sleepEnabled"><span data-i18n="sleepEnabled">Enabled</span></label>
+      <label style="display:flex;align-items:center;gap:8px">
+        <span data-i18n="sleepAfter">Sleep after</span>
+        <input type="number" id="sleepMinutes" min="1" max="720" step="1" style="width:5em">
+        <span data-i18n="sleepMin">minutes</span></label>
+      <button class="btn small" id="btnSleepApply" data-i18n="sleepApply" style="margin-top:8px">Apply to keyboard</button>
+      <p style="font-size:10px;color:var(--faint);margin-top:8px;line-height:1.5" data-i18n="sleepHint">
+        En LOCAL esto es simulado. Conectado, envia set_sleep real al firmware. Solo funciona con bateria.</p>
+    </details>
     <details class="dsec" open>
       <summary data-i18n="secLayers">Capas</summary>
       <div id="layerList"></div>
@@ -785,7 +797,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   expKey:'Export .keymap',expJson:'Export JSON',impJson:'Import JSON',reset:'Reset stock',
   assign:'Asignar tecla',search:'Buscar keycode o behavior…',unlock:'UNLOCK (set_lock)',
   lockHint:'En LOCAL el desbloqueo es simulado. Conectado, envía set_lock real al firmware (o usa la tecla &studio_unlock de Lower).',
-  secLock:'Bloqueo',secLayers:'Capas',secAnim:'Animación OLED derecha (&oledanim)',secInfo:'Dispositivo',secFile:'Archivo',
+  secLock:'Bloqueo',secSleep:'Deep sleep (&sleepcfg)',sleepEnabled:'Activado',sleepAfter:'Dormir tras',sleepMin:'minutos',sleepApply:'Aplicar al teclado',sleepHint:'En LOCAL esto es simulado. Conectado, envia set_sleep real al firmware. Solo funciona con bateria.',secLayers:'Capas',secAnim:'Animación OLED derecha (&oledanim)',secInfo:'Dispositivo',secFile:'Archivo',
   addLayer:'+ Añadir',saveKm:'Guardar (flash)',discard:'Descartar',stock:'↺ Keymap de fábrica',console:'Consola de protocolo',
   animHint:'Cicla crystal → cat → head → spaceman → pokemon, como &oledanim (Lower + encoder derecho).',
   needSerial:'Este navegador no soporta Web Serial (usa Chrome/Edge en HTTPS o localhost).',
@@ -862,7 +874,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   expKey:'Export .keymap',expJson:'Export JSON',impJson:'Import JSON',reset:'Reset stock',
   assign:'Assign key',search:'Search keycode or behavior…',unlock:'UNLOCK (set_lock)',
   lockHint:'In LOCAL the unlock is simulated. When connected it sends a real set_lock to the firmware (or use the &studio_unlock key on Lower).',
-  secLock:'Lock',secLayers:'Layers',secAnim:'Right OLED animation (&oledanim)',secInfo:'Device',secFile:'File',
+  secLock:'Lock',secSleep:'Deep sleep (&sleepcfg)',sleepEnabled:'Enabled',sleepAfter:'Sleep after',sleepMin:'minutes',sleepApply:'Apply to keyboard',sleepHint:'In LOCAL this is simulated. When connected it sends a real set_sleep to the firmware. Only works while on battery.',secLayers:'Layers',secAnim:'Right OLED animation (&oledanim)',secInfo:'Device',secFile:'File',
   addLayer:'+ Add',saveKm:'Save (flash)',discard:'Discard',stock:'↺ Factory keymap',console:'Protocol console',
   animHint:'Cycles crystal → cat → head → spaceman → pokemon, like &oledanim (Lower + right encoder).',
   needSerial:'This browser does not support Web Serial (use Chrome/Edge on HTTPS or localhost).',
@@ -2712,10 +2724,12 @@ function parseKeymapResponse(buf){
       effect:v(5), effect_count:v(6),
       hue:v(7), speed:v(8),
       animation_available:!!v(9), animation:v(10), animation_count:v(11),
-      wpm_view_available:!!v(12), wpm_view:v(13), wpm_view_count:v(14)}};
+      wpm_view_available:!!v(12), wpm_view:v(13), wpm_view_count:v(14),
+      sleep_available:!!v(15), sleep_enabled:!!v(16), sleep_minutes:v(17)}};
   }
   const srgb=first(fs,105);if(srgb)return{set_rgb:!!srgb.val};
   const sanim=first(fs,106);if(sanim)return{set_animation:!!sanim.val};
+  const sslp=first(fs,108);if(sslp)return{set_sleep:!!sslp.val};
   /* CODEKEEB PATCH: fields 99/100 (codekeeb/zmk-studio-messages fork). */
   const gsb=first(fs,99);if(gsb){
     const d=PBR(gsb.bytes);
@@ -3236,6 +3250,13 @@ function reqKeymapSetUnicodeMode(id,mode){
    mano la lista de .proto que compila, asi que un fichero nuevo nunca se
    generaria. Ver src/studio/lighting_subsystem.c del firmware. */
 function reqKeymapGetLighting(id){return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bool(104,true)));}
+/* set_sleep, RPC 108. SetSleepRequest{bool enabled=1; uint32
+   minutes=2} goes in as a length-delimited submessage inside the keymap
+   subsystem (field 5), the same envelope reqKeymapSetWpmView uses. */
+function reqKeymapSetSleep(id,enabled,minutes){
+  return PBW.cat(PBW.uint(1,id),PBW.bytes(5,PBW.bytes(108,
+    PBW.cat(PBW.bool(1,!!enabled),PBW.uint(2,minutes)))));
+}
 /* Solo se mandan los campos presentes en `v`, asi cambiar el brillo no
    toca el resto del estado. */
 function reqKeymapSetRgb(id,v){
@@ -4073,6 +4094,34 @@ async function pushAnimToBoard(){
     await studioRequest(rid=>reqKeymapSetAnimation(rid,animIdx));
   }catch(e){plog('err','set_animation: '+e.message);}
 }
+/* Deep sleep. Mirrors how the WPM view is handled. */
+let sleepCfg={available:false,enabled:true,minutes:30};
+function syncSleepUI(){
+  /* Editable in LOCAL and marked (sim), exactly as the lock state is: the
+     drawer simulates everything until a keyboard reports in, then adopts
+     what the firmware actually holds. */
+  const live=studio.connected&&sleepCfg.available;
+  const en=$('#sleepEnabled'); if(en)en.checked=!!sleepCfg.enabled;
+  const mi=$('#sleepMinutes'); if(mi)mi.value=sleepCfg.minutes;
+  const st=$('#sleepState');
+  if(st){ const v=sleepCfg.enabled?(sleepCfg.minutes+' min'):'off';
+          st.textContent=live?v:(v+' (sim)'); }
+}
+async function pushSleepToBoard(){
+  if(!studio.connected||!studio.lockState){
+    plog('err','set_sleep: connect and unlock first'); return;
+  }
+  try{
+    const r=await studioRequest(rid=>reqKeymapSetSleep(rid,sleepCfg.enabled,sleepCfg.minutes));
+    const ok=r&&r.data&&r.data.set_sleep;
+    if(ok){
+      plog('inf','set_sleep: enabled='+sleepCfg.enabled+' minutes='+sleepCfg.minutes);
+      osd('Sleep: '+(sleepCfg.enabled?sleepCfg.minutes+' min':'off'));
+    }else{
+      plog('err','set_sleep: rejected by the keyboard (range is 1-720)');
+    }
+  }catch(e){plog('err','set_sleep: '+e.message);}
+}
 /* Al conectar, la web adopta lo que el teclado tiene puesto de verdad,
    en vez de mostrar lo ultimo que se simulo en el navegador. */
 async function studioFetchLighting(){
@@ -4081,6 +4130,12 @@ async function studioFetchLighting(){
     const r=await studioRequest(reqKeymapGetLighting,4000);
     const L=r&&r.data&&r.data.get_lighting;
     if(!L)return;
+    sleepCfg.available=!!L.sleep_available;
+    if(sleepCfg.available){
+      sleepCfg.enabled=!!L.sleep_enabled;
+      sleepCfg.minutes=L.sleep_minutes||30;
+    }
+    syncSleepUI();
     if(L.rgb_available){
       rgb.on=L.active; rgb.bri=L.brightness||1; rgb.fx=L.effect||0;
       rgb.hue=L.hue||0; rgb.spd=L.speed||0;
@@ -4697,6 +4752,14 @@ function init(){
   $('#btnAnim2').onclick=cycleAnim;
   $('#btnWpm').onclick=cycleWpmView;
   $('#btnWpm2').onclick=cycleWpmView;
+  $('#sleepEnabled').onchange=e=>{sleepCfg.enabled=e.target.checked;syncSleepUI();};
+  $('#sleepMinutes').onchange=e=>{
+    const v=Math.round(+e.target.value)||30;
+    sleepCfg.minutes=Math.max(1,Math.min(720,v));syncSleepUI();};
+  $('#btnSleepApply').onclick=pushSleepToBoard;
+  /* Nothing calls this until a keyboard reports in, so run it once now to
+     put the section into its disconnected state. */
+  syncSleepUI();
   $('#fxSel').onchange=e=>{rgb.fx=+e.target.value;saveRgb();syncRgbUI();};
   $('#fxToggle').onclick=()=>rgbCmd(RGBFX_CMD.TOGGLE);
   /* Abre/cierra los ajustes de RGB a mano. Antes se abrian solos al
