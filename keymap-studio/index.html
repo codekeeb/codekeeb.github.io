@@ -878,7 +878,73 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   lockedTag:'BLOQUEADO (desbloquea con la tecla física &studio_unlock)',
   hintNoRpc:'⚠ El puerto abre pero el teclado NO responde RPC. Causas típicas: (1) elegiste el puerto equivocado — algunos teclados exponen DOS puertos serie (consola y studio): prueba el otro. (2) tu firmware no tiene ZMK Studio: verifica abriendo https://zmk.studio — si la app oficial tampoco conecta, reflashea sofle_left con el build de tu repo que incluye el snippet studio-rpc-usb-uart. (3) otro programa tiene el puerto ocupado.',
   hintTips:'Pistas: cable en la mitad IZQUIERDA · cierra ZMK Studio/terminales que ocupen el puerto · prueba el OTRO puerto si hay dos · verifica que https://zmk.studio oficial sí conecta.',
-  hintUsbUnlock:'ZMK Studio no permite desbloquear por USB: pulsa la tecla física &studio_unlock (capa Lower, fila Z, 2ª tecla). La app se actualizará al instante.'},
+  hintUsbUnlock:'ZMK Studio no permite desbloquear por USB: pulsa la tecla física &studio_unlock (capa Lower, fila Z, 2ª tecla). La app se actualizará al instante.',
+
+  helpTabs:{basics:'Empezar',editing:'Editar',layers:'Capas y macros',board:'Teclado real',light:'Luz y pantallas',shape:'Forma'},
+  help:{
+  basics:()=>`
+  <p class="hlead">Editor de keymaps para los teclados CODE/KEEB. Funciona sin teclado
+     conectado: todo lo que cambies se guarda en el navegador.</p>
+  ${hStep(1,'Elige tu teclado arriba a la izquierda: <b>Sofle</b>, <b>Corne</b> o <b>Totem</b>.')}
+  ${hStep(2,'Haz clic en una tecla y elige el keycode en el panel de abajo. La selección avanza sola.')}
+  ${hStep(3,'Cambia de capa con las pestañas bajo el teclado (<kbd>Alt+1…9</kbd>).')}
+  ${hStep(4,'¿Tienes el teclado a mano? Conéctalo por USB y escríbelo en la placa. Si no, exporta el keymap.')}
+  <h3>Modo simulación</h3>
+  <p>Teclea en tu teclado normal y el de la pantalla se ilumina, cuenta las
+     pulsaciones por minuto y anima las pantallas y el RGB. Sirve para ver
+     cómo queda antes de tocar el firmware.</p>`,
+  editing:()=>`
+  <h3>Atajos</h3>
+  <table>
+    ${hRow('Click','Seleccionar tecla')}
+    ${hRow('Click derecho','Menú: editar, copiar, pegar, transparente')}
+    ${hRow('Ctrl+C / Ctrl+V','Copiar / pegar la tecla seleccionada')}
+    ${hRow('Ctrl+Z / Ctrl+Y','Deshacer / rehacer')}
+    ${hRow('Alt+1…9','Cambiar de capa')}
+    ${hRow('Enter','En el buscador: asignar el primer resultado')}
+    ${hRow('Esc','Cerrar buscador, menús y paneles')}
+  </table>
+  <h3>Teclas de dos funciones</h3>
+  <p>Una tecla puede hacer una cosa al <b>tocar</b> y otra al <b>mantener</b>: por ejemplo Esc al tocar y Ctrl al mantener. En el panel de abajo cambia entre <b>tocar</b> y <b>mantener</b> para editar cada mitad, o pulsa <b>quitar hold</b> para dejarla normal.</p>
+  <p>En «mantener» solo caben una capa (MO) o una tecla suelta, que es lo que ZMK admite ahí.</p>`,
+  layers:()=>`
+  <h3>Capas</h3>
+  <p>Abre <b>Panel Studio → Capas</b> para añadir, renombrar, reordenar o borrar capas, y para devolver una capa a como venía de fábrica.</p>
+  <h3>Macros</h3>
+  <p><b>&dmac</b> son ranuras de macro que viven en la memoria del teclado: escribes ahí un email, una ñ, un «→» o una secuencia de teclas y la asignas a una tecla, <b>sin recompilar el firmware</b>.</p>
+  ${hCard('Método Unicode','Para acentos y símbolos, elige en el panel cómo los escribe tu sistema (Windows, Linux o macOS). Si salen caracteres raros, es este ajuste.')}`,
+  board:()=>`
+  <p class="hlead">Necesitas Chrome o Edge: Firefox y Safari no permiten hablar con
+     el teclado desde el navegador.</p>
+  ${hStep(1,'Conecta la <b>mitad izquierda</b> por USB. Es la que manda; la derecha se entera por Bluetooth.')}
+  ${hStep(2,'Pulsa <b>Conectar teclado</b> y elige el puerto que aparece.')}
+  ${hStep(3,'Para poder editar, desbloquea con la tecla <b>&studio_unlock</b> (capa Lower). Es una protección de ZMK para que nadie reescriba tu teclado sin tocarlo.')}
+  ${hStep(4,'<b>Guardar (flash)</b> deja los cambios grabados en el teclado, y siguen ahí al desenchufarlo.')}
+  ${hCard('Encoders','Los giros también se editan: haz clic en el encoder de la pantalla y asigna qué hace al girar en cada sentido.')}
+  ${hCard('Exportar / importar','En <b>Archivo</b> puedes descargar el keymap como <b>.keymap</b> de ZMK para compilarlo, o guardarlo en JSON para llevártelo a otro navegador.')}`,
+  light:()=>`
+  <p class="hlead">Solo en los teclados que lo llevan. El Totem no tiene ni pantallas ni RGB, así que estos controles no aparecen.</p>
+  <div class="hgrid">
+    ${hCard('RGB','Enciende, apaga y ajusta efecto, brillo, tono y velocidad. Con el teclado conectado los cambios van a la placa y <b>se guardan en ella</b>.')}
+    ${hCard('Pantalla izquierda','Cinco vistas: bongo cat, luna, número de WPM, velocímetro y gráfica. En el teclado: <b>Lower + click del encoder izquierdo</b>.')}
+    ${hCard('Pantalla derecha','Cicla la animación. En el teclado: <b>Lower + click del encoder derecho</b>.')}
+    ${hCard('Ver las pantallas de cerca','El botón junto a «Simulación» las amplía a tamaño grande.')}
+  </div>
+  <p>Lo que elijas aquí queda guardado en el teclado, así que sigue puesto al desenchufarlo.</p>`,
+  shape:()=>`
+  <p class="hlead">El dibujo del teclado se puede recolocar para que se parezca al tuyo. Es solo el dibujo: no cambia el firmware ni el keymap.</p>
+  <p>En <b>Panel Studio → Forma del teclado</b>, marca <b>Editar posiciones</b>:</p>
+  <table>
+    ${hRow('Clic','Seleccionar la tecla')}
+    ${hRow('↑ ↓ ← →','Moverla')}
+    ${hRow('Shift + ← →','Girarla')}
+  </table>
+  <div class="hgrid">
+    ${hCard('Mover la columna entera','Aplica el movimiento a toda la columna de la tecla, no solo a ella.')}
+    ${hCard('Reflejar en la otra mitad','Mueve la tecla simétrica de la otra mitad, como si un espejo dividiera el teclado.')}
+  </div>
+  <p>Puedes <b>exportar</b> la forma a JSON para guardarla, o volver a la original cuando quieras.</p>`
+  }},
 en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',disconnectShort:'Disconnect',studio:'Studio Panel',oledzoom:'OLED ×4',
   rgbfx:'RGB effect',bri:'Brightness',hue:'Hue',spd:'Speed',rgbOn:'ON',rgbOff:'OFF',rgbLbl:'RGB',
   expKey:'Export .keymap',expJson:'Export JSON',impJson:'Import JSON',reset:'Reset stock',
@@ -955,7 +1021,73 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   lockedTag:'LOCKED (unlock with the physical &studio_unlock key)',
   hintNoRpc:'⚠ The port opens but the keyboard does NOT answer RPC. Common causes: (1) wrong port — some keyboards expose TWO serial ports (console and studio): try the other one. (2) your firmware has no ZMK Studio: check by opening https://zmk.studio — if the official app cannot connect either, reflash sofle_left with the build from your repo that includes the studio-rpc-usb-uart snippet. (3) another program is holding the port.',
   hintTips:'Hints: cable on the LEFT half · close ZMK Studio/terminals holding the port · try the OTHER port if there are two · check that the official https://zmk.studio does connect.',
-  hintUsbUnlock:'ZMK Studio does not allow unlocking over USB: press the physical &studio_unlock key (Lower layer, Z row, 2nd key). The app will update instantly.'}};
+  hintUsbUnlock:'ZMK Studio does not allow unlocking over USB: press the physical &studio_unlock key (Lower layer, Z row, 2nd key). The app will update instantly.',
+
+  helpTabs:{basics:'Start',editing:'Editing',layers:'Layers & macros',board:'Real keyboard',light:'Light & screens',shape:'Shape'},
+  help:{
+  basics:()=>`
+  <p class="hlead">Keymap editor for CODE/KEEB keyboards. It works with no keyboard
+     attached: everything you change is saved in your browser.</p>
+  ${hStep(1,'Pick your keyboard at the top left: <b>Sofle</b>, <b>Corne</b> or <b>Totem</b>.')}
+  ${hStep(2,'Click a key and pick a keycode in the bottom panel. The selection auto-advances.')}
+  ${hStep(3,'Switch layers with the tabs under the keyboard (<kbd>Alt+1…9</kbd>).')}
+  ${hStep(4,'Got the keyboard with you? Plug it in over USB and write it to the board. If not, export the keymap.')}
+  <h3>Simulation mode</h3>
+  <p>Type on your real keyboard and the one on screen lights up, counts words
+     per minute and animates the screens and the RGB. Handy to see how it
+     looks before touching the firmware.</p>`,
+  editing:()=>`
+  <h3>Shortcuts</h3>
+  <table>
+    ${hRow('Click','Select a key')}
+    ${hRow('Right click','Menu: edit, copy, paste, transparent')}
+    ${hRow('Ctrl+C / Ctrl+V','Copy / paste the selected key')}
+    ${hRow('Ctrl+Z / Ctrl+Y','Undo / redo')}
+    ${hRow('Alt+1…9','Switch layer')}
+    ${hRow('Enter','In the search box: assign the first result')}
+    ${hRow('Esc','Close search, menus and panels')}
+  </table>
+  <h3>Dual-function keys</h3>
+  <p>A key can do one thing when <b>tapped</b> and another when <b>held</b>: Esc on tap and Ctrl on hold, say. In the bottom panel switch between <b>tap</b> and <b>hold</b> to edit each half, or press <b>remove hold</b> to make it a plain key.</p>
+  <p>The hold half only takes a layer (MO) or a single key — that is what ZMK allows there.</p>`,
+  layers:()=>`
+  <h3>Layers</h3>
+  <p>Open <b>Studio panel → Layers</b> to add, rename, reorder or delete layers, and to restore one to how it shipped.</p>
+  <h3>Macros</h3>
+  <p><b>&dmac</b> are macro slots that live in the keyboard’s own memory: put an email address, an accented letter, an arrow or a key sequence in one and bind it to a key, <b>with no firmware rebuild</b>.</p>
+  ${hCard('Unicode method','For accents and symbols, pick how your system types them (Windows, Linux or macOS) in the panel. If you get garbled characters, this is the setting.')}`,
+  board:()=>`
+  <p class="hlead">You need Chrome or Edge: Firefox and Safari cannot talk to the
+     keyboard from the browser.</p>
+  ${hStep(1,'Plug the <b>left half</b> in over USB. That is the one in charge; the right half follows over Bluetooth.')}
+  ${hStep(2,'Press <b>Connect keyboard</b> and pick the port it offers.')}
+  ${hStep(3,'To edit, unlock with the <b>&studio_unlock</b> key (Lower layer). It is a ZMK safeguard so nobody rewrites your keyboard without touching it.')}
+  ${hStep(4,'<b>Save (flash)</b> writes the changes into the keyboard, and they stay there once you unplug it.')}
+  ${hCard('Encoders','Rotations are editable too: click the encoder on screen and set what each direction does.')}
+  ${hCard('Export / import','Under <b>File</b> you can download the keymap as a ZMK <b>.keymap</b> to compile, or save it as JSON to carry to another browser.')}`,
+  light:()=>`
+  <p class="hlead">Only on the keyboards that have it. The Totem has neither screens nor RGB, so these controls are hidden there.</p>
+  <div class="hgrid">
+    ${hCard('RGB','Turn it on or off and set effect, brightness, hue and speed. With the keyboard connected the changes go to the board and <b>are saved there</b>.')}
+    ${hCard('Left screen','Five views: bongo cat, luna, WPM number, speedometer and graph. On the keyboard: <b>Lower + left encoder click</b>.')}
+    ${hCard('Right screen','Cycles the animation. On the keyboard: <b>Lower + right encoder click</b>.')}
+    ${hCard('See the screens up close','The button next to “Simulation” blows them up to a large size.')}
+  </div>
+  <p>Whatever you pick here is stored on the keyboard, so it survives unplugging.</p>`,
+  shape:()=>`
+  <p class="hlead">The keyboard drawing can be rearranged to match yours. It is only the drawing: it changes neither the firmware nor the keymap.</p>
+  <p>Under <b>Studio panel → Keyboard shape</b>, tick <b>Edit positions</b>:</p>
+  <table>
+    ${hRow('Click','Select the key')}
+    ${hRow('↑ ↓ ← →','Move it')}
+    ${hRow('Shift + ← →','Rotate it')}
+  </table>
+  <div class="hgrid">
+    ${hCard('Move the whole column','Applies the movement to the key’s whole column, not just that key.')}
+    ${hCard('Mirror on the other half','Moves the mirrored key on the other half, as if a mirror split the keyboard.')}
+  </div>
+  <p>You can <b>export</b> the shape to JSON to keep it, or go back to the original whenever you want.</p>`
+  }}};
 const t=k=>(I18N[lang]&&I18N[lang][k])||I18N.es[k]||k;
 function applyI18n(){$$('[data-i18n]').forEach(e=>{const k=e.dataset.i18n;if(I18N[lang]&&I18N[lang][k])e.textContent=I18N[lang][k];});
   $$('[data-i18n-ph]').forEach(e=>{const k=e.dataset.i18nPh;if(I18N[lang]&&I18N[lang][k])e.placeholder=I18N[lang][k];});
@@ -4160,145 +4292,22 @@ let helpTab='basics';
 /* La ayuda cubre ya seis areas (edicion, capas, simulacion, teclado
    real, forma y hardware), demasiado para una sola lista: se reparte en
    pestanas y cada una cabe en pantalla sin scroll largo. */
+/* The help text lives in I18N, under helpTabs and help, so adding a
+   language is data rather than another branch in here. These three
+   builders are shared by every language. */
+const hRow=(k,d)=>`<tr><td><kbd>${k}</kbd></td><td>${d}</td></tr>`;
+const hCard=(t,d,tag)=>`<div class="hcard"><b>${t}</b>${tag?`<span class="htag">${tag}</span>`:''}<p>${d}</p></div>`;
+const hStep=(n,d)=>`<div class="hstep"><i>${n}</i><div>${d}</div></div>`;
 function renderHelp(){
-  const es=lang==='es';
-  const T=[
-    ['basics',  es?'Empezar':'Start'],
-    ['editing', es?'Editar':'Editing'],
-    ['layers',  es?'Capas y macros':'Layers & macros'],
-    ['board',   es?'Teclado real':'Real keyboard'],
-    ['light',   es?'Luz y pantallas':'Light & screens'],
-    ['shape',   es?'Forma':'Shape'],
-  ];
-  $('#helpTabs').innerHTML=T.map(([k,l])=>
+  /* A language without a help block falls back whole rather than
+     rendering half of it in the wrong language. */
+  const L=(I18N[lang]&&I18N[lang].help)?I18N[lang]:I18N[LANGS[0]];
+  $('#helpTabs').innerHTML=Object.entries(L.helpTabs).map(([k,l])=>
     `<button data-tab="${k}" class="${k===helpTab?'on':''}">${l}</button>`).join('');
   $('#helpTabs').querySelectorAll('button').forEach(b=>
     b.onclick=()=>{helpTab=b.dataset.tab;renderHelp();});
-
-  const row=(k,d)=>`<tr><td><kbd>${k}</kbd></td><td>${d}</td></tr>`;
-  const card=(t,d,tag)=>`<div class="hcard"><b>${t}</b>${tag?`<span class="htag">${tag}</span>`:''}<p>${d}</p></div>`;
-  const step=(n,d)=>`<div class="hstep"><i>${n}</i><div>${d}</div></div>`;
-  const H={};
-
-  H.basics=es?`
-  <p class="hlead">Editor de keymaps para los teclados CODE/KEEB. Funciona sin teclado
-     conectado: todo lo que cambies se guarda en el navegador.</p>
-  ${step(1,'Elige tu teclado arriba a la izquierda: <b>Sofle</b>, <b>Corne</b> o <b>Totem</b>.')}
-  ${step(2,'Haz clic en una tecla y elige el keycode en el panel de abajo. La selección avanza sola.')}
-  ${step(3,'Cambia de capa con las pestañas bajo el teclado (<kbd>Alt+1…9</kbd>).')}
-  ${step(4,'¿Tienes el teclado a mano? Conéctalo por USB y escríbelo en la placa. Si no, exporta el keymap.')}
-  <h3>Modo simulación</h3>
-  <p>Teclea en tu teclado normal y el de la pantalla se ilumina, cuenta las
-     pulsaciones por minuto y anima las pantallas y el RGB. Sirve para ver
-     cómo queda antes de tocar el firmware.</p>`
-  :`
-  <p class="hlead">Keymap editor for CODE/KEEB keyboards. It works with no keyboard
-     attached: everything you change is saved in your browser.</p>
-  ${step(1,'Pick your keyboard at the top left: <b>Sofle</b>, <b>Corne</b> or <b>Totem</b>.')}
-  ${step(2,'Click a key and pick a keycode in the bottom panel. The selection auto-advances.')}
-  ${step(3,'Switch layers with the tabs under the keyboard (<kbd>Alt+1…9</kbd>).')}
-  ${step(4,'Got the keyboard with you? Plug it in over USB and write it to the board. If not, export the keymap.')}
-  <h3>Simulation mode</h3>
-  <p>Type on your real keyboard and the one on screen lights up, counts words
-     per minute and animates the screens and the RGB. Handy to see how it
-     looks before touching the firmware.</p>`;
-
-  H.editing=`
-  <h3>${es?'Atajos':'Shortcuts'}</h3>
-  <table>
-    ${row('Click',es?'Seleccionar tecla':'Select a key')}
-    ${row(es?'Click derecho':'Right click',es?'Menú: editar, copiar, pegar, transparente':'Menu: edit, copy, paste, transparent')}
-    ${row('Ctrl+C / Ctrl+V',es?'Copiar / pegar la tecla seleccionada':'Copy / paste the selected key')}
-    ${row('Ctrl+Z / Ctrl+Y',es?'Deshacer / rehacer':'Undo / redo')}
-    ${row('Alt+1…9',es?'Cambiar de capa':'Switch layer')}
-    ${row('Enter',es?'En el buscador: asignar el primer resultado':'In the search box: assign the first result')}
-    ${row('Esc',es?'Cerrar buscador, menús y paneles':'Close search, menus and panels')}
-  </table>
-  <h3>${es?'Teclas de dos funciones':'Dual-function keys'}</h3>
-  <p>${es
-    ?'Una tecla puede hacer una cosa al <b>tocar</b> y otra al <b>mantener</b>: por ejemplo Esc al tocar y Ctrl al mantener. En el panel de abajo cambia entre <b>tocar</b> y <b>mantener</b> para editar cada mitad, o pulsa <b>quitar hold</b> para dejarla normal.'
-    :'A key can do one thing when <b>tapped</b> and another when <b>held</b>: Esc on tap and Ctrl on hold, say. In the bottom panel switch between <b>tap</b> and <b>hold</b> to edit each half, or press <b>remove hold</b> to make it a plain key.'}</p>
-  <p>${es
-    ?'En «mantener» solo caben una capa (MO) o una tecla suelta, que es lo que ZMK admite ahí.'
-    :'The hold half only takes a layer (MO) or a single key — that is what ZMK allows there.'}</p>`;
-
-  H.layers=`
-  <h3>${es?'Capas':'Layers'}</h3>
-  <p>${es
-    ?'Abre <b>Panel Studio → Capas</b> para añadir, renombrar, reordenar o borrar capas, y para devolver una capa a como venía de fábrica.'
-    :'Open <b>Studio panel → Layers</b> to add, rename, reorder or delete layers, and to restore one to how it shipped.'}</p>
-  <h3>${es?'Macros':'Macros'}</h3>
-  <p>${es
-    ?'<b>&dmac</b> son ranuras de macro que viven en la memoria del teclado: escribes ahí un email, una ñ, un «→» o una secuencia de teclas y la asignas a una tecla, <b>sin recompilar el firmware</b>.'
-    :'<b>&dmac</b> are macro slots that live in the keyboard’s own memory: put an email address, an accented letter, an arrow or a key sequence in one and bind it to a key, <b>with no firmware rebuild</b>.'}</p>
-  ${card(es?'Método Unicode':'Unicode method',
-    es?'Para acentos y símbolos, elige en el panel cómo los escribe tu sistema (Windows, Linux o macOS). Si salen caracteres raros, es este ajuste.'
-      :'For accents and symbols, pick how your system types them (Windows, Linux or macOS) in the panel. If you get garbled characters, this is the setting.')}`;
-
-  H.board=es?`
-  <p class="hlead">Necesitas Chrome o Edge: Firefox y Safari no permiten hablar con
-     el teclado desde el navegador.</p>
-  ${step(1,'Conecta la <b>mitad izquierda</b> por USB. Es la que manda; la derecha se entera por Bluetooth.')}
-  ${step(2,'Pulsa <b>Conectar teclado</b> y elige el puerto que aparece.')}
-  ${step(3,'Para poder editar, desbloquea con la tecla <b>&studio_unlock</b> (capa Lower). Es una protección de ZMK para que nadie reescriba tu teclado sin tocarlo.')}
-  ${step(4,'<b>Guardar (flash)</b> deja los cambios grabados en el teclado, y siguen ahí al desenchufarlo.')}
-  ${card('Encoders','Los giros también se editan: haz clic en el encoder de la pantalla y asigna qué hace al girar en cada sentido.')}
-  ${card(es?'Exportar / importar':'Export / import','En <b>Archivo</b> puedes descargar el keymap como <b>.keymap</b> de ZMK para compilarlo, o guardarlo en JSON para llevártelo a otro navegador.')}`
-  :`
-  <p class="hlead">You need Chrome or Edge: Firefox and Safari cannot talk to the
-     keyboard from the browser.</p>
-  ${step(1,'Plug the <b>left half</b> in over USB. That is the one in charge; the right half follows over Bluetooth.')}
-  ${step(2,'Press <b>Connect keyboard</b> and pick the port it offers.')}
-  ${step(3,'To edit, unlock with the <b>&studio_unlock</b> key (Lower layer). It is a ZMK safeguard so nobody rewrites your keyboard without touching it.')}
-  ${step(4,'<b>Save (flash)</b> writes the changes into the keyboard, and they stay there once you unplug it.')}
-  ${card('Encoders','Rotations are editable too: click the encoder on screen and set what each direction does.')}
-  ${card('Export / import','Under <b>File</b> you can download the keymap as a ZMK <b>.keymap</b> to compile, or save it as JSON to carry to another browser.')}`;
-
-  H.light=`
-  <p class="hlead">${es
-    ?'Solo en los teclados que lo llevan. El Totem no tiene ni pantallas ni RGB, así que estos controles no aparecen.'
-    :'Only on the keyboards that have it. The Totem has neither screens nor RGB, so these controls are hidden there.'}</p>
-  <div class="hgrid">
-    ${card('RGB',es
-      ?'Enciende, apaga y ajusta efecto, brillo, tono y velocidad. Con el teclado conectado los cambios van a la placa y <b>se guardan en ella</b>.'
-      :'Turn it on or off and set effect, brightness, hue and speed. With the keyboard connected the changes go to the board and <b>are saved there</b>.')}
-    ${card(es?'Pantalla izquierda':'Left screen',es
-      ?'Cinco vistas: bongo cat, luna, número de WPM, velocímetro y gráfica. En el teclado: <b>Lower + click del encoder izquierdo</b>.'
-      :'Five views: bongo cat, luna, WPM number, speedometer and graph. On the keyboard: <b>Lower + left encoder click</b>.')}
-    ${card(es?'Pantalla derecha':'Right screen',es
-      ?'Cicla la animación. En el teclado: <b>Lower + click del encoder derecho</b>.'
-      :'Cycles the animation. On the keyboard: <b>Lower + right encoder click</b>.')}
-    ${card(es?'Ver las pantallas de cerca':'See the screens up close',es
-      ?'El botón junto a «Simulación» las amplía a tamaño grande.'
-      :'The button next to “Simulation” blows them up to a large size.')}
-  </div>
-  <p>${es
-    ?'Lo que elijas aquí queda guardado en el teclado, así que sigue puesto al desenchufarlo.'
-    :'Whatever you pick here is stored on the keyboard, so it survives unplugging.'}</p>`;
-
-  H.shape=`
-  <p class="hlead">${es
-    ?'El dibujo del teclado se puede recolocar para que se parezca al tuyo. Es solo el dibujo: no cambia el firmware ni el keymap.'
-    :'The keyboard drawing can be rearranged to match yours. It is only the drawing: it changes neither the firmware nor the keymap.'}</p>
-  <p>${es?'En <b>Panel Studio → Forma del teclado</b>, marca <b>Editar posiciones</b>:':'Under <b>Studio panel → Keyboard shape</b>, tick <b>Edit positions</b>:'}</p>
-  <table>
-    ${row(es?'Clic':'Click',es?'Seleccionar la tecla':'Select the key')}
-    ${row('↑ ↓ ← →',es?'Moverla':'Move it')}
-    ${row('Shift + ← →',es?'Girarla':'Rotate it')}
-  </table>
-  <div class="hgrid">
-    ${card(es?'Mover la columna entera':'Move the whole column',es
-      ?'Aplica el movimiento a toda la columna de la tecla, no solo a ella.'
-      :'Applies the movement to the key’s whole column, not just that key.')}
-    ${card(es?'Reflejar en la otra mitad':'Mirror on the other half',es
-      ?'Mueve la tecla simétrica de la otra mitad, como si un espejo dividiera el teclado.'
-      :'Moves the mirrored key on the other half, as if a mirror split the keyboard.')}
-  </div>
-  <p>${es
-    ?'Puedes <b>exportar</b> la forma a JSON para guardarla, o volver a la original cuando quieras.'
-    :'You can <b>export</b> the shape to JSON to keep it, or go back to the original whenever you want.'}</p>`;
-
-  $('#helpBody').innerHTML=H[helpTab]||H.basics;
+  const H=L.help;
+  $('#helpBody').innerHTML=(H[helpTab]||H.basics)();
 }
 
 /* ============================================================
