@@ -778,7 +778,29 @@ const store={
 };
 
 /* ---------------- i18n ---------------- */
-let lang=store.get('ck.lang')||'es';
+/* To add a language: put its code here and add its block to I18N below.
+   Nothing else needs touching -- the button, the detection and every
+   string are derived from this list. The first entry is the default. */
+const LANGS=['es','en'];
+/* Pick from the browser's preferred list, in its order, so someone on
+   ['fr','en-GB','es'] gets English rather than falling through to the
+   default. Region subtags are dropped: es-MX and es-419 are both es. */
+function detectLang(){
+  const want=(navigator.languages&&navigator.languages.length)
+    ? navigator.languages : [navigator.language||''];
+  for(const l of want){
+    const primary=String(l).toLowerCase().split('-')[0];
+    if(LANGS.includes(primary))return primary;
+  }
+  return LANGS[0];
+}
+/* A saved choice always wins, but only if it is still a language we
+   ship: a stale code would leave I18N[lang] undefined and fall back to
+   the default string by string. */
+const savedLang=store.get('ck.lang');
+let lang=LANGS.includes(savedLang)?savedLang:detectLang();
+/* The button shows where the next click takes you, not where you are. */
+const nextLang=()=>LANGS[(LANGS.indexOf(lang)+1)%LANGS.length];
 const I18N={
 es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',disconnectShort:'Desconectar',studio:'Panel Studio',oledzoom:'OLED ×4',
   rgbfx:'Efecto RGB',bri:'Brillo',hue:'Matiz',spd:'Velocidad',rgbOn:'ON',rgbOff:'OFF',rgbLbl:'RGB',
@@ -943,7 +965,7 @@ function applyI18n(){$$('[data-i18n]').forEach(e=>{const k=e.dataset.i18n;if(I18
      anchas y para los lectores de pantalla. */
   $$('[data-short-i18n]').forEach(e=>{const k=e.dataset.shortI18n;
     if(I18N[lang]&&I18N[lang][k])e.dataset.short=I18N[lang][k];});
-  $('#btnLang').textContent=lang==='es'?'EN':'ES';document.documentElement.lang=lang;}
+  $('#btnLang').textContent=nextLang().toUpperCase();document.documentElement.lang=lang;}
 
 /* ============================================================
    HID usage tables (page 0x07 keyboard, 0x0C consumer)
@@ -4663,7 +4685,7 @@ function init(){
   /* Las categorías del picker y las macros se generan por JS, así que
      applyI18n() (que solo recorre data-i18n) no las alcanza: hay que
      repintarlas a mano al cambiar de idioma. */
-  $('#btnLang').onclick=()=>{lang=lang==='es'?'en':'es';store.set('ck.lang',lang);
+  $('#btnLang').onclick=()=>{lang=nextLang();store.set('ck.lang',lang);
     applyI18n();syncRgbUI();renderLayerBar();
     renderPickerCats($('#pickerCats').dataset.cur||'todo');renderMacros();
     /* La barra de modificadores y la de distribucion tambien se generan
