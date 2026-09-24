@@ -4,13 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Codekeeb — Teclados split ergonómicos hechos a mano</title>
-<meta name="description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Elige cuánto viene montado, mira qué incluye cada opción y compáralos antes de comprar.">
+<meta name="description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Elige uno y configúralo, de la placa sola al teclado listo para escribir.">
 <link rel="canonical" href="https://codekeeb.github.io/">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://codekeeb.github.io/">
 <meta property="og:site_name" content="Codekeeb">
-<meta property="og:title" content="Codekeeb — Teclados split ergonómicos">
-<meta property="og:description" content="Cinco teclados split ergonómicos montados y probados a mano. Precio, stock y ficha completa antes de comprar.">
+<meta property="og:title" content="Codekeeb — Teclados split ergonómicos hechos a mano">
+<meta property="og:description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Elige uno y configúralo, de la placa sola al teclado listo para escribir.">
 <meta property="og:image" content="https://codekeeb.github.io/assets/img/products/sofle-retro.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
@@ -19,10 +18,12 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#f4f4f1">
+<meta name="theme-color" content="#ffffff">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<!-- Una sola familia, en su version variable: el eje de ancho (wdth) da
+     la voz de titular sin cargar una segunda tipografia. -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/tienda.css">
 </head>
 <body>
@@ -35,9 +36,9 @@
            width="640" height="224" alt="CODE/KEEB">
     </a>
     <nav class="top__nav" aria-label="Principal">
-      <a href="#tienda" data-t="m.tienda">Tienda</a>
+      <a href="/#tienda" aria-current="page" data-t="m.tienda">Tienda</a>
       <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
-      <a class="top__studio" href="keymap-studio/">Keymap Studio</a>
+      <a href="keymap-studio/">Keymap Studio</a>
     </nav>
     <span class="top__sp"></span>
     <div class="idiomas">
@@ -51,115 +52,99 @@
         <button data-lang-btn="fr">Français</button>
       </div>
     </div>
-    <a class="btn" href="#tienda" data-t="d.choose">Elige tu split</a>
   </div>
 </header>
 
 <main>
 
-  <!-- ===== HEROE: a sangre, pero no de pantalla completa =====
-       Es una tienda: lo que se vende tiene que asomar en la primera
-       pantalla. El recorte sale del `foco` medido de la foto. -->
-  <section class="heroe">
-    <img class="heroe__foto" src="assets/img/products/sofle-retro.jpg" alt="Sofle Choc Retro"
-         width="1200" height="838" fetchpriority="high" data-foco="63" data-encaje="58">
-    <div class="heroe__texto env">
-      <h1 data-t-html="p.heroTitle"></h1>
-      <p data-t="p.heroText"></p>
-      <div class="acciones">
-        <a class="btn btn--claro" href="#tienda" data-t="p.heroCta"></a>
-        <a class="btn btn--cristal" href="comparar.html" data-t="p.heroCta2"></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== LA TIENDA ===== -->
-  <section class="seccion" id="tienda" aria-labelledby="h-tienda">
+  <!-- ===== LA FAMILIA =====
+       Lo primero que ensena ergodox: la familia de teclados en fila. Aqui
+       es la portada y la tienda a la vez: lo que se vende, a la vista. -->
+  <section class="familia" id="tienda" aria-labelledby="h-familia">
     <div class="env">
-      <div class="seccion__cab seccion__cab--fila">
-        <div class="seccion__txt">
-          <h2 class="titulo" id="h-tienda" data-t="d.choose"></h2>
-          <p class="entradilla" data-t="d.lede"></p>
-        </div>
+      <div class="familia__cab">
+        <h1 class="titular" id="h-familia" data-t-html="e.familiaT"></h1>
+        <p data-t="e.familiaP"></p>
         <div class="filtros" id="filtros" role="group" aria-label="Filtros"></div>
       </div>
       <div class="rejilla" id="rejilla"></div>
     </div>
   </section>
 
-  <!-- ===== LO QUE LLEVA, FUNCIONANDO =====
-       Antes eran cuatro regiones de pantalla completa seguidas. Ahora es
-       un escenario con pestanas: lo mismo en una pantalla, y el que quiera
-       verlo todo pulsa. -->
-  <section class="seccion oscuro" id="ventajas" aria-labelledby="h-ventajas">
-    <div class="env">
-      <div class="seccion__cab">
-        <h2 class="titulo" id="h-ventajas" data-t-html="p2.vTitle"></h2>
-        <p class="entradilla" data-t="p2.vLede"></p>
+  <!-- ===== UN PRINCIPIO POR SECCION =====
+       Como ergodox: el teclado dibujado con su forma real y la parte que
+       se explica encendida. El dibujo es del Sofle, y el rotulo lo dice. -->
+  <section class="seccion" id="split" aria-labelledby="h-split">
+    <div class="env principio">
+      <div class="principio__vis"><div class="dibujo" id="dSplit"></div><p class="nota" data-nota-dib="Sofle"></p></div>
+      <div class="principio__txt"><h2 id="h-split" data-t="e.splitT"></h2><p data-t="e.splitP"></p></div>
+    </div>
+  </section>
+
+  <section class="seccion s-niebla" id="columnas" aria-labelledby="h-col">
+    <div class="env principio principio--der">
+      <div class="principio__vis"><div class="dibujo" id="dCol"></div><p class="nota" data-nota-dib="Sofle"></p></div>
+      <div class="principio__txt"><h2 id="h-col" data-t="e.colT"></h2><p data-t="e.colP"></p></div>
+    </div>
+  </section>
+
+  <section class="seccion" id="pulgares" aria-labelledby="h-pul">
+    <div class="env principio">
+      <div class="principio__vis"><div class="dibujo" id="dPul"></div><p class="nota" data-nota-dib="Sofle"></p></div>
+      <div class="principio__txt"><h2 id="h-pul" data-t="e.pulT"></h2><p data-t="e.pulP"></p></div>
+    </div>
+  </section>
+
+  <section class="seccion s-hielo" id="capas" aria-labelledby="h-capas">
+    <div class="env principio principio--der">
+      <div class="principio__vis">
+        <div class="capas" aria-hidden="true"><div id="capasFila"></div></div>
+        <p class="nota" data-t="p.demoNota"></p>
       </div>
-
-      <div class="pestanas" role="tablist" aria-label="Ventajas">
-        <button role="tab" id="t-rgb" aria-controls="v-rgb" aria-selected="true" data-t="p2.tRgb"></button>
-        <button role="tab" id="t-oled" aria-controls="v-oled" aria-selected="false" tabindex="-1" data-t="p2.tOled"></button>
-        <button role="tab" id="t-capas" aria-controls="v-capas" aria-selected="false" tabindex="-1" data-t="p2.tCapas"></button>
-        <button role="tab" id="t-hot" aria-controls="v-hot" aria-selected="false" tabindex="-1" data-t="p2.tHot"></button>
+      <div class="principio__txt">
+        <h2 id="h-capas" data-t-html="p.capasTitle"></h2>
+        <p data-t="p.capasText"></p>
+        <ul class="funciones">
+          <li><b data-t="p.edHold"></b><span data-t="p.edHoldT"></span></li>
+          <li><b data-t="p.edEnc"></b><span data-t="p.edEncT"></span></li>
+          <li><b data-t="p.edMacros"></b><span data-t="p.edMacrosT"></span></li>
+          <li><b data-t="p.edUnicode"></b><span data-t="p.edUnicodeT"></span></li>
+        </ul>
+        <p><a class="enlace" href="keymap-studio/"><span data-t="studio.cta"></span><span class="ic-flecha"></span></a></p>
       </div>
+    </div>
+  </section>
 
-      <div class="escenario">
-        <div class="panel" id="v-rgb" role="tabpanel" aria-labelledby="t-rgb" aria-hidden="false">
-          <div class="escenario__lienzo">
-            <div class="kb" id="kb"></div>
-            <p class="nota" data-t="p.rgbReal"></p>
-          </div>
-          <div class="escenario__texto">
-            <h3 data-t-html="p.rgbTitle"></h3>
-            <p id="fxTexto"></p>
-            <div class="modos" id="modos" role="group" aria-label="Modos de luz"></div>
-            <p class="nota nota--izq" data-t="p.rgbOtros"></p>
-          </div>
+  <!-- La unica seccion oscura: la luz del teclado no se ve sobre blanco. -->
+  <section class="seccion oscura" id="luz" aria-labelledby="h-luz">
+    <div class="env principio">
+      <div class="principio__vis"><div class="kb" id="kb"></div><p class="nota" data-t="p.rgbReal"></p></div>
+      <div class="principio__txt">
+        <h2 id="h-luz" data-t-html="p.rgbTitle"></h2>
+        <p id="fxTexto"></p>
+        <div class="modos" id="modos" role="group" aria-label="Modos de luz"></div>
+        <p class="nota nota--izq" data-t="p.rgbOtros"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" id="pantallas" aria-labelledby="h-oled">
+    <div class="env principio principio--der">
+      <div class="principio__vis">
+        <div class="oleds">
+          <figure class="oled"><div class="oled__marco"><canvas id="oledIzq" width="68" height="160" aria-hidden="true"></canvas></div><figcaption data-t="p.oledIzq"></figcaption></figure>
+          <figure class="oled"><div class="oled__marco"><canvas id="oledDer" width="68" height="160" aria-hidden="true"></canvas></div><figcaption data-t="p.oledDer"></figcaption></figure>
         </div>
+        <p class="nota" data-t="p.oledReal"></p>
+      </div>
+      <div class="principio__txt"><h2 id="h-oled" data-t-html="p.oledTitle"></h2><p data-t="p.oledText"></p></div>
+    </div>
+  </section>
 
-        <div class="panel" id="v-oled" role="tabpanel" aria-labelledby="t-oled" aria-hidden="true" hidden>
-          <div class="escenario__lienzo">
-            <div class="oleds">
-              <figure class="oled">
-                <div class="oled__marco"><canvas id="oledIzq" width="68" height="160" aria-hidden="true"></canvas></div>
-                <figcaption data-t="p.oledIzq"></figcaption>
-              </figure>
-              <figure class="oled">
-                <div class="oled__marco"><canvas id="oledDer" width="68" height="160" aria-hidden="true"></canvas></div>
-                <figcaption data-t="p.oledDer"></figcaption>
-              </figure>
-            </div>
-            <p class="nota" data-t="p.oledReal"></p>
-          </div>
-          <div class="escenario__texto">
-            <h3 data-t-html="p.oledTitle"></h3>
-            <p data-t="p.oledText"></p>
-          </div>
-        </div>
-
-        <div class="panel" id="v-capas" role="tabpanel" aria-labelledby="t-capas" aria-hidden="true" hidden>
-          <div class="escenario__lienzo">
-            <div class="capas" aria-hidden="true"><div id="capasFila"></div></div>
-            <p class="nota" data-t="p.demoNota"></p>
-          </div>
-          <div class="escenario__texto">
-            <h3 data-t-html="p.capasTitle"></h3>
-            <p data-t="p.capasText"></p>
-            <ul class="funciones">
-              <li><b data-t="p.edHold"></b><span data-t="p.edHoldT"></span></li>
-              <li><b data-t="p.edEnc"></b><span data-t="p.edEncT"></span></li>
-              <li><b data-t="p.edMacros"></b><span data-t="p.edMacrosT"></span></li>
-              <li><b data-t="p.edUnicode"></b><span data-t="p.edUnicodeT"></span></li>
-            </ul>
-            <a class="btn btn--claro" href="keymap-studio/" data-t="studio.cta"></a>
-          </div>
-        </div>
-
-        <div class="panel" id="v-hot" role="tabpanel" aria-labelledby="t-hot" aria-hidden="true" hidden>
-          <div class="escenario__lienzo">
-            <div class="hot">
+  <section class="seccion s-niebla" id="hotswap" aria-labelledby="h-hot">
+    <div class="env principio">
+      <div class="principio__vis">
+        <div class="hot">
           <div class="hot__col">
             <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="Kailh Choc Red">
               <g class="hot__pieza">
@@ -219,33 +204,23 @@
             <span class="hot__dato"><span data-t="p.swTactil"></span> · MX</span>
           </div>
         </div>
-            <p class="nota" data-t="p.hotNota"></p>
-          </div>
-          <div class="escenario__texto">
-            <h3 data-t-html="p.hotTitle"></h3>
-            <p data-t="p.hotText"></p>
-          </div>
-        </div>
+        <p class="nota" data-t="p.hotNota"></p>
       </div>
+      <div class="principio__txt"><h2 id="h-hot" data-t-html="p.hotTitle"></h2><p data-t="p.hotText"></p></div>
     </div>
   </section>
 
-  <!-- ===== LOS CINCO, LADO A LADO ===== -->
-  <section class="seccion seccion--carta" id="comparar" aria-labelledby="h-comparar">
+  <section class="seccion" id="elegir" aria-labelledby="h-elegir">
     <div class="env">
-      <div class="seccion__cab">
-        <h2 class="titulo" id="h-comparar" data-t-html="p2.cTitle"></h2>
-        <p class="entradilla" data-t="p2.cLede"></p>
-      </div>
+      <div class="cab cab--centro"><h2 id="h-elegir" data-t-html="p2.cTitle"></h2><p data-t="p2.cLede"></p></div>
       <div class="tabla-env"><table class="tabla" id="comparativa"></table></div>
-      <p class="enlace-pie"><a class="enlace" href="comparar.html" data-t="m.verComparador"></a></p>
+      <p class="centro-pie"><a class="enlace" href="comparar.html"><span data-t="m.verComparador"></span><span class="ic-flecha"></span></a></p>
     </div>
   </section>
 
-  <!-- ===== ANTES DE PAGAR ===== -->
-  <section class="seccion" aria-labelledby="h-confianza">
+  <section class="seccion s-niebla" aria-labelledby="h-conf">
     <div class="env">
-      <div class="seccion__cab"><h2 class="titulo" id="h-confianza" data-t="p2.confianza"></h2></div>
+      <div class="cab"><h2 id="h-conf" data-t="p2.confianza"></h2></div>
       <ul class="confianza" id="confianza"></ul>
     </div>
   </section>
@@ -255,8 +230,8 @@
   <div class="pie__in env">
     <p id="notaPrecios"></p>
     <nav aria-label="Pie">
-      <a href="#tienda" data-t="m.tienda">Tienda</a>
-      <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
+      <a href="/#tienda" data-t="m.tienda">Tienda</a>
+      <a href="comparar.html" data-t="d.compare">Comparar</a>
       <a href="keymap-studio/">Keymap Studio</a>
     </nav>
   </div>
@@ -265,7 +240,8 @@
 <script src="js/data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/tienda.js"></script>
-<script src="js/sofle.js"></script>
+<script src="js/geometria.js"></script>
+<script src="js/dibujo.js"></script>
 <script src="js/sofle-led.js"></script>
 <script src="js/rgb.js"></script>
 <script src="js/oled-datos.js"></script>

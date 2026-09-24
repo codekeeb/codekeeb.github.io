@@ -282,6 +282,11 @@ const CK = (() => {
     codigo:   '<path d="M7 5.5L2.5 10 7 14.5M13 5.5l4.5 4.5-4.5 4.5M11.5 4l-3 12"/>',
     switch:   '<rect x="4" y="7" width="12" height="9" rx="1.5"/><path d="M8.5 7V4h3v3M10 4v3"/>',
     teclado:  '<rect x="2.5" y="5" width="15" height="10" rx="2"/><path d="M5.5 8h1M9.5 8h1M13.5 8h1M5.5 11.5h9"/>',
+    /* Un icono por nivel de montaje, de menos a mas hecho. */
+    placa:    '<rect x="2.5" y="5" width="15" height="10" rx="1.5"/><circle cx="6.5" cy="10" r="1"/><circle cx="10" cy="10" r="1"/><circle cx="13.5" cy="10" r="1"/>',
+    chip:     '<rect x="6.5" y="6.5" width="7" height="7" rx="1"/><path d="M8.5 3.5v3M11.5 3.5v3M8.5 13.5v3M11.5 13.5v3M3.5 8.5h3M3.5 11.5h3M13.5 8.5h3M13.5 11.5h3"/>',
+    caja:     '<rect x="2.5" y="5" width="15" height="10" rx="2"/><rect x="5" y="7.5" width="2.5" height="2" rx=".5"/><rect x="8.75" y="7.5" width="2.5" height="2" rx=".5"/><rect x="12.5" y="7.5" width="2.5" height="2" rx=".5"/>',
+    keycap:   '<path d="M4.5 15.5h11l-1.8-9.5a1.5 1.5 0 00-1.5-1.2H7.8a1.5 1.5 0 00-1.5 1.2z"/><path d="M7.5 7.5h5"/>',
   };
   const icono = (n, t = 18) =>
     `<svg width="${t}" height="${t}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"

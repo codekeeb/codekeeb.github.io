@@ -34,6 +34,9 @@ BUCLES = {
     "capaB":    "la capa 2 de las leyendas",
     "pulsada":  "la tecla que se mantiene pulsada para saltar de capa",
     "saca":     "el switch saliendo del zocalo: ensena el hotswap real",
+    "separa-i": "la mitad izquierda se aparta hasta el ancho de hombros: ensena el split",
+    "separa-d": "la mitad derecha, la otra mitad del mismo gesto",
+    "columna":  "las columnas se encienden del menique al indice: ensena el escalonado por columnas",
 }
 
 

@@ -17,15 +17,17 @@ carencia.
 
 | Archivo | Que es |
 |---|---|
-| `index.html` | **La portada es la tienda**: heroe, rejilla de los cinco con filtros, las demos reales en un escenario con pestanas, comparacion rapida y confianza |
-| `modelo.html` | **Ficha de cada modelo**, `modelo.html?id=<id>`: galeria, configurador, que incluye cada opcion, ficha, componentes, comparacion, envio |
+| `index.html` | **La portada es la tienda**: la familia de los cinco con filtros, un principio del split por seccion (mitades, columnas, pulgares, capas, luz, pantallas, hotswap), comparacion y confianza |
+| `modelo.html` | **Ficha de cada modelo**, `modelo.html?id=<id>`: tira de la familia, barra del producto, configurador en una columna con "tu configuracion incluye", los principios con la forma de ESE teclado, ficha, comparacion y barra de compra fija abajo |
 | `comparar.html` | Los cinco en columnas, fila a fila, con "solo lo que cambia" |
 | `catalogo.html` | Solo redirige a `/#tienda`, para no romper enlaces viejos |
 | `js/data.js` | **Catalogo: la unica fuente de verdad.** Productos, precios, opciones de montaje (`buildOptions`) |
 | `js/i18n.js` | Los textos, en es / en / fr |
 | `js/tienda.js` | Motor comun: idioma, precios, niveles de montaje, tabla comparativa, iconos, encuadre de fotos |
 | `js/portada.js` · `js/modelo.js` · `js/comparar.js` | La logica de cada pagina |
-| `js/sofle.js` · `js/sofle-led.js` | Geometria real del Sofle y sus 30 LED por mitad, copiadas del Keymap Studio |
+| `js/geometria.js` | Geometria real de los tres tableros (Sofle, Corne, Totem), copiada del Keymap Studio. `CK_TABLERO` dice que tablero es cada producto |
+| `js/dibujo.js` | Dibuja un tablero en SVG desde esa geometria y le da los tres gestos: mitades, columnas, pulgares. **Es un esquema, no una foto**, y lo dice debajo |
+| `js/sofle-led.js` | Los 30 LED por mitad del Sofle. Solo hay mapa de luz del Sofle: por eso la luz solo se ensena en sus fichas |
 | `js/rgb.js` | Los efectos de luz, portados de `fxFrame` del Studio (30 fps, como el firmware) |
 | `js/oled.js` · `js/oled-datos.js` | Las dos OLED con los mapas de bits del firmware |
 | `css/tienda.css` | **Una sola hoja** para las tres paginas |

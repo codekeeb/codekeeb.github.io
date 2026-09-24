@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Codekeeb — Teclados split ergonómicos hechos a mano</title>
-<meta name="description" content="Teclado split ergonómico montado y probado a mano. Elige cuánto viene montado, mira qué incluye cada opción y compáralo con los otros modelos.">
+<meta name="description" content="Teclado split ergonómico montado y probado a mano. Configúralo, mira qué incluye cada opción y compáralo con los otros modelos.">
 <meta property="og:type" content="product">
 <meta property="og:site_name" content="Codekeeb">
+<meta property="og:title" content="Codekeeb — Teclados split ergonómicos hechos a mano">
+<meta property="og:description" content="Teclado split ergonómico montado y probado a mano. Configúralo, mira qué incluye cada opción y compáralo con los otros modelos.">
+<meta property="og:image" content="https://codekeeb.github.io/assets/img/products/sofle-retro.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
@@ -14,15 +17,17 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#f4f4f1">
+<meta name="theme-color" content="#ffffff">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<!-- Una sola familia, en su version variable: el eje de ancho (wdth) da
+     la voz de titular sin cargar una segunda tipografia. -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/tienda.css">
 </head>
-<body class="con-barra">
+<body class="con-cbarra">
 
-<header class="top">
+<header class="top top--suelta">
   <div class="top__in env">
     <a class="marca" href="/" aria-label="Codekeeb">
       <img src="assets/brand/logo-horizontal-dark.png"
@@ -30,9 +35,9 @@
            width="640" height="224" alt="CODE/KEEB">
     </a>
     <nav class="top__nav" aria-label="Principal">
-      <a href="/#tienda" aria-current="page" data-t="m.tienda">Tienda</a>
+      <a href="/#tienda" data-t="m.tienda">Tienda</a>
       <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
-      <a class="top__studio" href="keymap-studio/">Keymap Studio</a>
+      <a href="keymap-studio/">Keymap Studio</a>
     </nav>
     <span class="top__sp"></span>
     <div class="idiomas">
@@ -49,118 +54,216 @@
   </div>
 </header>
 
+<!-- La familia en pequeno, el que miras marcado: te situa en el catalogo,
+     como la tira de arriba de cada producto de ergodox. -->
+<nav class="tira" aria-label="Modelos"><ul class="env" id="tira"></ul></nav>
+
+<!-- La barra del producto: el nombre, sus secciones y la accion. Es la
+     que se queda pegada; la del sitio no, para no comerse el movil. -->
+<div class="pbarra">
+  <div class="pbarra__in env">
+    <span class="pbarra__nombre nombre" id="pNombre"></span>
+    <nav aria-label="Secciones">
+      <a href="#que" data-t="e.nQue"></a>
+      <a href="#configura" data-t="e.nConfig"></a>
+      <a href="#ficha" data-t="e.nFicha"></a>
+      <a href="#comparar" data-t="e.nComparar"></a>
+    </nav>
+    <a class="btn" href="#configura" data-t="p2.configurar"></a>
+  </div>
+</div>
+
 <main id="pagina">
 
-  <div class="env">
-    <nav class="migas" aria-label="Estás en">
-      <a href="/#tienda" data-t="m.tienda">Tienda</a>
-      <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
-      <span id="migaNombre"></span>
-    </nav>
-
-    <!-- ========= ARRIBA: la foto y lo que compras =========
-         La foto se queda fija mientras configuras (en escritorio): asi
-         nunca pierdes de vista QUE estas configurando. -->
-    <div class="compra">
-      <div class="galeria">
-        <div class="galeria__foto" id="foto"></div>
-        <div class="miniaturas" id="miniaturas"></div>
-      </div>
-
-      <div>
-        <div class="cabeza">
-          <h1 class="nombre" id="nombre"></h1>
-          <p id="desc"></p>
-          <div class="cabeza__precio" id="cabezaPrecio"></div>
-          <div id="estado"></div>
-        </div>
-
-        <!-- El configurador es un formulario de verdad: radios nativos,
-             se usa con el teclado y el lector de pantalla lo entiende. -->
-        <form class="config" id="config" onsubmit="return false">
-          <fieldset class="paso">
-            <legend><span data-t="m.nivel"></span><small data-t="m.nivelAyuda"></small></legend>
-            <div class="opciones" id="niveles"></div>
-          </fieldset>
-
-          <fieldset class="paso" id="pasoKeycaps" hidden>
-            <legend><span data-t="m.keycaps"></span></legend>
-            <div class="opciones" id="keycaps"></div>
-          </fieldset>
-
-          <div class="paso">
-            <div class="paso__t"><span data-t="m.switches"></span></div>
-            <div id="switches"></div>
-          </div>
-
-          <div class="resumen" id="resumen">
-            <b data-t="m.resumen"></b>
-            <dl id="resumenLista"></dl>
-            <div class="resumen__total">
-              <span data-t="m.total"></span>
-              <span class="precio" id="total"></span>
-              <small id="totalNota" hidden></small>
-            </div>
-            <a class="btn btn--ancho" id="comprar" target="_blank" rel="noopener">
-              <span data-t="m.comprar"></span><span id="iconoExterno"></span>
-            </a>
-            <p class="resumen__nota"><span data-t="m.notaEtsy"></span> <span id="fecha"></span></p>
-          </div>
-        </form>
+  <!-- ===== QUE ES ===== -->
+  <section class="env intro" id="que" aria-labelledby="nombre">
+    <div class="galeria">
+      <div class="galeria__foto" id="foto"></div>
+      <div class="miniaturas" id="miniaturas"></div>
+    </div>
+    <div class="esencial">
+      <h1 class="nombre" id="nombre"></h1>
+      <p id="desc"></p>
+      <div class="esencial__precio" id="precioCab"></div>
+      <div id="estado"></div>
+      <ul class="rasgos" id="rasgos"></ul>
+      <div class="esencial__acciones">
+        <a class="btn" href="#configura" data-t="p2.configurar"></a>
+        <a class="btn btn--linea" href="#ficha" data-t="e.nFicha"></a>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ========= ABAJO: lo que quiere ver quien compra ========= -->
-  <nav class="subnav" aria-label="Secciones">
-    <ul class="env">
-      <li><a href="#incluye" data-t="m.sIncluye"></a></li>
-      <li><a href="#caracteristicas" data-t="m.sCarac"></a></li>
-      <li><a href="#ficha" data-t="m.sFicha"></a></li>
-      <li><a href="#componentes" data-t="m.sComp"></a></li>
-      <li><a href="#comparar" data-t="m.sCompar"></a></li>
-      <li><a href="#envio" data-t="m.sEnvio"></a></li>
-    </ul>
-  </nav>
+  <!-- ===== CONFIGURA =====
+       Como la pagina de compra de ergodox: una columna, un paso por
+       bloque, y al final lo que incluye tu configuracion. -->
+  <section class="seccion configura" id="configura" aria-labelledby="h-config">
+    <div class="env">
+      <div class="cab cab--centro"><h2 id="h-config"></h2><p data-t="e.configuraP"></p></div>
+      <form class="config" id="config" onsubmit="return false">
+        <fieldset class="paso">
+          <legend data-t="m.nivel"></legend>
+          <div class="opciones" id="niveles"></div>
+        </fieldset>
+        <fieldset class="paso" id="pasoKeycaps" hidden>
+          <legend data-t="m.keycaps"></legend>
+          <div class="opciones" id="keycaps"></div>
+        </fieldset>
+        <div class="paso">
+          <p class="paso__t" data-t="m.switches"></p>
+          <div id="switches"></div>
+        </div>
+        <div class="incluye" id="incluye">
+          <h3 data-t="e.incluyeT"></h3>
+          <ul id="incluyeLista"></ul>
+          <div class="incluye__total">
+            <span data-t="m.total"></span>
+            <span class="precio" id="total"></span>
+            <small id="totalNota" hidden></small>
+          </div>
+          <a class="btn btn--ancho" id="comprar" target="_blank" rel="noopener"><span data-t="m.comprar"></span><span id="icExt"></span></a>
+          <p class="incluye__nota"><span data-t="m.notaEtsy"></span> <span id="fecha"></span></p>
+        </div>
+      </form>
+    </div>
+  </section>
 
-  <div class="env">
-    <section class="bloque" id="incluye" aria-labelledby="h-incluye">
-      <div class="bloque__cab">
-        <h2 id="h-incluye" data-t="m.sIncluyeT"></h2>
-        <p data-t="m.sIncluyeP"></p>
+  <!-- ===== POR QUE UN SPLIT ASI =====
+       Los principios, con la forma real de ESTE teclado: en la ficha del
+       Corne se dibuja el Corne. Las secciones de luz, pantallas y hotswap
+       solo salen si la ficha del modelo las declara. -->
+  <section class="seccion" id="p-split" aria-labelledby="h-split">
+    <div class="env principio">
+      <div class="principio__vis"><div class="dibujo" id="dSplit"></div><p class="nota" data-nota-dib></p></div>
+      <div class="principio__txt"><h2 id="h-split" data-t="e.splitT"></h2><p data-t="e.splitP"></p></div>
+    </div>
+  </section>
+  <section class="seccion s-niebla" id="p-col" aria-labelledby="h-col">
+    <div class="env principio principio--der">
+      <div class="principio__vis"><div class="dibujo" id="dCol"></div><p class="nota" data-nota-dib></p></div>
+      <div class="principio__txt"><h2 id="h-col" data-t="e.colT"></h2><p data-t="e.colP"></p></div>
+    </div>
+  </section>
+  <section class="seccion" id="p-pul" aria-labelledby="h-pul">
+    <div class="env principio">
+      <div class="principio__vis"><div class="dibujo" id="dPul"></div><p class="nota" data-nota-dib></p></div>
+      <div class="principio__txt"><h2 id="h-pul" data-t="e.pulT"></h2><p data-t="e.pulP"></p></div>
+    </div>
+  </section>
+  <section class="seccion oscura" id="p-luz" aria-labelledby="h-luz" hidden>
+    <div class="env principio principio--der">
+      <div class="principio__vis"><div class="kb" id="kb"></div><p class="nota" data-t="p.rgbReal"></p></div>
+      <div class="principio__txt">
+        <h2 id="h-luz" data-t-html="p.rgbTitle"></h2>
+        <p id="fxTexto"></p>
+        <div class="modos" id="modos" role="group" aria-label="Modos de luz"></div>
       </div>
-      <div class="tabla-env"><table class="tabla matriz" id="matriz"></table></div>
-    </section>
-
-    <section class="bloque" id="caracteristicas" aria-labelledby="h-carac">
-      <div class="bloque__cab"><h2 id="h-carac" data-t="m.sCaracT"></h2></div>
-      <ul class="rasgos" id="rasgos"></ul>
-    </section>
-
-    <section class="bloque" id="ficha" aria-labelledby="h-ficha">
-      <div class="bloque__cab"><h2 id="h-ficha" data-t="m.sFicha"></h2></div>
-      <dl class="ficha" id="fichaLista"></dl>
-    </section>
-
-    <section class="bloque" id="componentes" aria-labelledby="h-comp">
-      <div class="bloque__cab"><h2 id="h-comp" data-t="m.sComp"></h2></div>
-      <dl class="ficha" id="compLista"></dl>
-    </section>
-
-    <section class="bloque" id="comparar" aria-labelledby="h-compar">
-      <div class="bloque__cab">
-        <h2 id="h-compar" data-t="m.sComparT"></h2>
-        <p data-t="m.sComparP"></p>
+    </div>
+  </section>
+  <section class="seccion" id="p-oled" aria-labelledby="h-oled" hidden>
+    <div class="env principio">
+      <div class="principio__vis">
+        <div class="oleds">
+          <figure class="oled"><div class="oled__marco"><canvas id="oledIzq" width="68" height="160" aria-hidden="true"></canvas></div><figcaption data-t="p.oledIzq"></figcaption></figure>
+          <figure class="oled"><div class="oled__marco"><canvas id="oledDer" width="68" height="160" aria-hidden="true"></canvas></div><figcaption data-t="p.oledDer"></figcaption></figure>
+        </div>
+        <p class="nota" data-t="p.oledReal"></p>
       </div>
+      <div class="principio__txt"><h2 id="h-oled" data-t-html="p.oledTitle"></h2><p data-t="p.oledText"></p></div>
+    </div>
+  </section>
+  <section class="seccion s-niebla" id="p-hot" aria-labelledby="h-hot" hidden>
+    <div class="env principio principio--der">
+      <div class="principio__vis"><div class="hot">
+          <div class="hot__col">
+            <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="Kailh Choc Red">
+              <g class="hot__pieza">
+                <!-- vastago: en el Choc es una placa plana con ranura -->
+                <rect x="47" y="34" width="46" height="22" rx="3" fill="#b8322c"/>
+                <rect x="47" y="34" width="46" height="7" rx="3" fill="#d2453e"/>
+                <rect x="66" y="38" width="8" height="14" rx="2" fill="#8d231e"/>
+                <!-- carcasa superior e inferior: baja y ancha -->
+                <rect x="20" y="54" width="100" height="16" rx="3" fill="#2a2d33"/>
+                <rect x="14" y="68" width="112" height="30" rx="4" fill="#15171b"/>
+                <rect x="14" y="68" width="112" height="4" rx="2" fill="#31353c"/>
+                <!-- dos patas metalicas y el poste central de plastico -->
+                <rect x="38" y="97" width="6" height="17" rx="1.5" fill="#cbb26a"/>
+                <rect x="96" y="97" width="6" height="17" rx="1.5" fill="#cbb26a"/>
+                <rect x="64" y="97" width="12" height="12" rx="2" fill="#23262b"/>
+              </g>
+              <!-- zocalo hotswap sobre la placa -->
+              <g class="hot__zocalo">
+                <rect x="10" y="126" width="120" height="16" rx="2" fill="#191c21" stroke="#343941" stroke-width="1.5"/>
+                <rect x="33" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+                <rect x="91" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+                <rect x="0" y="142" width="140" height="22" rx="2" fill="#401b47"/>
+                <rect x="0" y="142" width="140" height="3" fill="#6d2e78"/>
+              </g>
+            </svg>
+            <span class="hot__et">Kailh Choc Red</span>
+            <span class="hot__dato"><span data-t="p.swLineal"></span> · low profile</span>
+          </div>
+          <div class="hot__col hot__col--2">
+            <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="MMD Holy Panda">
+              <g class="hot__pieza">
+                <!-- vastago en cruz, que es lo que distingue un MX -->
+                <rect x="63" y="14" width="14" height="34" rx="2" fill="#7a5236"/>
+                <rect x="53" y="26" width="34" height="11" rx="2" fill="#7a5236"/>
+                <rect x="63" y="14" width="14" height="5" rx="2" fill="#98683f"/>
+                <!-- carcasa superior clara, la que le da el nombre -->
+                <rect x="28" y="44" width="84" height="30" rx="4" fill="#e6e1d6"/>
+                <rect x="28" y="44" width="84" height="5" rx="2" fill="#f3efe7"/>
+                <rect x="36" y="40" width="68" height="6" rx="3" fill="#d8d2c4"/>
+                <!-- carcasa inferior negra, mas alta que la del Choc -->
+                <rect x="20" y="72" width="100" height="30" rx="4" fill="#15171b"/>
+                <rect x="20" y="72" width="100" height="4" rx="2" fill="#31353c"/>
+                <rect x="30" y="100" width="80" height="6" rx="2" fill="#0e1013"/>
+                <rect x="44" y="105" width="6" height="16" rx="1.5" fill="#cbb26a"/>
+                <rect x="90" y="105" width="6" height="16" rx="1.5" fill="#cbb26a"/>
+                <circle cx="70" cy="110" r="7" fill="#23262b"/>
+              </g>
+              <g class="hot__zocalo">
+                <rect x="10" y="126" width="120" height="16" rx="2" fill="#191c21" stroke="#343941" stroke-width="1.5"/>
+                <rect x="39" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+                <rect x="85" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+                <rect x="0" y="142" width="140" height="22" rx="2" fill="#401b47"/>
+                <rect x="0" y="142" width="140" height="3" fill="#6d2e78"/>
+              </g>
+            </svg>
+            <span class="hot__et">MMD Holy Panda</span>
+            <span class="hot__dato"><span data-t="p.swTactil"></span> · MX</span>
+          </div>
+        </div><p class="nota" data-t="p.hotNota"></p></div>
+      <div class="principio__txt"><h2 id="h-hot" data-t-html="p.hotTitle"></h2><p data-t="p.hotText"></p></div>
+    </div>
+  </section>
+
+  <!-- ===== FICHA ===== -->
+  <section class="seccion" id="ficha" aria-labelledby="h-ficha">
+    <div class="env">
+      <div class="cab"><h2 id="h-ficha" data-t="e.fichaT"></h2></div>
+      <div class="ficha-dos">
+        <div><h3 data-t="e.general"></h3><dl class="ficha" id="fichaLista"></dl></div>
+        <div id="compBloque"><h3 data-t="m.sComp"></h3><dl class="ficha" id="compLista"></dl></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== COMPARAR ===== -->
+  <section class="seccion s-niebla" id="comparar" aria-labelledby="h-comparar">
+    <div class="env">
+      <div class="cab"><h2 id="h-comparar" data-t="m.sComparT"></h2><p data-t="m.sComparP"></p></div>
       <div class="tabla-env"><table class="tabla" id="comparativa"></table></div>
-      <p class="enlace-pie"><a class="enlace" href="comparar.html" data-t="m.verComparador"></a></p>
-    </section>
+      <p class="centro-pie"><a class="enlace" href="comparar.html"><span data-t="m.verComparador"></span><span class="ic-flecha"></span></a></p>
+    </div>
+  </section>
 
-    <section class="bloque" id="envio" aria-labelledby="h-envio">
-      <div class="bloque__cab"><h2 id="h-envio" data-t="m.sEnvio"></h2></div>
+  <section class="seccion" aria-labelledby="h-conf">
+    <div class="env">
+      <div class="cab"><h2 id="h-conf" data-t="m.sEnvio"></h2></div>
       <ul class="confianza" id="confianza"></ul>
-    </section>
-  </div>
+    </div>
+  </section>
 </main>
 
 <footer class="pie">
@@ -168,22 +271,35 @@
     <p id="notaPrecios"></p>
     <nav aria-label="Pie">
       <a href="/#tienda" data-t="m.tienda">Tienda</a>
-      <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
+      <a href="comparar.html" data-t="d.compare">Comparar</a>
       <a href="keymap-studio/">Keymap Studio</a>
     </nav>
   </div>
 </footer>
 
-<!-- Barra de compra en el movil: aparece cuando el resumen ya ha
-     quedado atras, para que comprar no obligue a volver a subir. -->
-<div class="barra" id="barra" aria-hidden="true">
-  <div class="barra__txt"><span id="barraNombre"></span><span class="precio" id="barraTotal"></span></div>
-  <a class="btn" id="barraComprar" target="_blank" rel="noopener" tabindex="-1" data-t="m.comprar"></a>
+<!-- La barra de compra fija abajo, como la de ergodox: garantia, envio,
+     precio y comprar. -->
+<div class="cbarra" id="cbarra" aria-hidden="true">
+  <div class="cbarra__in env">
+    <div class="cbarra__garantias">
+      <span data-t="trust.warranty"></span><span data-t="trust.shipping"></span>
+      <a href="#incluye" data-t="e.verConfig"></a>
+    </div>
+    <div class="cbarra__txt"><span id="cbNombre"></span></div>
+    <span class="precio" id="cbTotal"></span>
+    <a class="btn" id="cbComprar" target="_blank" rel="noopener" tabindex="-1" data-t="m.comprar"></a>
+  </div>
 </div>
 
 <script src="js/data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/tienda.js"></script>
+<script src="js/geometria.js"></script>
+<script src="js/dibujo.js"></script>
+<script src="js/sofle-led.js"></script>
+<script src="js/rgb.js"></script>
+<script src="js/oled-datos.js"></script>
+<script src="js/oled.js"></script>
 <script src="js/modelo.js"></script>
 </body>
 </html>
