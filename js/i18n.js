@@ -385,7 +385,10 @@ const CK_I18N = {
     "p3.pulgares": "Pulgares",
     "p3.hotswap": "Hotswap",
     "p3.firmwareT": "Lo que hace el firmware.",
-    "p3.modosLuz": "Modos de luz"
+    "p3.modosLuz": "Modos de luz",
+    "p3.pcb": "PCB",
+    "p3.zocalo": "Zócalo hotswap, bajo la PCB",
+    "p3.libre": "Contacto libre: sin soldadura"
   },
 
   en: {
@@ -767,7 +770,10 @@ const CK_I18N = {
     "p3.pulgares": "Thumbs",
     "p3.hotswap": "Hotswap",
     "p3.firmwareT": "What the firmware does.",
-    "p3.modosLuz": "Lighting modes"
+    "p3.modosLuz": "Lighting modes",
+    "p3.pcb": "PCB",
+    "p3.zocalo": "Hotswap socket, under the PCB",
+    "p3.libre": "Free contact: no solder"
   },
 
   fr: {
@@ -1149,6 +1155,9 @@ const CK_I18N = {
     "p3.pulgares": "Pouces",
     "p3.hotswap": "Hotswap",
     "p3.firmwareT": "Ce que fait le firmware.",
-    "p3.modosLuz": "Modes d'éclairage"
+    "p3.modosLuz": "Modes d'éclairage",
+    "p3.pcb": "PCB",
+    "p3.zocalo": "Support hotswap, sous le PCB",
+    "p3.libre": "Contact libre : sans soudure"
   }
 };

@@ -405,7 +405,7 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 .p-franja[data-fuera] .p-franja__nombre{writing-mode:vertical-rl;transform:rotate(180deg);font-size:clamp(1.5rem,2.2vw,2.3rem)}
 
 /* el aparato de la forma: una ventana y cuatro teclas de modo */
-.p-maquina{--caja:#1c1e23;--base:#34373e;--cara:#4b4f58;--luz:#2b3bf5;--luz-2:#1f2bb8;
+.p-maquina{--base:#2a2d33;--cara:#43474f;--luz:#2b3bf5;--luz-2:#1f2bb8;--oro:#c9a95c;
   display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(16px,2.4vw,28px);
   margin-top:clamp(24px,3vw,36px);padding:clamp(14px,2vw,22px);border-radius:var(--radio);background:var(--panel)}
 .p-maquina__vista{display:grid;place-items:center;min-height:clamp(260px,30vw,400px);padding:clamp(18px,3vw,40px);
@@ -423,33 +423,55 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 #firmware{border-top:1px solid var(--linea)}
 .dibujo{width:100%;max-width:620px}
 
-/* el teclado dibujado (js/dibujo.js): el Sofle negro, y lo que se
-   explica encendido en el color del Sofle Carbon */
-.dib{display:block;width:100%;height:auto;overflow:visible}
-.dib__caja{fill:var(--caja)}
+/* el teclado dibujado (js/dibujo.js): solo las teclas, del gris de las
+   del Sofle Carbon, y lo que se explica encendido en su ultramar */
+.dib{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 10px 12px rgba(17,17,17,.16))}
 .dib__base{fill:var(--base);transition:fill var(--t-tap) var(--ease)}
 .dib__cara{fill:var(--cara);transition:fill var(--t-tap) var(--ease)}
 .dib--pulgares .dib__tecla--pulgar .dib__cara{fill:var(--luz)}
 .dib--pulgares .dib__tecla--pulgar .dib__base{fill:var(--luz-2)}
+/* Se juntan hasta --junto, que calcula dibujo.js con la geometria real
+   para que ninguna tecla toque a otra, y se abren hasta --abre. */
 .dib--mitades .dib__desliza--0{animation:separa-i var(--loop-mitades) var(--ease) infinite}
 .dib--mitades .dib__desliza--1{animation:separa-d var(--loop-mitades) var(--ease) infinite}
-@keyframes separa-i{0%,15%,100%{transform:translateX(90px)}45%,80%{transform:translateX(-50px)}}
-@keyframes separa-d{0%,15%,100%{transform:translateX(-90px)}45%,80%{transform:translateX(50px)}}
+@keyframes separa-i{0%,15%,100%{transform:translateX(var(--junto))}45%,80%{transform:translateX(var(--abre))}}
+@keyframes separa-d{0%,15%,100%{transform:translateX(calc(-1 * var(--junto)))}45%,80%{transform:translateX(calc(-1 * var(--abre)))}}
 /* del menique al indice, las dos manos a la vez: el orden de los dedos */
 .dib--columnas .dib__tecla:not(.dib__tecla--pulgar) .dib__cara{
   animation:columna var(--loop-columnas) var(--ease) infinite;
   animation-delay:calc(var(--c) * var(--paso) * 5)}
 @keyframes columna{0%,4%{fill:var(--luz)}30%,100%{fill:var(--cara)}}
 
-/* hotswap: los dos switches saliendo del zocalo */
-.hot{display:flex;gap:clamp(30px,7vw,80px);align-items:flex-end;justify-content:center}
-.hot__col{display:grid;justify-items:center;gap:2px}
-.hot__sw{width:clamp(110px,13vw,160px);height:auto;overflow:visible;filter:drop-shadow(0 14px 18px rgba(17,17,17,.22))}
-.hot__pieza{animation:saca var(--loop-tecla) var(--ease) infinite;transform-origin:50% 70%}
-.hot__col--2 .hot__pieza{animation-delay:calc(var(--loop-tecla) / 2)}
-@keyframes saca{0%,10%{transform:translateY(0) rotate(0)}40%,60%{transform:translateY(-46px) rotate(-7deg)}90%,100%{transform:translateY(0) rotate(0)}}
-.hot__et{font-size:var(--t-s);font-weight:800;margin-top:12px}
+/* Hotswap, de lado y a escala: el switch sale recto de la PCB, se ven los
+   taladros vacios y los contactos del zocalo se encienden. Los dos a la
+   misma escala: el Choc se ve la mitad de alto que el MX, que es lo que
+   significa low profile. */
+.hot{display:flex;flex-wrap:wrap;gap:22px clamp(16px,4vw,56px);align-items:flex-end;justify-content:center;width:100%}
+/* los dos encogen a la vez: siempre lado a lado, para compararlos */
+.hot__col{flex:1 1 0;max-width:220px;min-width:0;display:grid;justify-items:center;gap:10px;margin:0}
+.hot__sw{display:block;width:100%;height:auto;overflow:visible}
+.hot__pcb{fill:#1c1e23}
+.hot__hueco{fill:var(--carcasa)}
+.hot__zocalo{fill:#3a3d44}
+.hot__contacto{fill:var(--oro);animation:libre var(--loop-tecla) var(--ease) infinite}
+.hot__pata{fill:var(--oro)}
+.hot__poste,.hot__base{fill:#1f2126}
+.hot__tapa{fill:#2e3238}
+.hot__pieza{animation:saca var(--loop-tecla) var(--ease) infinite}
+.hot__col--2 .hot__pieza,.hot__col--2 .hot__contacto{animation-delay:calc(var(--loop-tecla) / 2)}
+@keyframes saca{0%,12%{transform:translateY(0)}38%,62%{transform:translateY(-36px)}88%,100%{transform:translateY(0)}}
+@keyframes libre{0%,30%,70%,100%{fill:var(--oro)}40%,60%{fill:var(--luz)}}
+.hot figcaption{display:grid;justify-items:center;gap:2px;text-align:center}
+.hot__et{font-size:var(--t-s);font-weight:800}
 .hot__dato{font-size:var(--t-xs);color:var(--tinta-2)}
+/* la leyenda de las piezas, como en un manual: muestra de color y nombre */
+.hot__leyenda{flex-basis:100%;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;
+  padding-top:14px;border-top:1px solid var(--linea);font-size:var(--t-xs);font-weight:700;color:var(--tinta-2)}
+.hot__leyenda li{display:flex;align-items:center;gap:7px}
+.hot__muestra{width:14px;height:8px;border-radius:2px}
+.hot__muestra--pcb{background:#1c1e23}
+.hot__muestra--zocalo{background:#3a3d44}
+.hot__muestra--libre{background:var(--luz)}
 
 /* capas: las mismas teclas con otra leyenda */
 .capas{width:min(100%,460px);padding:clamp(14px,3vw,24px);border-radius:var(--radio-s);background:#0c0d10}
@@ -473,7 +495,7 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 #p-capas .f-tecla{justify-self:start}
 
 .sin-movimiento .dib--mitades .dib__desliza--0,.sin-movimiento .dib--mitades .dib__desliza--1,
-.sin-movimiento .hot__pieza,.sin-movimiento .capas__t span,.sin-movimiento .capas__t--hold::after,
+.sin-movimiento .hot__pieza,.sin-movimiento .hot__contacto,.sin-movimiento .capas__t span,.sin-movimiento .capas__t--hold::after,
 .sin-movimiento .dib--columnas .dib__tecla .dib__cara{animation:none}
 .sin-movimiento .capas__t span+span{opacity:0}
 

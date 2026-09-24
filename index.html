@@ -79,66 +79,68 @@
       <div class="p-maquina">
         <div class="p-maquina__vista">
           <div class="dibujo" id="dibujo"></div>
+          <!-- Vista de lado, a escala (5 unidades por mm): la PCB, el zocalo
+               DEBAJO de ella, y el switch que sale recto con sus patas. Al
+               salir se ven los taladros vacios y el zocalo se enciende: no
+               hay soldadura. -->
           <div class="hot" id="hot" hidden>
-      <div class="hot__col">
-        <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="Kailh Choc Red">
-          <g class="hot__pieza">
-            <!-- vastago: en el Choc es una placa plana con ranura -->
-            <rect x="47" y="34" width="46" height="22" rx="3" fill="#b8322c"/>
-            <rect x="47" y="34" width="46" height="7" rx="3" fill="#d2453e"/>
-            <rect x="66" y="38" width="8" height="14" rx="2" fill="#8d231e"/>
-            <!-- carcasa superior e inferior: baja y ancha -->
-            <rect x="20" y="54" width="100" height="16" rx="3" fill="#2a2d33"/>
-            <rect x="14" y="68" width="112" height="30" rx="4" fill="#15171b"/>
-            <rect x="14" y="68" width="112" height="4" rx="2" fill="#31353c"/>
-            <!-- dos patas metalicas y el poste central de plastico -->
-            <rect x="38" y="97" width="6" height="17" rx="1.5" fill="#cbb26a"/>
-            <rect x="96" y="97" width="6" height="17" rx="1.5" fill="#cbb26a"/>
-            <rect x="64" y="97" width="12" height="12" rx="2" fill="#23262b"/>
-          </g>
-          <!-- zocalo hotswap sobre la placa -->
-          <g class="hot__zocalo">
-            <rect x="10" y="126" width="120" height="16" rx="2" fill="#191c21" stroke="#343941" stroke-width="1.5"/>
-            <rect x="33" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
-            <rect x="91" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
-            <rect x="0" y="142" width="140" height="22" rx="2" fill="#401b47"/>
-            <rect x="0" y="142" width="140" height="3" fill="#6d2e78"/>
-          </g>
-        </svg>
-        <span class="hot__et">Kailh Choc Red</span>
-        <span class="hot__dato"><span data-t="p.swLineal"></span> · low profile</span>
-      </div>
-      <div class="hot__col hot__col--2">
-        <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="MMD Holy Panda">
-          <g class="hot__pieza">
-            <!-- vastago en cruz, que es lo que distingue un MX -->
-            <rect x="63" y="14" width="14" height="34" rx="2" fill="#7a5236"/>
-            <rect x="53" y="26" width="34" height="11" rx="2" fill="#7a5236"/>
-            <rect x="63" y="14" width="14" height="5" rx="2" fill="#98683f"/>
-            <!-- carcasa superior clara, la que le da el nombre -->
-            <rect x="28" y="44" width="84" height="30" rx="4" fill="#e6e1d6"/>
-            <rect x="28" y="44" width="84" height="5" rx="2" fill="#f3efe7"/>
-            <rect x="36" y="40" width="68" height="6" rx="3" fill="#d8d2c4"/>
-            <!-- carcasa inferior negra, mas alta que la del Choc -->
-            <rect x="20" y="72" width="100" height="30" rx="4" fill="#15171b"/>
-            <rect x="20" y="72" width="100" height="4" rx="2" fill="#31353c"/>
-            <rect x="30" y="100" width="80" height="6" rx="2" fill="#0e1013"/>
-            <rect x="44" y="105" width="6" height="16" rx="1.5" fill="#cbb26a"/>
-            <rect x="90" y="105" width="6" height="16" rx="1.5" fill="#cbb26a"/>
-            <circle cx="70" cy="110" r="7" fill="#23262b"/>
-          </g>
-          <g class="hot__zocalo">
-            <rect x="10" y="126" width="120" height="16" rx="2" fill="#191c21" stroke="#343941" stroke-width="1.5"/>
-            <rect x="39" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
-            <rect x="85" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
-            <rect x="0" y="142" width="140" height="22" rx="2" fill="#401b47"/>
-            <rect x="0" y="142" width="140" height="3" fill="#6d2e78"/>
-          </g>
-        </svg>
-        <span class="hot__et">MMD Holy Panda</span>
-        <span class="hot__dato"><span data-t="p.swTactil"></span> · MX</span>
-      </div>
-    </div>
+            <figure class="hot__col">
+              <svg class="hot__sw" viewBox="0 44 150 120" role="img" aria-label="Kailh Choc Red">
+                <g class="hot__placa">
+                  <rect class="hot__pcb" x="5" y="140" width="140" height="8" rx="1.5"/>
+                  <rect class="hot__hueco" x="57" y="140" width="6" height="8"/>
+                  <rect class="hot__hueco" x="70" y="140" width="10" height="8"/>
+                  <rect class="hot__hueco" x="91" y="140" width="6" height="8"/>
+                  <rect class="hot__zocalo" x="42" y="148" width="26" height="10" rx="2"/>
+                  <rect class="hot__zocalo" x="82" y="148" width="26" height="10" rx="2"/>
+                  <rect class="hot__contacto" x="56" y="148" width="8" height="6" rx="1"/>
+                  <rect class="hot__contacto" x="90" y="148" width="8" height="6" rx="1"/>
+                </g>
+                <g class="hot__pieza">
+                  <rect class="hot__pata" x="58" y="138" width="4" height="17" rx="1"/>
+                  <rect class="hot__pata" x="92" y="138" width="4" height="17" rx="1"/>
+                  <rect class="hot__poste" x="71" y="138" width="8" height="13" rx="2"/>
+                  <rect class="hot__base" x="37.5" y="126" width="75" height="14" rx="3"/>
+                  <rect class="hot__tapa" x="41" y="119" width="68" height="8" rx="3"/>
+                  <rect fill="#d8453b" x="51" y="109" width="48" height="11" rx="2.5"/>
+                  <rect fill="#ec6a60" x="51" y="109" width="48" height="3.5" rx="1.75"/>
+                </g>
+              </svg>
+              <figcaption><span class="hot__et">Kailh Choc Red</span>
+                <span class="hot__dato"><span data-t="p.swLineal"></span> · low profile</span></figcaption>
+            </figure>
+            <figure class="hot__col hot__col--2">
+              <svg class="hot__sw" viewBox="0 44 150 120" role="img" aria-label="MMD Holy Panda">
+                <g class="hot__placa">
+                  <rect class="hot__pcb" x="5" y="140" width="140" height="8" rx="1.5"/>
+                  <rect class="hot__hueco" x="55" y="140" width="6" height="8"/>
+                  <rect class="hot__hueco" x="64" y="140" width="22" height="8"/>
+                  <rect class="hot__hueco" x="89" y="140" width="6" height="8"/>
+                  <rect class="hot__zocalo" x="40" y="148" width="24" height="10" rx="2"/>
+                  <rect class="hot__zocalo" x="86" y="148" width="24" height="10" rx="2"/>
+                  <rect class="hot__contacto" x="54" y="148" width="8" height="6" rx="1"/>
+                  <rect class="hot__contacto" x="88" y="148" width="8" height="6" rx="1"/>
+                </g>
+                <g class="hot__pieza">
+                  <rect class="hot__pata" x="56" y="138" width="4" height="17" rx="1"/>
+                  <rect class="hot__pata" x="90" y="138" width="4" height="17" rx="1"/>
+                  <rect class="hot__poste" x="65" y="138" width="20" height="16" rx="3"/>
+                  <rect class="hot__base" x="40" y="121" width="70" height="19" rx="3"/>
+                  <path fill="#e9e4d8" d="M36 122 L45 103 H105 L114 122 Z"/>
+                  <path fill="#f6f2ea" d="M43.5 106 L45 103 H105 L106.5 106 Z"/>
+                  <rect fill="#7a5236" x="66" y="85" width="18" height="19" rx="2"/>
+                  <rect fill="#98683f" x="66" y="85" width="18" height="4" rx="2"/>
+                </g>
+              </svg>
+              <figcaption><span class="hot__et">MMD Holy Panda</span>
+                <span class="hot__dato"><span data-t="p.swTactil"></span> · MX</span></figcaption>
+            </figure>
+            <ul class="hot__leyenda">
+              <li><i class="hot__muestra hot__muestra--pcb"></i><span data-t="p3.pcb"></span></li>
+              <li><i class="hot__muestra hot__muestra--zocalo"></i><span data-t="p3.zocalo"></span></li>
+              <li><i class="hot__muestra hot__muestra--libre"></i><span data-t="p3.libre"></span></li>
+            </ul>
+          </div>
         </div>
         <div class="p-maquina__mandos">
           <div class="p-modos" id="formas" role="group" data-t-aria="p3.modosForma"></div>
