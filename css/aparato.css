@@ -43,7 +43,7 @@
   --radio:12px; --radio-s:8px;
   --maxw:1240px;
   --canal:clamp(16px,4vw,40px);
-  --cabecera:60px;
+  --cabecera:46px;          /* la misma altura que la cabecera de Keymap Studio */
 
   /* movimiento: dos duraciones y una curva (tools/check-movimiento.py) */
   --t-tap:140ms;
@@ -89,10 +89,13 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 
 /* ---------- la barra: marca, los cinco modelos, ajustes ---------- */
 .f-top{position:sticky;top:0;z-index:var(--z-cabecera);display:flex;align-items:center;gap:clamp(12px,2vw,28px);
-  min-height:var(--cabecera);padding:0 var(--canal);background:var(--panel);border-bottom:1px solid var(--linea)}
-.f-marca img{height:22px;width:auto}
+  min-height:var(--cabecera);padding:0 clamp(16px,3vw,40px);background:var(--panel);border-bottom:1px solid var(--linea)}
+/* El logo, igual de grande y en el mismo sitio que en Keymap Studio
+   (keymap-studio/index.html, .brand .logo): 38 px de alto, que no empujan
+   la barra gracias al margen negativo; 32 px por debajo de 900. */
+.f-marca img{height:38px;width:auto;display:block;margin:-6px 0}
 .f-modelos{flex:1;min-width:0}
-.f-modelos ul{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-block:10px}
+.f-modelos ul{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-block:3px}
 .f-modelos ul::-webkit-scrollbar{display:none}
 /* cada modelo es una ficha con su color: un cuadrado de color y su nombre;
    el que miras se rellena entero, como una tecla encendida */
@@ -334,7 +337,7 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 /* el logo no cede: con la navegacion al lado se quedaba en 16 px */
 .f-marca:has(+ .p-nav){flex-shrink:0}
 .p-nav{flex:1;min-width:0;display:flex;justify-content:flex-end;gap:2px}
-.p-nav a{font-size:var(--t-s);font-weight:600;color:var(--tinta-2);padding:10px 8px;white-space:nowrap}
+.p-nav a{font-size:var(--t-s);font-weight:600;color:var(--tinta-2);padding:6px 8px;white-space:nowrap}
 .p-nav a[aria-current]{color:var(--tinta)}
 @media (hover:hover) and (pointer:fine){ .p-nav a:hover{color:var(--tinta)} }
 
@@ -512,6 +515,10 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
   .p-franja,.p-franja .f-ventana__foto img{transition:none}
 }
 
+@media (max-width:900px){
+  .f-top{padding-inline:14px}
+  .f-marca img{height:32px}
+}
 @media (max-width:960px){
   .f-placa__in{grid-template-columns:minmax(0,1fr)}
   .f-ventana{order:-1}
@@ -520,10 +527,12 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 }
 @media (max-width:640px){
   /* la barra en dos pisos: marca y ajustes arriba, los modelos debajo */
-  .f-top{flex-wrap:wrap;row-gap:0;padding-top:6px}
+  .f-top{flex-wrap:wrap;row-gap:0;padding-top:3px}
   .f-marca{flex:1}
-  .f-modelos{order:3;flex-basis:100%;margin-inline:calc(-1 * var(--canal))}
-  .f-modelos ul{padding:4px var(--canal) 10px}
+  /* la tira de modelos va de borde a borde: se sale lo mismo que el margen
+     de la barra (14 px, el de Keymap Studio), ni un pixel mas */
+  .f-modelos{order:3;flex-basis:100%;margin-inline:-14px}
+  .f-modelos ul{padding:4px 14px 10px}
   .f-studio{display:none}
   html{scroll-padding-top:120px}
   .f-resumen{top:auto}
