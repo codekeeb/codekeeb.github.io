@@ -94,11 +94,11 @@ la pagina es la carcasa: gris claro, paneles casi blancos y tinta negra.
 Los controles se comportan como teclas, y las cifras que importan salen
 en una pantalla de cristal liquido.
 
-**Alcance, a 24 sep 2026:** este sistema solo cubre la ficha
-(`modelo.html`, hoja `css/ficha.css`). La portada, el comparador y las
-paginas legales siguen con `css/tienda.css`, del mundo anterior. Hasta
-que se migren, las dos hojas conviven y **no se mezclan**: `modelo.html`
-no carga `tienda.css`.
+**Alcance, a 24 sep 2026:** este sistema cubre la portada (`index.html`)
+y la ficha (`modelo.html`), las dos con la hoja `css/aparato.css`. El
+comparador, las paginas legales y la 404 siguen con `css/tienda.css`, del
+mundo anterior. Hasta que se migren, las dos hojas conviven y **no se
+mezclan**: una pagina carga una o la otra.
 
 **Key Characteristics:**
 - Un color por modelo, a sangre, en su placa. Ese color no aparece en ningun otro modelo.
@@ -126,7 +126,7 @@ no carga `tienda.css`.
 - **Ventana** (`ventana`): el marco oscuro de las fotos. Tapa que las fotos tengan fondos distintos.
 
 ### Named Rules
-**The One Model Rule.** En una pagina solo hay un color de modelo encendido. Los otros cuatro aparecen solo como muestras en el selector.
+**The One Model Rule.** En la ficha solo hay un color de modelo encendido; los otros cuatro aparecen solo como muestras en el selector. La portada es la excepcion: enseña los cinco, pero cada uno en su franja y nunca mezclado con otro.
 **The Contrast-Picked Ink Rule.** Un producto nuevo trae su tinta elegida por contraste medido (4,5:1 como minimo), nunca a ojo.
 
 ## Typography
@@ -187,6 +187,12 @@ La barra superior y el pie. El pie es negro, con la fecha de los precios, los en
 ### Pantalla LCD
 La unica superficie donde van cifras grandes: "desde" en la placa, el total en el resumen y el precio en la barra de compra. Lleva una etiqueta en mayusculas arriba, la cifra en Doto y, si hace falta, una nota pequeña debajo.
 
+### Franja de modelo
+La portada es un muestrario: cinco franjas a toda altura, cada una del color de su modelo. Llevan el nombre en Doto, la version, la foto en su ventana, cuatro lecturas, la pantalla "desde" y la tecla Configurar. Toda la franja lleva a la ficha. Los filtros no quitan modelos: **pliegan** los que no encajan, que se quedan de canto con su nombre en vertical. Por debajo de 1080px las franjas pasan a bandas apiladas.
+
+### Teclas de modo
+Teclas con un LED gris que se pone blanco sobre la tecla negra cuando estan activas. Se usan en los filtros de la portada y en el aparato de la forma (mitades, columnas, pulgares, hotswap). Un solo aparato con teclas de modo sustituye a una seccion por cada principio. El LED activo no usa ningun color de modelo: esos colores son de los modelos.
+
 ### Hoja de datos
 Una tabla de parametro y valor. La cabecera es negra, los grupos (Generales, Componentes) van en etiqueta y las filas se separan con reglas de 1px. La lista de confianza sigue el mismo patron: icono, lo que se promete y la explicacion.
 
@@ -204,5 +210,5 @@ Una tabla de parametro y valor. La cabecera es negra, los grupos (Generales, Com
 - **Don't** poner `tabular-nums` sobre Schibsted Grotesk.
 - **Don't** poner etiquetas pequeñas encima de los titulos, ni texto con degradado.
 - **Don't** repetir tarjetas iguales de icono, titulo y texto como estructura de seccion.
-- **Don't** mezclar `tienda.css` y `ficha.css` en una misma pagina.
+- **Don't** mezclar `tienda.css` y `aparato.css` en una misma pagina.
 - **Don't** usar colores de modelo que no esten en `data.js`, ni inventarlos para otras partes de la web.

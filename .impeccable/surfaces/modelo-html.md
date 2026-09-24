@@ -2,7 +2,7 @@
 version: 1
 slug: "modelo-html"
 primary_target: "modelo.html"
-related_targets: ["js/modelo.js","css/ficha.css"]
+related_targets: ["js/modelo.js","css/aparato.css"]
 ---
 
 # Ficha de modelo (modelo.html?id=)

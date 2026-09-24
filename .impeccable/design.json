@@ -131,7 +131,7 @@
   ],
   "narrative": {
     "northStar": "Hardware con color",
-    "overview": "Cada teclado se presenta como un aparato, no como un anuncio: su color plano a sangre, su nombre en matriz de puntos, controles que se comportan como teclas y cifras en una pantalla LCD. La pagina alrededor es la carcasa. Hoy solo cubre la ficha (modelo.html).",
+    "overview": "Cada teclado se presenta como un aparato, no como un anuncio: su color plano a sangre, su nombre en matriz de puntos, controles que se comportan como teclas y cifras en una pantalla LCD. La pagina alrededor es la carcasa. Cubre la portada (index.html) y la ficha (modelo.html).",
     "keyCharacteristics": [
       "Un color por modelo, a sangre, en su placa. Ese color no aparece en ningun otro modelo.",
       "Dos tipografias: Doto solo para el nombre y las cifras de pantalla, y Schibsted Grotesk para todo lo demas.",
@@ -142,7 +142,7 @@
     "rules": [
       {
         "name": "The One Model Rule",
-        "body": "En una pagina solo hay un color de modelo encendido. Los otros cuatro aparecen solo como muestras en el selector.",
+        "body": "En la ficha solo hay un color de modelo encendido; los otros cuatro aparecen solo como muestras en el selector. La portada es la excepcion: enseña los cinco, pero cada uno en su franja y nunca mezclado con otro.",
         "section": "colors"
       },
       {
@@ -178,7 +178,7 @@
       "poner `tabular-nums` sobre Schibsted Grotesk.",
       "poner etiquetas pequeñas encima de los titulos, ni texto con degradado.",
       "repetir tarjetas iguales de icono, titulo y texto como estructura de seccion.",
-      "mezclar `tienda.css` y `ficha.css` en una misma pagina.",
+      "mezclar `tienda.css` y `aparato.css` en una misma pagina.",
       "usar colores de modelo que no esten en `data.js`, ni inventarlos para otras partes de la web."
     ]
   }

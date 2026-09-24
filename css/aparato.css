@@ -1,5 +1,5 @@
 /* ============================================================
-   CODEKEEB — la ficha de un modelo: "hardware con color"
+   CODEKEEB — "hardware con color": la portada y la ficha de cada modelo
    ------------------------------------------------------------
    Cada teclado es un aparato con su color y su etiqueta, no un anuncio.
    El color del modelo llena su placa (viene de data.js: color.fondo y
@@ -11,7 +11,8 @@
    para todo lo demas. La jerarquia se hace con peso y tracking, no con
    una escalera de tamanos.
 
-   Hoja independiente: esta pagina no carga tienda.css.
+   Hoja independiente: la portada y la ficha no cargan tienda.css (el
+   comparador y las paginas legales todavia si).
    ============================================================ */
 
 :root{
@@ -48,6 +49,13 @@
   --t-tap:140ms;
   --t-enter:380ms;
   --ease:cubic-bezier(.16,1,.3,1);
+  /* bucles de la portada: cada uno ensena algo del teclado y esta
+     apuntado en tools/check-movimiento.py; los para el boton de pausa */
+  --paso:60ms;
+  --loop-mitades:5.2s;
+  --loop-columnas:4.2s;
+  --loop-capa:12s;
+  --loop-tecla:3.2s;
 
   --z-dentro:1; --z-barra:58; --z-cabecera:60; --z-menu:70; --z-salto:100;
 }
@@ -317,6 +325,193 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 .f-barra .f-tecla{min-height:46px}
 
 /* ---------- responsive ---------- */
+/* ============================================================
+   LA PORTADA: el muestrario
+   Cinco franjas a toda altura, una por modelo, cada una con su color
+   de data.js. Es la unica pagina donde se ven los cinco colores a la
+   vez: cada uno en su franja y nunca mezclado con otro.
+   ============================================================ */
+/* el logo no cede: con la navegacion al lado se quedaba en 16 px */
+.f-marca:has(+ .p-nav){flex-shrink:0}
+.p-nav{flex:1;min-width:0;display:flex;justify-content:flex-end;gap:2px}
+.p-nav a{font-size:var(--t-s);font-weight:600;color:var(--tinta-2);padding:10px 8px;white-space:nowrap}
+.p-nav a[aria-current]{color:var(--tinta)}
+@media (hover:hover) and (pointer:fine){ .p-nav a:hover{color:var(--tinta)} }
+
+/* el mando: titulo, filtros y la cuenta, en una sola fila */
+.p-mando{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:14px var(--canal);
+  background:var(--carcasa);border-bottom:1px solid var(--linea)}
+.p-titulo{margin-right:auto;font-size:clamp(1.2rem,1.9vw,1.55rem);font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+.p-titulo em{font-style:normal;color:var(--tinta-2)}
+.p-filtros{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+/* Los filtros son teclas con LED: gris apagado, blanco sobre tecla negra
+   cuando estan puestos. Los colores saturados son de los modelos. */
+.p-filtro,.p-modo{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 13px;border-radius:var(--radio-s);
+  background:var(--panel);color:var(--tinta);font-size:var(--t-s);font-weight:700;
+  box-shadow:inset 0 0 0 1px var(--linea),inset 0 -2px 0 rgba(0,0,0,.09);
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),transform var(--t-tap) var(--ease)}
+.p-filtro i,.p-modo i{flex:none;width:8px;height:8px;border-radius:50%;background:#b8bcc4}
+.p-filtro[aria-pressed="true"],.p-modo[aria-pressed="true"]{background:var(--tinta);color:#fff;box-shadow:inset 0 -2px 0 rgba(255,255,255,.12)}
+.p-filtro[aria-pressed="true"] i,.p-modo[aria-pressed="true"] i{background:#fff}
+.p-filtro:active,.p-modo:active{transform:translateY(1px)}
+.p-filtro:focus-visible,.p-modo:focus-visible{outline:2.5px solid var(--tinta);outline-offset:3px}
+@media (hover:hover) and (pointer:fine){
+  .p-filtro:not([aria-pressed="true"]):hover,.p-modo:not([aria-pressed="true"]):hover{box-shadow:inset 0 0 0 1.5px var(--tinta)}
+}
+.p-cuenta{min-height:40px;padding:2px 12px;grid-auto-flow:column;align-items:center;gap:8px}
+.p-cuenta b{font-size:1.45rem}
+.p-vacio{flex-basis:100%;font-size:var(--t-s);font-weight:600;color:var(--tinta-2)}
+
+/* las franjas */
+.p-franjas{display:flex;min-height:clamp(580px,calc(100svh - var(--cabecera) - 70px),880px)}
+.p-franja{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:16px;
+  padding:clamp(20px,2vw,30px) clamp(14px,1.5vw,22px) 22px;background:var(--c);color:var(--ct);
+  transition:flex-grow var(--t-enter) var(--ease)}
+.p-franja::selection,.p-franja ::selection{background:var(--ct);color:var(--c)}
+.p-franja__nombre{font-family:var(--f-pantalla);font-weight:900;font-size:clamp(2.3rem,4.1vw,4.3rem);line-height:.85;
+  letter-spacing:-.02em;white-space:nowrap}
+/* El nombre es el enlace, y su ::after cubre la franja entera: toda ella
+   lleva a la ficha sin anidar un enlace dentro de otro. */
+.p-franja__nombre a::after{content:"";position:absolute;inset:0;z-index:var(--z-dentro)}
+.p-franja:has(a:focus-visible){outline:3px solid var(--ct);outline-offset:-7px}
+.p-franja__nombre a:focus-visible{outline:0}
+.p-franja__rasgo{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;font-size:var(--t-s);font-weight:700}
+.p-franja__cuerpo{display:flex;flex-direction:column;gap:16px;flex:1}
+/* Con el filtro puesto quedan dos o tres franjas anchas: el contenido no
+   crece con ellas (la foto empujaba "Configurar" fuera de la pantalla);
+   el color llena el resto. */
+.p-franja__cab,.p-franja__cuerpo{width:100%;max-width:400px}
+.p-franja .f-ventana{order:0;padding:6px;box-shadow:0 22px 40px -28px rgba(0,0,0,.6)}
+.p-franja .f-ventana__foto img{transition:transform var(--t-enter) var(--ease)}
+.p-franja .f-lecturas{margin-top:0}
+.p-franja .f-lecturas li{padding-block:9px}
+.p-franja .f-lecturas b{font-size:clamp(1.25rem,1.8vw,1.8rem)}
+.p-franja__pie{margin-top:auto;display:grid;gap:10px}
+.p-franja .f-pantalla{min-height:56px}
+.p-franja .f-pantalla b{font-size:clamp(1.45rem,2.1vw,2.05rem)}
+.p-franja .f-tecla{width:100%}
+.p-franja .stock{color:inherit;font-size:var(--t-xs)}
+@media (hover:hover) and (pointer:fine){
+  .p-franja:hover .f-tecla{filter:brightness(1.08)}
+  .p-franja:hover .f-ventana__foto img{transform:scale(1.035)}
+}
+/* Plegada: no encaja con el filtro. Se queda su color y su nombre, de
+   canto, para no perder de vista la familia. */
+.p-franja[data-fuera]{flex-grow:.2}
+.p-franja[data-fuera] .p-franja__cuerpo,.p-franja[data-fuera] .p-franja__rasgo{display:none}
+.p-franja[data-fuera] .p-franja__nombre{writing-mode:vertical-rl;transform:rotate(180deg);font-size:clamp(1.5rem,2.2vw,2.3rem)}
+
+/* el aparato de la forma: una ventana y cuatro teclas de modo */
+.p-maquina{--caja:#1c1e23;--base:#34373e;--cara:#4b4f58;--luz:#2b3bf5;--luz-2:#1f2bb8;
+  display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(16px,2.4vw,28px);
+  margin-top:clamp(24px,3vw,36px);padding:clamp(14px,2vw,22px);border-radius:var(--radio);background:var(--panel)}
+.p-maquina__vista{display:grid;place-items:center;min-height:clamp(260px,30vw,400px);padding:clamp(18px,3vw,40px);
+  border-radius:var(--radio-s);background:var(--carcasa);box-shadow:inset 0 2px 6px rgba(0,0,0,.12)}
+.p-maquina__vista>*{grid-area:1/1}
+.p-maquina__mandos{display:grid;align-content:start;gap:16px;padding-block:4px}
+.p-modos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.p-modo{min-height:52px}
+.p-maquina h3{font-size:var(--t-l);font-weight:800;letter-spacing:-.015em;text-wrap:balance}
+.p-maquina h3 em,.f-aparato h3 em{font-style:normal;color:var(--tinta-2)}
+.p-maquina p{max-width:52ch}
+.f-aparato p{max-width:68ch}
+.f-h2 em{font-style:normal;color:var(--tinta-2)}
+/* forma y firmware van seguidas sobre la carcasa: una regla las separa */
+#firmware{border-top:1px solid var(--linea)}
+.dibujo{width:100%;max-width:620px}
+
+/* el teclado dibujado (js/dibujo.js): el Sofle negro, y lo que se
+   explica encendido en el color del Sofle Carbon */
+.dib{display:block;width:100%;height:auto;overflow:visible}
+.dib__caja{fill:var(--caja)}
+.dib__base{fill:var(--base);transition:fill var(--t-tap) var(--ease)}
+.dib__cara{fill:var(--cara);transition:fill var(--t-tap) var(--ease)}
+.dib--pulgares .dib__tecla--pulgar .dib__cara{fill:var(--luz)}
+.dib--pulgares .dib__tecla--pulgar .dib__base{fill:var(--luz-2)}
+.dib--mitades .dib__desliza--0{animation:separa-i var(--loop-mitades) var(--ease) infinite}
+.dib--mitades .dib__desliza--1{animation:separa-d var(--loop-mitades) var(--ease) infinite}
+@keyframes separa-i{0%,15%,100%{transform:translateX(90px)}45%,80%{transform:translateX(-50px)}}
+@keyframes separa-d{0%,15%,100%{transform:translateX(-90px)}45%,80%{transform:translateX(50px)}}
+/* del menique al indice, las dos manos a la vez: el orden de los dedos */
+.dib--columnas .dib__tecla:not(.dib__tecla--pulgar) .dib__cara{
+  animation:columna var(--loop-columnas) var(--ease) infinite;
+  animation-delay:calc(var(--c) * var(--paso) * 5)}
+@keyframes columna{0%,4%{fill:var(--luz)}30%,100%{fill:var(--cara)}}
+
+/* hotswap: los dos switches saliendo del zocalo */
+.hot{display:flex;gap:clamp(30px,7vw,80px);align-items:flex-end;justify-content:center}
+.hot__col{display:grid;justify-items:center;gap:2px}
+.hot__sw{width:clamp(110px,13vw,160px);height:auto;overflow:visible;filter:drop-shadow(0 14px 18px rgba(17,17,17,.22))}
+.hot__pieza{animation:saca var(--loop-tecla) var(--ease) infinite;transform-origin:50% 70%}
+.hot__col--2 .hot__pieza{animation-delay:calc(var(--loop-tecla) / 2)}
+@keyframes saca{0%,10%{transform:translateY(0) rotate(0)}40%,60%{transform:translateY(-46px) rotate(-7deg)}90%,100%{transform:translateY(0) rotate(0)}}
+.hot__et{font-size:var(--t-s);font-weight:800;margin-top:12px}
+.hot__dato{font-size:var(--t-xs);color:var(--tinta-2)}
+
+/* capas: las mismas teclas con otra leyenda */
+.capas{width:min(100%,460px);padding:clamp(14px,3vw,24px);border-radius:var(--radio-s);background:#0c0d10}
+.capas__fila{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.capas__fila+.capas__fila{margin-top:7px}
+.capas__t{aspect-ratio:1;border-radius:8px;background:#34373e;display:grid;place-items:center;position:relative;
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.4)}
+.capas__t span{position:absolute;font-weight:700;font-size:clamp(.85rem,1.5vw,1.05rem);color:#eceef2;
+  animation:capaA var(--loop-capa) steps(1,end) infinite}
+.capas__t span+span{color:#aab3ff;animation-name:capaB}
+@keyframes capaA{0%,49.9%{opacity:1}50%,100%{opacity:0}}
+@keyframes capaB{0%,49.9%{opacity:0}50%,100%{opacity:1}}
+.capas__t--hold{background:#1f2bb8}
+.capas__t--hold::after{content:"";position:absolute;inset:0;border-radius:8px;box-shadow:inset 0 0 0 2px #fff;
+  opacity:0;animation:pulsada var(--loop-capa) steps(1,end) infinite}
+@keyframes pulsada{0%,49.9%{opacity:0}50%,100%{opacity:1}}
+.funciones{display:grid;gap:12px 22px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.funciones li{border-top:1px solid var(--linea);padding-top:10px}
+.funciones b{display:block;font-size:var(--t-s);font-weight:800;margin-bottom:2px}
+.funciones span{font-size:var(--t-s);color:var(--tinta-2);line-height:1.5}
+#p-capas .f-tecla{justify-self:start}
+
+.sin-movimiento .dib--mitades .dib__desliza--0,.sin-movimiento .dib--mitades .dib__desliza--1,
+.sin-movimiento .hot__pieza,.sin-movimiento .capas__t span,.sin-movimiento .capas__t--hold::after,
+.sin-movimiento .dib--columnas .dib__tecla .dib__cara{animation:none}
+.sin-movimiento .capas__t span+span{opacity:0}
+
+/* Por debajo de 1080 px cinco columnas ya no caben: bandas apiladas, con
+   la foto y las lecturas lado a lado. */
+@media (max-width:1080px){
+  .p-franjas{flex-direction:column;min-height:0}
+  .p-franja{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px 18px;padding:22px var(--canal) 24px}
+  .p-franja__cab{grid-column:1/-1}
+  .p-franja__cuerpo{display:contents}
+  .p-franja__cab{max-width:none}
+  .p-franja .f-lecturas{align-self:start}
+  .p-franja__pie{grid-column:1/-1;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+  .p-franja__pie .stock{grid-column:1/-1}
+  .p-franja[data-fuera]{padding-block:12px}
+  .p-franja[data-fuera] .p-franja__nombre{writing-mode:horizontal-tb;transform:none}
+  .p-maquina{grid-template-columns:minmax(0,1fr)}
+  /* la foto no pasa de 360 px: con media pantalla cada banda medía 580 */
+  .p-franja{grid-template-columns:minmax(0,360px) minmax(0,1fr)}
+  /* titulo y cuenta en una fila; los filtros debajo, en una tira que se
+     desliza en vez de ocupar varias filas */
+  .p-titulo{flex:1;min-width:0}
+  .p-filtros{order:1;flex-basis:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
+    margin-inline:calc(-1 * var(--canal));padding:2px var(--canal) 4px}
+  .p-filtros::-webkit-scrollbar{display:none}
+  .p-filtro{flex:none}
+  .p-vacio{order:2}
+}
+@media (max-width:640px){
+  .p-mando{padding-block:12px}
+  .p-nav a.p-nav__studio,.p-nav a[aria-current]{display:none}
+  .p-franja{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px 14px}
+  .p-franja .f-lecturas li{padding:7px 6px 7px 0}
+  .p-franja .f-lecturas li:nth-child(even){padding-left:8px}
+  .p-franja .f-lecturas span{font-size:.75rem}
+  .funciones{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  .p-franja,.p-franja .f-ventana__foto img{transition:none}
+}
+
 @media (max-width:960px){
   .f-placa__in{grid-template-columns:minmax(0,1fr)}
   .f-ventana{order:-1}

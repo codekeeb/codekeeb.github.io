@@ -18,32 +18,32 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#e8e9eb">
 <!-- Seguridad: la pagina solo carga lo suyo. Si un dia se anade un
      servicio externo, hay que darlo de alta aqui Y en privacidad.html. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/schibstedgrotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/doto-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/fonts/fuentes.css">
-<link rel="stylesheet" href="css/tienda.css">
+<link rel="stylesheet" href="css/aparato.css">
 </head>
 <body>
 <a class="saltar" href="#contenido" data-t="a11y.saltar">Saltar al contenido</a>
 
-<header class="top">
-  <div class="top__in env">
-    <a class="marca" href="/" aria-label="Codekeeb">
-      <img src="assets/brand/logo-horizontal-dark.png"
-           srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
-           width="640" height="224" alt="CODE/KEEB">
-    </a>
-    <nav class="top__nav" aria-label="Principal">
-      <a href="/#tienda" aria-current="page" data-t="m.tienda">Tienda</a>
-      <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
-      <a href="keymap-studio/">Keymap Studio</a>
-    </nav>
-    <span class="top__sp"></span>
-    <button type="button" class="top__pausa" data-pausa hidden></button>
+<header class="f-top">
+  <a class="f-marca" href="/" aria-label="Codekeeb">
+    <img src="assets/brand/logo-horizontal-dark.png"
+         srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
+         width="640" height="224" alt="CODE/KEEB">
+  </a>
+  <nav class="p-nav" aria-label="Principal">
+    <a href="/#tienda" aria-current="page" data-t="m.tienda">Tienda</a>
+    <a href="comparar.html" data-t="d.compare">Comparar</a>
+    <a class="p-nav__studio" href="keymap-studio/">Keymap Studio</a>
+  </nav>
+  <div class="f-ajustes">
+    <button type="button" class="f-pausa" data-pausa hidden></button>
     <div class="idiomas">
       <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false" aria-label="Idioma">
         <span data-lang-actual>ES</span>
@@ -59,185 +59,161 @@
 </header>
 
 <main id="contenido">
+  <!-- El muestrario: los cinco a la vista, cada uno en su franja de color.
+       Los filtros no quitan modelos: pliegan los que no encajan. -->
+  <section id="tienda" aria-labelledby="h-tienda">
+    <div class="p-mando">
+      <h1 class="p-titulo" id="h-tienda" data-t-html="e.familiaT"></h1>
+      <div class="p-filtros" id="filtros" role="group" data-t-aria="p3.filtros"></div>
+      <output class="f-pantalla p-cuenta" id="cuenta" aria-live="polite"></output>
+      <p class="p-vacio" id="vacio" hidden data-t="d.nomatch"></p>
+    </div>
+    <div class="p-franjas" id="franjas"></div>
+  </section>
 
-  <!-- ===== LA FAMILIA =====
-       Lo primero que ensena ergodox: la familia de teclados en fila. Aqui
-       es la portada y la tienda a la vez: lo que se vende, a la vista. -->
-  <section class="familia" id="tienda" aria-labelledby="h-familia">
-    <div class="env">
-      <div class="familia__cab">
-        <h1 class="titular" id="h-familia" data-t-html="e.familiaT"></h1>
-        <p data-t="e.familiaP"></p>
-        <div class="filtros" id="filtros" role="group" aria-label="Filtros"></div>
+  <!-- La forma: cuatro principios en un solo aparato, una tecla cada uno. -->
+  <section class="f-seccion" id="forma" aria-labelledby="h-forma">
+    <div class="f-in">
+      <h2 class="f-h2" id="h-forma" data-t="p3.formaT"></h2>
+      <p class="f-lede" data-t="p3.formaP"></p>
+      <div class="p-maquina">
+        <div class="p-maquina__vista">
+          <div class="dibujo" id="dibujo"></div>
+          <div class="hot" id="hot" hidden>
+      <div class="hot__col">
+        <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="Kailh Choc Red">
+          <g class="hot__pieza">
+            <!-- vastago: en el Choc es una placa plana con ranura -->
+            <rect x="47" y="34" width="46" height="22" rx="3" fill="#b8322c"/>
+            <rect x="47" y="34" width="46" height="7" rx="3" fill="#d2453e"/>
+            <rect x="66" y="38" width="8" height="14" rx="2" fill="#8d231e"/>
+            <!-- carcasa superior e inferior: baja y ancha -->
+            <rect x="20" y="54" width="100" height="16" rx="3" fill="#2a2d33"/>
+            <rect x="14" y="68" width="112" height="30" rx="4" fill="#15171b"/>
+            <rect x="14" y="68" width="112" height="4" rx="2" fill="#31353c"/>
+            <!-- dos patas metalicas y el poste central de plastico -->
+            <rect x="38" y="97" width="6" height="17" rx="1.5" fill="#cbb26a"/>
+            <rect x="96" y="97" width="6" height="17" rx="1.5" fill="#cbb26a"/>
+            <rect x="64" y="97" width="12" height="12" rx="2" fill="#23262b"/>
+          </g>
+          <!-- zocalo hotswap sobre la placa -->
+          <g class="hot__zocalo">
+            <rect x="10" y="126" width="120" height="16" rx="2" fill="#191c21" stroke="#343941" stroke-width="1.5"/>
+            <rect x="33" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+            <rect x="91" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+            <rect x="0" y="142" width="140" height="22" rx="2" fill="#401b47"/>
+            <rect x="0" y="142" width="140" height="3" fill="#6d2e78"/>
+          </g>
+        </svg>
+        <span class="hot__et">Kailh Choc Red</span>
+        <span class="hot__dato"><span data-t="p.swLineal"></span> · low profile</span>
       </div>
-      <div class="rejilla" id="rejilla"></div>
-    </div>
-  </section>
-
-  <!-- ===== UN PRINCIPIO POR SECCION =====
-       Como ergodox: el teclado dibujado con su forma real y la parte que
-       se explica encendida. El dibujo es del Sofle, y el rotulo lo dice. -->
-  <section class="seccion" id="split" aria-labelledby="h-split">
-    <div class="env principio">
-      <div class="principio__vis"><div class="dibujo" id="dSplit"></div><p class="nota" data-nota-dib="Sofle"></p></div>
-      <div class="principio__txt"><h2 id="h-split" data-t="e.splitT"></h2><p data-t="e.splitP"></p></div>
-    </div>
-  </section>
-
-  <section class="seccion s-niebla" id="columnas" aria-labelledby="h-col">
-    <div class="env principio principio--der">
-      <div class="principio__vis"><div class="dibujo" id="dCol"></div><p class="nota" data-nota-dib="Sofle"></p></div>
-      <div class="principio__txt"><h2 id="h-col" data-t="e.colT"></h2><p data-t="e.colP"></p></div>
-    </div>
-  </section>
-
-  <section class="seccion" id="pulgares" aria-labelledby="h-pul">
-    <div class="env principio">
-      <div class="principio__vis"><div class="dibujo" id="dPul"></div><p class="nota" data-nota-dib="Sofle"></p></div>
-      <div class="principio__txt"><h2 id="h-pul" data-t="e.pulT"></h2><p data-t="e.pulP"></p></div>
-    </div>
-  </section>
-
-  <section class="seccion s-hielo" id="capas" aria-labelledby="h-capas">
-    <div class="env principio principio--der">
-      <div class="principio__vis">
-        <div class="capas" aria-hidden="true"><div id="capasFila"></div></div>
-        <p class="nota" data-t="p.demoNota"></p>
-      </div>
-      <div class="principio__txt">
-        <h2 id="h-capas" data-t-html="p.capasTitle"></h2>
-        <p data-t="p.capasText"></p>
-        <ul class="funciones">
-          <li><b data-t="p.edHold"></b><span data-t="p.edHoldT"></span></li>
-          <li><b data-t="p.edEnc"></b><span data-t="p.edEncT"></span></li>
-          <li><b data-t="p.edMacros"></b><span data-t="p.edMacrosT"></span></li>
-          <li><b data-t="p.edUnicode"></b><span data-t="p.edUnicodeT"></span></li>
-        </ul>
-        <p><a class="enlace" href="keymap-studio/"><span data-t="studio.cta"></span><span class="ic-flecha"></span></a></p>
+      <div class="hot__col hot__col--2">
+        <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="MMD Holy Panda">
+          <g class="hot__pieza">
+            <!-- vastago en cruz, que es lo que distingue un MX -->
+            <rect x="63" y="14" width="14" height="34" rx="2" fill="#7a5236"/>
+            <rect x="53" y="26" width="34" height="11" rx="2" fill="#7a5236"/>
+            <rect x="63" y="14" width="14" height="5" rx="2" fill="#98683f"/>
+            <!-- carcasa superior clara, la que le da el nombre -->
+            <rect x="28" y="44" width="84" height="30" rx="4" fill="#e6e1d6"/>
+            <rect x="28" y="44" width="84" height="5" rx="2" fill="#f3efe7"/>
+            <rect x="36" y="40" width="68" height="6" rx="3" fill="#d8d2c4"/>
+            <!-- carcasa inferior negra, mas alta que la del Choc -->
+            <rect x="20" y="72" width="100" height="30" rx="4" fill="#15171b"/>
+            <rect x="20" y="72" width="100" height="4" rx="2" fill="#31353c"/>
+            <rect x="30" y="100" width="80" height="6" rx="2" fill="#0e1013"/>
+            <rect x="44" y="105" width="6" height="16" rx="1.5" fill="#cbb26a"/>
+            <rect x="90" y="105" width="6" height="16" rx="1.5" fill="#cbb26a"/>
+            <circle cx="70" cy="110" r="7" fill="#23262b"/>
+          </g>
+          <g class="hot__zocalo">
+            <rect x="10" y="126" width="120" height="16" rx="2" fill="#191c21" stroke="#343941" stroke-width="1.5"/>
+            <rect x="39" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+            <rect x="85" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
+            <rect x="0" y="142" width="140" height="22" rx="2" fill="#401b47"/>
+            <rect x="0" y="142" width="140" height="3" fill="#6d2e78"/>
+          </g>
+        </svg>
+        <span class="hot__et">MMD Holy Panda</span>
+        <span class="hot__dato"><span data-t="p.swTactil"></span> · MX</span>
       </div>
     </div>
-  </section>
-
-  <!-- La unica seccion oscura: la luz del teclado no se ve sobre blanco. -->
-  <section class="seccion oscura" id="luz" aria-labelledby="h-luz">
-    <div class="env principio">
-      <div class="principio__vis"><div class="kb" id="kb"></div><p class="nota" data-t="p.rgbReal"></p></div>
-      <div class="principio__txt">
-        <h2 id="h-luz" data-t-html="p.rgbTitle"></h2>
-        <p id="fxTexto"></p>
-        <div class="modos" id="modos" role="group" aria-label="Modos de luz"></div>
-        <p class="nota nota--izq" data-t="p.rgbOtros"></p>
-      </div>
-    </div>
-  </section>
-
-  <section class="seccion" id="pantallas" aria-labelledby="h-oled">
-    <div class="env principio principio--der">
-      <div class="principio__vis">
-        <div class="oleds">
-          <figure class="oled"><div class="oled__marco"><canvas id="oledIzq" width="68" height="160" aria-hidden="true"></canvas></div><figcaption data-t="p.oledIzq"></figcaption></figure>
-          <figure class="oled"><div class="oled__marco"><canvas id="oledDer" width="68" height="160" aria-hidden="true"></canvas></div><figcaption data-t="p.oledDer"></figcaption></figure>
         </div>
-        <p class="nota" data-t="p.oledReal"></p>
-      </div>
-      <div class="principio__txt"><h2 id="h-oled" data-t-html="p.oledTitle"></h2><p data-t="p.oledText"></p></div>
-    </div>
-  </section>
-
-  <section class="seccion s-niebla" id="hotswap" aria-labelledby="h-hot">
-    <div class="env principio">
-      <div class="principio__vis">
-        <div class="hot">
-          <div class="hot__col">
-            <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="Kailh Choc Red">
-              <g class="hot__pieza">
-                <!-- vastago: en el Choc es una placa plana con ranura -->
-                <rect x="47" y="34" width="46" height="22" rx="3" fill="#b8322c"/>
-                <rect x="47" y="34" width="46" height="7" rx="3" fill="#d2453e"/>
-                <rect x="66" y="38" width="8" height="14" rx="2" fill="#8d231e"/>
-                <!-- carcasa superior e inferior: baja y ancha -->
-                <rect x="20" y="54" width="100" height="16" rx="3" fill="#2a2d33"/>
-                <rect x="14" y="68" width="112" height="30" rx="4" fill="#15171b"/>
-                <rect x="14" y="68" width="112" height="4" rx="2" fill="#31353c"/>
-                <!-- dos patas metalicas y el poste central de plastico -->
-                <rect x="38" y="97" width="6" height="17" rx="1.5" fill="#cbb26a"/>
-                <rect x="96" y="97" width="6" height="17" rx="1.5" fill="#cbb26a"/>
-                <rect x="64" y="97" width="12" height="12" rx="2" fill="#23262b"/>
-              </g>
-              <!-- zocalo hotswap sobre la placa -->
-              <g class="hot__zocalo">
-                <rect x="10" y="126" width="120" height="16" rx="2" fill="#191c21" stroke="#343941" stroke-width="1.5"/>
-                <rect x="33" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
-                <rect x="91" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
-                <rect x="0" y="142" width="140" height="22" rx="2" fill="#401b47"/>
-                <rect x="0" y="142" width="140" height="3" fill="#6d2e78"/>
-              </g>
-            </svg>
-            <span class="hot__et">Kailh Choc Red</span>
-            <span class="hot__dato"><span data-t="p.swLineal"></span> · low profile</span>
-          </div>
-          <div class="hot__col hot__col--2">
-            <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="MMD Holy Panda">
-              <g class="hot__pieza">
-                <!-- vastago en cruz, que es lo que distingue un MX -->
-                <rect x="63" y="14" width="14" height="34" rx="2" fill="#7a5236"/>
-                <rect x="53" y="26" width="34" height="11" rx="2" fill="#7a5236"/>
-                <rect x="63" y="14" width="14" height="5" rx="2" fill="#98683f"/>
-                <!-- carcasa superior clara, la que le da el nombre -->
-                <rect x="28" y="44" width="84" height="30" rx="4" fill="#e6e1d6"/>
-                <rect x="28" y="44" width="84" height="5" rx="2" fill="#f3efe7"/>
-                <rect x="36" y="40" width="68" height="6" rx="3" fill="#d8d2c4"/>
-                <!-- carcasa inferior negra, mas alta que la del Choc -->
-                <rect x="20" y="72" width="100" height="30" rx="4" fill="#15171b"/>
-                <rect x="20" y="72" width="100" height="4" rx="2" fill="#31353c"/>
-                <rect x="30" y="100" width="80" height="6" rx="2" fill="#0e1013"/>
-                <rect x="44" y="105" width="6" height="16" rx="1.5" fill="#cbb26a"/>
-                <rect x="90" y="105" width="6" height="16" rx="1.5" fill="#cbb26a"/>
-                <circle cx="70" cy="110" r="7" fill="#23262b"/>
-              </g>
-              <g class="hot__zocalo">
-                <rect x="10" y="126" width="120" height="16" rx="2" fill="#191c21" stroke="#343941" stroke-width="1.5"/>
-                <rect x="39" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
-                <rect x="85" y="122" width="16" height="9" rx="2" fill="#cbb26a"/>
-                <rect x="0" y="142" width="140" height="22" rx="2" fill="#401b47"/>
-                <rect x="0" y="142" width="140" height="3" fill="#6d2e78"/>
-              </g>
-            </svg>
-            <span class="hot__et">MMD Holy Panda</span>
-            <span class="hot__dato"><span data-t="p.swTactil"></span> · MX</span>
-          </div>
+        <div class="p-maquina__mandos">
+          <div class="p-modos" id="formas" role="group" data-t-aria="p3.modosForma"></div>
+          <h3 id="formaT" aria-live="polite"></h3>
+          <p id="formaP"></p>
+          <p class="f-nota" id="formaNota"></p>
         </div>
-        <p class="nota" data-t="p.hotNota"></p>
       </div>
-      <div class="principio__txt"><h2 id="h-hot" data-t-html="p.hotTitle"></h2><p data-t="p.hotText"></p></div>
     </div>
   </section>
 
-  <section class="seccion" id="elegir" aria-labelledby="h-elegir">
-    <div class="env">
-      <div class="cab cab--centro"><h2 id="h-elegir" data-t-html="p2.cTitle"></h2><p data-t="p2.cLede"></p></div>
-      <div class="tabla-env"><table class="tabla" id="comparativa"></table></div>
-      <p class="centro-pie"><a class="enlace" href="comparar.html"><span data-t="m.verComparador"></span><span class="ic-flecha"></span></a></p>
+  <!-- Lo que hace el firmware, en pantallas de verdad. -->
+  <section class="f-seccion" id="firmware" aria-labelledby="h-firmware">
+    <div class="f-in">
+      <h2 class="f-h2" id="h-firmware" data-t="p3.firmwareT"></h2>
+      <div class="f-aparatos">
+        <article class="f-aparato f-aparato--luz" id="luz">
+          <h3 data-t-html="p.rgbTitle"></h3>
+          <div class="f-aparato__pantalla"><div class="kb" id="kb"></div></div>
+          <div class="modos" id="modos" role="group" data-t-aria="p3.modosLuz"></div>
+          <p id="fxTexto"></p>
+          <p class="f-nota"><span data-t="p.rgbReal"></span> <span data-t="p.rgbOtros"></span></p>
+        </article>
+        <article class="f-aparato">
+          <h3 data-t-html="p.oledTitle"></h3>
+          <div class="oleds">
+            <figure class="oled"><div class="oled__marco"><canvas id="oledIzq" width="68" height="160" aria-hidden="true"></canvas></div><figcaption data-t="p.oledIzq"></figcaption></figure>
+            <figure class="oled"><div class="oled__marco"><canvas id="oledDer" width="68" height="160" aria-hidden="true"></canvas></div><figcaption data-t="p.oledDer"></figcaption></figure>
+          </div>
+          <p data-t="p.oledText"></p>
+          <p class="f-nota" data-t="p.oledReal"></p>
+        </article>
+        <article class="f-aparato" id="p-capas">
+          <h3 data-t-html="p.capasTitle"></h3>
+          <div class="capas" aria-hidden="true"><div id="capasFila"></div></div>
+          <p data-t="p.capasText"></p>
+          <ul class="funciones">
+            <li><b data-t="p.edHold"></b><span data-t="p.edHoldT"></span></li>
+            <li><b data-t="p.edEnc"></b><span data-t="p.edEncT"></span></li>
+            <li><b data-t="p.edMacros"></b><span data-t="p.edMacrosT"></span></li>
+            <li><b data-t="p.edUnicode"></b><span data-t="p.edUnicodeT"></span></li>
+          </ul>
+          <p class="f-nota" data-t="p.demoNota"></p>
+          <a class="f-tecla f-tecla--tinta" href="keymap-studio/" data-t="studio.cta"></a>
+        </article>
+      </div>
     </div>
   </section>
 
-  <section class="seccion s-niebla" aria-labelledby="h-conf">
-    <div class="env">
-      <div class="cab"><h2 id="h-conf" data-t="p2.confianza"></h2></div>
+  <section class="f-seccion" id="elegir" aria-labelledby="h-elegir">
+    <div class="f-in">
+      <h2 class="f-h2" id="h-elegir" data-t-html="p2.cTitle"></h2>
+      <p class="f-lede" data-t="p2.cLede"></p>
+      <div class="tabla-env" tabindex="0" role="region" aria-labelledby="h-elegir"><table class="tabla" id="comparativa"></table></div>
+      <p><a class="f-enlace" href="comparar.html"><span data-t="m.verComparador"></span><span class="ic-flecha"></span></a></p>
+    </div>
+  </section>
+
+  <section class="f-seccion f-seccion--gris" aria-labelledby="h-conf">
+    <div class="f-in">
+      <h2 class="f-h2" id="h-conf" data-t="p2.confianza"></h2>
       <ul class="confianza" id="confianza"></ul>
     </div>
   </section>
 </main>
 
-<footer class="pie">
-  <div class="pie__in env">
+<footer class="f-pie">
+  <div class="f-in f-pie__in">
     <p id="notaPrecios"></p>
     <nav aria-label="Pie">
       <a href="/#tienda" data-t="m.tienda">Tienda</a>
       <a href="comparar.html" data-t="d.compare">Comparar</a>
       <a href="keymap-studio/">Keymap Studio</a>
     </nav>
-    <nav class="pie__legal" aria-label="Legal">
+    <nav class="f-pie__legal" aria-label="Legal">
       <a href="legal.html#aviso" data-t="l.aviso">Aviso legal</a>
       <a href="legal.html#privacidad" data-t="l.privacidad">Privacidad</a>
       <a href="legal.html#cookies" data-t="l.cookies">Cookies</a>

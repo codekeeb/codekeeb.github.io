@@ -17,7 +17,7 @@ carencia.
 
 | Archivo | Que es |
 |---|---|
-| `index.html` | **La portada es la tienda**: la familia de los cinco con filtros, un principio del split por seccion (mitades, columnas, pulgares, capas, luz, pantallas, hotswap), comparacion y confianza |
+| `index.html` | **La portada es la tienda**: cinco franjas de color, una por modelo, con filtros que pliegan las que no encajan; el aparato de la forma (mitades, columnas, pulgares, hotswap con teclas de modo), el firmware (luz, pantallas, capas), comparacion y confianza |
 | `modelo.html` | **Ficha de cada modelo**, `modelo.html?id=<id>`: tira de la familia, barra del producto, configurador en una columna con "tu configuracion incluye", los principios con la forma de ESE teclado, ficha, comparacion y barra de compra fija abajo |
 | `comparar.html` | Los cinco en columnas, fila a fila, con "solo lo que cambia" |
 | `legal.html` · `js/legal.js` · `js/legal-textos.js` | Aviso legal, privacidad, cookies y compras, en es / en / fr. Los datos del titular salen de `CK_TITULAR` (`js/data.js`) |
@@ -34,7 +34,8 @@ carencia.
 | `js/sofle-led.js` | Los 30 LED por mitad del Sofle. Solo hay mapa de luz del Sofle: por eso la luz solo se ensena en sus fichas |
 | `js/rgb.js` | Los efectos de luz, portados de `fxFrame` del Studio (30 fps, como el firmware) |
 | `js/oled.js` · `js/oled-datos.js` | Las dos OLED con los mapas de bits del firmware |
-| `css/tienda.css` | **Una sola hoja** para las tres paginas |
+| `css/aparato.css` | La hoja del mundo "hardware con color" (ver `DESIGN.md`): portada y ficha |
+| `css/tienda.css` | La hoja del mundo anterior: comparador, legal y 404, hasta que se migren. **No se mezcla** con `aparato.css` |
 | `assets/img/{es,en,fr}/` | Fotos con texto de la landing antigua. **Ya no las usa nadie**, pero son fotos reales: no se tiran sin que Ernesto lo diga |
 | `keymap-studio/` | Aplicacion aparte, con su propio i18n. No comparte nada |
 

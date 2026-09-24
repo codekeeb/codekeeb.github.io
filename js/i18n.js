@@ -375,7 +375,17 @@ const CK_I18N = {
     "f.studioP": "Cambia cada tecla, capa y macro desde el navegador (Chrome o Edge), con el teclado conectado por USB y sin instalar nada.",
     "f.studioA": "Abrir Keymap Studio",
     "f.parametro": "Parámetro",
-    "f.valor": "Valor"
+    "f.valor": "Valor",
+    "p3.filtros": "Filtrar modelos",
+    "p3.formaT": "La forma de un split.",
+    "p3.formaP": "Cuatro cosas que cambian respecto a un teclado de siempre. Toca cada tecla para verla.",
+    "p3.modosForma": "Qué enseñar",
+    "p3.mitades": "Mitades",
+    "p3.columnas": "Columnas",
+    "p3.pulgares": "Pulgares",
+    "p3.hotswap": "Hotswap",
+    "p3.firmwareT": "Lo que hace el firmware.",
+    "p3.modosLuz": "Modos de luz"
   },
 
   en: {
@@ -747,7 +757,17 @@ const CK_I18N = {
     "f.studioP": "Change every key, layer and macro from the browser (Chrome or Edge), with the keyboard plugged in over USB and nothing to install.",
     "f.studioA": "Open Keymap Studio",
     "f.parametro": "Parameter",
-    "f.valor": "Value"
+    "f.valor": "Value",
+    "p3.filtros": "Filter models",
+    "p3.formaT": "The shape of a split.",
+    "p3.formaP": "Four things that change from a regular keyboard. Tap each key to see it.",
+    "p3.modosForma": "What to show",
+    "p3.mitades": "Halves",
+    "p3.columnas": "Columns",
+    "p3.pulgares": "Thumbs",
+    "p3.hotswap": "Hotswap",
+    "p3.firmwareT": "What the firmware does.",
+    "p3.modosLuz": "Lighting modes"
   },
 
   fr: {
@@ -1119,6 +1139,16 @@ const CK_I18N = {
     "f.studioP": "Modifiez chaque touche, calque et macro depuis le navigateur (Chrome ou Edge), clavier branché en USB, sans rien installer.",
     "f.studioA": "Ouvrir Keymap Studio",
     "f.parametro": "Paramètre",
-    "f.valor": "Valeur"
+    "f.valor": "Valeur",
+    "p3.filtros": "Filtrer les modèles",
+    "p3.formaT": "La forme d'un split.",
+    "p3.formaP": "Quatre choses qui changent par rapport à un clavier classique. Touchez chaque touche pour la voir.",
+    "p3.modosForma": "Que montrer",
+    "p3.mitades": "Moitiés",
+    "p3.columnas": "Colonnes",
+    "p3.pulgares": "Pouces",
+    "p3.hotswap": "Hotswap",
+    "p3.firmwareT": "Ce que fait le firmware.",
+    "p3.modosLuz": "Modes d'éclairage"
   }
 };
