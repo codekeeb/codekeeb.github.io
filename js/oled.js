@@ -132,7 +132,9 @@ const CK_OLED = (() => {
   function montar(cvIzq, cvDer) {
     const izq = lienzo(-14), der = lienzo(-7);
     const ctxI = cvIzq.getContext("2d"), ctxD = cvDer.getContext("2d");
-    const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    /* Quieto si el sistema pide poco movimiento o el visitante ha pulsado
+       pausa: entonces se pinta un solo fotograma y se para. */
+    const quieto = () => CK.quieto();
 
     /* Un tecleo simulado: sube y baja entre 20 y 95 ppm en un ciclo lento,
        que es lo que hace que el gato cambie de ritmo y la grafica tenga
@@ -211,16 +213,21 @@ const CK_OLED = (() => {
       if (f) imagen(der, f, (W - f.w) >> 1, 73);
 
       volcar(izq, ctxI); volcar(der, ctxD);
-      if (visible && !quieto) rid = requestAnimationFrame(cuadro);
+      if (visible && !quieto()) rid = requestAnimationFrame(cuadro);
     }
 
     /* Dos pantallas repintandose a 60 fps fuera de la vista es gastar
        bateria para nada. */
     new IntersectionObserver(es => {
       visible = es[0].isIntersecting;
-      if (visible && !quieto) rid = requestAnimationFrame(cuadro);
+      if (visible && !quieto()) rid = requestAnimationFrame(cuadro);
       else cancelAnimationFrame(rid);
     }, { rootMargin: "120px" }).observe(cvIzq);
+    /* pausa o reanuda al pulsar el boton de la cabecera */
+    document.addEventListener("ck-movimiento", () => {
+      cancelAnimationFrame(rid);
+      if (visible && !quieto()) rid = requestAnimationFrame(cuadro);
+    });
 
     cuadro(performance.now());
     return { VISTAS };

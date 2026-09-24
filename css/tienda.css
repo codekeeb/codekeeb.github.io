@@ -35,9 +35,13 @@
   --azul:#3340e6;           /* el acento: 7:1 con blanco encima */
   --azul-2:#2330c8;
   --azul-velo:rgba(51,64,230,.08);
-  --ok:#1b7a4c;
+  --ok:#176b43;
   --aviso:#955710;
   --rgb:linear-gradient(90deg,#ff992a,#ff39c0 40%,#2a3dff 75%,#1be8ff);
+  /* El mismo recorrido, oscurecido para TEXTO sobre fondo claro: el naranja
+     y el cian del original daban 2,1:1 y 1,5:1 sobre blanco y la palabra
+     "RGB" del nombre no se leia. Todos por encima de 4,5:1 (WCAG AA). */
+  --rgb-texto:linear-gradient(90deg,#b93d0a,#b3176f 40%,#2a3dff 75%,#0a6c80);
   /* el teclado dibujado */
   --caja:#383c45;
   --base:#15171c;
@@ -92,6 +96,12 @@ p{text-wrap:pretty}
 :focus-visible{outline:2px solid var(--azul);outline-offset:3px;border-radius:6px}
 .oscura :focus-visible{outline-color:#fff}
 .env{width:100%;max-width:var(--col);margin-inline:auto;padding-inline:var(--canal)}
+.saltar{position:fixed;left:12px;top:-60px;z-index:100;padding:10px 16px;border-radius:10px;background:var(--noche);color:#fff;
+  font-weight:600;transition:top var(--t-tap) var(--ease)}
+.saltar:focus{top:12px}
+.top__pausa{margin-right:calc(-1 * clamp(12px,2.4vw,32px) + 4px);display:grid;place-items:center;width:44px;height:44px;border-radius:10px;color:var(--gris)}
+.top__pausa[aria-pressed="true"]{color:var(--azul);background:var(--azul-velo)}
+@media (hover:hover) and (pointer:fine){ .top__pausa:hover{color:var(--tinta);background:var(--niebla)} }
 .oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* ---------- cabecera: blanca, fina ---------- */
@@ -101,7 +111,7 @@ p{text-wrap:pretty}
 .marca{display:flex;align-items:center;min-height:44px;flex:0 0 auto}
 .marca img{height:24px;width:auto}
 .top__nav{display:flex;gap:clamp(6px,1.6vw,24px)}
-.top__nav a{display:inline-flex;align-items:center;min-height:44px;padding-inline:2px;font-size:var(--t-s);font-weight:500;
+.top__nav a{display:inline-flex;align-items:center;min-height:44px;padding-inline:2px;white-space:nowrap;font-size:var(--t-s);font-weight:500;
   color:var(--gris);transition:color var(--t-tap) var(--ease)}
 .top__nav a[aria-current="page"]{color:var(--tinta)}
 .top__sp{flex:1}
@@ -150,13 +160,13 @@ p{text-wrap:pretty}
    El degradado solo en la palabra RGB: compromiso de marca. */
 .nombre b{font-weight:inherit}
 .nombre i{font-style:normal;color:var(--gris)}
-.nombre u{text-decoration:none;background:var(--rgb);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nombre u{text-decoration:none;background:var(--rgb-texto);-webkit-background-clip:text;background-clip:text;color:transparent}
 
 .stock{display:inline-flex;align-items:center;gap:.5em;font-size:var(--t-xs);font-weight:600;color:var(--gris)}
 .stock::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
 .stock--hay{color:var(--ok)}
 .stock--ultima,.stock--encargo{color:var(--aviso)}
-.stock--agotado,.stock--pronto{color:var(--tenue)}
+.stock--agotado,.stock--pronto,.stock--consulta{color:var(--tenue)}
 .precio{font-weight:700;letter-spacing:-.01em}
 .precio small{font-size:.78em;font-weight:500;color:var(--gris)}
 .dto{display:inline-block;font-size:var(--t-xs);font-weight:700;padding:.2em .55em;border-radius:6px;
@@ -457,6 +467,8 @@ p{text-wrap:pretty}
 .cbarra__txt span{display:block;font-size:var(--t-xs);color:var(--gris);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cbarra .precio{font-size:var(--t-l);white-space:nowrap}
 body.con-cbarra{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+/* Que la barra fija de abajo no tape lo que recibe el foco (WCAG 2.4.11) */
+html:has(body.con-cbarra){scroll-padding-bottom:96px}
 
 /* ---------- ficha y componentes ---------- */
 .ficha{display:grid;gap:0 clamp(28px,4vw,64px);grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
@@ -495,6 +507,36 @@ body.con-cbarra{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
 .cmp__agotado{color:var(--tenue);text-decoration:line-through}
 .cmp tr.igual td{color:var(--tenue)}
 
+/* ---------- legal: texto para leer, no para vender ----------
+   Mismo sistema, mas estrecho y con indice fijo a la izquierda. La
+   medida de linea (68ch) importa mas que en ninguna otra pagina. */
+.legal{display:grid;grid-template-columns:200px minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:start}
+.legal__indice{position:sticky;top:calc(var(--cabecera) + 24px)}
+.legal__indice-t{font-size:var(--t-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);margin-bottom:8px}
+.legal__indice ul{display:grid;gap:2px}
+.legal__indice a{display:flex;align-items:center;min-height:40px;color:var(--gris);font-weight:500}
+@media (hover:hover) and (pointer:fine){ .legal__indice a:hover{color:var(--azul)} }
+.legal__fecha{font-size:var(--t-s);color:var(--tenue)}
+.legal__sec{padding-bottom:clamp(40px,6vw,64px);margin-bottom:clamp(40px,6vw,64px);border-bottom:1px solid var(--filete)}
+.legal__sec:last-child{border-bottom:0;margin-bottom:0}
+.legal__sec h2{font-size:var(--t-2xl);margin-bottom:20px}
+.legal__cuerpo{max-width:68ch;color:var(--tinta)}
+.legal__cuerpo>*+*{margin-top:14px}
+.legal__cuerpo h3{font-size:var(--t-l);margin-top:36px}
+.legal__cuerpo ul{list-style:disc;padding-left:1.3em;display:grid;gap:10px}
+.legal__cuerpo a{color:var(--azul);text-decoration:underline;text-underline-offset:3px}
+.legal__cuerpo code{font-size:.85em;background:var(--niebla);padding:1px 6px;border-radius:5px;word-break:break-word}
+.legal__resumen{background:var(--hielo);padding:18px 20px;border-radius:12px;font-weight:500}
+.legal__pendiente{background:var(--niebla);padding:16px 18px;border-radius:12px;color:var(--gris)}
+.legal__titular{display:grid;gap:8px}
+.legal__titular div{display:grid;grid-template-columns:minmax(120px,max-content) 1fr;gap:12px}
+.legal__titular dt{color:var(--gris);font-weight:600}
+.legal__tabla th[scope="row"]{white-space:normal;min-width:150px}
+.legal__borrar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.legal__estado{flex-basis:100%;font-size:var(--t-s);color:var(--ok);font-weight:600;min-height:1.5em}
+.pie__legal{flex-basis:100%;border-top:1px solid var(--filete);padding-top:8px}
+.pie nav.pie__legal a{font-size:var(--t-xs)}
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */
@@ -505,6 +547,8 @@ body.con-cbarra{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
   .cbarra__txt{display:block}
 }
 @media (max-width:760px){
+  .legal{grid-template-columns:minmax(0,1fr)}
+  .legal__indice{position:static}
   .top__nav .top__comparar{display:none}
   .pbarra nav{display:none}
   /* "Sofle Choc · Space Black RGB" no cabe entero junto al boton en 390px */
@@ -526,17 +570,21 @@ body.con-cbarra{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
   .cbarra__txt{display:none}
   .cbarra__in{justify-content:space-between}
   .cbarra .precio{font-size:var(--t-m)}
-  .cbarra .btn{flex:none;padding-inline:18px} .marca img{height:21px} }
+  .cbarra .btn{flex:none;padding-inline:18px} .marca img{height:21px}
+  .top__in{gap:10px} .top__pausa{margin-right:-6px;width:40px} }
 
 /* Menos movimiento, no menos informacion: fuera los bucles y los
    desplazamientos; el cambio de estado se conserva. */
+/* Los bucles se paran con la clase .sin-movimiento, que pone tienda.js
+   cuando el sistema pide poco movimiento O el visitante pulsa pausa en la
+   cabecera (WCAG 2.2.2). Un solo sitio para las dos vias. */
+.sin-movimiento .dib--mitades .dib__desliza--0,.sin-movimiento .dib--mitades .dib__desliza--1,
+.sin-movimiento .hot__pieza,.sin-movimiento .capas__t span,.sin-movimiento .capas__t--hold::after,
+.sin-movimiento .dib--columnas .dib__tecla .dib__cara{animation:none}
+.sin-movimiento .capas__t span+span{opacity:0}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .idiomas__m{animation:none}
-  .dib--mitades .dib__desliza--0,.dib--mitades .dib__desliza--1,.hot__pieza,
-  .capas__t span,.capas__t--hold::after{animation:none}
-  .dib--columnas .dib__tecla .dib__cara{animation:none}
-  .capas__t span+span{opacity:0}
   .modelo__foto img,.opcion,.btn,.cbarra{transition-property:background,color,box-shadow,opacity}
 }
 

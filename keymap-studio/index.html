@@ -16,16 +16,19 @@
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- Todo sale de este sitio: el editor habla con el teclado por Web Serial,
+     en local, y no manda nada a ningun servidor. El script va en linea porque
+     la aplicacion es un solo archivo; por eso 'unsafe-inline' en script-src. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="stylesheet" href="../assets/fonts/fuentes-studio.css">
 <style>
 /* ============================================================
    CODEKEEB · Keymap Studio — estética blanca etérea (tema web)
    Layout tipo Vial: teclado arriba, dock de keycodes abajo.
    ============================================================ */
 :root{
-  --bg:#f7f7f4; --surface:#ffffff; --ink:#14161b; --muted:#6e7480;
+  --bg:#f7f7f4; --surface:#ffffff; --ink:#14161b; --muted:#5d636e; /* era #6e7480: 4,4:1 sobre --bg, por debajo de WCAG AA */
   --hairline:rgba(20,22,27,.09); --hairline2:rgba(20,22,27,.16);
   --c-orange:#ff992a; --c-magenta:#ff39c0; --c-blue:#2a3dff; --c-cyan:#1be8ff;
   --grad:linear-gradient(90deg,#ff992a 0%,#ff39c0 38%,#2a3dff 72%,#1be8ff 100%);
@@ -188,7 +191,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   transform:rotate(var(--rot,0deg));box-shadow:inset 0 2px 4px rgba(255,255,255,.07),inset 0 -3px 6px rgba(0,0,0,.6),0 1px 3px rgba(0,0,0,.5)}
 .enc .mark{position:absolute;left:50%;top:50%;width:3px;height:32px;margin-left:-1.5px;margin-top:-32px;background:#e8eaee;border-radius:1.5px;transform-origin:1.5px 32px;transform:rotate(var(--rot,0deg))}
 .enc.hit{box-shadow:0 0 0 2px var(--c-orange),0 3px 10px rgba(0,0,0,.6)}
-.enc .ename{position:absolute;top:100%;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:8.5px;color:#8b9098;margin-top:3px;white-space:nowrap;letter-spacing:.08em}
+.enc .ename{position:absolute;top:100%;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:8.5px;color:var(--muted);margin-top:3px;white-space:nowrap;letter-spacing:.08em}
 
 /* OLEDs en escenario */
 .oledStage{position:absolute;z-index:2;border-radius:6px;border:1px solid #1e2126;background:#000;
@@ -501,8 +504,11 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   #topActions .btn{padding:5px 9px;font-size:.66rem;white-space:nowrap}
   /* "Conectar teclado" no cabe: se usa la version corta del data-short,
      que se actualiza junto al texto largo al cambiar de idioma. */
-  #btnConnect span{display:none}
-  #btnConnect::after{content:attr(data-short)}
+  /* El texto largo se esconde solo a la vista: con display:none el boton
+     se quedaba sin nombre para el lector de pantalla. Y el corto va con
+     texto alternativo vacio ("/ ''") para que no se lea dos veces. */
+  #btnConnect span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  #btnConnect::after{content:attr(data-short);content:attr(data-short) / ''}
   #toolbar{padding:8px 14px;gap:8px 14px}
   #toolbar .tgroup[style]{margin-left:0!important}
   .sliderRow input{width:64px}
@@ -711,7 +717,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
       <button class="btn small" id="btnDesel" data-i18n-title="deselTitle" title="Deseleccionar (Esc)">✕</button></div>
     <div id="pickerCats"></div>
     <div id="pickerMods"></div>
-    <div id="pickerGrid"></div>
+    <div id="pickerGrid" tabindex="0" role="group" aria-label="Keycodes"></div>
   </div>
 </section>
 

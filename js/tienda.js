@@ -16,9 +16,16 @@ const CK = (() => {
 
   /* El idioma vive en localStorage y lo comparten las tres direcciones
      y la web: si lo cambias aqui, sigue cambiado alla. */
+  /* localStorage puede no existir o lanzar un error (navegador que bloquea
+     el almacenamiento, modo privado estricto). Sin esta proteccion, ese
+     visitante veia la tienda en blanco. Lo que se guarda son solo
+     preferencias que elige el visitante: idioma y pausa del movimiento. */
+  const leer = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const guardar = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* sin memoria, no pasa nada */ } };
+
   function idioma() {
     const url = new URLSearchParams(location.search).get("lang");
-    const guardado = url || localStorage.getItem("ck-lang");
+    const guardado = url || leer("ck-lang");
     return IDIOMAS.includes(guardado) ? guardado : "es";
   }
 
@@ -103,10 +110,22 @@ const CK = (() => {
 
   /* Stock en palabras. `null` significa "por encargo", que no es lo
      mismo que agotado y genera muchas menos preguntas. */
+  /* --- frescura de los datos ---------------------------------------
+     Precio, stock y descuento se copian a mano de Etsy, y la fecha es
+     CK_PRICES_UPDATED. Pasadas dos semanas, "ultima unidad" o "-35%"
+     dejan de ser un dato y se vuelven presion de compra que quiza ya no
+     es verdad (y un descuento anunciado tiene que ser real y vigente).
+     Entonces la web deja de decirlo y manda a Etsy a comprobarlo. Se
+     arregla solo en cuanto se revisan los datos y se cambia la fecha. */
+  const DIAS_FRESCOS = 14;
+  const datosFrescos = () =>
+    (Date.now() - new Date(CK_PRICES_UPDATED + "T00:00:00").getTime()) / 864e5 <= DIAS_FRESCOS;
+
   function stock(p) {
     if (p.status === "soon") return { txt: t("models.soon"), clase: "pronto" };
     if (p.stock == null) return { txt: t("d.onRequest"), clase: "encargo" };
     if (p.stock <= 0) return { txt: t("pdp.soldOut"), clase: "agotado" };
+    if (!datosFrescos()) return { txt: t("d.verStock"), clase: "consulta" };
     if (p.stock === 1) return { txt: t("d.lastOne"), clase: "ultima" };
     return { txt: t("d.units").replace("%n", p.stock), clase: "hay" };
   }
@@ -271,6 +290,8 @@ const CK = (() => {
      un "✓" cambia de forma y de grosor segun la fuente y el sistema. */
   const TRAZOS = {
     si:       '<path d="M4 10.5l3.6 3.6L16 5.8"/>',
+    pausa:    '<path d="M7.5 5v10M12.5 5v10"/>',
+    play:     '<path d="M6.5 4.8l8.5 5.2-8.5 5.2z" fill="currentColor"/>',
     no:       '<path d="M5.5 10h9"/>',
     flecha:   '<path d="M4 10h11M11 5.5L15.5 10 11 14.5"/>',
     chevron:  '<path d="M5.5 8l4.5 4.5L14.5 8"/>',
@@ -354,13 +375,14 @@ const CK = (() => {
 
   function pintarIdioma(alCambiar) {
     document.documentElement.lang = lang;
+    pintarPausa();
     document.querySelectorAll("[data-lang-btn]").forEach(b => {
       const activo = b.dataset.langBtn === lang;
       b.setAttribute("aria-checked", String(activo));
       b.setAttribute("role", "menuitemradio");
       b.onclick = () => {
         lang = b.dataset.langBtn;
-        localStorage.setItem("ck-lang", lang);
+        guardar("ck-lang", lang);
         cerrarIdiomas();
         pintarIdioma(alCambiar);
         alCambiar();
@@ -408,6 +430,52 @@ const CK = (() => {
       cerrarIdiomas();
       disp.focus();
     });
+    /* Un role="menu" promete flechas a quien usa lector de pantalla:
+       arriba y abajo recorren, Inicio y Fin van a los extremos, y salir
+       con Tab cierra el menu en vez de dejarlo abierto detras. */
+    menu.addEventListener("keydown", e => {
+      const items = [...menu.querySelectorAll("button")];
+      const i = items.indexOf(document.activeElement);
+      const destino = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: items.length - 1 }[e.key];
+      if (destino === undefined) return;
+      e.preventDefault();
+      items[(destino + items.length) % items.length].focus();
+    });
+    menu.addEventListener("focusout", e => {
+      if (!menu.hidden && !menu.contains(e.relatedTarget) && e.relatedTarget !== disp) cerrarIdiomas();
+    });
+  }
+
+  /* --- pausa del movimiento (WCAG 2.2.2) --------------------------
+     La luz, las pantallas y los esquemas en bucle se mueven solos mas de
+     cinco segundos, y eso exige poder pararlos: a quien le cuesta leer
+     con algo moviendose al lado, o a quien le marea. Un solo boton en la
+     cabecera para todo, recordado entre paginas. Si el sistema ya pide
+     menos movimiento, no se mueve nada y el boton sobra. */
+  const pocoMovimiento = matchMedia("(prefers-reduced-motion: reduce)");
+  let pausado = leer("ck-pausa") === "1";
+  const quieto = () => pocoMovimiento.matches || pausado;
+
+  function pintarPausa() {
+    document.documentElement.classList.toggle("sin-movimiento", quieto());
+    document.querySelectorAll("[data-pausa]").forEach(b => {
+      b.hidden = pocoMovimiento.matches;
+      b.setAttribute("aria-pressed", String(pausado));
+      const txt = t(pausado ? "a11y.reanudar" : "a11y.pausar");
+      b.setAttribute("aria-label", txt);
+      b.title = txt;
+      b.innerHTML = icono(pausado ? "play" : "pausa", 18);
+    });
+  }
+  function montarPausa() {
+    document.querySelectorAll("[data-pausa]").forEach(b => b.onclick = () => {
+      pausado = !pausado;
+      guardar("ck-pausa", pausado ? "1" : "0");
+      pintarPausa();
+      document.dispatchEvent(new Event("ck-movimiento"));
+    });
+    pocoMovimiento.addEventListener?.("change", () => { pintarPausa(); document.dispatchEvent(new Event("ck-movimiento")); });
+    pintarPausa();
   }
 
   /* --- entradas ---------------------------------------------------
@@ -428,7 +496,9 @@ const CK = (() => {
   const productos = () => CK_PRODUCTS;
   const escapar = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-  return { get lang() { return lang; }, t, L, precio, notaPrecios, spec, etiquetasDeFicha, encuadrarTodo,
+  montarPausa();
+
+  return { get lang() { return lang; }, datosFrescos, quieto, montarPausa, pintarPausa, leer, guardar, t, L, precio, notaPrecios, spec, etiquetasDeFicha, encuadrarTodo,
            precioDe, precioHTML, enlaceCompra, niveles, NIVELES, icono, precioRango,
            comparativa, confianza, precioMinimo,
            rasgos, FILTROS, stock, rotulo, foto, pintarIdioma, montarSelectorIdioma,

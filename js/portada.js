@@ -79,11 +79,14 @@
   }
   /* Los modos pasan solos cada seis segundos, solo con la seccion a la
      vista y hasta que alguien toca uno. */
-  new IntersectionObserver(([e]) => {
+  let luzVisible = false;
+  const pase = () => {
     clearInterval(reloj);
-    if (e.isIntersecting && auto && !matchMedia("(prefers-reduced-motion: reduce)").matches)
+    if (luzVisible && auto && !CK.quieto())
       reloj = setInterval(() => { modo = (modo + 1) % MODOS.length; pintaModo(); }, 6000);
-  }).observe($("#luz"));
+  };
+  new IntersectionObserver(([e]) => { luzVisible = e.isIntersecting; pase(); }).observe($("#luz"));
+  document.addEventListener("ck-movimiento", pase);
 
   CK_OLED.montar($("#oledIzq"), $("#oledDer"));
 

@@ -106,9 +106,10 @@ const VISTAS = [
   { nombre: "ancho", width: 1920, height: 1080, dsf: 1, movil: false },
 ];
 
-/* Estos dominios externos estan bloqueados en el contenedor de Claude.
-   No son fallos del sitio, pero en las capturas la tipografia sera la de
-   respaldo: no juzgues el interletrado a partir de ellas. */
+/* Desde el 24 sep 2026 las tipografias se sirven desde el propio sitio y
+   estos dominios ya no deberian aparecer; si aparecen, el vigilante de
+   peticiones de abajo lo cuenta como tercero. Se quedan en la lista para
+   que un fallo de red suyo no tape el aviso de privacidad con ruido. */
 const EXTERNOS = ["fonts.googleapis.com", "fonts.gstatic.com"];
 
 async function main() {
@@ -128,6 +129,7 @@ async function main() {
     { id: "portada",   url: "/index.html" },
     { id: "modelo",    url: "/modelo.html?id=totem" },
     { id: "comparar",  url: "/comparar.html" },
+    { id: "legal",     url: "/legal.html" },
   ];
   if (args.includes("--all")) {
     const data = await readFile(join(RAIZ, "js", "data.js"), "utf8");
@@ -172,6 +174,16 @@ async function main() {
           /* Los recursos que no cargan ya los reporta requestfailed, con su URL. */
           if (m.text().startsWith("Failed to load resource")) return;
           problemas.push(`${etiqueta}  consola: ${m.text().slice(0, 160)}`);
+        });
+        /* Privacidad: la tienda no debe pedir nada a otro dominio. Cada
+           peticion externa le da a un tercero la IP del visitante, y eso
+           exige contarlo en privacidad.html y, a veces, consentimiento.
+           Si esto salta, o se quita el tercero o se documenta. */
+        page.on("request", r => {
+          const u = new URL(r.url());
+          if (/^(https?|wss?):$/.test(u.protocol) && u.hostname !== "127.0.0.1") {
+            problemas.push(`${etiqueta}  pide a un tercero: ${u.hostname}`);
+          }
         });
         page.on("requestfailed", r => {
           if (!EXTERNOS.some(d => r.url().includes(d))) {

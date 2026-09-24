@@ -19,6 +19,19 @@ const CK_SHOP_URL = "https://www.etsy.com/shop/CodeKeeb";
    precios para no aparentar que están al minuto. */
 const CK_PRICES_UPDATED = "2026-08-14";
 
+/* Datos del titular para el aviso legal (en Espana, art. 10 de la LSSI:
+   nombre o razon social, NIF, domicilio y un correo de contacto; el
+   registro solo si es una sociedad inscrita). Los pone Ernesto: NUNCA se
+   inventan ni se rellenan con ejemplos. Mientras falte alguno, legal.html
+   dice que se estan completando y da Etsy como via de contacto. */
+const CK_TITULAR = {
+  nombre: null,      // "Nombre Apellidos" o razon social
+  nif: null,
+  domicilio: null,
+  email: null,
+  registro: null,
+};
+
 /*
   Campos de cada producto:
   - img/heroImg: assets/img/products/<archivo>. Hay versión -sm para
@@ -67,9 +80,9 @@ const CK_PRODUCTS = [
     stock: 1,
     kicker: { es: "Split · Inalámbrico · 5,3 mm · ZMK", en: "Split · Wireless · 5.3 mm · ZMK", fr: "Split · Sans fil · 5,3 mm · ZMK" },
     desc: {
-      es: "El Sofle low profile más fino del mercado: 5,3 mm con la electrónica embebida en un case texturizado de fibra de carbono.",
-      en: "The slimmest low profile Sofle on the market: 5.3 mm with the electronics embedded into a carbon fiber textured case.",
-      fr: "Le Sofle low profile le plus fin du marché : 5,3 mm avec l'électronique intégrée dans un boîtier texturé fibre de carbone."
+      es: "Sofle low profile de 5,3 mm de perfil, con la electrónica embebida en un case texturizado de fibra de carbono.",
+      en: "A 5.3 mm low profile Sofle, with the electronics embedded into a carbon fiber textured case.",
+      fr: "Un Sofle low profile de 5,3 mm de profil, avec l'électronique intégrée dans un boîtier texturé fibre de carbone."
     },
     highlights: {
       es: ["5,3 mm de perfil, electrónica embebida en el case", "Motor RGB propio: 10 modos y degradados continuos entre mitades", "OLED dual con firmware propio: batería, capa, WPM y Bongo Cat", "300 mAh · hasta 4 días por carga con RGB apagado"],

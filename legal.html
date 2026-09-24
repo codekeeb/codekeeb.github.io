@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Comparar los cinco — Codekeeb</title>
-<meta name="description" content="La misma ficha técnica para los cinco teclados split de Codekeeb, fila a fila, con las opciones de montaje que vende cada uno.">
-<link rel="canonical" href="https://codekeeb.github.io/comparar.html">
+<title>Información legal — Codekeeb</title>
+<meta name="description" content="Aviso legal, privacidad, cookies y condiciones de compra de Codekeeb. Esta web no recoge datos, no usa cookies y no carga nada de terceros; las compras se hacen en Etsy.">
+<link rel="canonical" href="https://codekeeb.github.io/legal.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Codekeeb">
 <meta name="twitter:card" content="summary_large_image">
@@ -36,7 +36,7 @@
     </a>
     <nav class="top__nav" aria-label="Principal">
       <a href="/#tienda" data-t="m.tienda">Tienda</a>
-      <a class="top__comparar" href="comparar.html" aria-current="page" data-t="d.compare">Comparar</a>
+      <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
       <a href="keymap-studio/">Keymap Studio</a>
     </nav>
     <span class="top__sp"></span>
@@ -57,20 +57,39 @@
 <main class="seccion seccion--suelta" id="contenido">
   <div class="env">
     <div class="cab">
-      <h1 class="titular" data-t-html="c.titulo"></h1>
-      <p data-t="c.lede"></p>
+      <h1 class="titular" data-t="l.titulo">Información legal</h1>
+      <p data-t="l.lede"></p>
+      <p class="legal__fecha" id="actualizada"></p>
     </div>
-
-    <div class="mandos">
-      <button type="button" class="interruptor" id="soloDif" aria-pressed="false">
-        <span class="interruptor__luz" aria-hidden="true"></span><span data-t="c.dif"></span>
-      </button>
-      <button type="button" class="btn btn--linea" id="todos" data-t="c.todos" hidden></button>
-      <span class="cuenta" id="cuenta" aria-live="polite"></span>
+    <div class="legal">
+      <nav class="legal__indice" aria-labelledby="h-indice">
+        <p id="h-indice" class="legal__indice-t" data-t="l.indice"></p>
+        <ul>
+          <li><a href="#aviso" data-t="l.aviso"></a></li>
+          <li><a href="#privacidad" data-t="l.privacidad"></a></li>
+          <li><a href="#cookies" data-t="l.cookies"></a></li>
+          <li><a href="#compras" data-t="l.compras"></a></li>
+        </ul>
+      </nav>
+      <div class="legal__texto">
+      <section class="legal__sec" id="aviso" aria-labelledby="h-aviso">
+        <h2 id="h-aviso" data-t="l.aviso"></h2>
+        <div class="legal__cuerpo"></div>
+      </section>
+      <section class="legal__sec" id="privacidad" aria-labelledby="h-privacidad">
+        <h2 id="h-privacidad" data-t="l.privacidad"></h2>
+        <div class="legal__cuerpo"></div>
+      </section>
+      <section class="legal__sec" id="cookies" aria-labelledby="h-cookies">
+        <h2 id="h-cookies" data-t="l.cookies"></h2>
+        <div class="legal__cuerpo"></div>
+      </section>
+      <section class="legal__sec" id="compras" aria-labelledby="h-compras">
+        <h2 id="h-compras" data-t="l.compras"></h2>
+        <div class="legal__cuerpo"></div>
+      </section>
+      </div>
     </div>
-
-    <div class="tabla-env"><table class="tabla cmp" id="tabla"></table></div>
-    <p class="vacio" id="vacio" hidden></p>
   </div>
 </main>
 
@@ -94,6 +113,7 @@
 <script src="js/data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/tienda.js"></script>
-<script src="js/comparar.js"></script>
+<script src="js/legal-textos.js"></script>
+<script src="js/legal.js"></script>
 </body>
 </html>

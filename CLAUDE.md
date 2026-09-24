@@ -20,6 +20,8 @@ carencia.
 | `index.html` | **La portada es la tienda**: la familia de los cinco con filtros, un principio del split por seccion (mitades, columnas, pulgares, capas, luz, pantallas, hotswap), comparacion y confianza |
 | `modelo.html` | **Ficha de cada modelo**, `modelo.html?id=<id>`: tira de la familia, barra del producto, configurador en una columna con "tu configuracion incluye", los principios con la forma de ESE teclado, ficha, comparacion y barra de compra fija abajo |
 | `comparar.html` | Los cinco en columnas, fila a fila, con "solo lo que cambia" |
+| `legal.html` · `js/legal.js` · `js/legal-textos.js` | Aviso legal, privacidad, cookies y compras, en es / en / fr. Los datos del titular salen de `CK_TITULAR` (`js/data.js`) |
+| `assets/fonts/` | Las tipografias, servidas desde el sitio (licencia OFL al lado). **Nada de Google Fonts** |
 | `catalogo.html` | Solo redirige a `/#tienda`, para no romper enlaces viejos |
 | `js/data.js` | **Catalogo: la unica fuente de verdad.** Productos, precios, opciones de montaje (`buildOptions`) |
 | `js/i18n.js` | Los textos, en es / en / fr |
@@ -53,6 +55,34 @@ Lo que **no** esta en los datos y por eso no se inventa:
 - **Que decide el rango del Totem** (152,75 – 187,85): sale el rango.
 - `CK_FLAVORS` (los acabados) no se ensena en ninguna parte.
 
+## Privacidad y legal: lo que no se puede romper sin avisar
+
+Desde el 24 sep 2026 la web **no pide nada a otros dominios**, no usa
+cookies ni analitica, y por eso no lleva banner de cookies. Tres cosas
+lo sostienen, y si una cambia hay que cambiar las otras:
+
+- **La CSP** (`<meta http-equiv="Content-Security-Policy">` en cada
+  pagina) solo deja cargar lo propio. `preview.mjs` avisa de cualquier
+  peticion a un tercero ("pide a un tercero: ...").
+- **`legal-textos.js`** promete exactamente eso. Anadir una analitica,
+  un mapa, un video incrustado o un formulario obliga a reescribir la
+  politica ANTES, y si es no esencial, a pedir consentimiento antes de
+  cargarlo. No se anade sin que Ernesto lo pida.
+- **Lo que se guarda en el navegador** esta listado en `tabla()` de
+  `js/legal.js`. Una clave nueva de localStorage va tambien ahi.
+
+`CK_TITULAR` (datos del aviso legal) esta a `null` hasta que Ernesto los
+de. **Nunca se inventan ni se rellenan con ejemplos.**
+
+Stock y descuentos caducan con los precios: pasados 14 dias desde
+`CK_PRICES_UPDATED`, la web deja de decir "ultima unidad" o "-35%" y
+manda a comprobarlo en Etsy (`datosFrescos()` en `tienda.js`). Se
+arregla solo al revisar los datos y cambiar la fecha.
+
+Accesibilidad: todo lo que se mueve solo mas de 5 s se para con el boton
+de pausa de la cabecera (`CK.quieto()`; clase `.sin-movimiento`). Un
+bucle nuevo tiene que respetarlo.
+
 ## Las tres reglas que se rompen solas
 
 **1. Tres idiomas, siempre.** `js/i18n.js` tiene 117 claves en es, en y fr.
@@ -84,7 +114,8 @@ desbordamientos horizontales, errores de JavaScript, recursos que no cargan
 y textos sin traducir. **Manda las capturas** antes de decir que algo
 funciona: Ernesto suele revisar desde el movil.
 
-Las capturas salen ya con las **tipografias reales**: `preview.mjs` lanza
+Las tipografias se sirven desde `assets/fonts/`, asi que las capturas son
+fieles aunque falle la red. `preview.mjs` lanza
 Chromium tras el proxy del contenedor y lo capa a TLS 1.2, que es lo que
 hace falta para que Google Fonts cargue (el relay corta el ClientHello
 grande de TLS 1.3, y los argumentos por omision de Playwright lo vuelven a

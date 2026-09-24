@@ -87,7 +87,9 @@ const CK_RGB = (() => {
 
   function montar(destino) {
     const { escena, teclas } = dibujar(destino);
-    const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    /* Quieto si el sistema pide poco movimiento o el visitante ha pulsado
+       pausa: entonces se pinta un solo fotograma y se para. */
+    const quieto = () => CK.quieto();
     let fx = null, est = [estadoMitad(), estadoMitad()];
     let visible = false, rid = 0, ultimo = 0, proxima = 0;
     const ultimoColor = new Array(teclas.length).fill("");
@@ -185,7 +187,7 @@ const CK_RGB = (() => {
           });
         }
       }
-      if (visible && !quieto) rid = requestAnimationFrame(pinta);
+      if (visible && !quieto()) rid = requestAnimationFrame(pinta);
     }
 
     function escalar() {
@@ -198,9 +200,14 @@ const CK_RGB = (() => {
 
     new IntersectionObserver(es => {
       visible = es[0].isIntersecting;
-      if (visible && !quieto) rid = requestAnimationFrame(pinta);
+      if (visible && !quieto()) rid = requestAnimationFrame(pinta);
       else cancelAnimationFrame(rid);
     }, { rootMargin: "120px" }).observe(destino);
+    /* pausa o reanuda al pulsar el boton de la cabecera */
+    document.addEventListener("ck-movimiento", () => {
+      cancelAnimationFrame(rid);
+      if (visible && !quieto()) rid = requestAnimationFrame(pinta);
+    });
 
     pinta(performance.now());
 
@@ -213,7 +220,7 @@ const CK_RGB = (() => {
         fx = nuevo;
         est = [estadoMitad(), estadoMitad()];
         ultimo = 0;
-        if (quieto || !visible) pinta(performance.now());
+        if (quieto() || !visible) pinta(performance.now());
       },
     };
   }

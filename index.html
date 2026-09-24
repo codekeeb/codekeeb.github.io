@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Codekeeb — Teclados split ergonómicos hechos a mano</title>
-<meta name="description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Elige uno y configúralo, de la placa sola al teclado listo para escribir.">
+<meta name="description" content="Cinco teclados split ergonómicos hechos a mano: Sofle Choc, Totem y Corne. Elige uno y configúralo, de la placa sola al teclado listo para escribir.">
 <link rel="canonical" href="https://codekeeb.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Codekeeb">
 <meta property="og:title" content="Codekeeb — Teclados split ergonómicos hechos a mano">
-<meta property="og:description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Elige uno y configúralo, de la placa sola al teclado listo para escribir.">
+<meta property="og:description" content="Cinco teclados split ergonómicos hechos a mano: Sofle Choc, Totem y Corne. Elige uno y configúralo, de la placa sola al teclado listo para escribir.">
 <meta property="og:image" content="https://codekeeb.github.io/assets/img/products/sofle-retro.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
@@ -19,14 +19,16 @@
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#ffffff">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Una sola familia, en su version variable: el eje de ancho (wdth) da
-     la voz de titular sin cargar una segunda tipografia. -->
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap" rel="stylesheet">
+<!-- Seguridad: la pagina solo carga lo suyo. Si un dia se anade un
+     servicio externo, hay que darlo de alta aqui Y en privacidad.html. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fuentes.css">
 <link rel="stylesheet" href="css/tienda.css">
 </head>
 <body>
+<a class="saltar" href="#contenido" data-t="a11y.saltar">Saltar al contenido</a>
 
 <header class="top">
   <div class="top__in env">
@@ -41,6 +43,7 @@
       <a href="keymap-studio/">Keymap Studio</a>
     </nav>
     <span class="top__sp"></span>
+    <button type="button" class="top__pausa" data-pausa hidden></button>
     <div class="idiomas">
       <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false" aria-label="Idioma">
         <span data-lang-actual>ES</span>
@@ -55,7 +58,7 @@
   </div>
 </header>
 
-<main>
+<main id="contenido">
 
   <!-- ===== LA FAMILIA =====
        Lo primero que ensena ergodox: la familia de teclados en fila. Aqui
@@ -233,6 +236,12 @@
       <a href="/#tienda" data-t="m.tienda">Tienda</a>
       <a href="comparar.html" data-t="d.compare">Comparar</a>
       <a href="keymap-studio/">Keymap Studio</a>
+    </nav>
+    <nav class="pie__legal" aria-label="Legal">
+      <a href="legal.html#aviso" data-t="l.aviso">Aviso legal</a>
+      <a href="legal.html#privacidad" data-t="l.privacidad">Privacidad</a>
+      <a href="legal.html#cookies" data-t="l.cookies">Cookies</a>
+      <a href="legal.html#compras" data-t="l.compras">Compras y devoluciones</a>
     </nav>
   </div>
 </footer>

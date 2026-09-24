@@ -72,10 +72,21 @@
     $("#miniaturas").innerHTML = fotos.length < 2 ? "" : fotos.map((f, i) =>
       `<button type="button" aria-pressed="${i === 0}" aria-label="${i + 1} / ${fotos.length}">
          <img src="assets/img/products/${f.replace(/\.jpg$/, "-sm.jpg")}" alt="" loading="lazy"></button>`).join("");
+    rotularGaleria();
     $("#miniaturas").querySelectorAll("button").forEach((b, i) => b.onclick = () => {
       $("#miniaturas").querySelectorAll("button").forEach((x, j) => x.setAttribute("aria-pressed", String(i === j)));
       $("#foto").querySelectorAll("img").forEach((im, j) => im.toggleAttribute("data-sale", i !== j));
     });
+  }
+
+  /* Cada foto dice cual es de cuantas: con el mismo alt en todas, un lector
+     de pantalla anunciaba tres veces "Corne v4 MX" sin decir que cambiaba.
+     Va aparte porque hay que repetirlo al cambiar de idioma. */
+  function rotularGaleria() {
+    const fotos = [...$("#foto").querySelectorAll("img")], n = fotos.length;
+    const txt = i => T("a11y.foto").replace("%n", i + 1).replace("%t", n);
+    fotos.forEach((im, i) => im.alt = n > 1 ? `${nombreCorto}, ${txt(i)}` : nombreCorto);
+    $("#miniaturas").querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-label", T("a11y.verFoto") + " " + txt(i)));
   }
 
   /* ---------- lo esencial ---------- */
@@ -87,12 +98,14 @@
     const desde = CK.precioMinimo(p);
     $("#precioCab").innerHTML = desde == null ? "" : `
       <span class="precio">${niveles.length > 1 ? `<small>${T("price.from")}</small> ` : ""}${CK.precio(desde)}</span>
-      ${p.discountPct ? `<span class="dto">−${p.discountPct}% ${T("m.dtoEtsy")}</span>` : ""}
-      ${p.rating ? `<span class="valoracion">${CK.icono("estrella", 15)} ${String(p.rating.toFixed(1)).replace(".", CK.lang === "en" ? "." : ",")} · ${p.reviews} ${T(p.reviews === 1 ? "m.resena" : "m.resenas")}</span>` : ""}`;
+      ${p.discountPct && CK.datosFrescos() ? `<span class="dto">−${p.discountPct}% ${T("m.dtoEtsy")}</span>` : ""}
+      ${p.rating ? `<a class="valoracion" href="${CK.enlaceCompra(p)}" target="_blank" rel="noopener">${CK.icono("estrella", 15)} ${String(p.rating.toFixed(1)).replace(".", CK.lang === "en" ? "." : ",")} · ${p.reviews} ${T(p.reviews === 1 ? "m.resena" : "m.resenas")}</a>` : ""}`;
     const e = CK.stock(p);
     $("#estado").innerHTML = `<span class="stock stock--${e.clase}">${CK.escapar(e.txt)}</span>`;
     $("#rasgos").innerHTML = (CK.L(p.highlights) || []).map(r => `<li>${CK.icono("si", 18)}<span>${CK.escapar(r)}</span></li>`).join("")
-      + `<li>${CK.icono("codigo", 18)}<span>${T("m.studio")}</span></li>`;
+      /* El Keymap Studio habla ZMK Studio: solo sirve a los que lo llevan.
+         Los Corne son QMK con VIA o Vial, que tienen su propia herramienta. */
+      + (/ZMK Studio/.test(CK.spec(p, "Firmware") || "") ? `<li>${CK.icono("codigo", 18)}<span>${T("m.studio")}</span></li>` : "");
   }
 
   /* ---------- el configurador ---------- */
@@ -248,8 +261,9 @@
       const ver = que.getBoundingClientRect().bottom < 0;
       if (ver === cb.classList.contains("visible")) return;
       cb.classList.toggle("visible", ver);
-      cb.setAttribute("aria-hidden", String(!ver));
-      $("#cbComprar").tabIndex = ver ? 0 : -1;
+      /* inert, no aria-hidden: escondida, la barra no debe recibir el foco
+         del teclado (ni su boton ni el enlace "ver tu configuracion"). */
+      cb.inert = !ver;
     };
     addEventListener("scroll", () => { if (!pend) { pend = true; requestAnimationFrame(mira); } }, { passive: true });
     mira();
@@ -264,6 +278,7 @@
 
   function pintar() {
     tira();
+    rotularGaleria();
     esencial();
     pasoNiveles();
     actualiza();
@@ -277,6 +292,9 @@
     CK.encuadrarTodo();
   }
 
+  /* El formulario no se envia a ningun sitio: comprar es un enlace a Etsy.
+     Enter en una opcion no debe recargar la pagina. */
+  $("#config").addEventListener("submit", e => e.preventDefault());
   galeria();
   CK.montarSelectorIdioma();
   CK.pintarIdioma(pintar);
