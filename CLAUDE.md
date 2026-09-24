@@ -22,7 +22,7 @@ carencia.
 | `comparar.html` | Los cinco en columnas, fila a fila, con "solo lo que cambia" |
 | `legal.html` · `js/legal.js` · `js/legal-textos.js` | Aviso legal, privacidad, cookies y compras, en es / en / fr. Los datos del titular salen de `CK_TITULAR` (`js/data.js`) |
 | `404.html` · `js/no-encontrada.js` | Pagina de error con los cinco modelos. Rutas **absolutas**: GitHub Pages la sirve en cualquier ruta rota |
-| `tools/hotswap/dibujar.py` | Genera el dibujo de linea del hotswap de la portada (switch Choc y MX, PCB y zocalos Kailh) con las cotas de sus hojas de datos. **Se regenera, no se edita el SVG a mano** |
+| `tools/hotswap/dibujar.py` | Genera el dibujo de linea del hotswap de la portada (switch Choc y MX, PCB y zocalos Kailh) con las cotas de sus hojas de datos y el contorno de la huella de KiCad (kiswitch). **Se regenera, no se edita el SVG a mano** |
 | `tools/3d/` | Reconstruccion 3D del Sofle con img2threejs, **parada en la maqueta** (ver su README). No se publica |
 | `assets/fonts/` | Las tipografias, servidas desde el sitio (licencia OFL al lado). **Nada de Google Fonts** |
 | `catalogo.html` | Solo redirige a `/#tienda`, para no romper enlaces viejos |
