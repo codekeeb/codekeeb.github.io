@@ -224,7 +224,7 @@ const CK_I18N = {
     "p.rgbReal": "Forma real del Sofle Choc y sus 30 LED de underglow por mitad, los mismos que usa el editor. Los colores, las velocidades y el algoritmo son los del firmware.",
     "p.swLineal": "Lineal",
     "p.swTactil": "Táctil",
-    "p.hotNota": "Esquema de un switch y su zócalo hotswap. No es una fotografía del producto.",
+    "p.hotNota": "Dibujo a escala con las medidas de las hojas de datos de Kailh (PG1350, PG1511 y sus zócalos). No es una fotografía.",
     "p.oledIzq": "Izquierda · estado",
     "p.oledDer": "Derecha · animación",
     "p.oledReal": "Los mismos mapas de bits que graba el firmware en las nice!view: 68×160 píxeles, uno por bit. El tecleo está simulado para que se mueva.",
@@ -386,8 +386,8 @@ const CK_I18N = {
     "p3.hotswap": "Hotswap",
     "p3.firmwareT": "Lo que hace el firmware.",
     "p3.modosLuz": "Modos de luz",
-    "p3.pcb": "PCB",
-    "p3.zocalo": "Zócalo hotswap, bajo la PCB",
+    "p3.pcb": "Switch, PCB y zócalo",
+    "p3.zocalo": "El zócalo, de lado y en planta",
     "p3.libre": "Contacto libre: sin soldadura"
   },
 
@@ -609,7 +609,7 @@ const CK_I18N = {
     "p.rgbReal": "The real shape of the Sofle Choc and its 30 underglow LEDs per half, the same ones the editor uses. Colours, speeds and the algorithm are the firmware's.",
     "p.swLineal": "Linear",
     "p.swTactil": "Tactile",
-    "p.hotNota": "Diagram of a switch and its hotswap socket. Not a photograph of the product.",
+    "p.hotNota": "Drawn to scale from Kailh's datasheets (PG1350, PG1511 and their sockets). Not a photograph.",
     "p.oledIzq": "Left · status",
     "p.oledDer": "Right · animation",
     "p.oledReal": "The same bitmaps the firmware writes to the nice!views: 68×160 pixels, one per bit. The typing is simulated so there's something to see.",
@@ -771,8 +771,8 @@ const CK_I18N = {
     "p3.hotswap": "Hotswap",
     "p3.firmwareT": "What the firmware does.",
     "p3.modosLuz": "Lighting modes",
-    "p3.pcb": "PCB",
-    "p3.zocalo": "Hotswap socket, under the PCB",
+    "p3.pcb": "Switch, PCB and socket",
+    "p3.zocalo": "The socket, from the side and from above",
     "p3.libre": "Free contact: no solder"
   },
 
@@ -994,7 +994,7 @@ const CK_I18N = {
     "p.rgbReal": "La forme réelle du Sofle Choc et ses 30 LED d'underglow par moitié, celles qu'utilise l'éditeur. Les couleurs, les vitesses et l'algorithme sont ceux du firmware.",
     "p.swLineal": "Linéaire",
     "p.swTactil": "Tactile",
-    "p.hotNota": "Schéma d'un switch et de son socket hotswap. Ce n'est pas une photo du produit.",
+    "p.hotNota": "Dessin à l'échelle d'après les fiches techniques Kailh (PG1350, PG1511 et leurs supports). Ce n'est pas une photo.",
     "p.oledIzq": "Gauche · état",
     "p.oledDer": "Droite · animation",
     "p.oledReal": "Les mêmes bitmaps que le firmware écrit sur les nice!view : 68×160 pixels, un par bit. La frappe est simulée pour qu'il se passe quelque chose.",
@@ -1156,8 +1156,8 @@ const CK_I18N = {
     "p3.hotswap": "Hotswap",
     "p3.firmwareT": "Ce que fait le firmware.",
     "p3.modosLuz": "Modes d'éclairage",
-    "p3.pcb": "PCB",
-    "p3.zocalo": "Support hotswap, sous le PCB",
+    "p3.pcb": "Switch, PCB et support",
+    "p3.zocalo": "Le support, de profil et en plan",
     "p3.libre": "Contact libre : sans soudure"
   }
 };
