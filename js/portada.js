@@ -30,7 +30,7 @@
     const e = CK.stock(p), desde = CK.precioMinimo(p), varios = CK.niveles(p).length > 1;
     return `<article class="modelo">
       <div class="modelo__foto">
-        <img src="${CK.foto(p)}" alt="${CK.escapar(`${p.name} ${p.version || ""}`.trim())}"
+        <img src="${CK.foto(p)}" alt="${CK.escapar(`${p.name} ${CK.L(p.version) || ""}`.trim())}"
              data-foco="${p.foco ?? 50}" ${i > 2 ? 'loading="lazy"' : 'fetchpriority="high"'}>
         <span class="modelo__stock stock stock--${e.clase}">${CK.escapar(e.txt)}</span>
       </div>

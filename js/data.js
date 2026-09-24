@@ -62,6 +62,8 @@ const CK_TITULAR = {
 const CK_PRODUCTS = [
   {
     id: "sofle-carbon",
+    color: { fondo: "#2B3BF5", tinta: "#FFFFFF" },   // bloque de la ficha; tinta elegida por contraste (>= 4,5:1)
+    corto: "Sofle Carbon",
     listingId: "4538841345",
     status: "available",
     featured: true,
@@ -117,6 +119,8 @@ const CK_PRODUCTS = [
   },
   {
     id: "sofle-retro",
+    color: { fondo: "#F0469A", tinta: "#111111" },   // bloque de la ficha; tinta elegida por contraste (>= 4,5:1)
+    corto: "Sofle Retro",
     listingId: "4542645510",
     status: "available",
     featured: true,
@@ -171,12 +175,14 @@ const CK_PRODUCTS = [
   },
   {
     id: "totem",
+    color: { fondo: "#FFD21F", tinta: "#111111" },   // bloque de la ficha; tinta elegida por contraste (>= 4,5:1)
+    corto: "Totem",
     listingId: "4551478025",
     status: "available",
     featured: true,
-    title: { model: "Totem", trait: "38 teclas" },
+    title: { model: "Totem", trait: { es: "38 teclas", en: "38 keys", fr: "38 touches" } },
     name: "Totem",
-    version: "38 teclas",
+    version: { es: "38 teclas", en: "38 keys", fr: "38 touches" },
     img: "totem.jpg",
     foco: 61,   // del 29% al 93%
     heroImg: "totem.jpg",
@@ -224,6 +230,8 @@ const CK_PRODUCTS = [
   },
   {
     id: "corne-v4",
+    color: { fondo: "#FF6B1A", tinta: "#111111" },   // bloque de la ficha; tinta elegida por contraste (>= 4,5:1)
+    corto: "Corne v4",
     listingId: "4524082170",
     status: "available",
     featured: true,
@@ -275,6 +283,8 @@ const CK_PRODUCTS = [
   },
   {
     id: "corne-v3",
+    color: { fondo: "#2BD98A", tinta: "#111111" },   // bloque de la ficha; tinta elegida por contraste (>= 4,5:1)
+    corto: "Corne v3",
     listingId: "4526929358",
     status: "available",
     featured: true,

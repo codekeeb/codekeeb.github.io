@@ -371,6 +371,11 @@ const CK_I18N = {
     "n.titulo": "Esta página no existe",
     "n.texto": "Puede que el enlace sea antiguo o tenga una errata. Los cinco teclados siguen aquí:",
     "n.tienda": "Ir a la tienda",
+    "f.firmwareT": "Lo que hace su firmware",
+    "f.studioP": "Cambia cada tecla, capa y macro desde el navegador (Chrome o Edge), con el teclado conectado por USB y sin instalar nada.",
+    "f.studioA": "Abrir Keymap Studio",
+    "f.parametro": "Parámetro",
+    "f.valor": "Valor"
   },
 
   en: {
@@ -738,6 +743,11 @@ const CK_I18N = {
     "n.titulo": "This page doesn't exist",
     "n.texto": "The link may be old or have a typo. All five keyboards are still here:",
     "n.tienda": "Go to the shop",
+    "f.firmwareT": "What its firmware does",
+    "f.studioP": "Change every key, layer and macro from the browser (Chrome or Edge), with the keyboard plugged in over USB and nothing to install.",
+    "f.studioA": "Open Keymap Studio",
+    "f.parametro": "Parameter",
+    "f.valor": "Value"
   },
 
   fr: {
@@ -1105,5 +1115,10 @@ const CK_I18N = {
     "n.titulo": "Cette page n'existe pas",
     "n.texto": "Le lien est peut-être ancien ou contient une faute. Les cinq claviers sont toujours là :",
     "n.tienda": "Aller à la boutique",
+    "f.firmwareT": "Ce que fait son firmware",
+    "f.studioP": "Modifiez chaque touche, calque et macro depuis le navigateur (Chrome ou Edge), clavier branché en USB, sans rien installer.",
+    "f.studioA": "Ouvrir Keymap Studio",
+    "f.parametro": "Paramètre",
+    "f.valor": "Valeur"
   }
 };

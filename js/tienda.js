@@ -136,7 +136,8 @@ const CK = (() => {
   function rotulo(p) {
     const tit = p.title || { model: p.name, trait: p.version };
     const partes = [`<b>${tit.model}</b>`];
-    if (tit.trait) partes.push(`<i>${tit.trait}</i>`);
+    /* el rasgo puede venir en tres idiomas: "38 teclas" salia tal cual en ingles */
+    if (tit.trait) partes.push(`<i>${L(tit.trait)}</i>`);
     if (tit.accent) partes.push(`<u>${tit.accent}</u>`);
     return partes.join(" ");
   }

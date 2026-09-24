@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-24T00:00:00Z",
+  "title": "Design System: Codekeeb",
+  "extensions": {
+    "colorMeta": {
+      "carcasa": {
+        "role": "neutral",
+        "displayName": "Carcasa"
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Panel"
+      },
+      "tinta": {
+        "role": "neutral",
+        "displayName": "Tinta"
+      },
+      "lcd": {
+        "role": "neutral",
+        "displayName": "Pantalla LCD"
+      },
+      "modelo-sofle-carbon": {
+        "role": "primary",
+        "displayName": "Ultramar Sofle Carbon"
+      },
+      "modelo-sofle-retro": {
+        "role": "primary",
+        "displayName": "Magenta Sofle Retro"
+      },
+      "modelo-totem": {
+        "role": "primary",
+        "displayName": "Amarillo Totem"
+      },
+      "modelo-corne-v4": {
+        "role": "primary",
+        "displayName": "Naranja Corne v4"
+      },
+      "modelo-corne-v3": {
+        "role": "primary",
+        "displayName": "Menta Corne v3"
+      }
+    },
+    "typographyMeta": {
+      "nombre": {
+        "displayName": "Nombre",
+        "purpose": "Solo el nombre del modelo, en una linea."
+      },
+      "pantalla": {
+        "displayName": "Pantalla",
+        "purpose": "Cifras dentro de la pantalla LCD y las lecturas de la placa."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tecla",
+        "value": "inset 0 -3px 0 rgba(0,0,0,.28), 0 1px 2px rgba(0,0,0,.2)",
+        "purpose": "Canto inferior de las teclas; desaparece al pulsar."
+      },
+      {
+        "name": "lcd",
+        "value": "inset 0 2px 5px rgba(0,0,0,.22), inset 0 0 0 1px rgba(0,0,0,.18)",
+        "purpose": "Pantalla hundida."
+      },
+      {
+        "name": "ventana",
+        "value": "0 30px 60px -34px rgba(0,0,0,.55)",
+        "purpose": "Separa la ventana de fotos de la placa."
+      }
+    ],
+    "motion": [
+      {
+        "name": "t-tap",
+        "value": "140ms",
+        "purpose": "Lo que responde al dedo."
+      },
+      {
+        "name": "t-enter",
+        "value": "380ms",
+        "purpose": "Lo que entra en escena."
+      },
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "La unica curva."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "una-columna",
+        "value": "960px"
+      },
+      {
+        "name": "movil",
+        "value": "640px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Tecla de modelo",
+      "kind": "button",
+      "refersTo": "tecla-modelo",
+      "description": "Compra en Etsy, en el color del modelo.",
+      "html": "<button class=\"ds-tecla\">Comprar en Etsy</button>",
+      "css": ".ds-tecla{display:inline-flex;align-items:center;min-height:52px;padding:0 1.4em;border:0;border-radius:8px;background:#2b3bf5;color:#fff;font:800 1.0625rem/1 'Schibsted Grotesk',system-ui,sans-serif;letter-spacing:-.01em;box-shadow:inset 0 -3px 0 rgba(0,0,0,.28),0 1px 2px rgba(0,0,0,.2);transition:transform 140ms cubic-bezier(.16,1,.3,1),box-shadow 140ms cubic-bezier(.16,1,.3,1);cursor:pointer}.ds-tecla:hover{filter:brightness(1.06)}.ds-tecla:active{transform:translateY(2px);box-shadow:inset 0 -1px 0 rgba(0,0,0,.28)}.ds-tecla:focus-visible{outline:2.5px solid #111;outline-offset:3px}"
+    },
+    {
+      "name": "Pantalla LCD",
+      "kind": "custom",
+      "refersTo": "pantalla",
+      "description": "Unica superficie para cifras grandes.",
+      "html": "<div class=\"ds-lcd\"><span>Total</span><b>230,75 €</b></div>",
+      "css": ".ds-lcd{display:grid;gap:2px;min-height:64px;padding:8px 16px 10px;border-radius:8px;background:#d4dacb;color:#161a10;box-shadow:inset 0 2px 5px rgba(0,0,0,.22),inset 0 0 0 1px rgba(0,0,0,.18)}.ds-lcd span{font:700 .8125rem 'Schibsted Grotesk',sans-serif;letter-spacing:.06em;text-transform:uppercase}.ds-lcd b{font:900 2.4rem/1 Doto,monospace}"
+    },
+    {
+      "name": "Opcion con LED",
+      "kind": "input",
+      "refersTo": "opcion",
+      "description": "Radio del configurador; el LED se enciende en el color del modelo.",
+      "html": "<label class=\"ds-op\"><input type=\"radio\" name=\"n\" checked><i></i><b>Teclado completo</b></label>",
+      "css": ".ds-op{position:relative;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:8px;background:#fff;font:700 1rem 'Schibsted Grotesk',sans-serif;cursor:pointer;box-shadow:inset 0 0 0 1px #c6c9cf}.ds-op input{position:absolute;inset:0;opacity:0;margin:0}.ds-op i{width:12px;height:12px;border-radius:50%;background:#b8bcc4}.ds-op:has(input:checked){box-shadow:inset 0 0 0 2px #111}.ds-op:has(input:checked) i{background:#2b3bf5;box-shadow:inset 0 1px 1px rgba(255,255,255,.6)}.ds-op:has(input:focus-visible){outline:2.5px solid #111;outline-offset:3px}"
+    },
+    {
+      "name": "Ficha de modelo",
+      "kind": "chip",
+      "description": "Selector de modelos; el actual se llena de su color.",
+      "html": "<a class=\"ds-chip\" aria-current=\"page\"><i></i>Sofle Carbon</a>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px 0 8px;border-radius:8px;background:#f7f7f8;color:#111;font:700 .9375rem 'Schibsted Grotesk',sans-serif;box-shadow:inset 0 0 0 1px #c6c9cf}.ds-chip i{width:14px;height:14px;border-radius:3px;background:#2b3bf5}.ds-chip[aria-current=page]{background:#2b3bf5;color:#fff;box-shadow:none}.ds-chip[aria-current=page] i{background:#fff}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Hardware con color",
+    "overview": "Cada teclado se presenta como un aparato, no como un anuncio: su color plano a sangre, su nombre en matriz de puntos, controles que se comportan como teclas y cifras en una pantalla LCD. La pagina alrededor es la carcasa. Hoy solo cubre la ficha (modelo.html).",
+    "keyCharacteristics": [
+      "Un color por modelo, a sangre, en su placa. Ese color no aparece en ningun otro modelo.",
+      "Dos tipografias: Doto solo para el nombre y las cifras de pantalla, y Schibsted Grotesk para todo lo demas.",
+      "La jerarquia sale del peso y el tracking, no de una escalera de tamanos.",
+      "Los datos van en filas con regla, como una hoja de datos: parametro y valor.",
+      "Fotos reales en una ventana oscura, nunca recortadas ni sustituidas."
+    ],
+    "rules": [
+      {
+        "name": "The One Model Rule",
+        "body": "En una pagina solo hay un color de modelo encendido. Los otros cuatro aparecen solo como muestras en el selector.",
+        "section": "colors"
+      },
+      {
+        "name": "The Contrast-Picked Ink Rule",
+        "body": "Un producto nuevo trae su tinta elegida por contraste medido (4,5:1 como minimo), nunca a ojo.",
+        "section": "colors"
+      },
+      {
+        "name": "The Doto Is A Screen Rule",
+        "body": "Doto solo aparece donde habria una pantalla o una etiqueta de maquina: el nombre, los precios y las lecturas. Nunca se usa en parrafos, botones ni titulos.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Tabular Figures Rule",
+        "body": "Schibsted Grotesk no lleva `tabular-nums`: esa opcion tambien da ancho fijo a las comas y los dos puntos, y salia \"120 , 25 €\". Las cifras que se comparan ya van en Doto, que es de ancho fijo.",
+        "section": "typography"
+      },
+      {
+        "name": "The Only Physical Things Rule",
+        "body": "Solo tienen relieve las teclas, la pantalla y la ventana. Las secciones, los modulos y las filas son planos.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "sacar el color, el nombre corto y los datos de `js/data.js`. Un producto nuevo tiene ficha sin tocar el CSS.",
+      "usar el color del modelo solo en su placa, en su boton de compra y en su LED.",
+      "poner los datos comparables en filas con regla, no en tarjetas.",
+      "mostrar las fotos reales dentro de la ventana oscura.",
+      "mover las cosas solo con `--t-tap` (140ms) o `--t-enter` (380ms) y con la curva `--ease`."
+    ],
+    "donts": [
+      "usar Doto en parrafos, botones o titulos de seccion.",
+      "poner `tabular-nums` sobre Schibsted Grotesk.",
+      "poner etiquetas pequeñas encima de los titulos, ni texto con degradado.",
+      "repetir tarjetas iguales de icono, titulo y texto como estructura de seccion.",
+      "mezclar `tienda.css` y `ficha.css` en una misma pagina.",
+      "usar colores de modelo que no esten en `data.js`, ni inventarlos para otras partes de la web."
+    ]
+  }
+}

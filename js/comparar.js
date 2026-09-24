@@ -32,7 +32,7 @@
         <div class="cmp__acciones">
           <a class="btn" href="modelo.html?id=${p.id}">${T("p2.configurar")}</a>
           <button type="button" class="cmp__quitar" data-quitar="${p.id}"
-                  aria-label="${T("c.quitar")}: ${CK.escapar(`${p.name} ${p.version || ""}`.trim())}">${T("c.quitar")}</button>
+                  aria-label="${T("c.quitar")}: ${CK.escapar(`${p.name} ${CK.L(p.version) || ""}`.trim())}">${T("c.quitar")}</button>
         </div>
       </div>
     </th>`;
