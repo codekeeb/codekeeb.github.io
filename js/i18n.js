@@ -387,7 +387,7 @@ const CK_I18N = {
     "p3.firmwareT": "Lo que hace el firmware.",
     "p3.modosLuz": "Modos de luz",
     "p3.pcb": "Switch, PCB y zócalo",
-    "p3.zocalo": "El zócalo, de lado y en planta",
+    "p3.zocalo": "La PCB, en transparencia, y lo que queda oculto",
     "p3.libre": "Contacto libre: sin soldadura"
   },
 
@@ -772,7 +772,7 @@ const CK_I18N = {
     "p3.firmwareT": "What the firmware does.",
     "p3.modosLuz": "Lighting modes",
     "p3.pcb": "Switch, PCB and socket",
-    "p3.zocalo": "The socket, from the side and from above",
+    "p3.zocalo": "The PCB, see-through, and hidden edges",
     "p3.libre": "Free contact: no solder"
   },
 
@@ -1157,7 +1157,7 @@ const CK_I18N = {
     "p3.firmwareT": "Ce que fait le firmware.",
     "p3.modosLuz": "Modes d'éclairage",
     "p3.pcb": "Switch, PCB et support",
-    "p3.zocalo": "Le support, de profil et en plan",
+    "p3.zocalo": "Le PCB, en transparence, et les arêtes cachées",
     "p3.libre": "Contact libre : sans soudure"
   }
 };
