@@ -2,188 +2,89 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Comparar los cinco — Codekeeb</title>
-<meta name="description" content="La misma ficha técnica para los cinco teclados split de Codekeeb, fila a fila, con lo que cambia resaltado.">
+<meta name="description" content="La misma ficha técnica para los cinco teclados split de Codekeeb, fila a fila, con las opciones de montaje que vende cada uno.">
 <link rel="canonical" href="https://codekeeb.github.io/comparar.html">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://codekeeb.github.io/comparar.html">
 <meta property="og:site_name" content="Codekeeb">
-<meta property="og:title" content="Comparar los cinco — Codekeeb">
-<meta property="og:description" content="La misma ficha técnica para los cinco teclados split de Codekeeb, fila a fila, con lo que cambia resaltado.">
-<meta property="og:image" content="https://codekeeb.github.io/assets/img/products/totem.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Comparar los cinco — Codekeeb">
-<meta name="twitter:description" content="La misma ficha técnica para los cinco teclados split de Codekeeb, fila a fila, con lo que cambia resaltado.">
-<meta name="twitter:image" content="https://codekeeb.github.io/assets/img/products/totem.jpg">
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#f7f7f4">
+<meta name="theme-color" content="#f4f4f1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/comparar.css">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tienda.css">
 </head>
 <body>
 
 <header class="top">
-  <div class="top__in envoltura">
+  <div class="top__in env">
     <a class="marca" href="/" aria-label="Codekeeb">
       <img src="assets/brand/logo-horizontal-dark.png"
            srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
            width="640" height="224" alt="CODE/KEEB">
     </a>
-    <nav class="top__nav">
-      <a href="catalogo.html" data-t="d.choose">Elige tu split</a>
+    <nav class="top__nav" aria-label="Principal">
+      <a href="/#tienda" data-t="m.tienda">Tienda</a>
+      <a class="top__comparar" href="comparar.html" aria-current="page" data-t="d.compare">Comparar</a>
       <a class="top__studio" href="keymap-studio/">Keymap Studio</a>
     </nav>
     <span class="top__sp"></span>
     <div class="idiomas">
-      <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false"
-              aria-label="Idioma"><span data-lang-actual>ES</span><svg viewBox="0 0 10 6" aria-hidden="true"
-              width="10" height="6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"
-              stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false" aria-label="Idioma">
+        <span data-lang-actual>ES</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <div class="idiomas__m" data-lang-menu role="menu" hidden>
         <button data-lang-btn="es">Español</button>
         <button data-lang-btn="en">English</button>
         <button data-lang-btn="fr">Français</button>
       </div>
     </div>
-    <a class="btn btn--solido" href="catalogo.html" data-t="d.choose">Elige tu split</a>
+    <a class="btn" href="/#tienda" data-t="d.choose">Elige tu split</a>
   </div>
 </header>
 
-<main>
-  <section class="intro envoltura">
-    <h1 class="entra entra--titulo" data-t="d.compare">Compara los cinco</h1>
-    <p class="entra entra--texto" style="--d:1" data-t="d.compareLede"></p>
-  </section>
+<main class="seccion seccion--arriba">
+  <div class="env">
+    <div class="seccion__cab">
+      <h1 class="titulo" data-t-html="c.titulo"></h1>
+      <p class="entradilla" data-t="c.lede"></p>
+    </div>
 
-  <section class="envoltura">
-    <div class="mandos entra entra--texto" style="--d:2">
-      <button class="interruptor" id="soloDif" aria-pressed="false">
-        <span class="luz" aria-hidden="true"></span>
-        <span id="soloDifTxt">Solo lo que cambia</span>
+    <div class="mandos">
+      <button type="button" class="interruptor" id="soloDif" aria-pressed="false">
+        <span class="interruptor__luz" aria-hidden="true"></span><span data-t="c.dif"></span>
       </button>
-      <button class="btn btn--linea" id="reset">Todos</button>
-      <span class="cuenta" id="cuenta"></span>
+      <button type="button" class="btn btn--linea" id="todos" data-t="c.todos" hidden></button>
+      <span class="cuenta mono" id="cuenta" aria-live="polite"></span>
     </div>
-    <div class="marco entra entra--tabla" style="--d:3">
-      <table id="tabla"><thead id="cabeza"></thead><tbody id="cuerpo"></tbody></table>
-    </div>
+
+    <div class="tabla-env"><table class="tabla cmp" id="tabla"></table></div>
     <p class="vacio" id="vacio" hidden></p>
-  </section>
+  </div>
 </main>
 
-<footer class="cierre">
-  <div class="envoltura"><div class="confianza" id="confianza"></div></div>
-  <div class="envoltura"><div class="pie">
-    <p class="nota" id="nota"></p>
-    <p data-t="footer.copy"></p>
-  </div></div>
+<footer class="pie">
+  <div class="pie__in env">
+    <p id="notaPrecios"></p>
+    <nav aria-label="Pie">
+      <a href="/#tienda" data-t="m.tienda">Tienda</a>
+      <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
+      <a href="keymap-studio/">Keymap Studio</a>
+    </nav>
+  </div>
 </footer>
 
 <script src="js/data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/tienda.js"></script>
-<script>
-(() => {
-  const $ = s => document.querySelector(s);
-  /* Que modelos estan encendidos. Apagar uno es la accion principal de
-     esta pagina: se compara descartando, no anadiendo. */
-  let encendidos = new Set(CK.productos().map(p => p.id));
-  let soloDiferencias = false;
-
-  const ETIQUETAS = {
-    es: { dif: "Solo lo que cambia", todos: "Encender todos", apagar: "quitar" },
-    en: { dif: "Only what differs",  todos: "Show all",       apagar: "remove" },
-    fr: { dif: "Seulement ce qui change", todos: "Tout afficher", apagar: "retirer" },
-  };
-
-  function columnaCabeza(p) {
-    const est = CK.stock(p);
-    return `
-      <th scope="col">
-        <div class="col__foto"><img src="${CK.foto(p, true)}" alt="${CK.escapar((p.name + " " + (p.version || "")).trim())}" data-foco="${p.foco ?? 50}"></div>
-        <div class="col__nombre">${CK.rotulo(p)}</div>
-        <div class="col__precio">${CK.precioHTML(p)}${
-          p.priceOriginal ? `<s>${CK.precio(p.priceOriginal)}</s>` : ""}</div>
-        <div class="col__estado ${est.clase}">${CK.escapar(est.txt)}</div>
-        <div class="col__acciones">
-          <a class="btn btn--linea" href="modelo.html?id=${p.id}">${CK.t("models.details")}</a>
-          <a class="btn btn--solido" href="${p.url}" target="_blank" rel="noopener">${CK.t("nav.buy")}</a>
-        </div>
-        <button class="col__apagar" data-apagar="${p.id}">− ${ETIQUETAS[CK.lang].apagar}</button>
-      </th>`;
-  }
-
-  function pintar() {
-    $("#nota").textContent = CK.notaPrecios();
-    $("#soloDifTxt").textContent = ETIQUETAS[CK.lang].dif;
-    $("#reset").textContent = ETIQUETAS[CK.lang].todos;
-    $("#soloDif").setAttribute("aria-pressed", String(soloDiferencias));
-
-    const lista = CK.productos().filter(p => encendidos.has(p.id));
-    $("#cuenta").textContent = `${lista.length} ${CK.t("d.of")} ${CK.productos().length}`;
-
-    const vacio = $("#vacio");
-    if (!lista.length) {
-      $("#tabla").hidden = true;
-      vacio.hidden = false;
-      vacio.textContent = CK.t("d.nomatch");
-      CK.observarEntradas();
-      return;
-    }
-    $("#tabla").hidden = false;
-    vacio.hidden = true;
-
-    $("#cabeza").innerHTML = `<tr><th class="etiqueta" scope="col">${CK.t("d.model")}</th>${lista.map(columnaCabeza).join("")}</tr>`;
-    $("#cabeza").querySelectorAll("[data-apagar]").forEach(b =>
-      b.onclick = () => { encendidos.delete(b.dataset.apagar); pintar(); });
-
-    /* Las filas salen del propio catalogo, no de una lista escrita a
-       mano: si manana un producto trae una ficha nueva, aparece sola. */
-    const filas = CK.etiquetasDeFicha(lista).map(clave => {
-      const celdas = lista.map(p => CK.spec(p, clave.es));
-      const presentes = celdas.filter(Boolean);
-      const difiere = new Set(presentes).size > 1 || presentes.length !== celdas.length;
-      if (soloDiferencias && !difiere) return "";
-      return `<tr class="${difiere ? "difiere" : ""}">
-        <td class="etiqueta">${CK.escapar(CK.L(clave))}</td>
-        ${celdas.map(v => `<td class="${v ? "" : "falta"}">${v ? CK.escapar(v) : "—"}</td>`).join("")}
-      </tr>`;
-    }).join("");
-
-    /* El precio va abajo tambien, como fila, porque es el dato que mas
-       se compara y arriba queda fuera de la vista al bajar. */
-    const filaPrecio = `<tr class="difiere">
-      <td class="etiqueta">${CK.t("d.priceCol")}</td>
-      ${lista.map(p => `<td><b class="mono">${CK.precioHTML(p)}</b>${
-        p.discountPct ? ` <span class="mono" style="font-size:.7em;color:var(--tenue)">−${p.discountPct}%</span>` : ""}</td>`).join("")}
-    </tr>`;
-
-    $("#cuerpo").innerHTML = filas + filaPrecio;
-
-    $("#confianza").innerHTML = [
-      ["trust.shipping","trust.shippingText"],["trust.warranty","trust.warrantyText"],
-      ["trust.custom","trust.customText"],["trust.firmware","trust.firmwareText"],
-    ].map(([a,b],i)=>`<div class="entra entra--texto" style="--d:${i}"><h3>${CK.t(a)}</h3><p>${CK.t(b)}</p></div>`).join("");
-
-    CK.encuadrarTodo();
-    CK.observarEntradas();
-  }
-
-  $("#soloDif").onclick = () => { soloDiferencias = !soloDiferencias; pintar(); };
-  $("#reset").onclick = () => { encendidos = new Set(CK.productos().map(p => p.id)); pintar(); };
-
-  CK.montarSelectorIdioma();
-  CK.pintarIdioma(pintar);
-  pintar();
-})();
-</script>
+<script src="js/comparar.js"></script>
 </body>
 </html>

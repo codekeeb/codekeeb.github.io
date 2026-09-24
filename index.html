@@ -2,31 +2,28 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Codekeeb — Teclados split ergonómicos hechos a mano</title>
-<meta name="description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Presoldados, hotswap, firmware abierto y un editor propio para reprogramarlos sin instalar nada.">
+<meta name="description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Elige cuánto viene montado, mira qué incluye cada opción y compáralos antes de comprar.">
 <link rel="canonical" href="https://codekeeb.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://codekeeb.github.io/">
 <meta property="og:site_name" content="Codekeeb">
 <meta property="og:title" content="Codekeeb — Teclados split ergonómicos">
-<meta property="og:description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Presoldados, hotswap, firmware abierto y un editor propio para reprogramarlos sin instalar nada.">
+<meta property="og:description" content="Cinco teclados split ergonómicos montados y probados a mano. Precio, stock y ficha completa antes de comprar.">
 <meta property="og:image" content="https://codekeeb.github.io/assets/img/products/sofle-retro.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Codekeeb — Teclados split ergonómicos">
-<meta name="twitter:description" content="Cinco teclados split ergonómicos montados y probados a mano: Sofle Choc, Totem y Corne. Presoldados, hotswap, firmware abierto y un editor propio para reprogramarlos sin instalar nada.">
-<meta name="twitter:image" content="https://codekeeb.github.io/assets/img/products/sofle-retro.jpg">
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#f2f2ef">
+<meta name="theme-color" content="#f4f4f1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/portada.css">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tienda.css">
 </head>
 <body>
 
@@ -37,168 +34,132 @@
            srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
            width="640" height="224" alt="CODE/KEEB">
     </a>
-    <nav class="top__nav">
-      <a href="#rgb" data-t="p.navVentajas">Ventajas</a>
-      <a href="#cinco" data-t="p.losCinco">Los cinco</a>
-      <a href="comparar.html" data-t="d.compare">Comparar</a>
+    <nav class="top__nav" aria-label="Principal">
+      <a href="#tienda" data-t="m.tienda">Tienda</a>
+      <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
       <a class="top__studio" href="keymap-studio/">Keymap Studio</a>
     </nav>
     <span class="top__sp"></span>
     <div class="idiomas">
-      <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false"
-              aria-label="Idioma"><span data-lang-actual>ES</span><svg viewBox="0 0 10 6" aria-hidden="true"
-              width="10" height="6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"
-              stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false" aria-label="Idioma">
+        <span data-lang-actual>ES</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <div class="idiomas__m" data-lang-menu role="menu" hidden>
         <button data-lang-btn="es">Español</button>
         <button data-lang-btn="en">English</button>
         <button data-lang-btn="fr">Français</button>
       </div>
     </div>
-    <a class="btn" href="catalogo.html" data-t="d.choose">Elige tu split</a>
+    <a class="btn" href="#tienda" data-t="d.choose">Elige tu split</a>
   </div>
 </header>
 
 <main>
 
-  <!-- ============ 1 · HERO ============
-       A sangre: la foto toca los cuatro bordes de la ventana y el texto va
-       encima, dentro de la columna de la pagina. Es un cambio de criterio
-       respecto a "ninguna imagen a sangre", pedido el 15 sep.
-
-       El recorte lo sigue calculando `CK.encuadrarTodo()` con el `foco`
-       medido de la foto (63%); ver el comentario del heroe en portada.css. -->
-  <section class="hero">
-    <!-- El `src` va en el HTML y no lo pone el script: sin el, la pagina
-           sale con una imagen rota hasta que cargan tres archivos de JS, y
-           ademas el navegador no puede empezar a bajarla hasta entonces.
-           El modelo del heroe esta fijado (el Retro), asi que no es un dato
-           que cambie solo. -->
-      <img class="hero__foto" id="heroImg" fetchpriority="high"
-           src="assets/img/products/sofle-retro.jpg" alt="Sofle Choc Retro"
-           data-foco="63" data-encaje="62">
-    <div class="hero__velo" aria-hidden="true"></div>
-    <div class="hero__texto env">
-      <h1 class="titular entra entra--titulo" data-t-html="p.heroTitle"></h1>
-      <p class="bajada entra entra--texto" style="--d:1" data-t="p.heroText"></p>
-      <div class="acciones entra entra--texto" style="--d:2">
-        <a class="btn" href="catalogo.html" data-t="p.heroCta"></a>
-        <a class="btn btn--claro" href="comparar.html" data-t="p.heroCta2"></a>
+  <!-- ===== HEROE: a sangre, pero no de pantalla completa =====
+       Es una tienda: lo que se vende tiene que asomar en la primera
+       pantalla. El recorte sale del `foco` medido de la foto. -->
+  <section class="heroe">
+    <img class="heroe__foto" src="assets/img/products/sofle-retro.jpg" alt="Sofle Choc Retro"
+         width="1200" height="838" fetchpriority="high" data-foco="63" data-encaje="58">
+    <div class="heroe__texto env">
+      <h1 data-t-html="p.heroTitle"></h1>
+      <p data-t="p.heroText"></p>
+      <div class="acciones">
+        <a class="btn btn--claro" href="#tienda" data-t="p.heroCta"></a>
+        <a class="btn btn--cristal" href="comparar.html" data-t="p.heroCta2"></a>
       </div>
     </div>
-    <a class="chapa" id="chapa" target="_blank" rel="noopener"></a>
   </section>
 
-  <!-- ============ 2 · LOS MODOS DE LUZ ============
-       El teclado se queda fijo y los modos pasan a su lado. No es un
-       dibujo: `js/sofle.js` trae la geometria del shield y `js/rgb.js`
-       los cinco efectos con los colores y las velocidades del firmware.
-       Los otros cinco se nombran abajo sin animarse. -->
-  <section class="fijada" id="rgb">
-    <div class="fijada__in env">
-      <div class="fijada__lienzo">
-        <div class="esquema">
-          <div class="kb" id="kb"></div>
-          <p class="esquema__nota" data-t="p.rgbReal"></p>
+  <!-- ===== LA TIENDA ===== -->
+  <section class="seccion" id="tienda" aria-labelledby="h-tienda">
+    <div class="env">
+      <div class="seccion__cab seccion__cab--fila">
+        <div class="seccion__txt">
+          <h2 class="titulo" id="h-tienda" data-t="d.choose"></h2>
+          <p class="entradilla" data-t="d.lede"></p>
         </div>
+        <div class="filtros" id="filtros" role="group" aria-label="Filtros"></div>
       </div>
-      <div class="fijada__pasos">
-        <div class="paso paso--titular" data-fx=""><p data-t-html="p.rgbTitle"></p></div>
-        <div class="paso" data-fx="gradient">
-          <b class="paso__n">gradient</b><p data-t="p.fx1Text"></p></div>
-        <div class="paso" data-fx="ripple">
-          <b class="paso__n">ripple</b><p data-t="p.fx2Text"></p></div>
-        <div class="paso" data-fx="fire">
-          <b class="paso__n">fire</b><p data-t="p.fx3Text"></p></div>
-        <div class="paso" data-fx="sunset">
-          <b class="paso__n">sunset</b><p data-t="p.fx4Text"></p></div>
-        <div class="paso" data-fx="heatmap">
-          <b class="paso__n">heatmap</b><p data-t="p.fx5Text"></p></div>
-        <div class="paso paso--cola"><p class="rotulo" data-t="p.rgbOtros"></p></div>
-      </div>
+      <div class="rejilla" id="rejilla"></div>
     </div>
   </section>
 
-  <!-- ============ 3 · LAS DOS OLED ============
-       Dos pantallas separadas, no una caja con textos: es lo que lleva el
-       teclado y cada una hace una cosa distinta. Los mapas de bits son los
-       del firmware (`js/oled-datos.js`) y la composicion es la misma que
-       usa el editor (`js/oled.js`). -->
-  <section class="escena escena--noche">
-    <div class="env centro pila">
-      <div class="centro">
-        <span class="rotulo entra entra--rotulo" data-t="p.oledLabel"></span>
-        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.oledTitle"></h2>
+  <!-- ===== LO QUE LLEVA, FUNCIONANDO =====
+       Antes eran cuatro regiones de pantalla completa seguidas. Ahora es
+       un escenario con pestanas: lo mismo en una pantalla, y el que quiera
+       verlo todo pulsa. -->
+  <section class="seccion oscuro" id="ventajas" aria-labelledby="h-ventajas">
+    <div class="env">
+      <div class="seccion__cab">
+        <h2 class="titulo" id="h-ventajas" data-t-html="p2.vTitle"></h2>
+        <p class="entradilla" data-t="p2.vLede"></p>
       </div>
-      <div class="esquema entra entra--pieza" style="--d:2">
-        <div class="oleds">
-          <figure class="oled">
-            <div class="oled__marco"><canvas id="oledIzq" width="68" height="160" aria-hidden="true"></canvas></div>
-            <figcaption data-t="p.oledIzq"></figcaption>
-          </figure>
-          <figure class="oled">
-            <div class="oled__marco"><canvas id="oledDer" width="68" height="160" aria-hidden="true"></canvas></div>
-            <figcaption data-t="p.oledDer"></figcaption>
-          </figure>
+
+      <div class="pestanas" role="tablist" aria-label="Ventajas">
+        <button role="tab" id="t-rgb" aria-controls="v-rgb" aria-selected="true" data-t="p2.tRgb"></button>
+        <button role="tab" id="t-oled" aria-controls="v-oled" aria-selected="false" tabindex="-1" data-t="p2.tOled"></button>
+        <button role="tab" id="t-capas" aria-controls="v-capas" aria-selected="false" tabindex="-1" data-t="p2.tCapas"></button>
+        <button role="tab" id="t-hot" aria-controls="v-hot" aria-selected="false" tabindex="-1" data-t="p2.tHot"></button>
+      </div>
+
+      <div class="escenario">
+        <div class="panel" id="v-rgb" role="tabpanel" aria-labelledby="t-rgb" aria-hidden="false">
+          <div class="escenario__lienzo">
+            <div class="kb" id="kb"></div>
+            <p class="nota" data-t="p.rgbReal"></p>
+          </div>
+          <div class="escenario__texto">
+            <h3 data-t-html="p.rgbTitle"></h3>
+            <p id="fxTexto"></p>
+            <div class="modos" id="modos" role="group" aria-label="Modos de luz"></div>
+            <p class="nota nota--izq" data-t="p.rgbOtros"></p>
+          </div>
         </div>
-        <p class="esquema__nota" data-t="p.oledReal"></p>
-      </div>
-      <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.oledText"></p>
-    </div>
-  </section>
 
-  <!-- ============ 4 · CAPAS Y EL EDITOR ============
-       La demo de capas se queda (ensena que las teclas cambian de
-       significado), y debajo va lo que el editor hace de verdad, sacado
-       de sus propias funciones: hold-tap, encoders por capa, macros
-       guardadas en el teclado, unicode y la lista de behaviors que el
-       firmware declara por USB. -->
-  <section class="escena escena--noche">
-    <div class="env centro pila">
-      <div class="centro">
-        <span class="rotulo entra entra--rotulo" data-t="p.capasLabel"></span>
-        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.capasTitle"></h2>
-      </div>
-      <div class="esquema entra entra--pieza" style="--d:2">
-        <div class="capas">
-          <div id="capasFila" aria-hidden="true"></div>
-          <p class="capas__pie" aria-hidden="true">
-            <span data-t="p.capasLabel"></span><b><span>1</span><span>2</span></b>
-          </p>
+        <div class="panel" id="v-oled" role="tabpanel" aria-labelledby="t-oled" aria-hidden="true" hidden>
+          <div class="escenario__lienzo">
+            <div class="oleds">
+              <figure class="oled">
+                <div class="oled__marco"><canvas id="oledIzq" width="68" height="160" aria-hidden="true"></canvas></div>
+                <figcaption data-t="p.oledIzq"></figcaption>
+              </figure>
+              <figure class="oled">
+                <div class="oled__marco"><canvas id="oledDer" width="68" height="160" aria-hidden="true"></canvas></div>
+                <figcaption data-t="p.oledDer"></figcaption>
+              </figure>
+            </div>
+            <p class="nota" data-t="p.oledReal"></p>
+          </div>
+          <div class="escenario__texto">
+            <h3 data-t-html="p.oledTitle"></h3>
+            <p data-t="p.oledText"></p>
+          </div>
         </div>
-        <p class="esquema__nota" data-t="p.demoNota"></p>
-      </div>
-      <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.capasText"></p>
 
-      <ul class="editor entra entra--texto" style="--d:4">
-        <li><h3 data-t="p.edCapas"></h3><p data-t="p.edCapasT"></p></li>
-        <li><h3 data-t="p.edHold"></h3><p data-t="p.edHoldT"></p></li>
-        <li><h3 data-t="p.edEnc"></h3><p data-t="p.edEncT"></p></li>
-        <li><h3 data-t="p.edMacros"></h3><p data-t="p.edMacrosT"></p></li>
-        <li><h3 data-t="p.edUnicode"></h3><p data-t="p.edUnicodeT"></p></li>
-        <li><h3 data-t="p.edBehav"></h3><p data-t="p.edBehavT"></p></li>
-      </ul>
-      <div class="entra entra--texto pila pila--junta" style="--d:5">
-        <a class="btn btn--claro" href="keymap-studio/" data-t="studio.cta"></a>
-        <p class="rotulo" data-t="p.edNota"></p>
-      </div>
-    </div>
-  </section>
+        <div class="panel" id="v-capas" role="tabpanel" aria-labelledby="t-capas" aria-hidden="true" hidden>
+          <div class="escenario__lienzo">
+            <div class="capas" aria-hidden="true"><div id="capasFila"></div></div>
+            <p class="nota" data-t="p.demoNota"></p>
+          </div>
+          <div class="escenario__texto">
+            <h3 data-t-html="p.capasTitle"></h3>
+            <p data-t="p.capasText"></p>
+            <ul class="funciones">
+              <li><b data-t="p.edHold"></b><span data-t="p.edHoldT"></span></li>
+              <li><b data-t="p.edEnc"></b><span data-t="p.edEncT"></span></li>
+              <li><b data-t="p.edMacros"></b><span data-t="p.edMacrosT"></span></li>
+              <li><b data-t="p.edUnicode"></b><span data-t="p.edUnicodeT"></span></li>
+            </ul>
+            <a class="btn btn--claro" href="keymap-studio/" data-t="studio.cta"></a>
+          </div>
+        </div>
 
-  <!-- ============ 5 · HOTSWAP ============ -->
-  <section class="escena escena--noche">
-    <div class="env centro pila">
-      <div class="centro">
-        <span class="rotulo entra entra--rotulo" data-t="p.hotLabel"></span>
-        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="p.hotTitle"></h2>
-      </div>
-      <div class="esquema entra entra--pieza" style="--d:2">
-        <!-- Dos switches dibujados con su forma real y su zocalo Kailh
-             debajo: el Choc es bajo y de vastago plano, el MX es alto y de
-             cruz, y esa diferencia es justamente la que decide el tacto.
-             Sigue siendo un esquema, y lo dice el rotulo de abajo: no hay
-             fotografia de estos switches en el repositorio. -->
-        <div class="hot">
+        <div class="panel" id="v-hot" role="tabpanel" aria-labelledby="t-hot" aria-hidden="true" hidden>
+          <div class="escenario__lienzo">
+            <div class="hot">
           <div class="hot__col">
             <svg class="hot__sw" viewBox="0 0 140 190" role="img" aria-label="Kailh Choc Red">
               <g class="hot__pieza">
@@ -258,57 +219,46 @@
             <span class="hot__dato"><span data-t="p.swTactil"></span> · MX</span>
           </div>
         </div>
-        <p class="esquema__nota" data-t="p.hotNota"></p>
+            <p class="nota" data-t="p.hotNota"></p>
+          </div>
+          <div class="escenario__texto">
+            <h3 data-t-html="p.hotTitle"></h3>
+            <p data-t="p.hotText"></p>
+          </div>
+        </div>
       </div>
-      <p class="bajada centro entra entra--texto" style="--d:3" data-t="p.hotText"></p>
     </div>
   </section>
 
-  <!-- ============ 6 · LOS CINCO ============
-       Carril horizontal con las fotos apoyadas, sin tarjetas. -->
-  <section class="escena escena--carta" id="cinco">
+  <!-- ===== LOS CINCO, LADO A LADO ===== -->
+  <section class="seccion seccion--carta" id="comparar" aria-labelledby="h-comparar">
     <div class="env">
-      <div class="centro">
-        <span class="rotulo entra entra--rotulo" data-t="p.losCinco"></span>
-        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t="p.catalogoTitle"></h2>
+      <div class="seccion__cab">
+        <h2 class="titulo" id="h-comparar" data-t-html="p2.cTitle"></h2>
+        <p class="entradilla" data-t="p2.cLede"></p>
       </div>
-    </div>
-    <div class="env" style="margin-top:clamp(30px,5svh,56px)">
-      <div class="carril entra entra--pieza" style="--d:2" id="carril"></div>
-      <div class="acciones" style="margin-top:22px">
-        <a class="btn" href="catalogo.html" data-t="p.verTodo"></a>
-        <a class="btn btn--suave" href="comparar.html" data-t="p.verComparador"></a>
-      </div>
+      <div class="tabla-env"><table class="tabla" id="comparativa"></table></div>
+      <p class="enlace-pie"><a class="enlace" href="comparar.html" data-t="m.verComparador"></a></p>
     </div>
   </section>
 
-  <!-- ============ 7 · KEYMAP STUDIO ============ -->
-  <section class="escena">
-    <div class="env centro pila pila--junta">
-      <div class="centro">
-        <span class="rotulo entra entra--rotulo">Keymap Studio</span>
-        <h2 class="titular entra entra--titulo" style="--d:1;margin-top:14px" data-t-html="studio.title"></h2>
-      </div>
-      <p class="bajada centro entra entra--texto" style="--d:2" data-t="p.studioText"></p>
-      <div class="acciones entra entra--texto" style="--d:3">
-        <a class="btn" href="keymap-studio/" data-t="studio.cta"></a>
-      </div>
-      <p class="rotulo entra entra--rotulo" style="--d:4" data-t="p.repos"></p>
-    </div>
-  </section>
-
-  <!-- ============ 8 · CONFIANZA ============ -->
-  <section class="escena escena--carta">
+  <!-- ===== ANTES DE PAGAR ===== -->
+  <section class="seccion" aria-labelledby="h-confianza">
     <div class="env">
-      <div class="cuatro" id="confianza"></div>
+      <div class="seccion__cab"><h2 class="titulo" id="h-confianza" data-t="p2.confianza"></h2></div>
+      <ul class="confianza" id="confianza"></ul>
     </div>
   </section>
 </main>
 
-<footer class="env">
-  <div class="pie">
-    <p class="nota" id="nota"></p>
-    <p data-t="footer.copy"></p>
+<footer class="pie">
+  <div class="pie__in env">
+    <p id="notaPrecios"></p>
+    <nav aria-label="Pie">
+      <a href="#tienda" data-t="m.tienda">Tienda</a>
+      <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
+      <a href="keymap-studio/">Keymap Studio</a>
+    </nav>
   </div>
 </footer>
 
@@ -320,97 +270,6 @@
 <script src="js/rgb.js"></script>
 <script src="js/oled-datos.js"></script>
 <script src="js/oled.js"></script>
-<script>
-(() => {
-  const $ = s => document.querySelector(s);
-
-  const LEYENDAS = [
-    [["Q","1"],["W","2"],["E","3"],["R","4"],["T","5"],["Y","6"]],
-    [["⇧","⇧"],["A","←"],["S","↓"],["D","↑"],["F","→"],["G","⌫"]],
-  ];
-  function dibujarCapas() {
-    $("#capasFila").innerHTML = LEYENDAS.map((fila, f) =>
-      `<div class="capas__fila">${fila.map(([a, b], i) =>
-        `<span class="capas__t${f === 1 && i === 0 ? " capas__t--hold" : ""}">
-           <span>${a}</span><span>${b}</span>
-         </span>`).join("")}</div>`).join("");
-  }
-
-  /* El teclado se monta una sola vez: cambiar de idioma no cambia la
-     forma del Sofle, y remontarlo perderia el efecto en curso. */
-  const teclado = CK_RGB.montar(document.getElementById("kb"));
-  CK_OLED.montar(document.getElementById("oledIzq"), document.getElementById("oledDer"));
-
-  function pintar() {
-    const productos = CK.productos();
-    /* Los cinco estan marcados como `featured`, asi que `find` devolvia
-       siempre el primero. El heroe ensena el Retro a proposito: es el
-       unico con rotulo serigrafiado y el que mejor se lee en foto. */
-    const destacado = productos.find(p => p.id === "sofle-retro") || productos[0];
-    const est = CK.stock(destacado);
-
-    $("#nota").textContent = CK.notaPrecios();
-
-    /* El `src` ya viene en el HTML; aqui solo se ajusta el texto
-       alternativo al idioma del catalogo. */
-    $("#heroImg").alt = `${destacado.name} ${destacado.version || ""}`.trim();
-
-    /* La chapa dice el nombre en tres niveles, el precio DE ENTRADA con su
-       "desde" delante, y el stock. Y lleva al anuncio concreto. */
-    $("#chapa").href = CK.enlaceCompra(destacado);
-    $("#chapa").innerHTML = `
-      <span>${CK.rotulo(destacado)}</span>
-      <span class="chapa__sep" aria-hidden="true"></span>
-      <span>${CK.precioHTML(destacado)}</span>
-      <span class="chapa__sep" aria-hidden="true"></span>
-      <em>${CK.escapar(est.txt)}</em>`;
-
-    /* Sin `loading="lazy"`: las cinco fotos viven dentro de un carril con
-       `overflow-x:auto`, y ahi el navegador considera que las cuatro que
-       no se ven estan fuera de pantalla y no las carga nunca. Son cinco
-       imagenes pequenas; cargarlas es mas barato que el fallo. */
-    $("#carril").innerHTML = productos.map(p => {
-      const e = CK.stock(p);
-      return `
-        <a href="modelo.html?id=${p.id}">
-          <img src="${CK.foto(p, true)}" alt="${CK.escapar((p.name + " " + (p.version || "")).trim())}" data-foco="${p.foco ?? 50}">
-          <div>
-            <h3>${CK.rotulo(p)}</h3>
-            <p class="precio">${CK.precioHTML(p)}</p>
-            <p class="estado ${e.clase}">${CK.escapar(e.txt)}</p>
-          </div>
-        </a>`;
-    }).join("");
-
-    $("#confianza").innerHTML = [
-      ["trust.shipping","trust.shippingText"],["trust.warranty","trust.warrantyText"],
-      ["trust.custom","trust.customText"],["trust.firmware","trust.firmwareText"],
-    ].map(([a,b],i)=>`<div class="entra entra--texto" style="--d:${i}"><h3>${CK.t(a)}</h3><p>${CK.t(b)}</p></div>`).join("");
-
-    dibujarCapas();
-    CK.encuadrarTodo();
-
-    /* El modo que esta a la altura de los ojos se enciende, y el teclado
-       fijado cambia al efecto de ese modo. Sin escuchar el scroll: lo
-       resuelve el observador con un margen que deja activa solo la banda
-       central de la pantalla. */
-    const ioPaso = new IntersectionObserver(es => {
-      for (const e of es) {
-        e.target.classList.toggle("viva", e.isIntersecting);
-        /* `data-fx` vacio = RGB apagado. El primer paso ensena el teclado
-           negro, sin luz, que es como esta cuando lo sacas de la caja. */
-        if (e.isIntersecting && e.target.dataset.fx !== undefined) teclado.modo(e.target.dataset.fx || null);
-      }
-    }, { rootMargin: "-42% 0px -42% 0px" });
-    document.querySelectorAll(".paso").forEach(p => ioPaso.observe(p));
-
-    CK.observarEntradas();
-  }
-
-  CK.montarSelectorIdioma();
-  CK.pintarIdioma(pintar);
-  pintar();
-})();
-</script>
+<script src="js/portada.js"></script>
 </body>
 </html>

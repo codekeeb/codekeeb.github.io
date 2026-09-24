@@ -8,7 +8,7 @@
      - imagenes o recursos que no cargan
 
    Uso:
-     node tools/preview.mjs              # portada, catalogo y comparador
+     node tools/preview.mjs              # portada, ficha del Totem y comparador
      node tools/preview.mjs --all        # + la pagina de cada producto
      node tools/preview.mjs --lang es    # solo un idioma
 
@@ -120,9 +120,13 @@ async function main() {
   /* Las tres paginas de la tienda. Dejaron de ser prototipos el 15 de
      septiembre: la portada es `/`, y el catalogo y el comparador cuelgan
      de ella, asi que las tres entran en la tanda normal. */
+  /* La portada (que es la tienda), una ficha con configurador y el
+     comparador. La ficha de la tanda normal es la del Totem porque es la
+     mas dificil: cuatro niveles de montaje y precios en rango. `--all`
+     anade las cinco. catalogo.html ya solo redirige a la portada. */
   const paginas = [
     { id: "portada",   url: "/index.html" },
-    { id: "catalogo",  url: "/catalogo.html" },
+    { id: "modelo",    url: "/modelo.html?id=totem" },
     { id: "comparar",  url: "/comparar.html" },
   ];
   if (args.includes("--all")) {

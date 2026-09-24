@@ -1,14 +1,14 @@
 /* ============================================================
-   CODEKEEB — motor comun de las tres direcciones
+   CODEKEEB — motor comun de la tienda
    ------------------------------------------------------------
-   Las direcciones son propuestas de DISENO, no de datos: las tres
-   leen el mismo `js/data.js` y el mismo `js/i18n.js` que la web de
-   produccion. Asi lo que se compara es la forma, no el contenido,
-   y ninguna puede hacer trampas inventandose un producto.
+   Lo usan las tres paginas: la portada (js/portada.js), la ficha de
+   cada modelo (js/modelo.js) y el comparador (js/comparar.js). Aqui
+   vive lo que las tres necesitan igual: idioma, formato de precio,
+   lectura del catalogo, los niveles de montaje, la tabla comparativa y
+   los iconos.
 
-   Aqui solo va lo que las tres necesitan igual: idioma, formato de
-   precio y lectura del catalogo. El aspecto lo pone cada una en su
-   propia hoja de estilo; ninguna carga `css/style.css`.
+   Todo sale de `js/data.js` y `js/i18n.js`. Si falta un dato, se dice
+   que falta; no se rellena.
    ============================================================ */
 
 const CK = (() => {
@@ -203,6 +203,148 @@ const CK = (() => {
     raiz.querySelectorAll("img[data-foco]").forEach(encuadrar);
   }
 
+
+  /* --- niveles de montaje -----------------------------------------
+     Las opciones de cada anuncio de Etsy vienen con el nombre que les
+     puso Ernesto ("Solo PCB", "PCB soldada", "Barebones", "Teclado
+     completo", o "Completo · Kea Grey" en el Retro). Aqui se ordenan en
+     cuatro niveles, de menos a mas montado, porque la pregunta de quien
+     compra es exactamente esa: cuanto viene hecho.
+
+     Lo que incluye cada nivel es la definicion del nivel, no un dato que
+     me invente: una PCB soldada es la placa con la electronica soldada, un
+     barebones es el teclado montado SIN switches ni keycaps, y el completo
+     lo trae todo. Las diferencias de precio de los propios anuncios lo
+     confirman (en el Totem y el Sofle, completo menos barebones son unos
+     30 euros: los switches y las keycaps). */
+  const NIVELES = ["pcb", "soldada", "barebones", "completo"];
+  const LLEVA = {
+    /*            placa  electronica  caja   switches  keycaps */
+    pcb:        [true,  false,       false, false,    false],
+    soldada:    [true,  true,        false, false,    false],
+    barebones:  [true,  true,        true,  false,    false],
+    completo:   [true,  true,        true,  true,     true ],
+  };
+  function nivelDe(nombreEs) {
+    const n = (nombreEs || "").toLowerCase();
+    if (/^solo pcb/.test(n)) return "pcb";
+    if (/^pcb soldada/.test(n)) return "soldada";
+    if (/^barebones/.test(n)) return "barebones";
+    if (/completo/.test(n)) return "completo";
+    return null;
+  }
+  /* Devuelve los niveles que vende ESTE producto, en orden, cada uno con
+     sus variantes (el Retro tiene cuatro completos, uno por juego de
+     keycaps). Un nivel esta agotado solo si lo estan todas sus variantes. */
+  function niveles(p) {
+    const grupos = new Map();
+    for (const op of (p.buildOptions || [])) {
+      const nivel = nivelDe(op.name && op.name.es);
+      if (!nivel) continue;
+      if (!grupos.has(nivel)) grupos.set(nivel, []);
+      const partes = L(op.name).split("·").map(x => x.trim());
+      grupos.get(nivel).push({
+        nombre: L(op.name),
+        variante: partes.length > 1 ? partes.slice(1).join(" · ") : null,
+        precio: op.price ?? null,
+        hasta: op.priceTo ?? null,
+        agotada: !!op.sold,
+      });
+    }
+    return NIVELES.filter(n => grupos.has(n)).map(n => {
+      const vars = grupos.get(n);
+      const conPrecio = vars.filter(v => !v.agotada && v.precio != null);
+      return {
+        id: n,
+        lleva: LLEVA[n],
+        variantes: vars,
+        conVariantes: vars.some(v => v.variante),
+        agotado: vars.every(v => v.agotada),
+        precio: conPrecio.length ? Math.min(...conPrecio.map(v => v.precio)) : null,
+        hasta: conPrecio.length ? Math.max(...conPrecio.map(v => v.hasta ?? v.precio)) : null,
+      };
+    });
+  }
+
+  /* --- iconos --------------------------------------------------------
+     Dibujados, con un solo grosor de trazo. No glifos Unicode ni emoji:
+     un "✓" cambia de forma y de grosor segun la fuente y el sistema. */
+  const TRAZOS = {
+    si:       '<path d="M4 10.5l3.6 3.6L16 5.8"/>',
+    no:       '<path d="M5.5 10h9"/>',
+    flecha:   '<path d="M4 10h11M11 5.5L15.5 10 11 14.5"/>',
+    chevron:  '<path d="M5.5 8l4.5 4.5L14.5 8"/>',
+    externo:  '<path d="M8 4.5H4.5v11h11V12M11 4.5h4.5V9M15.5 4.5L9 11"/>',
+    estrella: '<path d="M10 3.3l2 4.2 4.6.6-3.4 3.1.9 4.5L10 13.5l-4.1 2.2.9-4.5L3.4 8.1 8 7.5z" fill="currentColor" stroke="none"/>',
+    envio:    '<path d="M2.5 5.5h9v8h-9zM11.5 8h3.2l2.8 2.8v2.7h-6"/><circle cx="6" cy="14.5" r="1.5"/><circle cx="14" cy="14.5" r="1.5"/>',
+    garantia: '<path d="M10 2.8l6 2.4v4.2c0 3.6-2.5 6.3-6 7.8-3.5-1.5-6-4.2-6-7.8V5.2z"/><path d="M7.2 10l2 2 3.8-4"/>',
+    mano:     '<path d="M12.8 3.5a3.6 3.6 0 00-4.4 4.4L3.5 12.8a1.8 1.8 0 002.6 2.6L11 10.6a3.6 3.6 0 004.4-4.4l-2.1 2.1-2-.6-.6-2z"/>',
+    codigo:   '<path d="M7 5.5L2.5 10 7 14.5M13 5.5l4.5 4.5-4.5 4.5M11.5 4l-3 12"/>',
+    switch:   '<rect x="4" y="7" width="12" height="9" rx="1.5"/><path d="M8.5 7V4h3v3M10 4v3"/>',
+    teclado:  '<rect x="2.5" y="5" width="15" height="10" rx="2"/><path d="M5.5 8h1M9.5 8h1M13.5 8h1M5.5 11.5h9"/>',
+  };
+  const icono = (n, t = 18) =>
+    `<svg width="${t}" height="${t}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"
+      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TRAZOS[n] || ""}</svg>`;
+
+  /* --- rango de precio ---------------------------------------------- */
+  function precioRango(desde, hasta) {
+    if (desde == null) return null;
+    if (hasta != null && hasta > desde + 0.004) return `${precio(desde)} – ${precio(hasta)}`;
+    return precio(desde);
+  }
+
+
+  /* --- la tabla comparativa ----------------------------------------
+     La usan la portada (sin modelo "actual") y cada ficha (con el suyo
+     marcado). Las filas son las que deciden la compra; las demas estan en
+     el comparador. Lo que COINCIDE con el modelo actual se apaga, para que
+     salte a la vista lo que cambia. */
+  const FILAS_COMPARA = ["Teclas", "Switches", "Conexión", "Pantallas", "Iluminación", "Encoders"];
+  function precioMinimo(q) {
+    const ns = niveles(q).filter(n => !n.agotado && n.precio != null);
+    return ns.length ? Math.min(...ns.map(n => n.precio)) : (q.priceFrom ?? null);
+  }
+  function comparativa(tabla, actual) {
+    const todos = productos();
+    const celda = (q, cont, mio) =>
+      `<td class="${q === actual ? "actual" : ""}${actual && q !== actual && cont === mio ? " igual" : ""}">${cont}</td>`;
+    const fila = (etq, valor) => {
+      const mio = actual ? valor(actual) : null;
+      return `<tr><th scope="row">${escapar(etq)}</th>${todos.map(q => celda(q, valor(q), mio)).join("")}</tr>`;
+    };
+    const etiquetaDe = es => {
+      for (const q of todos) { const f = (q.specs || []).find(x => x[0].es === es); if (f) return L(f[0]); }
+      return es;
+    };
+    tabla.innerHTML = `
+      <thead><tr><th scope="col"><span class="oculto">${t("m.sCompar")}</span></th>
+        ${todos.map(q => `<th scope="col" class="${q === actual ? "actual" : ""}">${q === actual
+          ? `<span class="nombre">${rotulo(q)}</span>`
+          : `<a class="nombre" href="modelo.html?id=${q.id}">${rotulo(q)}</a>`}</th>`).join("")}</tr></thead>
+      <tbody>
+        ${fila(t("d.priceCol"), q => { const v = precioMinimo(q); return v == null ? "—" : `<span class="precio"><small>${t("price.from")}</small> ${precio(v)}</span>`; })}
+        ${FILAS_COMPARA.map(es => fila(etiquetaDe(es), q => escapar(spec(q, es) || "—"))).join("")}
+        ${fila(t("d.stockCol"), q => { const e = stock(q); return `<span class="stock stock--${e.clase}">${escapar(e.txt)}</span>`; })}
+      </tbody>`;
+    /* En la ficha, el modelo que miras puede quedar fuera por la derecha
+       en el movil: se desliza el marco hasta su columna. */
+    const marco = tabla.parentElement, col = tabla.querySelector("thead th.actual"), fija = tabla.querySelector("thead th");
+    if (actual && marco && col && marco.scrollWidth > marco.clientWidth)
+      marco.scrollLeft = Math.max(0, col.offsetLeft - fija.offsetWidth);
+  }
+
+  /* --- confianza: lo que se pregunta antes de pagar ------------------ */
+  function confianza(ul) {
+    ul.innerHTML = [
+      ["envio", "trust.shipping", "trust.shippingText"],
+      ["garantia", "trust.warranty", "trust.warrantyText"],
+      ["mano", "trust.custom", "trust.customText"],
+      ["codigo", "trust.firmware", "trust.firmwareText"],
+      ["externo", "m.pagoEtsy", "m.pagoEtsyT"],
+    ].map(([ic, a, b]) => `<li>${icono(ic, 22)}<b>${t(a)}</b><span>${t(b)}</span></li>`).join("");
+  }
+
   /* --- idioma en la pagina --------------------------------------- */
 
   function pintarIdioma(alCambiar) {
@@ -282,7 +424,8 @@ const CK = (() => {
   const escapar = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   return { get lang() { return lang; }, t, L, precio, notaPrecios, spec, etiquetasDeFicha, encuadrarTodo,
-           precioDe, precioHTML, enlaceCompra,
+           precioDe, precioHTML, enlaceCompra, niveles, NIVELES, icono, precioRango,
+           comparativa, confianza, precioMinimo,
            rasgos, FILTROS, stock, rotulo, foto, pintarIdioma, montarSelectorIdioma,
            observarEntradas, productos,
            escapar, tiendaURL: CK_SHOP_URL };

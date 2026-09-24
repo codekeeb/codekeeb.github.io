@@ -17,37 +17,39 @@ carencia.
 
 | Archivo | Que es |
 |---|---|
-| `index.html` | **Portada de la tienda.** Heroe con foto, las cuatro ventajas funcionando y el carril de los cinco |
-| `catalogo.html` | Rejilla de los cinco con precio, stock y filtros |
-| `comparar.html` | Los cinco en columnas, fila a fila |
-| `modelo.html` | Plantilla **generica** de producto, se abre como `modelo.html?id=<id>` |
-| `js/data.js` | **Catalogo: la unica fuente de verdad.** Productos, precios, acabados |
+| `index.html` | **La portada es la tienda**: heroe, rejilla de los cinco con filtros, las demos reales en un escenario con pestanas, comparacion rapida y confianza |
+| `modelo.html` | **Ficha de cada modelo**, `modelo.html?id=<id>`: galeria, configurador, que incluye cada opcion, ficha, componentes, comparacion, envio |
+| `comparar.html` | Los cinco en columnas, fila a fila, con "solo lo que cambia" |
+| `catalogo.html` | Solo redirige a `/#tienda`, para no romper enlaces viejos |
+| `js/data.js` | **Catalogo: la unica fuente de verdad.** Productos, precios, opciones de montaje (`buildOptions`) |
 | `js/i18n.js` | Los textos, en es / en / fr |
-| `js/tienda.js` | Motor comun de portada, catalogo y comparador: idioma, precios, encuadre de fotos |
-| `js/product.js` | Logica de `modelo.html` |
-| `css/portada.css` · `css/catalogo.css` · `css/comparar.css` | Una hoja por pagina, independientes |
-| `css/style.css` | Sistema de diseno de la web anterior. **Hoy solo lo usa `modelo.html`** |
-| `js/main.js` | **Muerto**: movia la landing de un producto que ya no existe. Ver abajo |
-| `assets/img/{es,en,fr}/` | Fotos con texto, una por idioma, **mismo nombre** |
-| `assets/img/shared/` | Fotos sin texto |
+| `js/tienda.js` | Motor comun: idioma, precios, niveles de montaje, tabla comparativa, iconos, encuadre de fotos |
+| `js/portada.js` · `js/modelo.js` · `js/comparar.js` | La logica de cada pagina |
+| `js/sofle.js` · `js/sofle-led.js` | Geometria real del Sofle y sus 30 LED por mitad, copiadas del Keymap Studio |
+| `js/rgb.js` | Los efectos de luz, portados de `fxFrame` del Studio (30 fps, como el firmware) |
+| `js/oled.js` · `js/oled-datos.js` | Las dos OLED con los mapas de bits del firmware |
+| `css/tienda.css` | **Una sola hoja** para las tres paginas |
+| `assets/img/{es,en,fr}/` | Fotos con texto de la landing antigua. **Ya no las usa nadie**, pero son fotos reales: no se tiran sin que Ernesto lo diga |
 | `keymap-studio/` | Aplicacion aparte, con su propio i18n. No comparte nada |
 
-Anadir un producto a `js/data.js` le da su pagina sin tocar `modelo.html`, y
-aparece solo en la portada, el catalogo y el comparador.
+Anadir un producto a `js/data.js` le da su ficha sin tocar `modelo.html`, y
+aparece solo en la tienda y en el comparador.
 
-### Restos de la landing anterior (15 sep 2026)
+### El configurador y de donde sale cada dato
 
-La portada dejo de ser una landing de un solo producto. Al sustituirla
-quedaron tres cosas colgando, y **ninguna se ha borrado**: hay que decidirlas.
+Las opciones de montaje salen de `buildOptions` y se ordenan en cuatro
+niveles por su nombre (`tienda.js`, `niveles()`): Solo PCB, PCB soldada,
+Barebones, Completo. Lo que incluye cada nivel es la definicion del nivel
+(la tabla `LLEVA`), no un dato por producto.
 
-- `js/main.js` ya no lo carga nadie. Es el unico que leia `CK_FLAVORS`, o
-  sea que **los sabores de keycaps no se ensenan en ninguna parte**.
-- 120 de las 188 claves de `js/i18n.js` no las usa ningun HTML: son las de
-  las secciones viejas (`f1.*` a `f4.*`, `specs.*`, `flavors.*`) y las de
-  los prototipos (`d.proto*`, `d.backToAll`).
-- `assets/img/{es,en,fr}/` son cinco fotos rotuladas por idioma que solo
-  usaba la landing. Son **fotos reales de producto**: no se tiran sin que
-  Ernesto lo diga.
+Lo que **no** esta en los datos y por eso no se inventa:
+- **Switches a elegir.** Ningun anuncio los trae con precio. La ficha dice
+  cual monta (o con cual es compatible). Si se anade
+  `switches: [{name:{es,en,fr}, price}]` a un producto, sale como selector.
+- **Precio de los completos del Sofle Retro** (Kea Grey, Kea Play,
+  KeaColor): sale "precio en Etsy".
+- **Que decide el rango del Totem** (152,75 – 187,85): sale el rango.
+- `CK_FLAVORS` (los acabados) no se ensena en ninguna parte.
 
 ## Las tres reglas que se rompen solas
 

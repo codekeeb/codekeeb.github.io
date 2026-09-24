@@ -1,144 +1,189 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- El titulo y la descripcion los rellena JS con el modelo cargado.
-       Esta pagina sirve a los 5 modelos via ?id=<id de CK_PRODUCTS>. -->
-  <title>Codekeeb</title>
-  <meta name="description" content="">
-  <meta property="og:type" content="product">
-  <meta property="og:site_name" content="Codekeeb">
-  <meta property="og:title" content="">
-  <meta property="og:description" content="">
-  <meta property="og:image" content="">
-  <meta name="twitter:image" content="">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="/assets/favicon.ico" sizes="any">
-  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#fafaf8">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=5">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Codekeeb — Teclados split ergonómicos hechos a mano</title>
+<meta name="description" content="Teclado split ergonómico montado y probado a mano. Elige cuánto viene montado, mira qué incluye cada opción y compáralo con los otros modelos.">
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="Codekeeb">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#f4f4f1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tienda.css">
 </head>
-<body data-lang="es">
+<body class="con-barra">
 
-  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
-
-  <header class="nav" id="nav">
-    <a class="nav__logo" href="./" aria-label="Codekeeb">
+<header class="top">
+  <div class="top__in env">
+    <a class="marca" href="/" aria-label="Codekeeb">
       <img src="assets/brand/logo-horizontal-dark.png"
            srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
-           alt="Codekeeb" width="160" height="56">
+           width="640" height="224" alt="CODE/KEEB">
     </a>
-    <nav class="nav__links" id="navLinks">
-      <a href="./#modelos" data-i18n="nav.models">Modelos</a>
-      <a href="./#caracteristicas" data-i18n="nav.features">Características</a>
-      <a href="keymap-studio/">Keymap Studio</a>
+    <nav class="top__nav" aria-label="Principal">
+      <a href="/#tienda" aria-current="page" data-t="m.tienda">Tienda</a>
+      <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
+      <a class="top__studio" href="keymap-studio/">Keymap Studio</a>
     </nav>
-    <div class="nav__right">
-      <div class="lang" role="group" aria-label="Idioma">
-        <button class="lang__btn is-active" data-setlang="es">ES</button>
-        <button class="lang__btn" data-setlang="en">EN</button>
-        <button class="lang__btn" data-setlang="fr">FR</button>
+    <span class="top__sp"></span>
+    <div class="idiomas">
+      <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false" aria-label="Idioma">
+        <span data-lang-actual>ES</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="idiomas__m" data-lang-menu role="menu" hidden>
+        <button data-lang-btn="es">Español</button>
+        <button data-lang-btn="en">English</button>
+        <button data-lang-btn="fr">Français</button>
       </div>
-      <a class="btn btn--primary nav__cta" href="#" id="navBuy" target="_blank" rel="noopener" data-i18n="hero.buy">Comprar</a>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main id="top">
-    <!-- Aviso si el ?id= no existe: mejor esto que una pagina en blanco. -->
-    <section class="pdp-missing" id="pdpMissing" hidden>
-      <h1 data-i18n="pdp.notFound">Modelo no encontrado</h1>
-      <a class="btn btn--primary" href="./#modelos" data-i18n="pdp.backToModels">Ver todos los modelos</a>
+<main id="pagina">
+
+  <div class="env">
+    <nav class="migas" aria-label="Estás en">
+      <a href="/#tienda" data-t="m.tienda">Tienda</a>
+      <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
+      <span id="migaNombre"></span>
+    </nav>
+
+    <!-- ========= ARRIBA: la foto y lo que compras =========
+         La foto se queda fija mientras configuras (en escritorio): asi
+         nunca pierdes de vista QUE estas configurando. -->
+    <div class="compra">
+      <div class="galeria">
+        <div class="galeria__foto" id="foto"></div>
+        <div class="miniaturas" id="miniaturas"></div>
+      </div>
+
+      <div>
+        <div class="cabeza">
+          <h1 class="nombre" id="nombre"></h1>
+          <p id="desc"></p>
+          <div class="cabeza__precio" id="cabezaPrecio"></div>
+          <div id="estado"></div>
+        </div>
+
+        <!-- El configurador es un formulario de verdad: radios nativos,
+             se usa con el teclado y el lector de pantalla lo entiende. -->
+        <form class="config" id="config" onsubmit="return false">
+          <fieldset class="paso">
+            <legend><span data-t="m.nivel"></span><small data-t="m.nivelAyuda"></small></legend>
+            <div class="opciones" id="niveles"></div>
+          </fieldset>
+
+          <fieldset class="paso" id="pasoKeycaps" hidden>
+            <legend><span data-t="m.keycaps"></span></legend>
+            <div class="opciones" id="keycaps"></div>
+          </fieldset>
+
+          <div class="paso">
+            <div class="paso__t"><span data-t="m.switches"></span></div>
+            <div id="switches"></div>
+          </div>
+
+          <div class="resumen" id="resumen">
+            <b data-t="m.resumen"></b>
+            <dl id="resumenLista"></dl>
+            <div class="resumen__total">
+              <span data-t="m.total"></span>
+              <span class="precio" id="total"></span>
+              <small id="totalNota" hidden></small>
+            </div>
+            <a class="btn btn--ancho" id="comprar" target="_blank" rel="noopener">
+              <span data-t="m.comprar"></span><span id="iconoExterno"></span>
+            </a>
+            <p class="resumen__nota"><span data-t="m.notaEtsy"></span> <span id="fecha"></span></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= ABAJO: lo que quiere ver quien compra ========= -->
+  <nav class="subnav" aria-label="Secciones">
+    <ul class="env">
+      <li><a href="#incluye" data-t="m.sIncluye"></a></li>
+      <li><a href="#caracteristicas" data-t="m.sCarac"></a></li>
+      <li><a href="#ficha" data-t="m.sFicha"></a></li>
+      <li><a href="#componentes" data-t="m.sComp"></a></li>
+      <li><a href="#comparar" data-t="m.sCompar"></a></li>
+      <li><a href="#envio" data-t="m.sEnvio"></a></li>
+    </ul>
+  </nav>
+
+  <div class="env">
+    <section class="bloque" id="incluye" aria-labelledby="h-incluye">
+      <div class="bloque__cab">
+        <h2 id="h-incluye" data-t="m.sIncluyeT"></h2>
+        <p data-t="m.sIncluyeP"></p>
+      </div>
+      <div class="tabla-env"><table class="tabla matriz" id="matriz"></table></div>
     </section>
 
-    <article class="pdp" id="pdp" hidden>
-      <nav class="pdp__crumbs mono">
-        <a href="./" data-i18n="pdp.home">Inicio</a> ·
-        <a href="./#modelos" data-i18n="nav.models">Modelos</a> ·
-        <span id="pdpCrumb"></span>
-      </nav>
+    <section class="bloque" id="caracteristicas" aria-labelledby="h-carac">
+      <div class="bloque__cab"><h2 id="h-carac" data-t="m.sCaracT"></h2></div>
+      <ul class="rasgos" id="rasgos"></ul>
+    </section>
 
-      <div class="pdp__top">
-        <!-- galeria -->
-        <div class="pdp__media">
-          <div class="pdp__stage">
-            <img id="pdpImg" src="" alt="" fetchpriority="high">
-            <span class="pdp__off" id="pdpOff" hidden></span>
-          </div>
-          <div class="pdp__thumbs" id="pdpThumbs"></div>
-        </div>
+    <section class="bloque" id="ficha" aria-labelledby="h-ficha">
+      <div class="bloque__cab"><h2 id="h-ficha" data-t="m.sFicha"></h2></div>
+      <dl class="ficha" id="fichaLista"></dl>
+    </section>
 
-        <!-- compra -->
-        <div class="pdp__buy">
-          <p class="kicker" id="pdpKicker"></p>
-          <h1 class="pdp__title" id="pdpTitle"></h1>
-          <p class="pdp__rating" id="pdpRating" hidden></p>
-          <p class="pdp__desc" id="pdpDesc"></p>
+    <section class="bloque" id="componentes" aria-labelledby="h-comp">
+      <div class="bloque__cab"><h2 id="h-comp" data-t="m.sComp"></h2></div>
+      <dl class="ficha" id="compLista"></dl>
+    </section>
 
-          <div class="pdp__price" id="pdpPrice"></div>
-
-          <div class="pdp__opts">
-            <h2 class="pdp__optsTitle mono" data-i18n="pdp.options">Opciones de compra</h2>
-            <ul id="pdpOpts"></ul>
-          </div>
-
-          <p class="pdp__stock" id="pdpStock" hidden></p>
-
-          <a class="btn btn--primary pdp__cta" id="pdpCta" href="#" target="_blank" rel="noopener"
-             data-i18n="models.view">Ver en Etsy</a>
-          <p class="pdp__note mono" id="pdpNote"></p>
-
-          <ul class="pdp__assur">
-            <li data-i18n="trust.shipping">Envío desde España</li>
-            <li data-i18n="trust.warranty">Garantía y soporte</li>
-            <li data-i18n="trust.custom">Personalizable</li>
-          </ul>
-        </div>
+    <section class="bloque" id="comparar" aria-labelledby="h-compar">
+      <div class="bloque__cab">
+        <h2 id="h-compar" data-t="m.sComparT"></h2>
+        <p data-t="m.sComparP"></p>
       </div>
+      <div class="tabla-env"><table class="tabla" id="comparativa"></table></div>
+      <p class="enlace-pie"><a class="enlace" href="comparar.html" data-t="m.verComparador"></a></p>
+    </section>
 
-      <!-- lo que lo hace distinto -->
-      <section class="pdp__block" id="pdpHighlightsBlock">
-        <h2 class="section-title" data-i18n="pdp.highlights">Lo que lo hace distinto</h2>
-        <ul class="pdp__highlights" id="pdpHighlights"></ul>
-      </section>
+    <section class="bloque" id="envio" aria-labelledby="h-envio">
+      <div class="bloque__cab"><h2 id="h-envio" data-t="m.sEnvio"></h2></div>
+      <ul class="confianza" id="confianza"></ul>
+    </section>
+  </div>
+</main>
 
-      <!-- ficha tecnica -->
-      <section class="pdp__block" id="pdpSpecsBlock">
-        <h2 class="section-title" data-i18n="specs.label">Ficha técnica</h2>
-        <dl class="pdp__specs" id="pdpSpecs"></dl>
-      </section>
+<footer class="pie">
+  <div class="pie__in env">
+    <p id="notaPrecios"></p>
+    <nav aria-label="Pie">
+      <a href="/#tienda" data-t="m.tienda">Tienda</a>
+      <a class="top__comparar" href="comparar.html" data-t="d.compare">Comparar</a>
+      <a href="keymap-studio/">Keymap Studio</a>
+    </nav>
+  </div>
+</footer>
 
-      <!-- otros modelos -->
-      <section class="pdp__block">
-        <h2 class="section-title" data-i18n="pdp.others">Otros modelos</h2>
-        <div class="models__grid" id="pdpOthers"></div>
-      </section>
-    </article>
-  </main>
+<!-- Barra de compra en el movil: aparece cuando el resumen ya ha
+     quedado atras, para que comprar no obligue a volver a subir. -->
+<div class="barra" id="barra" aria-hidden="true">
+  <div class="barra__txt"><span id="barraNombre"></span><span class="precio" id="barraTotal"></span></div>
+  <a class="btn" id="barraComprar" target="_blank" rel="noopener" tabindex="-1" data-t="m.comprar"></a>
+</div>
 
-  <footer class="footer">
-    <div class="footer__top">
-      <div class="footer__brand">
-        <img src="assets/brand/logo-stacked-dark.png"
-             srcset="assets/brand/logo-stacked-dark.png 1x, assets/brand/logo-stacked-dark@2x.png 2x"
-             alt="Codekeeb" class="footer__logo" width="200" height="106">
-      </div>
-      <nav class="footer__col">
-        <h4 class="mono" data-i18n="footer.explore">Explorar</h4>
-        <a href="./#modelos" data-i18n="nav.models">Modelos</a>
-        <a href="keymap-studio/">Keymap Studio</a>
-      </nav>
-    </div>
-  </footer>
-
-  <script src="js/i18n.js?v=5"></script>
-  <script src="js/data.js?v=5"></script>
-  <script src="js/product.js?v=5"></script>
+<script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/tienda.js"></script>
+<script src="js/modelo.js"></script>
 </body>
 </html>

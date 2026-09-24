@@ -1,0 +1,639 @@
+/* ============================================================
+   CODEKEEB — la tienda
+   ------------------------------------------------------------
+   Una sola hoja para las tres paginas: la portada (que ES la tienda),
+   la ficha de cada modelo y el comparador. Antes habia cuatro hojas que
+   repetian la cabecera, los botones y los tokens cada una a su manera, y
+   por eso cada arreglo habia que hacerlo tres veces.
+
+   Lo que manda, en este orden:
+   1. FUNCIONAL. Quien entra en un modelo tiene que saber que esta
+      comprando: que incluye cada opcion, cuanto cuesta y en que se
+      diferencia de los otros cuatro. La forma sirve a eso.
+   2. Claro, de dia. Se mira desde el movil con luz ambiente, asi que el
+      suelo es papel. El negro queda solo para el escenario de las demos,
+      que es donde la luz del teclado tiene que verse.
+   3. El producto real. Fotos reales, la forma real del Sofle, el RGB y
+      las OLED con los datos del firmware. Nada inventado.
+
+   Movimiento: dos duraciones y una curva (lo vigila
+   tools/check-movimiento.py). Y todo parte de un estado VISIBLE: nada
+   espera escondido a que un observador lo descubra.
+   ============================================================ */
+
+:root{
+  /* --- color. Contrastes medidos sobre --papel, no elegidos a ojo. --- */
+  --papel:#f4f4f1;
+  --carta:#ffffff;
+  --tinta:#121417;
+  --gris:#5c6269;          /* 5,5:1 */
+  --tenue:#686e75;         /* 4,6:1: el minimo, solo para lo terciario */
+  --filete:rgba(18,20,23,.1);
+  --filete-2:rgba(18,20,23,.18);
+  --velo:rgba(18,20,23,.045);
+  --ok:#1d7a4f;            /* hay stock, esta incluido */
+  --aviso:#9a5b12;         /* ultima unidad, por encargo */
+  --noche:#0d0f12;         /* suelo del escenario de demos, y nada mas */
+  /* El degradado es la marca: la barra del logotipo. Se gasta en tres
+     sitios y ninguno mas: el logotipo, la palabra RGB del nombre y el
+     indicador de la opcion elegida en el configurador. */
+  --rgb:linear-gradient(90deg,#ff992a,#ff39c0 40%,#2a3dff 75%,#1be8ff);
+
+  /* --- tipo --- */
+  --sans:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --display:"Archivo Black","Archivo",Arial,sans-serif;
+  --mono:"Martian Mono",ui-monospace,"SFMono-Regular",monospace;
+  /* Una escala y nada fuera de ella. 11 px es el suelo del texto
+     funcional: por debajo la Martian Mono deja de leerse. */
+  --t-xs:.72rem;   /* 11,5 */
+  --t-s:.86rem;    /* 13,8 */
+  --t-m:1rem;      /* 16 */
+  --t-l:1.15rem;   /* 18,4 */
+  --t-xl:clamp(1.3rem,2.2vw,1.6rem);
+  --t-2xl:clamp(1.8rem,3.4vw,2.6rem);
+  --t-3xl:clamp(2.3rem,5.4vw,4.1rem);
+
+  /* --- movimiento --- */
+  --t-tap:180ms;
+  --t-enter:420ms;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --paso:60ms;
+  /* Bucles de demostracion, cada uno con su motivo en check-movimiento. */
+  --loop-capa:12s;
+  --loop-tecla:3.2s;
+
+  /* --- espacio --- */
+  --col:1240px;
+  --canal:clamp(18px,4.6vw,56px);
+  --cabecera:60px;
+  --radio:14px;
+  --radio-s:9px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:calc(var(--cabecera) + 12px);
+  caret-color:var(--tinta);scrollbar-color:rgba(18,20,23,.3) transparent;scrollbar-width:thin}
+body{font-family:var(--sans);font-size:var(--t-m);line-height:1.5;background:var(--papel);color:var(--tinta);
+  -webkit-font-smoothing:antialiased}
+/* `height:auto`: los atributos width/height del HTML se vuelven CSS y le
+   ganan a `aspect-ratio`. Sin esto, las fotos salian verticales. */
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+table{border-collapse:collapse;width:100%}
+h1,h2,h3{font-weight:400;text-wrap:balance}
+p{text-wrap:pretty}
+[hidden]{display:none!important}
+
+/* Las superficies que no se dibujan tambien visten la pagina. */
+::selection{background:var(--tinta);color:var(--papel)}
+.oscuro ::selection{background:#fff;color:var(--noche)}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-thumb{background:rgba(18,20,23,.24);border:3px solid var(--papel);border-radius:99px}
+/* El anillo lo pone el suelo, no el elemento: con `currentColor` un
+   boton oscuro dibujaba papel claro sobre papel claro. */
+:focus-visible{outline:2px solid var(--tinta);outline-offset:3px;border-radius:6px}
+.oscuro :focus-visible,.heroe :focus-visible{outline-color:#fff}
+
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.env{width:100%;max-width:var(--col);margin-inline:auto;padding-inline:var(--canal)}
+.oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- cabecera ---------- */
+.top{position:sticky;top:0;z-index:60;background:rgba(244,244,241,.86);
+  backdrop-filter:saturate(170%) blur(16px);border-bottom:1px solid var(--filete)}
+.top__in{display:flex;align-items:center;gap:clamp(10px,2vw,26px);height:var(--cabecera)}
+.marca{display:flex;align-items:center;min-height:44px;flex:0 0 auto}
+.marca img{height:24px;width:auto}
+.top__nav{display:flex;gap:clamp(4px,1.4vw,20px)}
+.top__nav a{display:inline-flex;align-items:center;min-height:44px;padding-inline:4px;font-size:var(--t-s);
+  color:var(--gris);transition:color var(--t-tap) var(--ease)}
+.top__nav a[aria-current="page"]{color:var(--tinta)}
+.top__sp{flex:1}
+@media (hover:hover) and (pointer:fine){ .top__nav a:hover{color:var(--tinta)} }
+
+/* Idioma: un boton con el actual y un desplegable con los tres. */
+.idiomas{position:relative}
+.idiomas__d{display:inline-flex;align-items:center;gap:.45em;min-height:44px;padding:0 .7em;border-radius:99px;
+  font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.1em;color:var(--gris);
+  transition:color var(--t-tap) var(--ease),background var(--t-tap) var(--ease)}
+.idiomas__d svg{transition:transform var(--t-tap) var(--ease)}
+.idiomas__d[aria-expanded="true"]{color:var(--tinta)}
+.idiomas__d[aria-expanded="true"] svg{transform:rotate(180deg)}
+.idiomas__m{position:absolute;top:calc(100% + 6px);right:0;z-index:70;min-width:156px;display:grid;padding:5px;
+  border-radius:12px;background:var(--carta);box-shadow:0 0 0 1px var(--filete),0 18px 40px -22px rgba(18,20,23,.5);
+  animation:despliega var(--t-tap) var(--ease)}
+@keyframes despliega{from{opacity:0;transform:translateY(-4px) scale(.98)}}
+.idiomas__m button{display:flex;align-items:center;min-height:42px;padding:0 .8em;border-radius:8px;
+  font-size:var(--t-s);text-align:left;color:var(--gris)}
+.idiomas__m button[aria-checked="true"]{color:var(--tinta);font-weight:600}
+.idiomas__m button[aria-checked="true"]::after{content:"";width:6px;height:6px;border-radius:50%;
+  background:var(--ok);margin-left:auto}
+@media (hover:hover) and (pointer:fine){
+  .idiomas__d:hover{color:var(--tinta);background:var(--velo)}
+  .idiomas__m button:hover{background:var(--velo);color:var(--tinta)}
+}
+
+/* ---------- botones ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.55em;min-height:46px;padding:0 1.35em;
+  border-radius:99px;font-size:var(--t-s);font-weight:600;letter-spacing:-.005em;white-space:nowrap;
+  background:var(--tinta);color:var(--papel);
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease),
+             transform var(--t-tap) var(--ease)}
+/* Se hunde al pulsar: sin esto el boton no parece que te haya oido. */
+.btn:active{transform:scale(.97)}
+.btn--linea{background:transparent;color:var(--tinta);box-shadow:inset 0 0 0 1px var(--filete-2)}
+.btn--claro{background:#fff;color:var(--tinta)}
+.btn--cristal{background:rgba(255,255,255,.14);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.34)}
+.btn--ancho{width:100%}
+.btn svg{flex:0 0 auto}
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{background:#000}
+  .btn--linea:hover{background:var(--velo);box-shadow:inset 0 0 0 1px var(--tinta)}
+  .btn--claro:hover{background:#e9eaec}
+  .btn--cristal:hover{background:rgba(255,255,255,.26)}
+}
+.enlace{display:inline-flex;align-items:center;gap:.35em;min-height:44px;font-size:var(--t-s);font-weight:600;
+  color:var(--tinta);text-decoration:underline;text-decoration-color:var(--filete-2);text-underline-offset:.3em;
+  transition:text-decoration-color var(--t-tap) var(--ease)}
+@media (hover:hover) and (pointer:fine){ .enlace:hover{text-decoration-color:var(--tinta)} }
+
+/* ---------- nombre en tres niveles, como el logotipo ----------
+   Modelo en negro, rasgo en gris y el acento en degradado SOLO cuando
+   dice RGB. Es compromiso de marca (PRODUCT.md), por eso es la unica
+   letra en degradado de toda la tienda. */
+.nombre b{font-weight:inherit}
+.nombre i{font-style:normal;color:var(--gris)}
+.nombre u{text-decoration:none;background:var(--rgb);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---------- estado de stock ---------- */
+.stock{display:inline-flex;align-items:center;gap:.5em;font-size:var(--t-xs);font-family:var(--mono);
+  letter-spacing:.04em;color:var(--gris)}
+.stock::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.stock--hay{color:var(--ok)}
+.stock--ultima,.stock--encargo{color:var(--aviso)}
+.stock--agotado,.stock--pronto{color:var(--tenue)}
+
+/* ---------- precio ---------- */
+.precio{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.precio small{font-family:var(--sans);font-size:.72em;letter-spacing:0;color:var(--gris);font-weight:400}
+.precio s{font-size:.72em;color:var(--tenue);margin-left:.4em}
+.dto{display:inline-block;font-family:var(--mono);font-size:var(--t-xs);padding:.2em .5em;border-radius:5px;
+  background:rgba(29,122,79,.1);color:var(--ok);vertical-align:.12em}
+
+/* ---------- secciones ---------- */
+.seccion{padding-block:clamp(56px,9vw,112px)}
+.seccion--carta{background:var(--carta)}
+.seccion__cab{display:grid;gap:12px;margin-bottom:clamp(26px,4vw,44px);max-width:62ch}
+.seccion__cab--fila{max-width:none;display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:18px}
+.titulo{font-family:var(--display);font-size:var(--t-2xl);line-height:1.04;letter-spacing:-.035em}
+.titulo em{font-style:normal;color:var(--gris)}
+.entradilla{font-size:var(--t-l);color:var(--gris);line-height:1.5;max-width:58ch}
+
+/* ============================================================
+   PORTADA
+   ============================================================ */
+
+/* Heroe a sangre, pero no de pantalla completa: es una tienda, y lo que
+   se vende tiene que asomar en la primera pantalla. */
+.heroe{position:relative;isolation:isolate;min-height:min(80svh,780px);display:grid;align-content:end;
+  padding-block:clamp(90px,14svh,140px) clamp(34px,6svh,64px);background:var(--noche);color:#fff}
+.heroe__foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+/* El velo sube desde abajo, donde esta el texto, y se acaba antes de la
+   mitad: oscurece la mesa, no el producto. */
+.heroe::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(to top,rgba(8,9,11,.9) 0%,rgba(8,9,11,.72) 24%,rgba(8,9,11,.34) 46%,rgba(8,9,11,0) 70%)}
+.heroe__texto{display:grid;justify-items:start;gap:clamp(14px,2vh,20px)}
+.heroe h1{font-family:var(--display);font-size:var(--t-3xl);line-height:.98;letter-spacing:-.04em;max-width:11em}
+.heroe h1 em{font-style:normal;color:rgba(255,255,255,.66)}
+.heroe p{font-size:clamp(1rem,1.5vw,1.2rem);color:rgba(255,255,255,.88);max-width:44ch}
+.heroe .acciones{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+
+/* ---------- la tienda: filtros y rejilla ---------- */
+.filtros{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filtros button{min-height:40px;padding:0 1em;border-radius:99px;font-size:var(--t-s);color:var(--gris);
+  box-shadow:inset 0 0 0 1px var(--filete-2);
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease)}
+.filtros button[aria-pressed="true"]{background:var(--tinta);color:var(--papel);box-shadow:none}
+.filtros .cuenta{font-family:var(--mono);font-size:var(--t-xs);color:var(--tenue);margin-left:6px}
+@media (hover:hover) and (pointer:fine){
+  .filtros button:not([aria-pressed="true"]):hover{color:var(--tinta);box-shadow:inset 0 0 0 1px var(--tinta)}
+}
+
+/* Rejilla de tres, y no de cinco: con cinco en fila cada foto mide
+   200 px y el teclado es un borron. Dos filas se leen de un vistazo. */
+.rejilla{display:grid;gap:clamp(18px,2.4vw,30px);grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr))}
+/* La tarjeta es un enlace entero: la foto, el nombre y el precio llevan
+   al mismo sitio, y el blanco no se come el clic. */
+.producto{position:relative;display:grid;grid-template-rows:auto 1fr;background:var(--carta);border-radius:var(--radio);
+  overflow:hidden;box-shadow:0 0 0 1px var(--filete);
+  transition:box-shadow var(--t-tap) var(--ease),transform var(--t-tap) var(--ease)}
+.producto__foto{position:relative;aspect-ratio:3/2;background:#e9e9e5;overflow:hidden}
+.producto__foto img{width:100%;height:100%;object-fit:cover;transition:transform var(--t-enter) var(--ease)}
+/* En columna y con el pie empujado al fondo: el precio y "Configurar"
+   caen a la misma altura en toda la fila aunque un nombre ocupe dos
+   lineas y otro una. Sin esto, cada precio quedaba a su altura. */
+.producto__cuerpo{display:flex;flex-direction:column;gap:10px;padding:18px 20px 20px}
+.producto h3{font-family:var(--display);font-size:var(--t-xl);line-height:1.1;letter-spacing:-.025em}
+.producto h3 a::after{content:"";position:absolute;inset:0;z-index:1}
+.producto__pitch{font-size:var(--t-s);color:var(--gris);line-height:1.5}
+/* Cuatro datos que se comparan de un vistazo, en mono porque son medidas. */
+.datos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.datos li{font-family:var(--mono);font-size:var(--t-xs);padding:.35em .6em;border-radius:6px;background:var(--velo);
+  color:var(--tinta)}
+.producto__pie{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-top:auto;
+  padding-top:14px;border-top:1px solid var(--filete)}
+.producto__pie .precio{font-size:var(--t-l)}
+.producto__cta{display:inline-flex;align-items:center;gap:.4em;font-size:var(--t-s);font-weight:600}
+.producto__cta svg{transition:transform var(--t-tap) var(--ease)}
+.producto__insignia{position:absolute;top:12px;left:12px;z-index:2}
+@media (hover:hover) and (pointer:fine){
+  .producto:hover{box-shadow:0 0 0 1px var(--filete-2),0 24px 48px -30px rgba(18,20,23,.45);transform:translateY(-2px)}
+  .producto:hover .producto__foto img{transform:scale(1.025)}
+  .producto:hover .producto__cta svg{transform:translateX(3px)}
+}
+.producto:active{transform:scale(.99)}
+.vacio{padding:40px;text-align:center;color:var(--gris);border-radius:var(--radio);box-shadow:inset 0 0 0 1px var(--filete-2)}
+
+/* ---------- el escenario de demos ----------
+   Antes eran cuatro regiones de pantalla completa, una detras de otra:
+   2.700 px de meseta negra. Ahora es UN escenario con pestanas: lo mismo,
+   en una pantalla, y quien quiera verlo todo pulsa. */
+.oscuro{background:var(--noche);color:#fff}
+.oscuro .titulo em{color:rgba(255,255,255,.5)}
+.oscuro .entradilla{color:rgba(255,255,255,.66)}
+.pestanas{display:flex;flex-wrap:wrap;gap:6px;padding:5px;border-radius:99px;background:rgba(255,255,255,.07);
+  width:max-content;max-width:100%}
+.pestanas button{min-height:40px;padding:0 1.05em;border-radius:99px;font-size:var(--t-s);color:rgba(255,255,255,.66);
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease)}
+.pestanas button[aria-selected="true"]{background:#fff;color:var(--noche)}
+@media (hover:hover) and (pointer:fine){ .pestanas button:not([aria-selected="true"]):hover{color:#fff} }
+.escenario{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(24px,4vw,64px);align-items:center;
+  margin-top:clamp(28px,4vw,48px);min-height:clamp(340px,42vw,470px)}
+.escenario__lienzo{display:grid;place-items:center;gap:22px;min-width:0}
+.escenario__texto{display:grid;gap:14px;align-content:center;min-width:0}
+.escenario__texto h3{font-family:var(--display);font-size:var(--t-xl);letter-spacing:-.025em;line-height:1.12}
+.escenario__texto p{color:rgba(255,255,255,.72);font-size:var(--t-m);line-height:1.6}
+.escenario__texto h3 em{font-style:normal;color:rgba(255,255,255,.55)}
+/* `.escenario__texto p` (0,1,1) le gana a `.nota` (0,1,0): sin esta regla
+   la coletilla de los otros cinco modos salia a 16 px en mono, mas
+   grande que el propio parrafo. Ya paso una vez en la portada anterior. */
+.escenario__texto .nota{font-size:var(--t-xs);color:rgba(255,255,255,.52)}
+/* El cambio de pestana: el panel entra desde donde ya estaba, sin
+   desaparecer antes. */
+.panel{display:contents}
+.panel[aria-hidden="false"] .escenario__lienzo,.panel[aria-hidden="false"] .escenario__texto{animation:asoma var(--t-enter) var(--ease)}
+@keyframes asoma{from{opacity:.4;transform:translateY(8px)}}
+.nota{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.04em;line-height:1.7;color:rgba(255,255,255,.52);
+  max-width:48ch;text-align:center}
+/* Los cinco modos: el nombre es el identificador del firmware, no se traduce. */
+.modos{display:flex;flex-wrap:wrap;gap:6px}
+.modos button{min-height:36px;padding:0 .85em;border-radius:8px;font-family:var(--mono);font-size:var(--t-xs);
+  color:rgba(255,255,255,.66);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16);
+  transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease)}
+.modos button[aria-pressed="true"]{color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)}
+.funciones{display:grid;gap:14px 26px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.funciones li{border-top:1px solid rgba(255,255,255,.14);padding-top:10px}
+.funciones b{display:block;font-size:var(--t-s);margin-bottom:3px}
+.funciones span{font-size:var(--t-s);color:rgba(255,255,255,.62);line-height:1.5}
+
+/* ---------- comparacion rapida ---------- */
+/* `position:relative` no sobra: el texto para lectores de pantalla va en
+   `position:absolute`, y si el contenedor con scroll no esta posicionado
+   esos spans se colocan contra la PAGINA en su sitio dentro de la tabla
+   ancha, y estiran el documento a lo ancho (589 px en un movil de 390). */
+.tabla-env{position:relative;overflow-x:auto;border-radius:var(--radio);box-shadow:0 0 0 1px var(--filete);background:var(--carta)}
+.tabla th,.tabla td{padding:14px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--filete);
+  font-size:var(--t-s)}
+/* Las celdas parten linea y las columnas tienen un ancho minimo: con
+   `nowrap` la ultima columna se cortaba contra el borde del marco. */
+.tabla thead th{min-width:150px}
+.tabla th[scope="row"]{white-space:nowrap}
+.tabla thead th{font-weight:600;background:var(--carta);position:sticky;top:0}
+.tabla tbody tr:last-child>*{border-bottom:0}
+.tabla th[scope="row"]{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--gris);font-weight:400}
+.tabla td.mono,.tabla .precio{font-size:var(--t-s)}
+/* La columna del modelo que estas mirando, marcada sin caja. */
+/* Lo que COINCIDE con el modelo que miras se apaga, y lo distinto se
+   queda en tinta. Al reves (negrita en lo distinto) no servia: el Totem
+   se diferencia de los otros en casi todo y la tabla entera salia en
+   negrita, que es lo mismo que no marcar nada. */
+.tabla .igual{color:var(--tenue)}
+.tabla a.nombre{text-decoration:underline;text-decoration-color:var(--filete-2);text-underline-offset:.3em}
+
+/* ---------- confianza ---------- */
+.confianza{display:grid;gap:clamp(22px,3vw,40px);grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.confianza li{display:grid;gap:8px;align-content:start}
+.confianza svg{color:var(--tinta)}
+.confianza b{font-size:var(--t-m)}
+.confianza span{font-size:var(--t-s);color:var(--gris);line-height:1.55}
+
+.pie{border-top:1px solid var(--filete);padding-block:30px 44px}
+.pie__in{display:flex;flex-wrap:wrap;gap:14px 30px;justify-content:space-between;align-items:start}
+.pie p{font-size:var(--t-xs);color:var(--tenue);max-width:62ch;line-height:1.7}
+.pie nav{display:flex;flex-wrap:wrap;gap:4px 18px}
+.pie nav a{display:inline-flex;align-items:center;min-height:44px;font-size:var(--t-s);color:var(--gris)}
+
+/* ============================================================
+   FICHA DE MODELO
+   ============================================================ */
+.migas{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-block:18px 8px;font-size:var(--t-s);color:var(--gris)}
+.migas a{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline;
+  text-decoration-color:var(--filete-2);text-underline-offset:.3em}
+
+/* Arriba, dos columnas: la foto se queda quieta mientras configuras. */
+.compra{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(26px,4vw,64px);align-items:start;
+  padding-bottom:clamp(40px,6vw,72px)}
+.galeria{position:sticky;top:calc(var(--cabecera) + 18px);display:grid;gap:12px;min-width:0}
+.galeria__foto{position:relative;aspect-ratio:4/3;border-radius:var(--radio);overflow:hidden;background:#e9e9e5}
+.galeria__foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:opacity var(--t-enter) var(--ease)}
+.galeria__foto img[data-sale]{opacity:0}
+.miniaturas{display:flex;gap:10px}
+.miniaturas button{width:84px;aspect-ratio:4/3;border-radius:var(--radio-s);overflow:hidden;opacity:.6;
+  box-shadow:0 0 0 1px var(--filete);transition:opacity var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease)}
+.miniaturas button[aria-pressed="true"]{opacity:1;box-shadow:0 0 0 2px var(--tinta)}
+.miniaturas img{width:100%;height:100%;object-fit:cover}
+@media (hover:hover) and (pointer:fine){ .miniaturas button:hover{opacity:1} }
+
+.cabeza{display:grid;gap:12px;padding-bottom:22px;border-bottom:1px solid var(--filete)}
+.cabeza h1{font-family:var(--display);font-size:var(--t-2xl);line-height:1.02;letter-spacing:-.035em}
+.cabeza p{color:var(--gris);font-size:var(--t-m);line-height:1.55}
+.cabeza__precio{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
+/* Los precios GRANDES van en la sans, no en la mono. En una monoespaciada
+   el espacio entre la cifra y el simbolo mide lo mismo que un digito, y a
+   42 px "26 €" salia con un agujero en medio. La mono se queda para las
+   columnas y las opciones, donde alinear las cifras si importa. */
+.cabeza__precio .precio,.resumen__total .precio,.barra__txt .precio{font-family:var(--sans);font-weight:700;
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.cabeza__precio .precio{font-size:var(--t-2xl)}
+.valoracion{display:inline-flex;align-items:center;gap:6px;font-size:var(--t-s);color:var(--gris)}
+.valoracion svg{color:var(--tinta)}
+
+/* ---------- el configurador ---------- */
+.config{display:grid;gap:26px;padding-top:24px}
+.paso{display:grid;gap:12px;border:0;min-width:0}
+/* El `legend` de un fieldset no entra en el `gap` del grid, asi que lleva
+   su margen; el titulo del paso de switches es un hijo normal y ya lo
+   separa el `gap`. Con margen en los dos, ese paso salia el doble de suelto. */
+.paso legend,.paso__t{display:flex;align-items:baseline;justify-content:space-between;gap:12px;width:100%;
+  font-size:var(--t-m);font-weight:600}
+.paso legend{margin-bottom:12px}
+.paso legend small,.paso__t small{font-weight:400;font-size:var(--t-s);color:var(--gris)}
+.opciones{display:grid;gap:10px}
+/* Cada opcion es un radio de verdad: se elige con el teclado, se anuncia
+   bien y el formulario no depende de JavaScript para saber cual esta. */
+.opcion{position:relative;display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:15px 16px;
+  border-radius:var(--radio-s);background:var(--carta);box-shadow:inset 0 0 0 1px var(--filete-2);cursor:pointer;
+  transition:box-shadow var(--t-tap) var(--ease),background var(--t-tap) var(--ease),transform var(--t-tap) var(--ease)}
+.opcion input{position:absolute;opacity:0;pointer-events:none}
+.opcion__n{font-weight:600;font-size:var(--t-m)}
+.opcion__p{font-family:var(--mono);font-size:var(--t-s);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.opcion__d{grid-column:1/-1;font-size:var(--t-s);color:var(--gris);line-height:1.5}
+/* Lo que trae y lo que no, en la misma tarjeta: es la pregunta que se
+   hace quien duda entre "barebones" y "completo". */
+.lleva{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px}
+.lleva li{display:inline-flex;align-items:center;gap:5px;font-size:var(--t-xs);color:var(--tenue)}
+.lleva li.si{color:var(--tinta)}
+.lleva svg{flex:0 0 auto}
+/* La elegida: un filete de 2 px en el color de la marca. El degradado
+   aqui es informacion (esta es la tuya), no adorno. */
+.opcion:has(input:checked){box-shadow:inset 0 0 0 2px var(--tinta);background:#fff}
+.opcion:has(input:checked)::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;
+  background:linear-gradient(#ff992a,#ff39c0,#2a3dff,#1be8ff)}
+.opcion:has(input:focus-visible){outline:2px solid var(--tinta);outline-offset:3px}
+.opcion:active{transform:scale(.99)}
+/* Agotada: se ve y no se puede elegir. Tacharla en vez de ocultarla
+   genera menos preguntas que hacerla desaparecer. */
+.opcion--agotada{cursor:not-allowed;background:transparent;box-shadow:inset 0 0 0 1px var(--filete)}
+.opcion--agotada .opcion__n,.opcion--agotada .opcion__p{color:var(--tenue);text-decoration:line-through;
+  text-decoration-color:var(--filete-2)}
+@media (hover:hover) and (pointer:fine){
+  .opcion:not(.opcion--agotada):not(:has(input:checked)):hover{box-shadow:inset 0 0 0 1px var(--tinta)}
+}
+/* Fija: no hay nada que elegir, pero decir que switch trae es media
+   respuesta a "que estoy comprando". */
+.fija{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;padding:14px 16px;
+  border-radius:var(--radio-s);background:var(--velo)}
+.fija b{font-size:var(--t-m)}
+.fija span{grid-column:2;font-size:var(--t-s);color:var(--gris)}
+.fija svg{grid-row:span 2}
+
+/* El resumen: lo que te llevas, cuanto cuesta y adonde vas a pagarlo. */
+.resumen{display:grid;gap:14px;padding:20px;border-radius:var(--radio);background:var(--carta);
+  box-shadow:0 0 0 1px var(--filete),0 24px 50px -36px rgba(18,20,23,.45)}
+.resumen dl{display:grid;gap:6px}
+.resumen dl div{display:flex;justify-content:space-between;gap:14px;font-size:var(--t-s)}
+.resumen dt{color:var(--gris)}
+.resumen dd{text-align:right;font-weight:600}
+.resumen__total{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 12px;
+  padding-top:14px;border-top:1px solid var(--filete)}
+.resumen__total small{flex-basis:100%;text-align:right;font-size:var(--t-xs);color:var(--gris)}
+.resumen__total span{font-weight:600}
+.resumen__total .precio{font-size:var(--t-xl)}
+.resumen__nota{font-size:var(--t-xs);color:var(--gris);line-height:1.6}
+
+/* ---------- navegacion de la ficha ---------- */
+.subnav{position:sticky;top:var(--cabecera);z-index:40;background:rgba(244,244,241,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--filete)}
+.subnav ul{display:flex;gap:clamp(6px,2vw,26px);overflow-x:auto;scrollbar-width:none}
+.subnav ul::-webkit-scrollbar{display:none}
+.subnav a{display:inline-flex;align-items:center;min-height:50px;white-space:nowrap;font-size:var(--t-s);color:var(--gris);
+  box-shadow:inset 0 -2px 0 transparent;transition:color var(--t-tap) var(--ease),box-shadow var(--t-tap) var(--ease)}
+.subnav a[aria-current="true"]{color:var(--tinta);box-shadow:inset 0 -2px 0 var(--tinta)}
+
+.bloque{padding-block:clamp(48px,7vw,84px);border-bottom:1px solid var(--filete)}
+.bloque:last-of-type{border-bottom:0}
+.bloque__cab{display:grid;gap:10px;margin-bottom:clamp(22px,3vw,34px);max-width:62ch}
+.bloque__cab h2{font-family:var(--display);font-size:var(--t-xl);letter-spacing:-.025em;line-height:1.1}
+.bloque__cab p{color:var(--gris)}
+
+/* Que incluye cada opcion: una matriz, porque la pregunta es comparar. */
+.matriz td,.matriz th{text-align:center}
+.matriz th[scope="row"]{text-align:left}
+.matriz thead th{white-space:normal;min-width:110px;vertical-align:bottom}
+.matriz thead th small{display:block;font-family:var(--mono);font-weight:400;color:var(--gris);margin-top:4px}
+/* La columna de etiquetas se queda quieta al deslizar: en el movil solo
+   caben dos opciones a la vez, y sin esto al llegar a "Teclado completo"
+   ya no sabias que fila era cual. */
+.tabla th[scope="row"]{position:sticky;left:0;z-index:1;background:var(--carta)}
+.tabla .actual{background:#f4f4f2}
+.tabla th[scope="row"].actual{background:#f4f4f2}
+.matriz .si{color:var(--ok)}
+.matriz .no{color:var(--tenue)}
+
+/* Caracteristicas: una lista con numero de verdad no, con filete. */
+.rasgos{display:grid;gap:0 clamp(24px,4vw,56px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.rasgos li{display:grid;grid-template-columns:auto 1fr;gap:14px;padding-block:18px;border-top:1px solid var(--filete);
+  font-size:var(--t-m);line-height:1.5}
+.rasgos svg{margin-top:3px;color:var(--ok)}
+
+/* Ficha y componentes: filas de etiqueta y valor. Dos columnas en
+   escritorio para que una ficha de diez filas no sea un pasillo. */
+.ficha{display:grid;gap:0 clamp(24px,4vw,56px);grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.ficha div{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:14px;padding-block:14px;
+  border-top:1px solid var(--filete)}
+.ficha dt{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.06em;text-transform:uppercase;color:var(--gris);
+  padding-top:.2em}
+.ficha dd{font-size:var(--t-m)}
+
+/* ---------- barra de compra fija en el movil ---------- */
+.barra{position:fixed;left:0;right:0;bottom:0;z-index:55;display:none;align-items:center;gap:14px;
+  padding:12px var(--canal) calc(12px + env(safe-area-inset-bottom,0px));background:rgba(255,255,255,.94);
+  backdrop-filter:blur(16px);box-shadow:0 -1px 0 var(--filete),0 -18px 36px -28px rgba(18,20,23,.5);
+  transform:translateY(110%);transition:transform var(--t-enter) var(--ease)}
+.barra.visible{transform:none}
+.barra__txt{display:grid;min-width:0;flex:1}
+.barra__txt span{font-size:var(--t-xs);color:var(--gris);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* A 16 px cabe un rango entero ("152,75 € – 187,85 €") junto al boton en
+   390 px; a 18 se cortaba en puntos suspensivos. */
+.barra__txt .precio{font-size:var(--t-m);white-space:nowrap}
+
+/* ============================================================
+   DEMOS: el Sofle real, las dos OLED, las capas y el hotswap
+   (portados de la portada anterior, que funcionaban)
+   ============================================================ */
+.kb{position:relative;width:min(100%,720px);aspect-ratio:1520/666}
+.kb__escena{position:absolute;left:0;top:0;transform-origin:0 0}
+.kb__mitad{position:absolute}
+/* La tecla es negra y punto: el color y el halo los pone `js/rgb.js`, y
+   solo cuando su LED esta encendido. */
+.kb__tecla{position:absolute;border-radius:7px;background:#0d0f12;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.06),inset 0 -4px 7px rgba(0,0,0,.7)}
+
+.oleds{display:flex;gap:clamp(26px,6vw,64px);justify-content:center;align-items:flex-start}
+.oled{display:grid;justify-items:center;gap:14px}
+.oled__marco{padding:7px;border-radius:9px;background:#0a0c0f;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 20px 40px -24px rgba(0,0,0,.9)}
+/* `pixelated`: se escala el lienzo, no el dibujo, y el pixel sigue siendo
+   un pixel. Es medio argumento de la demo. */
+.oled canvas{display:block;width:clamp(92px,12vw,124px);height:auto;aspect-ratio:68/160;image-rendering:pixelated;
+  border-radius:3px;background:#04060a}
+.oled figcaption{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.08em;color:rgba(255,255,255,.6)}
+
+.capas{width:min(100%,520px)}
+.capas__fila{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.capas__fila+.capas__fila{margin-top:8px}
+.capas__t{aspect-ratio:1;border-radius:6px;background:#16181c;display:grid;place-items:center;position:relative;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.capas__t span{position:absolute;font-family:var(--mono);font-size:clamp(.75rem,1.5vw,1rem);color:#e7e9ec;
+  animation:capaA var(--loop-capa) steps(1,end) infinite}
+.capas__t span+span{color:#ffb457;animation-name:capaB}
+@keyframes capaA{0%,49.9%{opacity:1}50%,100%{opacity:0}}
+@keyframes capaB{0%,49.9%{opacity:0}50%,100%{opacity:1}}
+.capas__t--hold{background:#262b32}
+.capas__t--hold::after{content:"";position:absolute;inset:0;border-radius:6px;box-shadow:inset 0 0 0 2px #ffb457;
+  opacity:0;animation:pulsada var(--loop-capa) steps(1,end) infinite}
+@keyframes pulsada{0%,49.9%{opacity:0}50%,100%{opacity:1}}
+
+.hot{display:flex;gap:clamp(30px,7vw,72px);align-items:flex-end;justify-content:center}
+.hot__col{display:grid;justify-items:center;gap:4px}
+.hot__sw{width:clamp(120px,15vw,170px);height:auto;overflow:visible}
+.hot__pieza{animation:saca var(--loop-tecla) var(--ease) infinite;transform-origin:50% 70%}
+.hot__col--2 .hot__pieza{animation-delay:calc(var(--loop-tecla) / 2)}
+@keyframes saca{
+  0%,10%{transform:translateY(0) rotate(0)}
+  40%,60%{transform:translateY(-46px) rotate(-7deg)}
+  90%,100%{transform:translateY(0) rotate(0)}
+}
+.hot__et{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.86);margin-top:12px}
+.hot__dato{font-family:var(--mono);font-size:var(--t-xs);color:rgba(255,255,255,.58)}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:980px){
+  .compra{grid-template-columns:minmax(0,1fr)}
+  .galeria{position:static}
+  .escenario{grid-template-columns:minmax(0,1fr)}
+  .barra{display:flex}
+  /* La barra fija tapa el final de la pagina: se le reserva su alto. */
+  body.con-barra{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+}
+@media (max-width:760px){
+  .matriz thead th,.tabla thead th{min-width:96px}
+  .tabla th,.tabla td{padding:12px 10px}
+  .tabla th[scope="row"]{white-space:normal;min-width:98px;max-width:118px}
+  /* En el movil caben dos enlaces: la tienda y el Studio. El comparador
+     se alcanza desde la propia tienda y desde cada ficha. */
+  .top__nav .top__comparar{display:none}
+  /* En vertical la foto del heroe va a sangre de lado a lado pero con su
+     alto natural: recortarla a lo alto partiria el split por la mitad. */
+  .heroe{min-height:0;padding-block:0 34px;align-content:start;grid-template-columns:minmax(0,1fr)}
+  .heroe__foto{position:static;height:auto;z-index:0}
+  .heroe::after{display:none}
+  .heroe__texto{padding-top:28px}
+  .heroe .acciones{width:100%;flex-direction:column}
+  .heroe .btn{width:100%}
+  .funciones{grid-template-columns:minmax(0,1fr)}
+  .ficha div{grid-template-columns:minmax(0,1fr)}
+  .ficha div{gap:4px}
+  .pestanas{width:100%;border-radius:14px}
+  .pestanas button{flex:1}
+}
+@media (max-width:520px){
+  .top__in .btn{display:none}
+  .marca img{height:21px}
+}
+
+/* Menos movimiento, no menos informacion. No se apaga todo de golpe (eso
+   se come tambien la respuesta al dedo): se quitan los desplazamientos y
+   los bucles, y se conserva el cambio de estado. El panel nuevo aparece,
+   el menu se abre, la opcion elegida se marca; solo que sin viajar. */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .idiomas__m,.panel[aria-hidden="false"] .escenario__lienzo,.panel[aria-hidden="false"] .escenario__texto{animation:none}
+  .producto,.producto__foto img,.opcion,.btn,.barra{transition-property:background,color,box-shadow,opacity}
+  .capas__t span,.capas__t--hold::after,.hot__pieza{animation:none}
+  .capas__t span+span{opacity:0}
+}
+
+.resumen .resumen__rango dd{font-weight:400;color:var(--gris)}
+.bloque .enlace-pie{margin-top:14px}
+
+/* La insignia de stock va sobre la foto: necesita su propio suelo para
+   leerse encima de una mesa clara o de un teclado negro. */
+.producto__insignia{background:rgba(255,255,255,.94);padding:.45em .75em;border-radius:99px;
+  box-shadow:0 2px 8px -4px rgba(18,20,23,.35)}
+.seccion__txt{display:grid;gap:12px;max-width:62ch}
+.nota--izq{text-align:left}
+.escenario__texto .btn{justify-self:start}
+
+/* ============================================================
+   COMPARADOR
+   ============================================================ */
+.seccion--arriba{padding-top:clamp(34px,5vw,56px)}
+.mandos{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:18px}
+.cuenta{font-size:var(--t-xs);color:var(--tenue)}
+/* Un interruptor de verdad: boton con `aria-pressed`, no una casilla
+   disfrazada. */
+.interruptor{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 1em 0 .75em;border-radius:99px;
+  font-size:var(--t-s);font-weight:600;box-shadow:inset 0 0 0 1px var(--filete-2);
+  transition:box-shadow var(--t-tap) var(--ease)}
+.interruptor__luz{position:relative;width:30px;height:18px;border-radius:99px;background:var(--filete-2);
+  transition:background var(--t-tap) var(--ease)}
+.interruptor__luz::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform var(--t-tap) var(--ease)}
+.interruptor[aria-pressed="true"] .interruptor__luz{background:var(--ok)}
+.interruptor[aria-pressed="true"] .interruptor__luz::after{transform:translateX(12px)}
+@media (hover:hover) and (pointer:fine){ .interruptor:hover{box-shadow:inset 0 0 0 1px var(--tinta)} }
+
+/* 172 px por modelo: con 190 los cinco no cabian en el marco de 1128 a
+   1440 de ancho y la ultima columna se cortaba. */
+.cmp thead th{min-width:172px;vertical-align:top}
+.cmp th[scope="row"]{max-width:150px}
+.cmp__col{display:grid;gap:8px;justify-items:start}
+.cmp__foto{display:block;width:100%;aspect-ratio:3/2;border-radius:var(--radio-s);overflow:hidden;background:#e9e9e5}
+.cmp__foto img{width:100%;height:100%;object-fit:cover}
+.cmp__nombre{font-size:var(--t-m);font-weight:600;line-height:1.25}
+.cmp__acciones{display:flex;align-items:center;gap:10px;margin-top:4px}
+.cmp__acciones .btn{min-height:40px;padding:0 1.05em}
+.cmp__quitar{display:inline-flex;align-items:center;min-height:40px;padding:0 .4em;font-size:var(--t-s);color:var(--gris);
+  text-decoration:underline;text-decoration-color:var(--filete-2);text-underline-offset:.3em}
+@media (hover:hover) and (pointer:fine){ .cmp__quitar:hover{color:var(--tinta)} }
+.cmp__agotado{color:var(--tenue);text-decoration:line-through}
+.cmp tr.igual td{color:var(--tenue)}
+.barra__txt span:first-child{font-size:var(--t-xs)}
