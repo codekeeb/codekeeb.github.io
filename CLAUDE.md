@@ -21,6 +21,8 @@ carencia.
 | `modelo.html` | **Ficha de cada modelo**, `modelo.html?id=<id>`: tira de la familia, barra del producto, configurador en una columna con "tu configuracion incluye", los principios con la forma de ESE teclado, ficha, comparacion y barra de compra fija abajo |
 | `comparar.html` | Los cinco en columnas, fila a fila, con "solo lo que cambia" |
 | `legal.html` · `js/legal.js` · `js/legal-textos.js` | Aviso legal, privacidad, cookies y compras, en es / en / fr. Los datos del titular salen de `CK_TITULAR` (`js/data.js`) |
+| `404.html` · `js/no-encontrada.js` | Pagina de error con los cinco modelos. Rutas **absolutas**: GitHub Pages la sirve en cualquier ruta rota |
+| `tools/3d/` | Reconstruccion 3D del Sofle con img2threejs, **parada en la maqueta** (ver su README). No se publica |
 | `assets/fonts/` | Las tipografias, servidas desde el sitio (licencia OFL al lado). **Nada de Google Fonts** |
 | `catalogo.html` | Solo redirige a `/#tienda`, para no romper enlaces viejos |
 | `js/data.js` | **Catalogo: la unica fuente de verdad.** Productos, precios, opciones de montaje (`buildOptions`) |
@@ -82,6 +84,37 @@ arregla solo al revisar los datos y cambiar la fecha.
 Accesibilidad: todo lo que se mueve solo mas de 5 s se para con el boton
 de pausa de la cabecera (`CK.quieto()`; clase `.sin-movimiento`). Un
 bucle nuevo tiene que respetarlo.
+
+## Skills de diseno: quien manda
+
+Cuatro fuentes de criterio y una jerarquia, para que no se contradigan
+(instaladas el 24 sep 2026, a peticion de Ernesto):
+
+1. **Este CLAUDE.md** manda sobre todas. Fotos reales, tres idiomas,
+   sin terceros, dos duraciones y una curva.
+2. **`impeccable`** (`.claude/skills/impeccable`): la skill principal de
+   diseno. Direccion, craft, auditoria.
+3. **`emil-design-eng`**: detalles de interaccion y movimiento, siempre
+   dentro de `--t-tap` / `--t-enter` / `--ease`.
+4. **`taste-redesign`** (`.claude/skills/taste-redesign`, de
+   Leonxlnx/taste-skill, MIT, commit `c184364`): solo como lista de
+   auditoria. **No se aplican** sus consejos de fotos de relleno
+   (picsum.photos: rompe la regla 2 y la CSP), de "cifras organicas" y
+   "fechas aleatorias para que parezcan reales" (es inventar datos), ni
+   vidrio o grano como decoracion (impeccable lo prohibe).
+
+Referencias, **para consultar, nunca para copiar** la marca de otro:
+`.claude/referencias/apple-DESIGN.md` y `tesla-DESIGN.md`
+(VoltAgent/awesome-design-md, MIT, commit `f696123`): paginas de
+producto y configurador.
+
+`img2threejs` (img2threejs/img2threejs, Apache-2.0, commit `6e60b5e`)
+no va en el repositorio: son 5,5 MB de herramienta, no de web. Se
+instala en `~/.claude/skills/img2threejs` con
+`git clone https://github.com/img2threejs/img2threejs ~/.claude/skills/img2threejs && git -C ~/.claude/skills/img2threejs checkout 6e60b5e`.
+Un modelo 3D sacado de una foto es una **representacion generada**: va
+rotulado como orientativo, igual que los esquemas, y three.js se sirve
+desde el sitio (`assets/vendor/`), no desde un CDN.
 
 ## Las tres reglas que se rompen solas
 

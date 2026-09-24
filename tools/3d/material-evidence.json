@@ -1,0 +1,128 @@
+[
+ {
+  "materialSpecId": "keycap-cream",
+  "bbox": {
+   "x": 467,
+   "y": 296,
+   "width": 10,
+   "height": 12
+  },
+  "materialId": "plastic.matte",
+  "confidence": 0.717,
+  "palette": [
+   "#7F8074",
+   "#8B8C7C",
+   "#9D9E8F",
+   "#959786",
+   "#A8A89B"
+  ]
+ },
+ {
+  "materialSpecId": "keycap-black",
+  "bbox": {
+   "x": 455,
+   "y": 450,
+   "width": 20,
+   "height": 9
+  },
+  "materialId": "plastic.matte",
+  "confidence": 0.751,
+  "palette": [
+   "#0C131D",
+   "#0D141E",
+   "#0A111B",
+   "#0C151E",
+   "#0F1721"
+  ]
+ },
+ {
+  "materialSpecId": "plate",
+  "bbox": {
+   "x": 1020,
+   "y": 425,
+   "width": 40,
+   "height": 10
+  },
+  "materialId": "plastic.matte",
+  "confidence": 0.831,
+  "palette": [
+   "#323646",
+   "#3F4452",
+   "#2E3241",
+   "#363C4B",
+   "#494D5A"
+  ]
+ },
+ {
+  "materialSpecId": "pcb",
+  "bbox": {
+   "x": 580,
+   "y": 300,
+   "width": 9,
+   "height": 40
+  },
+  "materialId": "coating.painted-metal",
+  "confidence": 0.751,
+  "palette": [
+   "#622A55",
+   "#502849",
+   "#47213D",
+   "#703A62",
+   "#F9E4F3"
+  ]
+ },
+ {
+  "materialSpecId": "switch-dark",
+  "bbox": {
+   "x": 255,
+   "y": 447,
+   "width": 35,
+   "height": 10
+  },
+  "materialId": "plastic.matte",
+  "confidence": 0.831,
+  "palette": [
+   "#030407",
+   "#201E1B",
+   "#08070D",
+   "#140109",
+   "#240712"
+  ]
+ },
+ {
+  "materialSpecId": "knob",
+  "bbox": {
+   "x": 518,
+   "y": 385,
+   "width": 14,
+   "height": 9
+  },
+  "materialId": "metal.aluminum",
+  "confidence": 0.751,
+  "palette": [
+   "#4F1A40",
+   "#351931",
+   "#201625",
+   "#150E1A",
+   "#6C7076"
+  ]
+ },
+ {
+  "materialSpecId": "oled",
+  "bbox": {
+   "x": 526,
+   "y": 262,
+   "width": 14,
+   "height": 20
+  },
+  "materialId": "glass.clear",
+  "confidence": 0.86,
+  "palette": [
+   "#5B284E",
+   "#4C2543",
+   "#723E61",
+   "#2A0B1F",
+   "#8D6F83"
+  ]
+ }
+]

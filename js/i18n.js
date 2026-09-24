@@ -129,8 +129,6 @@ const CK_I18N = {
     "t1.text": "Listo nada más abrir la caja. Cero soldador.",
     "t2.title": "Hotswap total",
     "t2.text": "Switches y MCU intercambiables sin herramientas.",
-    "t3.title": "ZMK open-source",
-    "t3.text": "Firmware libre. Tu keymap, tuyo para siempre.",
     "t4.title": "Series pequeñas",
     "t4.text": "Montado y revisado a mano, unidad a unidad.",
 
@@ -369,7 +367,10 @@ const CK_I18N = {
     "l.borrarStudio": "Borrar también lo de Keymap Studio",
     "l.confirmaStudio": "Se borrarán de este navegador tus mapas de teclas y macros de Keymap Studio. No se puede deshacer. ¿Seguir?",
     "l.borrado": "Hecho: borrado de este navegador.",
-    "l.nada": "No había nada guardado."
+    "l.nada": "No había nada guardado.",
+    "n.titulo": "Esta página no existe",
+    "n.texto": "Puede que el enlace sea antiguo o tenga una errata. Los cinco teclados siguen aquí:",
+    "n.tienda": "Ir a la tienda",
   },
 
   en: {
@@ -495,8 +496,6 @@ const CK_I18N = {
     "t1.text": "Ready out of the box. Zero soldering.",
     "t2.title": "Fully hotswap",
     "t2.text": "Switches and MCU swappable, no tools needed.",
-    "t3.title": "ZMK open-source",
-    "t3.text": "Free firmware. Your keymap, yours forever.",
     "t4.title": "Small batches",
     "t4.text": "Hand-assembled and inspected, one by one.",
 
@@ -735,7 +734,10 @@ const CK_I18N = {
     "l.borrarStudio": "Also clear Keymap Studio data",
     "l.confirmaStudio": "Your Keymap Studio keymaps and macros will be deleted from this browser. This can't be undone. Continue?",
     "l.borrado": "Done: cleared from this browser.",
-    "l.nada": "Nothing was stored."
+    "l.nada": "Nothing was stored.",
+    "n.titulo": "This page doesn't exist",
+    "n.texto": "The link may be old or have a typo. All five keyboards are still here:",
+    "n.tienda": "Go to the shop",
   },
 
   fr: {
@@ -861,8 +863,6 @@ const CK_I18N = {
     "t1.text": "Prêt dès la sortie de la boîte. Zéro soudure.",
     "t2.title": "Hotswap intégral",
     "t2.text": "Switches et MCU interchangeables, sans outils.",
-    "t3.title": "ZMK open-source",
-    "t3.text": "Firmware libre. Votre keymap, à vous pour toujours.",
     "t4.title": "Petites séries",
     "t4.text": "Assemblé et contrôlé à la main, pièce par pièce.",
 
@@ -1101,6 +1101,9 @@ const CK_I18N = {
     "l.borrarStudio": "Effacer aussi les données de Keymap Studio",
     "l.confirmaStudio": "Vos keymaps et macros de Keymap Studio seront effacées de ce navigateur. Impossible d'annuler. Continuer ?",
     "l.borrado": "C'est fait : effacé de ce navigateur.",
-    "l.nada": "Rien n'était enregistré."
+    "l.nada": "Rien n'était enregistré.",
+    "n.titulo": "Cette page n'existe pas",
+    "n.texto": "Le lien est peut-être ancien ou contient une faute. Les cinq claviers sont toujours là :",
+    "n.tienda": "Aller à la boutique",
   }
 };

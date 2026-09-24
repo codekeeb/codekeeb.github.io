@@ -1,0 +1,110 @@
+{
+ "referenceId": "sofle-retro",
+ "regions": [
+  {
+   "componentId": "key-05",
+   "regionId": "cap-face",
+   "sourceImage": "ref.png",
+   "bbox": {
+    "x": 467,
+    "y": 296,
+    "width": 10,
+    "height": 12
+   },
+   "family": "plastic",
+   "subtype": "generic-polymer",
+   "finish": "matte",
+   "materialSpecId": "keycap-cream"
+  },
+  {
+   "componentId": "key-53",
+   "regionId": "cap-face",
+   "sourceImage": "ref.png",
+   "bbox": {
+    "x": 455,
+    "y": 450,
+    "width": 20,
+    "height": 9
+   },
+   "family": "plastic",
+   "subtype": "generic-polymer",
+   "finish": "matte",
+   "materialSpecId": "keycap-black"
+  },
+  {
+   "componentId": "half-right-hand-plate",
+   "regionId": "plate-edge",
+   "sourceImage": "ref.png",
+   "bbox": {
+    "x": 1020,
+    "y": 425,
+    "width": 40,
+    "height": 10
+   },
+   "family": "plastic",
+   "subtype": "generic-polymer",
+   "finish": "matte",
+   "materialSpecId": "plate"
+  },
+  {
+   "componentId": "half-left-hand-controller",
+   "regionId": "soldermask",
+   "sourceImage": "ref.png",
+   "bbox": {
+    "x": 580,
+    "y": 300,
+    "width": 9,
+    "height": 40
+   },
+   "family": "coating",
+   "subtype": "paint-over-metal",
+   "finish": "gloss-or-satin",
+   "materialSpecId": "pcb"
+  },
+  {
+   "componentId": "half-left-hand-switches",
+   "regionId": "housing",
+   "sourceImage": "ref.png",
+   "bbox": {
+    "x": 255,
+    "y": 447,
+    "width": 35,
+    "height": 10
+   },
+   "family": "plastic",
+   "subtype": "generic-polymer",
+   "finish": "matte",
+   "materialSpecId": "switch-dark"
+  },
+  {
+   "componentId": "half-left-hand-encoder",
+   "regionId": "knob-top",
+   "sourceImage": "ref.png",
+   "bbox": {
+    "x": 518,
+    "y": 385,
+    "width": 14,
+    "height": 9
+   },
+   "family": "metal",
+   "subtype": "aluminum",
+   "finish": "satin",
+   "materialSpecId": "knob"
+  },
+  {
+   "componentId": "half-left-hand-oled",
+   "regionId": "screen",
+   "sourceImage": "ref.png",
+   "bbox": {
+    "x": 526,
+    "y": 262,
+    "width": 14,
+    "height": 20
+   },
+   "family": "glass",
+   "subtype": "clear",
+   "finish": "polished",
+   "materialSpecId": "oled"
+  }
+ ]
+}

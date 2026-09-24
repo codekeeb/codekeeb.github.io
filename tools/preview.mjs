@@ -130,6 +130,7 @@ async function main() {
     { id: "modelo",    url: "/modelo.html?id=totem" },
     { id: "comparar",  url: "/comparar.html" },
     { id: "legal",     url: "/legal.html" },
+    { id: "404",       url: "/404.html" },
   ];
   if (args.includes("--all")) {
     const data = await readFile(join(RAIZ, "js", "data.js"), "utf8");
