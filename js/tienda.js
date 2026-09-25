@@ -434,7 +434,12 @@ const CK = (() => {
       disp.setAttribute("aria-expanded", "true");
       (menu.querySelector('[aria-checked="true"]') || menu.firstElementChild)?.focus();
     };
-    addEventListener("click", e => { if (!menu.contains(e.target)) cerrarIdiomas(); });
+    /* Tocar fuera cierra. Con pointerdown y no con click: Safari en
+       iPhone no manda click al tocar algo que no es un enlace o un boton.
+       El disparador se excluye, que ya abre y cierra el solo. */
+    addEventListener("pointerdown", e => {
+      if (!menu.hidden && !menu.contains(e.target) && !disp.contains(e.target)) cerrarIdiomas();
+    });
     addEventListener("keydown", e => {
       if (e.key !== "Escape" || menu.hidden) return;
       cerrarIdiomas();
@@ -451,7 +456,13 @@ const CK = (() => {
       e.preventDefault();
       items[(destino + items.length) % items.length].focus();
     });
+    /* Salir con Tab cierra. Pero solo si el foco se va a OTRO sitio: en
+       Safari del iPhone tocar un boton no le da el foco, asi que al tocar
+       "English" el foco salia del menu hacia ninguna parte (relatedTarget
+       null), el menu se cerraba antes de que llegara el toque y el idioma
+       no cambiaba nunca desde el movil (Ernesto, 25 sep 2026). */
     menu.addEventListener("focusout", e => {
+      if (!e.relatedTarget) return;
       if (!menu.hidden && !menu.contains(e.relatedTarget) && e.relatedTarget !== disp) cerrarIdiomas();
     });
   }
