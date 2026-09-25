@@ -121,8 +121,8 @@ async function main() {
   /* Las tres paginas de la tienda. Dejaron de ser prototipos el 15 de
      septiembre: la portada es `/`, y el catalogo y el comparador cuelgan
      de ella, asi que las tres entran en la tanda normal. */
-  /* La portada (que es la tienda), una ficha con configurador y el
-     comparador. La ficha de la tanda normal es la del Totem porque es la
+  /* La portada (que es la tienda), una ficha con configurador, el
+     comparador y el manual del Sofle (el mas largo). La ficha de la tanda normal es la del Totem porque es la
      mas dificil: cuatro niveles de montaje y precios en rango. `--all`
      anade las cinco. catalogo.html ya solo redirige a la portada. */
   const paginas = [
@@ -131,12 +131,15 @@ async function main() {
     { id: "comparar",  url: "/comparar.html" },
     { id: "legal",     url: "/legal.html" },
     { id: "404",       url: "/404.html" },
+    { id: "manual",    url: "/manual.html?id=sofle-carbon" },
   ];
   if (args.includes("--all")) {
     const data = await readFile(join(RAIZ, "js", "data.js"), "utf8");
     const bloque = data.slice(data.indexOf("const CK_PRODUCTS"), data.indexOf("const CK_FLAVORS"));
     for (const m of bloque.matchAll(/\n    id: "([^"]+)"/g)) {
       paginas.push({ id: m[1], url: `/modelo.html?id=${m[1]}` });
+      /* y su manual: los que no lo tienen dicen "en preparacion" */
+      paginas.push({ id: `manual-${m[1]}`, url: `/manual.html?id=${m[1]}` });
     }
   }
 

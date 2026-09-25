@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Manual — Codekeeb</title>
+<meta name="description" content="Manual de uso de cada teclado Codekeeb: capas, Bluetooth, luz, cambiar las teclas y actualizar el firmware.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Codekeeb">
+<meta property="og:title" content="Manual — Codekeeb">
+<meta property="og:description" content="Manual de uso de cada teclado Codekeeb: capas, Bluetooth, luz, cambiar las teclas y actualizar el firmware.">
+<meta property="og:image" content="https://codekeeb.github.io/assets/img/products/sofle-retro.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#ffffff">
+<!-- Seguridad: la pagina solo carga lo suyo. Si un dia se anade un
+     servicio externo, hay que darlo de alta aqui Y en privacidad.html. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="preload" href="assets/fonts/schibstedgrotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/doto-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fuentes.css">
+<link rel="stylesheet" href="css/aparato.css">
+</head>
+<body>
+<a class="saltar" href="#pagina" data-t="a11y.saltar">Saltar al contenido</a>
+
+<!-- La misma barra que la ficha, pero la tira solo lleva los modelos que
+     tienen manual. -->
+<header class="f-top">
+  <a class="f-marca" href="/" aria-label="Codekeeb">
+    <img src="assets/brand/logo-horizontal-dark.png"
+         srcset="assets/brand/logo-horizontal-dark.png 1x, assets/brand/logo-horizontal-dark@2x.png 2x"
+         width="640" height="224" alt="CODE/KEEB">
+  </a>
+  <nav class="f-modelos" aria-label="Manuales"><ul id="modelos"></ul></nav>
+  <div class="f-ajustes">
+    <a class="f-studio" href="keymap-studio/">Keymap Studio</a>
+    <button type="button" class="f-pausa" data-pausa hidden></button>
+    <div class="idiomas">
+      <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false" aria-label="Idioma">
+        <span data-lang-actual>ES</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="idiomas__m" data-lang-menu role="menu" hidden>
+        <button data-lang-btn="es">Español</button>
+        <button data-lang-btn="en">English</button>
+        <button data-lang-btn="fr">Français</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="pagina"></main>
+
+<footer class="f-pie">
+  <div class="f-in f-pie__in">
+    <p id="notaPrecios"></p>
+    <nav aria-label="Pie">
+      <a href="/#tienda" data-t="m.tienda">Tienda</a>
+      <a href="comparar.html" data-t="d.compare">Comparar</a>
+      <a href="keymap-studio/">Keymap Studio</a>
+    </nav>
+    <nav class="f-pie__legal" aria-label="Legal">
+      <a href="legal.html#aviso" data-t="l.aviso">Aviso legal</a>
+      <a href="legal.html#privacidad" data-t="l.privacidad">Privacidad</a>
+      <a href="legal.html#cookies" data-t="l.cookies">Cookies</a>
+      <a href="legal.html#compras" data-t="l.compras">Compras y devoluciones</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/tienda.js"></script>
+<script src="js/manuales.js"></script>
+<script src="js/manual.js"></script>
+</body>
+</html>

@@ -147,6 +147,8 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 .f-compra{display:flex;flex-wrap:wrap;align-items:stretch;gap:12px;margin-top:clamp(22px,3vw,30px)}
 .f-estado{margin-top:12px;font-size:var(--t-s);font-weight:600}
 .f-estado a{text-decoration:underline;text-underline-offset:3px}
+.f-manual{margin-top:6px}
+.f-manual .f-enlace{min-height:40px}
 
 /* La pantalla: cristal liquido gris verdoso y cifras de matriz de puntos.
    Es la misma arriba (desde) y en el configurador (total). */
@@ -535,6 +537,93 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 }
 @media (prefers-reduced-motion:reduce){
   .p-franja,.p-franja .f-ventana__foto img{transition:none}
+}
+
+/* ============================================================
+   EL MANUAL (manual.html)
+   Una placa corta del color del modelo, el indice fijo a la izquierda y
+   el texto a la derecha. Las capas del teclado, como laminas en la
+   ventana oscura: lineas claras y la tecla que importa, encendida.
+   ============================================================ */
+.m-placa{background:var(--modelo);color:var(--modelo-tinta)}
+.m-placa__in{padding-block:clamp(26px,4vw,48px) clamp(24px,4vw,44px);display:grid;gap:10px}
+.m-placa__nombre{font-family:var(--f-pantalla);font-weight:900;font-size:clamp(2.8rem,8vw,5.6rem);line-height:.85;letter-spacing:-.02em}
+.m-placa__sub{font-size:var(--t-l);font-weight:700}
+.m-datos{display:flex;flex-wrap:wrap;gap:0;margin-top:clamp(12px,2vw,20px);border-top:2px solid currentColor}
+.m-datos div{padding:10px 22px 0 0;margin-right:22px}
+.m-datos dt{font-size:var(--t-xs);font-weight:700;letter-spacing:.02em}
+.m-datos dd{margin:0;font-weight:700}
+
+.m-cuerpo{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:clamp(24px,4vw,64px);
+  padding-block:clamp(32px,5vw,64px) clamp(56px,8vw,104px)}
+.m-indice ol,.m-pasos{list-style:none;padding:0;margin-inline:0}
+.m-indice ol{position:sticky;top:calc(var(--cabecera) + 20px);display:grid;gap:2px}
+.m-indice a{display:grid;grid-template-columns:2.2em 1fr;align-items:baseline;padding:8px 10px;border-radius:var(--radio-s);
+  font-weight:700;color:var(--tinta-2);transition:background var(--t-tap) var(--ease),color var(--t-tap) var(--ease)}
+.m-indice a[aria-current]{background:var(--tinta);color:#fff}
+@media (hover:hover) and (pointer:fine){ .m-indice a:not([aria-current]):hover{background:var(--panel);color:var(--tinta)} }
+.m-num{font-family:var(--f-pantalla);font-weight:900;letter-spacing:0}
+
+.m-texto{min-width:0;max-width:760px}
+.m-cap{padding-bottom:clamp(36px,5vw,56px);margin-bottom:clamp(36px,5vw,56px);border-bottom:1px solid var(--linea);
+  scroll-margin-top:calc(var(--cabecera) + 16px)}
+.m-cap:last-of-type{border-bottom:0}
+.m-cap h2{display:flex;align-items:baseline;gap:.5em;font-size:var(--t-xl);font-weight:800;letter-spacing:-.025em;margin-bottom:16px}
+.m-cap h2 .m-num{font-size:.8em;color:var(--tinta-2)}
+.m-cap>p,.m-capa figcaption{max-width:64ch;margin-top:14px;color:var(--tinta)}
+.m-cap strong{font-weight:800}
+/* las teclas del texto: pequenas teclas de verdad, con su canto */
+kbd{display:inline-block;min-width:1.7em;padding:.05em .45em .12em;border-radius:5px;background:var(--blanco);
+  font:700 .88em/1.35 var(--f-ui);text-align:center;color:var(--tinta);
+  box-shadow:inset 0 0 0 1px var(--linea-2),inset 0 -2px 0 var(--linea)}
+.m-pasos{counter-reset:paso;display:grid;gap:12px;margin-top:16px;max-width:64ch}
+.m-pasos li{counter-increment:paso;display:grid;grid-template-columns:2.2em 1fr;gap:10px;align-items:baseline}
+.m-pasos li::before{content:counter(paso);font-family:var(--f-pantalla);font-weight:900;font-size:1.25em;line-height:1;
+  display:grid;place-items:center;width:1.9em;height:1.9em;border-radius:var(--radio-s);background:var(--lcd);color:var(--lcd-tinta);
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.18),inset 0 0 0 1px rgba(0,0,0,.14)}
+.m-nota{margin-top:16px;padding:12px 16px;border-radius:var(--radio-s);background:var(--panel);font-weight:600;max-width:64ch;
+  box-shadow:inset 0 0 0 1px var(--linea)}
+.m-enlaces{display:flex;flex-wrap:wrap;gap:4px 24px;margin-top:14px}
+.m-tabla{margin-top:16px;overflow-x:auto;border-radius:var(--radio-s);box-shadow:inset 0 0 0 1px var(--linea)}
+.m-tabla .f-datos th[scope="row"]{font-weight:700;white-space:normal;min-width:11em}
+.m-tabla .f-datos td{font-weight:500}
+.m-pie{margin-top:8px}
+
+/* la lamina de una capa */
+.m-capa{margin:22px 0 0}
+.m-lamina{position:relative;padding:clamp(16px,3vw,28px) clamp(12px,2.4vw,24px) clamp(14px,2.4vw,22px);border-radius:var(--radio);
+  background:#15161a;color:#e9eaee;overflow-x:auto}
+.m-lamina__nombre{display:block;margin-bottom:14px;font-family:var(--f-pantalla);font-weight:900;font-size:1.4rem;line-height:1;color:#fff}
+.m-teclado{display:flex;justify-content:space-between;gap:clamp(14px,4vw,48px);min-width:560px}
+.m-mitad{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:5px;flex:1}
+/* las etiquetas largas bajan de cuerpo en vez de partirse por la mitad */
+.m-t{position:relative;display:grid;place-items:center;align-content:center;min-height:40px;padding:2px;border-radius:6px;
+  font-size:.72rem;font-weight:700;line-height:1.1;text-align:center;hyphens:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.34)}
+.m-t--largo{font-size:.6rem;letter-spacing:-.01em}
+.m-t small{display:block;font-size:.62rem;font-weight:600;opacity:.7}
+.m-t--hueco{box-shadow:none}
+.m-t--igual{color:rgba(255,255,255,.3);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.m-t--fn{background:var(--modelo);color:var(--modelo-tinta);box-shadow:none}
+.m-t--mantenida{box-shadow:inset 0 0 0 1.5px #fff;outline:1px dashed rgba(255,255,255,.7);outline-offset:3px;color:#fff}
+.m-t--encoder{border-radius:50%;aspect-ratio:1;min-height:0;width:min(100%,46px);justify-self:center}
+.m-leyenda{margin-top:10px;font-size:var(--t-xs);color:var(--tinta-2);max-width:72ch}
+
+@media (max-width:900px){
+  .m-cuerpo{grid-template-columns:minmax(0,1fr)}
+  /* el indice pasa a una tira que se desliza bajo la cabecera */
+  /* --alto-cab lo pone manual.js: en movil la cabecera tiene dos pisos */
+  .m-indice{position:sticky;top:var(--alto-cab,var(--cabecera));z-index:var(--z-dentro);margin-inline:calc(-1 * var(--canal));
+    background:var(--carcasa);border-bottom:1px solid var(--linea)}
+  .m-indice ol{position:static;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:8px var(--canal)}
+  .m-indice ol::-webkit-scrollbar{display:none}
+  .m-indice a{white-space:nowrap;display:flex;gap:.45em;padding:7px 10px}
+  .m-cap{scroll-margin-top:calc(var(--alto-cab,var(--cabecera)) + 64px)}
+}
+@media (max-width:640px){
+  /* en el movil las dos mitades una encima de otra: caben sin desplazar */
+  .m-teclado{flex-direction:column;min-width:0;gap:14px}
+  .m-mitad--der{order:0}
 }
 
 @media (max-width:900px){

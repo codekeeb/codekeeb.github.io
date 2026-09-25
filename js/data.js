@@ -62,6 +62,7 @@ const CK_TITULAR = {
 const CK_PRODUCTS = [
   {
     id: "sofle-carbon",
+    manual: "sofle-zmk",      // js/manuales.js: el manual de su firmware
     color: { fondo: "#2B3BF5", tinta: "#FFFFFF" },   // bloque de la ficha; tinta elegida por contraste (>= 4,5:1)
     corto: "Sofle Carbon",
     listingId: "4538841345",
@@ -119,6 +120,7 @@ const CK_PRODUCTS = [
   },
   {
     id: "sofle-retro",
+    manual: "sofle-zmk",      // js/manuales.js: el manual de su firmware
     color: { fondo: "#F0469A", tinta: "#111111" },   // bloque de la ficha; tinta elegida por contraste (>= 4,5:1)
     corto: "Sofle Retro",
     listingId: "4542645510",
@@ -175,6 +177,7 @@ const CK_PRODUCTS = [
   },
   {
     id: "totem",
+    manual: "totem-zmk",      // js/manuales.js: el manual de su firmware
     color: { fondo: "#FFD21F", tinta: "#111111" },   // bloque de la ficha; tinta elegida por contraste (>= 4,5:1)
     corto: "Totem",
     listingId: "4551478025",

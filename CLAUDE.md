@@ -19,6 +19,7 @@ carencia.
 |---|---|
 | `index.html` | **La portada es la tienda**: cinco franjas de color, una por modelo, con filtros que pliegan las que no encajan; el aparato de la forma (mitades, columnas, pulgares, hotswap con teclas de modo), el firmware (luz, pantallas, capas), comparacion y confianza |
 | `modelo.html` | **Ficha de cada modelo**, `modelo.html?id=<id>`: tira de la familia, barra del producto, configurador en una columna con "tu configuracion incluye", los principios con la forma de ESE teclado, ficha, comparacion y barra de compra fija abajo |
+| `manual.html` · `js/manual.js` · `js/manuales.js` | **Manual de cada modelo**, `manual.html?id=<id>`: indice de capitulos y capas dibujadas tecla a tecla. El contenido es por firmware (`manual:` en `data.js`) y **sale del .keymap del repositorio del firmware, no de su README**. Los Corne no tienen: sus repos estan vacios y no se inventan pasos |
 | `comparar.html` | Los cinco en columnas, fila a fila, con "solo lo que cambia" |
 | `legal.html` · `js/legal.js` · `js/legal-textos.js` | Aviso legal, privacidad, cookies y compras, en es / en / fr. Los datos del titular salen de `CK_TITULAR` (`js/data.js`) |
 | `404.html` · `js/no-encontrada.js` | Pagina de error con los cinco modelos. Rutas **absolutas**: GitHub Pages la sirve en cualquier ruta rota |

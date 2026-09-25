@@ -388,7 +388,20 @@ const CK_I18N = {
     "p3.modosLuz": "Modos de luz",
     "p3.pcb": "Switch, PCB y zócalo",
     "p3.zocalo": "La PCB, en transparencia, y lo que queda oculto",
-    "p3.libre": "Contacto libre: sin soldadura"
+    "p3.libre": "Contacto libre: sin soldadura",
+    "man.titulo": "Manual de uso",
+    "man.indice": "Capítulos",
+    "man.modelos": "Manuales",
+    "man.firmware": "Firmware",
+    "man.controlador": "Controlador",
+    "man.conexion": "Conexión",
+    "man.bateria": "Batería",
+    "man.capa": "Capa",
+    "man.leyenda": "En color, lo que hace cada tecla en esta capa. Con borde discontinuo, la que mantienes para entrar. «·» hace lo mismo que en la capa de escribir. Las teclas redondas son los encoders, pulsados.",
+    "man.pendT": "Este manual está en preparación.",
+    "man.pendP": "Lo publicaremos cuando esté comprobado contra el firmware del teclado, para que cada paso sea el que es. Mientras tanto, cualquier duda, escríbeme por Etsy.",
+    "man.verFicha": "Ver la ficha del teclado",
+    "man.enlace": "Manual de uso"
   },
 
   en: {
@@ -773,7 +786,20 @@ const CK_I18N = {
     "p3.modosLuz": "Lighting modes",
     "p3.pcb": "Switch, PCB and socket",
     "p3.zocalo": "The PCB, see-through, and hidden edges",
-    "p3.libre": "Free contact: no solder"
+    "p3.libre": "Free contact: no solder",
+    "man.titulo": "User manual",
+    "man.indice": "Chapters",
+    "man.modelos": "Manuals",
+    "man.firmware": "Firmware",
+    "man.controlador": "Controller",
+    "man.conexion": "Connection",
+    "man.bateria": "Battery",
+    "man.capa": "Layer",
+    "man.leyenda": "In colour, what each key does on this layer. With a dashed border, the one you hold to get there. “·” does the same as on the typing layer. The round keys are the encoders, pressed.",
+    "man.pendT": "This manual is being prepared.",
+    "man.pendP": "We'll publish it once it's checked against the keyboard's firmware, so every step is exactly right. Meanwhile, if you have any question, message me on Etsy.",
+    "man.verFicha": "See the keyboard's page",
+    "man.enlace": "User manual"
   },
 
   fr: {
@@ -1158,6 +1184,19 @@ const CK_I18N = {
     "p3.modosLuz": "Modes d'éclairage",
     "p3.pcb": "Switch, PCB et support",
     "p3.zocalo": "Le PCB, en transparence, et les arêtes cachées",
-    "p3.libre": "Contact libre : sans soudure"
+    "p3.libre": "Contact libre : sans soudure",
+    "man.titulo": "Manuel d'utilisation",
+    "man.indice": "Chapitres",
+    "man.modelos": "Manuels",
+    "man.firmware": "Firmware",
+    "man.controlador": "Contrôleur",
+    "man.conexion": "Connexion",
+    "man.bateria": "Batterie",
+    "man.capa": "Couche",
+    "man.leyenda": "En couleur, ce que fait chaque touche sur cette couche. Bordure en pointillés : celle que vous maintenez pour y accéder. « · » fait la même chose que sur la couche d'écriture. Les touches rondes sont les encodeurs, pressés.",
+    "man.pendT": "Ce manuel est en préparation.",
+    "man.pendP": "Nous le publierons une fois vérifié sur le firmware du clavier, pour que chaque étape soit exacte. En attendant, pour toute question, écrivez-moi sur Etsy.",
+    "man.verFicha": "Voir la fiche du clavier",
+    "man.enlace": "Manuel d'utilisation"
   }
 };

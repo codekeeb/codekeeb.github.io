@@ -98,6 +98,13 @@
     $("#nombre").textContent = tit.model;
     $("#rasgo").innerHTML = `<span>${CK.escapar(CK.L(tit.trait) || "")}</span>${tit.accent ? `<span class="f-rgb">${CK.escapar(tit.accent)}</span>` : ""}`;
     $("#desc").textContent = CK.L(p.desc) || "";
+    /* el manual, solo si este firmware lo tiene (los Corne todavia no) */
+    $("#manual").hidden = !p.manual;
+    if (p.manual) {
+      const a = $("#manual a");
+      a.href = `manual.html?id=${p.id}`;
+      a.innerHTML = `${T("man.enlace")}${CK.icono("flecha", 16)}`;
+    }
     $("#lecturas").innerHTML = (p.stats || []).slice(0, 4).map(([v, etq]) =>
       `<li><b>${CK.escapar(v)}</b><span>${CK.escapar(CK.L(etq))}</span></li>`).join("");
     const desde = CK.precioMinimo(p);

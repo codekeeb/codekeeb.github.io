@@ -196,6 +196,9 @@ Teclas con un LED gris que se pone blanco sobre la tecla negra cuando estan acti
 ### Hoja de datos
 Una tabla de parametro y valor. La cabecera es negra, los grupos (Generales, Componentes) van en etiqueta y las filas se separan con reglas de 1px. La lista de confianza sigue el mismo patron: icono, lo que se promete y la explicacion.
 
+### Manual
+`manual.html?id=`: una placa corta del color del modelo, un índice de capítulos numerados fijo a la izquierda (tira deslizable en móvil) y el texto en una columna de 64 caracteres. Las teclas del texto son `kbd` con su canto; los pasos se numeran en pequeñas pantallas LCD. Cada capa del teclado es una **lámina** en la ventana oscura: teclas en línea clara, las que cambian en esa capa rellenas del color del modelo, la que se mantiene con borde discontinuo y los encoders redondos. En móvil las dos mitades se apilan.
+
 ## Do's and Don'ts
 
 ### Do:
