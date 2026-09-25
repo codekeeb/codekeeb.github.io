@@ -12,7 +12,7 @@
    ============================================================ */
 
 const CK = (() => {
-  const IDIOMAS = ["es", "en", "fr"];
+  const IDIOMAS = ["es", "en"];
 
   /* El idioma vive en localStorage y lo comparten las tres direcciones
      y la web: si lo cambias aqui, sigue cambiado alla. */
@@ -23,10 +23,16 @@ const CK = (() => {
   const leer = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
   const guardar = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* sin memoria, no pasa nada */ } };
 
+  /* Sin eleccion guardada, manda el idioma del navegador: quien no lo
+     tiene en espanol ve la web en ingles. Antes caia siempre al espanol,
+     y desde que se quito el frances (25 sep 2026) un visitante frances
+     habria acabado en espanol. Un "fr" viejo guardado cae aqui tambien. */
   function idioma() {
     const url = new URLSearchParams(location.search).get("lang");
     const guardado = url || leer("ck-lang");
-    return IDIOMAS.includes(guardado) ? guardado : "es";
+    if (IDIOMAS.includes(guardado)) return guardado;
+    const nav = (navigator.languages && navigator.languages[0]) || navigator.language || "es";
+    return /^es\b/i.test(nav) ? "es" : "en";
   }
 
   let lang = idioma();
@@ -36,11 +42,11 @@ const CK = (() => {
      caza un idioma a medias. */
   const t = k => (CK_I18N[lang] && CK_I18N[lang][k]) || k;
 
-  /* Un campo del catalogo que viene como {es,en,fr}. Los hay que son
+  /* Un campo del catalogo que viene como {es,en}. Los hay que son
      una cadena suelta (un "58" no se traduce); esos se devuelven tal cual. */
   const L = v => (v && typeof v === "object" && !Array.isArray(v)) ? (v[lang] ?? v.es) : v;
 
-  const LOCALE = { es: "es-ES", en: "en-GB", fr: "fr-FR" };
+  const LOCALE = { es: "es-ES", en: "en-GB" };
 
   /* Precio en euros. Sin decimales cuando son ,00: un "40 €" se lee
      mas rapido que un "40,00 €" y el importe real lo confirma Etsy. */
@@ -392,6 +398,9 @@ const CK = (() => {
     document.querySelectorAll("[data-lang-actual]").forEach(e => { e.textContent = lang.toUpperCase(); });
     document.querySelectorAll("[data-t]").forEach(e => { e.textContent = t(e.dataset.t); });
     document.querySelectorAll("[data-t-html]").forEach(e => { e.innerHTML = t(e.dataset.tHtml); });
+    /* los nombres accesibles tambien cambian de idioma: un lector de
+       pantalla en ingles leia "Principal" e "Idioma" */
+    document.querySelectorAll("[data-t-aria]").forEach(e => { e.setAttribute("aria-label", t(e.dataset.tAria)); });
   }
 
   /* --- selector de idioma: un boton, no tres -----------------------

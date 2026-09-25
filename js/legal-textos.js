@@ -1,8 +1,8 @@
 /* ============================================================
-   CODEKEEB — textos legales, en es / en / fr
+   CODEKEEB — textos legales, en es / en
    ------------------------------------------------------------
    Van aparte de i18n.js porque son largos y se leen en una sola pagina.
-   legal.js comprueba que los tres idiomas tienen las mismas secciones y
+   legal.js comprueba que los dos idiomas tienen las mismas secciones y
    lo avisa por consola si no (preview.mjs lo caza como error).
 
    REGLA: aqui solo se afirma lo que es verdad HOY en el codigo del sitio
@@ -146,68 +146,5 @@ const CK_LEGAL = {
       <p>This summarises general rules. It does not replace the law that applies to your purchase, which depends on your country and the type of sale, nor does it extend those rights.</p>
       <h3>Support</h3>
       <p>If something fails, get in touch through Etsy.</p>`,
-  },
-
-  fr: {
-    aviso: `
-      <p>Ce site est le catalogue de Codekeeb, claviers split faits à la main. Rien n'y est vendu ni encaissé : chaque achat se fait dans la boutique CodeKeeb sur Etsy.</p>
-      <h3>Éditeur du site</h3>
-      {{TITULAR}}
-      <h3>Propriété intellectuelle et crédits</h3>
-      <p>Les photos de produit sont des photos originales des claviers vendus. Les schémas des claviers sont des dessins réalisés à partir de leur géométrie, comme l'indique la légende sous chacun d'eux.</p>
-      <p>Les conceptions des claviers appartiennent à leurs auteurs : <b>Sofle</b>, de Josef Adamčík (licence MIT) ; <b>Corne</b> (crkbd), de foostan ; <b>TOTEM</b>, de GEIST (licence CERN-OHL-P v2). ZMK, QMK, VIA et Vial sont des projets de logiciel libre portés par leurs communautés. Codekeeb assemble, adapte et vend des unités basées sur ces conceptions, mais n'en est pas l'auteur.</p>
-      <p>Polices : Archivo, Inter, Baloo 2 et Space Mono, sous licence SIL Open Font License, servies depuis ce même site.</p>
-      <h3>Avis</h3>
-      <p>Les notes affichées ici sont celles d'Etsy, avec leur nombre d'avis et un lien vers l'annonce. Elles ne sont ni rédigées, ni choisies, ni modifiées sur ce site. Si vous pensez qu'un avis n'est pas authentique, vous pouvez le signaler à Etsy ou m'écrire.</p>
-      <h3>Liens vers d'autres sites</h3>
-      <p>Les liens vers Etsy, GitHub et ZMK mènent à des sites qui ont leurs propres conditions et politiques de confidentialité.</p>`,
-
-    privacidad: `
-      <p class="legal__resumen">En bref : ce site ne vous demande aucune donnée, n'utilise pas de cookies, n'a ni mesure d'audience ni publicité, et ne charge rien depuis d'autres domaines. Si vous achetez, c'est sur Etsy.</p>
-      <h3>Responsable du traitement</h3>
-      <p>L'éditeur indiqué dans les <a href="#aviso">mentions légales</a>.</p>
-      <h3>Quelles données ce site traite</h3>
-      <ul>
-        <li><b>Aucune que vous saisissez.</b> Il n'y a ni formulaire, ni compte, ni newsletter.</li>
-        <li><b>Votre adresse IP</b>, qui, comme sur tout site, parvient au serveur qui l'héberge : GitHub Pages, de GitHub, Inc. (États-Unis). GitHub enregistre les adresses IP des visiteurs pour des raisons de sécurité et les traite selon sa <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">déclaration de confidentialité</a>. Codekeeb n'a accès ni à ces journaux ni à des statistiques de visite.</li>
-        <li><b>Des préférences enregistrées par votre propre navigateur</b> : langue, pause des animations et, si vous utilisez Keymap Studio, vos keymaps et macros. Elles ne quittent pas votre navigateur. Le détail est dans <a href="#cookies">cookies</a>.</li>
-      </ul>
-      <h3>Keymap Studio</h3>
-      <p>L'éditeur communique avec votre clavier par câble (Web Serial), directement depuis votre navigateur. Ni la keymap ni les macros ne sont envoyées à un serveur. Les macros conservent le texte que vous y tapez : n'y mettez pas de mots de passe.</p>
-      <h3>Si vous achetez sur Etsy</h3>
-      <p>Etsy gère la commande, le paiement et vos données de livraison selon sa politique de confidentialité. Etsy transmet au vendeur ce qui est nécessaire pour préparer et expédier la commande (votre nom et votre adresse de livraison) ainsi que les messages que vous lui envoyez. Ces données servent uniquement à expédier la commande, assurer le service après-vente et respecter les obligations légales, par exemple fiscales. La base légale est l'exécution de l'achat et ces obligations (art. 6.1.b et 6.1.c du RGPD), et elles sont conservées aussi longtemps que celles-ci l'exigent.</p>
-      <h3>Vos droits</h3>
-      <p>Vous pouvez demander l'accès, la rectification, l'effacement, l'opposition, la limitation ou la portabilité de vos données en écrivant à l'éditeur. Si vous estimez qu'ils n'ont pas été respectés, vous pouvez saisir l'Agence espagnole de protection des données (<a href="https://www.aepd.es" target="_blank" rel="noopener">aepd.es</a>) ou l'autorité de votre pays.</p>
-      <h3>Sécurité</h3>
-      <p>Le site est servi uniquement en HTTPS, et une politique de sécurité du contenu l'empêche de charger du code depuis d'autres domaines. Comme il ne collecte aucune donnée personnelle, il n'en conserve aucune à protéger.</p>
-      <h3>Modifications</h3>
-      <p>Si le site commence un jour à collecter des données ou à utiliser un service tiers, cette politique sera mise à jour avant. Et si votre consentement est nécessaire, il vous sera demandé avant toute activation.</p>`,
-
-    cookies: `
-      <p class="legal__resumen">Ce site n'utilise pas de cookies, ni d'outil de mesure d'audience, de publicité ou de suivi. C'est pourquoi vous ne verrez pas de bandeau cookies : il n'y a rien à accepter ni à refuser.</p>
-      <p>Il utilise en revanche le stockage local de votre navigateur (localStorage) pour retenir les choix que vous faites. Il reste sur votre appareil, n'est envoyé nulle part et ne permet pas de vous identifier.</p>
-      {{TABLA}}
-      <p>Comme il s'agit d'un stockage que vous activez vous-même en utilisant une fonction, il ne nécessite pas de consentement préalable. Vous pouvez l'effacer ici ou depuis les réglages de votre navigateur :</p>
-      {{BORRAR}}
-      <p>Si un outil de mesure est ajouté un jour, cette page le dira avant, et votre accord vous sera demandé avant son chargement.</p>`,
-
-    compras: `
-      <h3>Où acheter</h3>
-      <p>Tous les achats se font dans la boutique CodeKeeb sur Etsy ({{TIENDA}}). Le contrat et le paiement sont régis par les conditions d'Etsy et par ce qu'indique l'annonce de chaque produit.</p>
-      <h3>Prix</h3>
-      <p>Les prix de ce site sont indicatifs : ils sont copiés depuis Etsy et portent la date de la dernière vérification ({{FECHA}}). Ceux qui font foi, avec les frais de port, sont ceux qu'Etsy affiche avant le paiement.</p>
-      <h3>Livraison</h3>
-      <p>Les commandes partent d'Espagne. Délais et frais : dans chaque annonce Etsy.</p>
-      <h3>Retours et annulations</h3>
-      <p>Les conditions précises (délai, qui paie le retour et quels articles peuvent être retournés) sont celles des politiques de la boutique sur Etsy. Consultez-les avant d'acheter.</p>
-      <h3>Vos droits de consommateur</h3>
-      <p>Si vous achetez en tant que consommateur dans l'Union européenne auprès d'un vendeur professionnel, la loi vous reconnaît notamment :</p>
-      <ul>
-        <li><b>Droit de rétractation.</b> Vous disposez de 14 jours calendaires à compter de la réception de la commande pour la renvoyer sans motif. La loi exclut les biens confectionnés selon vos spécifications ou nettement personnalisés, ce qui peut concerner les commandes sur mesure (couleurs, switches ou disposition que vous choisissez). Si votre commande est sur mesure, demandez avant d'acheter.</li>
-        <li><b>Garantie légale de conformité.</b> Si le produit présente un défaut d'origine, vous pouvez demander sa réparation ou son remplacement. Dans l'UE, elle dure au moins deux ans ; en Espagne, trois ans à compter de la livraison.</li>
-      </ul>
-      <p>Ceci résume des règles générales. Cela ne remplace pas la loi applicable à votre achat, qui dépend de votre pays et du type de vente, et n'étend pas ces droits.</p>
-      <h3>Support</h3>
-      <p>Si quelque chose ne va pas, écrivez via Etsy.</p>`,
   },
 };

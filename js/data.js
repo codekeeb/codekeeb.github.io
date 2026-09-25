@@ -81,38 +81,36 @@ const CK_PRODUCTS = [
     priceOriginal: 309.00,
     discountPct: 35,
     stock: 1,
-    kicker: { es: "Split · Inalámbrico · 5,3 mm · ZMK", en: "Split · Wireless · 5.3 mm · ZMK", fr: "Split · Sans fil · 5,3 mm · ZMK" },
+    kicker: { es: "Split · Inalámbrico · 5,3 mm · ZMK", en: "Split · Wireless · 5.3 mm · ZMK" },
     desc: {
       es: "Sofle low profile de 5,3 mm de perfil, con la electrónica embebida en un case texturizado de fibra de carbono.",
-      en: "A 5.3 mm low profile Sofle, with the electronics embedded into a carbon fiber textured case.",
-      fr: "Un Sofle low profile de 5,3 mm de profil, avec l'électronique intégrée dans un boîtier texturé fibre de carbone."
+      en: "A 5.3 mm low profile Sofle, with the electronics embedded into a carbon fiber textured case."
     },
     highlights: {
       es: ["5,3 mm de perfil, electrónica embebida en el case", "Motor RGB propio: 10 modos y degradados continuos entre mitades", "OLED dual con firmware propio: batería, capa, WPM y Bongo Cat", "300 mAh · hasta 4 días por carga con RGB apagado"],
-      en: ["5.3 mm profile, electronics embedded into the case", "Custom RGB engine: 10 modes, gradients flowing across both halves", "Dual OLED on custom firmware: battery, layer, WPM and Bongo Cat", "300 mAh · up to 4 days per charge with RGB off"],
-      fr: ["Profil de 5,3 mm, électronique intégrée au boîtier", "Moteur RGB maison : 10 modes, dégradés continus entre les moitiés", "Double OLED firmware maison : batterie, calque, WPM et Bongo Cat", "300 mAh · jusqu'à 4 jours par charge sans RGB"]
+      en: ["5.3 mm profile, electronics embedded into the case", "Custom RGB engine: 10 modes, gradients flowing across both halves", "Dual OLED on custom firmware: battery, layer, WPM and Bongo Cat", "300 mAh · up to 4 days per charge with RGB off"]
     },
     specs: [
-      [{es:"Teclas",en:"Keys",fr:"Touches"}, "58"],
-      [{es:"Perfil",en:"Profile",fr:"Profil"}, "5,3 mm"],
-      [{es:"Switches",en:"Switches",fr:"Switches"}, {es:"Choc low profile, hotswap",en:"Choc low profile, hotswap",fr:"Choc low profile, hotswap"}],
-      [{es:"Conexión",en:"Connectivity",fr:"Connexion"}, {es:"Bluetooth (5 perfiles) + USB-C",en:"Bluetooth (5 profiles) + USB-C",fr:"Bluetooth (5 profils) + USB-C"}],
-      [{es:"Batería",en:"Battery",fr:"Batterie"}, {es:"300 mAh · hasta 4 días sin RGB",en:"300 mAh · up to 4 days with RGB off",fr:"300 mAh · jusqu'à 4 jours sans RGB"}],
-      [{es:"Pantallas",en:"Displays",fr:"Écrans"}, {es:"OLED dual, firmware propio",en:"Dual OLED, custom firmware",fr:"Double OLED, firmware maison"}],
-      [{es:"Iluminación",en:"Lighting",fr:"Éclairage"}, {es:"RGB per-key + underglow, 10 modos",en:"Per-key RGB + underglow, 10 modes",fr:"RGB par touche + underglow, 10 modes"}],
-      [{es:"Encoders",en:"Encoders",fr:"Encodeurs"}, {es:"2 rotatorios clicables",en:"2 clickable rotary",fr:"2 rotatifs cliquables"}],
-      [{es:"Case",en:"Case",fr:"Boîtier"}, {es:"Fibra de carbono texturizada, impreso a medida",en:"Carbon fiber textured, printed in house",fr:"Fibre de carbone texturée, imprimé maison"}],
-      [{es:"Firmware",en:"Firmware",fr:"Firmware"}, "ZMK + ZMK Studio"]
+      [{es:"Teclas",en:"Keys"}, "58"],
+      [{es:"Perfil",en:"Profile"}, {es:"5,3 mm",en:"5.3 mm"}],
+      [{es:"Switches",en:"Switches"}, {es:"Choc low profile, hotswap",en:"Choc low profile, hotswap"}],
+      [{es:"Conexión",en:"Connectivity"}, {es:"Bluetooth (5 perfiles) + USB-C",en:"Bluetooth (5 profiles) + USB-C"}],
+      [{es:"Batería",en:"Battery"}, {es:"300 mAh · hasta 4 días sin RGB",en:"300 mAh · up to 4 days with RGB off"}],
+      [{es:"Pantallas",en:"Displays"}, {es:"OLED dual, firmware propio",en:"Dual OLED, custom firmware"}],
+      [{es:"Iluminación",en:"Lighting"}, {es:"RGB per-key + underglow, 10 modos",en:"Per-key RGB + underglow, 10 modes"}],
+      [{es:"Encoders",en:"Encoders"}, {es:"2 rotatorios clicables",en:"2 clickable rotary"}],
+      [{es:"Case",en:"Case"}, {es:"Fibra de carbono texturizada, impreso a medida",en:"Carbon fiber textured, printed in house"}],
+      [{es:"Firmware",en:"Firmware"}, "ZMK + ZMK Studio"]
     ],
     buildOptions: [
-      { name: { es: "Teclado completo", en: "Full Keyboard", fr: "Clavier complet" }, price: 230.75 },
-      { name: { es: "Barebones", en: "Barebones", fr: "Barebones" }, price: 200.85 }
+      { name: { es: "Teclado completo", en: "Full Keyboard" }, price: 230.75 },
+      { name: { es: "Barebones", en: "Barebones" }, price: 200.85 }
     ],
     stats: [
-      ["5,3", { es: "mm de perfil", en: "mm profile", fr: "mm de profil" }],
-      ["58", { es: "teclas", en: "keys", fr: "touches" }],
-      ["BT+5", { es: "perfiles + USB-C", en: "profiles + USB-C", fr: "profils + USB-C" }],
-      ["ZMK", { es: "firmware libre", en: "open firmware", fr: "firmware libre" }]
+      [{ es: "5,3", en: "5.3" }, { es: "mm de perfil", en: "mm profile" }],
+      ["58", { es: "teclas", en: "keys" }],
+      ["BT+5", { es: "perfiles + USB-C", en: "profiles + USB-C" }],
+      ["ZMK", { es: "firmware libre", en: "open firmware" }]
     ],
     caption: "space black · 5,3 mm · BT+5 · ZMK",
     meta: ["58", "BT+5", "ZMK", "RGB", "OLED"],
@@ -138,38 +136,36 @@ const CK_PRODUCTS = [
     priceOriginal: 309.00,
     discountPct: 35,
     stock: 8,
-    kicker: { es: "Split · Inalámbrico · Retro · ZMK", en: "Split · Wireless · Retro · ZMK", fr: "Split · Sans fil · Rétro · ZMK" },
+    kicker: { es: "Split · Inalámbrico · Retro · ZMK", en: "Split · Wireless · Retro · ZMK" },
     desc: {
       es: "El mismo Sofle Choc inalámbrico en acabado retro, con varios juegos de keycaps a elegir.",
-      en: "The same wireless Sofle Choc in a retro finish, with several keycap sets to choose from.",
-      fr: "Le même Sofle Choc sans fil en finition rétro, avec plusieurs jeux de keycaps au choix."
+      en: "The same wireless Sofle Choc in a retro finish, with several keycap sets to choose from."
     },
     highlights: {
       es: ["Cuatro juegos de keycaps a elegir (Kea Grey, Kea Play, KeaColor)", "Hotswap Choc: cambia cualquier switch low profile a mano", "RGB per-key y underglow en ambas mitades", "Dos encoders rotatorios clicables"],
-      en: ["Four keycap sets to choose from (Kea Grey, Kea Play, KeaColor)", "Choc hotswap: swap any low profile switch by hand", "Per key RGB plus underglow across both halves", "Two clickable rotary encoders"],
-      fr: ["Quatre jeux de keycaps au choix (Kea Grey, Kea Play, KeaColor)", "Hotswap Choc : changez n'importe quel switch low profile à la main", "RGB par touche et underglow sur les deux moitiés", "Deux encodeurs rotatifs cliquables"]
+      en: ["Four keycap sets to choose from (Kea Grey, Kea Play, KeaColor)", "Choc hotswap: swap any low profile switch by hand", "Per key RGB plus underglow across both halves", "Two clickable rotary encoders"]
     },
     specs: [
-      [{es:"Teclas",en:"Keys",fr:"Touches"}, "58"],
-      [{es:"Switches",en:"Switches",fr:"Switches"}, {es:"Choc low profile, hotswap",en:"Choc low profile, hotswap",fr:"Choc low profile, hotswap"}],
-      [{es:"Conexión",en:"Connectivity",fr:"Connexion"}, {es:"Bluetooth (5 perfiles) + USB-C",en:"Bluetooth (5 profiles) + USB-C",fr:"Bluetooth (5 profils) + USB-C"}],
-      [{es:"Keycaps",en:"Keycaps",fr:"Keycaps"}, {es:"Kea Grey · Kea Play · KeaColor · MTNU",en:"Kea Grey · Kea Play · KeaColor · MTNU",fr:"Kea Grey · Kea Play · KeaColor · MTNU"}],
-      [{es:"Iluminación",en:"Lighting",fr:"Éclairage"}, {es:"RGB per-key + underglow",en:"Per-key RGB + underglow",fr:"RGB par touche + underglow"}],
-      [{es:"Encoders",en:"Encoders",fr:"Encodeurs"}, {es:"2 rotatorios clicables",en:"2 clickable rotary",fr:"2 rotatifs cliquables"}],
-      [{es:"Firmware",en:"Firmware",fr:"Firmware"}, "ZMK + ZMK Studio"]
+      [{es:"Teclas",en:"Keys"}, "58"],
+      [{es:"Switches",en:"Switches"}, {es:"Choc low profile, hotswap",en:"Choc low profile, hotswap"}],
+      [{es:"Conexión",en:"Connectivity"}, {es:"Bluetooth (5 perfiles) + USB-C",en:"Bluetooth (5 profiles) + USB-C"}],
+      [{es:"Keycaps",en:"Keycaps"}, {es:"Kea Grey · Kea Play · KeaColor · MTNU",en:"Kea Grey · Kea Play · KeaColor · MTNU"}],
+      [{es:"Iluminación",en:"Lighting"}, {es:"RGB per-key + underglow",en:"Per-key RGB + underglow"}],
+      [{es:"Encoders",en:"Encoders"}, {es:"2 rotatorios clicables",en:"2 clickable rotary"}],
+      [{es:"Firmware",en:"Firmware"}, "ZMK + ZMK Studio"]
     ],
     buildOptions: [
-      { name: { es: "Barebones", en: "Barebones", fr: "Barebones" }, price: 200.85 },
-      { name: { es: "Completo · MTNU", en: "Full · MTNU", fr: "Complet · MTNU" }, sold: true },
-      { name: { es: "Completo · Kea Grey", en: "Full · Kea Grey", fr: "Complet · Kea Grey" } },
-      { name: { es: "Completo · Kea Play", en: "Full · Kea Play", fr: "Complet · Kea Play" } },
-      { name: { es: "Completo · KeaColor", en: "Full · KeaColor", fr: "Complet · KeaColor" } }
+      { name: { es: "Barebones", en: "Barebones" }, price: 200.85 },
+      { name: { es: "Completo · MTNU", en: "Full · MTNU" }, sold: true },
+      { name: { es: "Completo · Kea Grey", en: "Full · Kea Grey" } },
+      { name: { es: "Completo · Kea Play", en: "Full · Kea Play" } },
+      { name: { es: "Completo · KeaColor", en: "Full · KeaColor" } }
     ],
     stats: [
-      ["58", { es: "teclas", en: "keys", fr: "touches" }],
-      ["4", { es: "sets de keycaps", en: "keycap sets", fr: "jeux de keycaps" }],
-      ["BT+5", { es: "perfiles + USB-C", en: "profiles + USB-C", fr: "profils + USB-C" }],
-      ["ZMK", { es: "firmware libre", en: "open firmware", fr: "firmware libre" }]
+      ["58", { es: "teclas", en: "keys" }],
+      ["4", { es: "sets de keycaps", en: "keycap sets" }],
+      ["BT+5", { es: "perfiles + USB-C", en: "profiles + USB-C" }],
+      ["ZMK", { es: "firmware libre", en: "open firmware" }]
     ],
     caption: "retro · hotswap choc · BT+5 · ZMK",
     meta: ["58", "BT+5", "ZMK", "RGB", "OLED"],
@@ -183,9 +179,9 @@ const CK_PRODUCTS = [
     listingId: "4551478025",
     status: "available",
     featured: true,
-    title: { model: "Totem", trait: { es: "38 teclas", en: "38 keys", fr: "38 touches" } },
+    title: { model: "Totem", trait: { es: "38 teclas", en: "38 keys" } },
     name: "Totem",
-    version: { es: "38 teclas", en: "38 keys", fr: "38 touches" },
+    version: { es: "38 teclas", en: "38 keys" },
     img: "totem.jpg",
     foco: 61,   // del 29% al 93%
     heroImg: "totem.jpg",
@@ -196,36 +192,34 @@ const CK_PRODUCTS = [
     priceOriginal: 40.00,
     discountPct: 35,
     stock: 1,
-    kicker: { es: "Split · 38 teclas · ZMK", en: "Split · 38 keys · ZMK", fr: "Split · 38 touches · ZMK" },
+    kicker: { es: "Split · 38 teclas · ZMK", en: "Split · 38 keys · ZMK" },
     desc: {
       es: "El más compacto: 38 teclas, hotswap Choc y case ZMK Bluetooth. Disponible en inalámbrico o cableado.",
-      en: "The most compact: 38 keys, Choc hotswap and ZMK Bluetooth case. Available wireless or wired.",
-      fr: "Le plus compact : 38 touches, hotswap Choc et boîtier ZMK Bluetooth. Disponible sans fil ou filaire."
+      en: "The most compact: 38 keys, Choc hotswap and ZMK Bluetooth case. Available wireless or wired."
     },
     highlights: {
       es: ["38 teclas: el layout más compacto del catálogo", "Inalámbrico o cableado, tú eliges", "Choc Red hotswap", "Personalizable bajo pedido"],
-      en: ["38 keys: the most compact layout in the catalogue", "Wireless or wired, your choice", "Choc Red hotswap", "Customisable on request"],
-      fr: ["38 touches : le layout le plus compact du catalogue", "Sans fil ou filaire, au choix", "Hotswap Choc Red", "Personnalisable sur demande"]
+      en: ["38 keys: the most compact layout in the catalogue", "Wireless or wired, your choice", "Choc Red hotswap", "Customisable on request"]
     },
     specs: [
-      [{es:"Teclas",en:"Keys",fr:"Touches"}, "38"],
-      [{es:"Switches",en:"Switches",fr:"Switches"}, {es:"Choc Red, hotswap",en:"Choc Red, hotswap",fr:"Choc Red, hotswap"}],
-      [{es:"Conexión",en:"Connectivity",fr:"Connexion"}, {es:"Inalámbrico o cableado",en:"Wireless or wired",fr:"Sans fil ou filaire"}],
-      [{es:"Case",en:"Case",fr:"Boîtier"}, {es:"ZMK Bluetooth",en:"ZMK Bluetooth",fr:"ZMK Bluetooth"}],
-      [{es:"Firmware",en:"Firmware",fr:"Firmware"}, "ZMK"],
-      [{es:"Personalización",en:"Customisation",fr:"Personnalisation"}, {es:"Bajo pedido",en:"On request",fr:"Sur demande"}]
+      [{es:"Teclas",en:"Keys"}, "38"],
+      [{es:"Switches",en:"Switches"}, {es:"Choc Red, hotswap",en:"Choc Red, hotswap"}],
+      [{es:"Conexión",en:"Connectivity"}, {es:"Inalámbrico o cableado",en:"Wireless or wired"}],
+      [{es:"Case",en:"Case"}, {es:"ZMK Bluetooth",en:"ZMK Bluetooth"}],
+      [{es:"Firmware",en:"Firmware"}, "ZMK"],
+      [{es:"Personalización",en:"Customisation"}, {es:"Bajo pedido",en:"On request"}]
     ],
     buildOptions: [
-      { name: { es: "Teclado completo", en: "Full Keyboard", fr: "Clavier complet" }, price: 152.75, priceTo: 187.85 },
-      { name: { es: "Barebones", en: "Barebones", fr: "Barebones" }, price: 120.25, priceTo: 155.35 },
-      { name: { es: "PCB soldada", en: "Soldered PCB", fr: "PCB soudée" }, price: 71.50 },
-      { name: { es: "Solo PCB", en: "PCB Only", fr: "PCB seule" }, price: 26.00 }
+      { name: { es: "Teclado completo", en: "Full Keyboard" }, price: 152.75, priceTo: 187.85 },
+      { name: { es: "Barebones", en: "Barebones" }, price: 120.25, priceTo: 155.35 },
+      { name: { es: "PCB soldada", en: "Soldered PCB" }, price: 71.50 },
+      { name: { es: "Solo PCB", en: "PCB Only" }, price: 26.00 }
     ],
     stats: [
-      ["38", { es: "teclas", en: "keys", fr: "touches" }],
-      ["BT", { es: "o cableado", en: "or wired", fr: "ou filaire" }],
-      ["Choc", { es: "hotswap", en: "hotswap", fr: "hotswap" }],
-      ["ZMK", { es: "firmware libre", en: "open firmware", fr: "firmware libre" }]
+      ["38", { es: "teclas", en: "keys" }],
+      ["BT", { es: "o cableado", en: "or wired" }],
+      ["Choc", { es: "hotswap", en: "hotswap" }],
+      ["ZMK", { es: "firmware libre", en: "open firmware" }]
     ],
     caption: "38 teclas · choc hotswap · ZMK",
     meta: ["38", "BT", "ZMK", "Choc"],
@@ -251,34 +245,32 @@ const CK_PRODUCTS = [
     priceOriginal: 49.00,
     discountPct: 10,
     stock: 2,
-    kicker: { es: "Split · 42 teclas · QMK + VIA", en: "Split · 42 keys · QMK + VIA", fr: "Split · 42 touches · QMK + VIA" },
+    kicker: { es: "Split · 42 teclas · QMK + VIA", en: "Split · 42 keys · QMK + VIA" },
     desc: {
       es: "Corne v4 MX con case naranja a medida. Cableado TRRS y firmware QMK con VIA.",
-      en: "Corne v4 MX with a custom orange case. TRRS wired and QMK firmware with VIA.",
-      fr: "Corne v4 MX avec boîtier orange sur mesure. Câblé TRRS et firmware QMK avec VIA."
+      en: "Corne v4 MX with a custom orange case. TRRS wired and QMK firmware with VIA."
     },
     highlights: {
       es: ["Case naranja impreso a medida", "QMK + VIA: remapea desde el navegador", "Switches MX hotswap", "Cableado TRRS, sin baterías que cargar"],
-      en: ["Custom printed orange case", "QMK + VIA: remap from your browser", "MX hotswap switches", "TRRS wired, no batteries to charge"],
-      fr: ["Boîtier orange imprimé sur mesure", "QMK + VIA : remappage depuis le navigateur", "Switches MX hotswap", "Câblé TRRS, aucune batterie à charger"]
+      en: ["Custom printed orange case", "QMK + VIA: remap from your browser", "MX hotswap switches", "TRRS wired, no batteries to charge"]
     },
     specs: [
-      [{es:"Teclas",en:"Keys",fr:"Touches"}, "42"],
-      [{es:"Switches",en:"Switches",fr:"Switches"}, {es:"MX, hotswap",en:"MX, hotswap",fr:"MX, hotswap"}],
-      [{es:"Conexión",en:"Connectivity",fr:"Connexion"}, {es:"Cableado TRRS",en:"TRRS wired",fr:"Câblé TRRS"}],
-      [{es:"Iluminación",en:"Lighting",fr:"Éclairage"}, {es:"RGB per-key",en:"Per-key RGB",fr:"RGB par touche"}],
-      [{es:"Case",en:"Case",fr:"Boîtier"}, {es:"Naranja, impreso a medida",en:"Orange, printed in house",fr:"Orange, imprimé maison"}],
-      [{es:"Firmware",en:"Firmware",fr:"Firmware"}, "QMK + VIA"]
+      [{es:"Teclas",en:"Keys"}, "42"],
+      [{es:"Switches",en:"Switches"}, {es:"MX, hotswap",en:"MX, hotswap"}],
+      [{es:"Conexión",en:"Connectivity"}, {es:"Cableado TRRS",en:"TRRS wired"}],
+      [{es:"Iluminación",en:"Lighting"}, {es:"RGB per-key",en:"Per-key RGB"}],
+      [{es:"Case",en:"Case"}, {es:"Naranja, impreso a medida",en:"Orange, printed in house"}],
+      [{es:"Firmware",en:"Firmware"}, "QMK + VIA"]
     ],
     buildOptions: [
-      { name: { es: "Teclado completo", en: "Full Keyboard", fr: "Clavier complet" }, price: 261.00 },
-      { name: { es: "PCB soldada", en: "Soldered PCB", fr: "PCB soudée" }, price: 44.10 }
+      { name: { es: "Teclado completo", en: "Full Keyboard" }, price: 261.00 },
+      { name: { es: "PCB soldada", en: "Soldered PCB" }, price: 44.10 }
     ],
     stats: [
-      ["42", { es: "teclas", en: "keys", fr: "touches" }],
-      ["MX", { es: "hotswap", en: "hotswap", fr: "hotswap" }],
-      ["VIA", { es: "remapeo web", en: "web remapping", fr: "remappage web" }],
-      ["QMK", { es: "firmware libre", en: "open firmware", fr: "firmware libre" }]
+      ["42", { es: "teclas", en: "keys" }],
+      ["MX", { es: "hotswap", en: "hotswap" }],
+      ["VIA", { es: "remapeo web", en: "web remapping" }],
+      ["QMK", { es: "firmware libre", en: "open firmware" }]
     ],
     caption: "v4 · custom orange · TRRS · QMK",
     meta: ["42", "MX", "QMK", "RGB", "VIA"],
@@ -305,35 +297,33 @@ const CK_PRODUCTS = [
     stock: null,
     rating: 5.0,
     reviews: 1,
-    kicker: { es: "Split · 42 teclas · QMK + Vial", en: "Split · 42 keys · QMK + Vial", fr: "Split · 42 touches · QMK + Vial" },
+    kicker: { es: "Split · 42 teclas · QMK + Vial", en: "Split · 42 keys · QMK + Vial" },
     desc: {
       es: "Corne HAL v3 RGB MX cableado por USB-C. Disponible como barebones o PCB.",
-      en: "Corne HAL v3 RGB MX wired over USB-C. Available as barebones or PCB.",
-      fr: "Corne HAL v3 RGB MX câblé en USB-C. Disponible en barebones ou PCB."
+      en: "Corne HAL v3 RGB MX wired over USB-C. Available as barebones or PCB."
     },
     highlights: {
       es: ["Cableado por USB-C entre mitades", "QMK + Vial: remapeo en caliente", "RGB per-key", "El primer modelo de la tienda, con reseña de 5 estrellas"],
-      en: ["USB-C wired between halves", "QMK + Vial: live remapping", "Per key RGB", "The shop's first model, with a 5 star review"],
-      fr: ["Câblé en USB-C entre les moitiés", "QMK + Vial : remappage à chaud", "RGB par touche", "Le premier modèle de la boutique, noté 5 étoiles"]
+      en: ["USB-C wired between halves", "QMK + Vial: live remapping", "Per key RGB", "The shop's first model, with a 5 star review"]
     },
     specs: [
-      [{es:"Teclas",en:"Keys",fr:"Touches"}, "42"],
-      [{es:"Switches",en:"Switches",fr:"Switches"}, {es:"MX, hotswap",en:"MX, hotswap",fr:"MX, hotswap"}],
-      [{es:"Conexión",en:"Connectivity",fr:"Connexion"}, {es:"Cableado USB-C entre mitades",en:"USB-C wired between halves",fr:"Câblé USB-C entre moitiés"}],
-      [{es:"Iluminación",en:"Lighting",fr:"Éclairage"}, {es:"RGB per-key",en:"Per-key RGB",fr:"RGB par touche"}],
-      [{es:"Firmware",en:"Firmware",fr:"Firmware"}, "QMK + Vial"]
+      [{es:"Teclas",en:"Keys"}, "42"],
+      [{es:"Switches",en:"Switches"}, {es:"MX, hotswap",en:"MX, hotswap"}],
+      [{es:"Conexión",en:"Connectivity"}, {es:"Cableado USB-C entre mitades",en:"USB-C wired between halves"}],
+      [{es:"Iluminación",en:"Lighting"}, {es:"RGB per-key",en:"Per-key RGB"}],
+      [{es:"Firmware",en:"Firmware"}, "QMK + Vial"]
     ],
     buildOptions: [
-      { name: { es: "Teclado completo", en: "Full Keyboard", fr: "Clavier complet" }, sold: true },
-      { name: { es: "Barebones", en: "Barebones", fr: "Barebones" }, price: 171.00 },
-      { name: { es: "PCB soldada", en: "Soldered PCB", fr: "PCB soudée" }, price: 135.00 },
-      { name: { es: "Solo PCB", en: "PCB Only", fr: "PCB seule" }, price: 40.50 }
+      { name: { es: "Teclado completo", en: "Full Keyboard" }, sold: true },
+      { name: { es: "Barebones", en: "Barebones" }, price: 171.00 },
+      { name: { es: "PCB soldada", en: "Soldered PCB" }, price: 135.00 },
+      { name: { es: "Solo PCB", en: "PCB Only" }, price: 40.50 }
     ],
     stats: [
-      ["42", { es: "teclas", en: "keys", fr: "touches" }],
-      ["USB-C", { es: "entre mitades", en: "between halves", fr: "entre moitiés" }],
-      ["Vial", { es: "remapeo live", en: "live remapping", fr: "remappage live" }],
-      ["QMK", { es: "firmware libre", en: "open firmware", fr: "firmware libre" }]
+      ["42", { es: "teclas", en: "keys" }],
+      ["USB-C", { es: "entre mitades", en: "between halves" }],
+      ["Vial", { es: "remapeo live", en: "live remapping" }],
+      ["QMK", { es: "firmware libre", en: "open firmware" }]
     ],
     caption: "v3 · usb-c · vial · QMK",
     meta: ["42", "MX", "QMK", "RGB", "Vial"],

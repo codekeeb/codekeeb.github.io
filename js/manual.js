@@ -26,6 +26,10 @@
     }).join("");
   }
 
+  if (!params.get("id")) {
+    document.documentElement.style.setProperty("--modelo", "#111111");
+    document.documentElement.style.setProperty("--modelo-tinta", "#ffffff");
+  }
   if (p) {
     const color = p.color || { fondo: "#2b3bf5", tinta: "#ffffff" };
     document.documentElement.style.setProperty("--modelo", color.fondo);
@@ -80,7 +84,10 @@
   }
 
   /* ---------- los bloques ---------- */
-  const tiene = que => que !== "pantallas" || !!CK.spec(p, "Pantallas");
+  /* Si un capitulo o bloque va con el modelo: hoy solo las pantallas
+     cambian entre modelos del mismo firmware. */
+  const tieneQ = (q, que) => que !== "pantallas" || !!CK.spec(q, "Pantallas");
+  const tiene = que => tieneQ(p, que);
   function enlace([txt, url]) {
     const href = url === "@releases" ? man.releases : url === "@repo" ? man.repo : url;
     const fuera = /^https?:/.test(href);
@@ -123,8 +130,32 @@
     </section>`;
   }
 
+  /* manual.html sin modelo: la lista de todos, para quien llega desde
+     el menu y no desde su ficha. Cada uno en su color, como en la
+     portada; los que no tienen manual salen, pero dicen que esta en
+     preparacion en vez de esconderse. */
+  function todos() {
+    document.title = `${T("man.modelos")} — Codekeeb`;
+    const fila = q => {
+      const c = q.color || { fondo: "#111111", tinta: "#ffffff" };
+      const tit = q.title || { model: q.name, trait: q.version };
+      const mq = q.manual && CK_MANUALES[q.manual];
+      const estado = mq ? T("man.caps").replace("%n", mq.capitulos.filter(x => !x.solo || tieneQ(q, x.solo)).length) : T("man.enPrep");
+      return `<li><a class="m-lista__fila${mq ? "" : " m-lista__fila--pend"}" href="manual.html?id=${q.id}" style="--c:${c.fondo};--ct:${c.tinta}">
+        <b>${esc(tit.model)}</b><span>${esc(L(tit.trait) || "")}</span>
+        <span class="m-lista__estado">${estado}${mq ? `<span class="ic-flecha">${CK.icono("flecha", 16)}</span>` : ""}</span></a></li>`;
+    };
+    $("#pagina").innerHTML = `<section class="m-placa" aria-labelledby="h-manual">
+      <div class="f-in m-placa__in">
+        <h1 class="m-placa__nombre" id="h-manual">${T("man.modelos")}</h1>
+        <p class="m-placa__sub m-placa__sub--largo">${T("man.todosSub")}</p>
+      </div></section>
+      <div class="f-in"><ul class="m-lista">${CK.productos().map(fila).join("")}</ul></div>`;
+  }
+
   function pintar() {
     modelos();
+    if (!params.get("id")) return todos();
     if (!p) {
       $("#pagina").innerHTML = `<section class="f-seccion"><div class="f-in">
         <h1 class="f-h2">${T("pdp.notFound")}</h1><p class="f-lede">${esc(params.get("id") || "")}</p>

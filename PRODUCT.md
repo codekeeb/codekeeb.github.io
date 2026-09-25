@@ -64,7 +64,7 @@ teclado conectado por USB: es una herramienta de postventa, no solo de venta.
 
 - Sitio **estatico puro**: HTML + CSS + JS vanilla, sin framework, sin
   bundler, sin `package.json`. Publicado en GitHub Pages desde `main`.
-- **Tres idiomas obligatorios**: es / en / fr, 117 claves en `js/i18n.js`.
+- **Dos idiomas obligatorios**: es / en (el frances se quito el 25 sep 2026). Claves en `js/i18n.js`; en los datos, `{es, en}`.
   Un texto en un solo idioma rompe la web en los otros dos.
 - `js/data.js` es la unica fuente de verdad del catalogo: 5 modelos, 3
   acabados, precios, stock, opciones de montaje y enlace directo a cada

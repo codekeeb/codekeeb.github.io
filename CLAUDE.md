@@ -19,16 +19,16 @@ carencia.
 |---|---|
 | `index.html` | **La portada es la tienda**: cinco franjas de color, una por modelo, con filtros que pliegan las que no encajan; el aparato de la forma (mitades, columnas, pulgares, hotswap con teclas de modo), el firmware (luz, pantallas, capas), comparacion y confianza |
 | `modelo.html` | **Ficha de cada modelo**, `modelo.html?id=<id>`: tira de la familia, barra del producto, configurador en una columna con "tu configuracion incluye", los principios con la forma de ESE teclado, ficha, comparacion y barra de compra fija abajo |
-| `manual.html` · `js/manual.js` · `js/manuales.js` | **Manual de cada modelo**, `manual.html?id=<id>`: indice de capitulos y capas dibujadas tecla a tecla. El contenido es por firmware (`manual:` en `data.js`) y **sale del .keymap del repositorio del firmware, no de su README**. Los Corne no tienen: sus repos estan vacios y no se inventan pasos |
+| `manual.html` · `js/manual.js` · `js/manuales.js` | **Manual de cada modelo**, `manual.html?id=<id>`: indice de capitulos y capas dibujadas tecla a tecla. Sin `id`, la lista de todos (a ella lleva "Manuales" de la cabecera y del pie). El contenido es por firmware (`manual:` en `data.js`) y **sale del .keymap del repositorio del firmware, no de su README**. Los Corne no tienen: sus repos estan vacios y no se inventan pasos |
 | `comparar.html` | Los cinco en columnas, fila a fila, con "solo lo que cambia" |
-| `legal.html` · `js/legal.js` · `js/legal-textos.js` | Aviso legal, privacidad, cookies y compras, en es / en / fr. Los datos del titular salen de `CK_TITULAR` (`js/data.js`) |
+| `legal.html` · `js/legal.js` · `js/legal-textos.js` | Aviso legal, privacidad, cookies y compras, en es / en. Los datos del titular salen de `CK_TITULAR` (`js/data.js`) |
 | `404.html` · `js/no-encontrada.js` | Pagina de error con los cinco modelos. Rutas **absolutas**: GitHub Pages la sirve en cualquier ruta rota |
 | `tools/hotswap/iso.py` | Genera la isometrica de linea del hotswap de la portada (switch Choc y MX, PCB y zocalos Kailh), con las lineas ocultas quitadas, con las cotas de sus hojas de datos y el contorno de la huella de KiCad (kiswitch). **Se regenera, no se edita el SVG a mano** |
 | `tools/3d/` | Reconstruccion 3D del Sofle con img2threejs, **parada en la maqueta** (ver su README). No se publica |
 | `assets/fonts/` | Las tipografias, servidas desde el sitio (licencia OFL al lado). **Nada de Google Fonts** |
 | `catalogo.html` | Solo redirige a `/#tienda`, para no romper enlaces viejos |
 | `js/data.js` | **Catalogo: la unica fuente de verdad.** Productos, precios, opciones de montaje (`buildOptions`) |
-| `js/i18n.js` | Los textos, en es / en / fr |
+| `js/i18n.js` | Los textos, en es / en |
 | `js/tienda.js` | Motor comun: idioma, precios, niveles de montaje, tabla comparativa, iconos, encuadre de fotos |
 | `js/portada.js` · `js/modelo.js` · `js/comparar.js` | La logica de cada pagina |
 | `js/geometria.js` | Geometria real de los tres tableros (Sofle, Corne, Totem), copiada del Keymap Studio. `CK_TABLERO` dice que tablero es cada producto |
@@ -93,7 +93,7 @@ bucle nuevo tiene que respetarlo.
 Cuatro fuentes de criterio y una jerarquia, para que no se contradigan
 (instaladas el 24 sep 2026, a peticion de Ernesto):
 
-1. **Este CLAUDE.md** manda sobre todas. Fotos reales, tres idiomas,
+1. **Este CLAUDE.md** manda sobre todas. Fotos reales, dos idiomas,
    sin terceros, dos duraciones y una curva.
 2. **`impeccable`** (`.claude/skills/impeccable`): la skill principal de
    diseno. Direccion, craft, auditoria.
@@ -121,11 +121,15 @@ desde el sitio (`assets/vendor/`), no desde un CDN.
 
 ## Las tres reglas que se rompen solas
 
-**1. Tres idiomas, siempre.** `js/i18n.js` tiene 117 claves en es, en y fr.
-Si anades un texto en uno y olvidas los otros, la web en ese idioma muestra
-la clave cruda (`nav.features`) en vez del texto. Lo mismo con
-`data-i18n-img`: el archivo tiene que existir en las tres carpetas.
-En el catalogo los textos van como `{es, en, fr}`.
+**1. Dos idiomas, siempre: es y en.** El frances se quito el 25 sep 2026,
+a peticion de Ernesto. `js/i18n.js` tiene las mismas claves en es y en: si
+anades un texto en uno y olvidas el otro, la web muestra la clave cruda
+(`nav.features`) en vez del texto. En el catalogo, los manuales y los
+textos legales van como `{es, en}`, y ahi el fallo es peor porque no se
+ve: `CK.L()` cae al espanol, asi que la web en ingles lo ensena en
+espanol. `check-i18n.py` recorre esos datos y lo caza.
+Sin eleccion guardada, el idioma sale del navegador: quien no lo tiene
+en espanol ve la web en ingles. Keymap Studio lee la misma eleccion.
 
 **2. Las fotos son de producto real.** Los 64 archivos de `assets/` son
 fotografias de teclados que Ernesto ha construido y vende. **Nunca** los
@@ -139,9 +143,9 @@ actualizala. Si esta a mas de dos semanas, avisa.
 ## Antes de dar nada por bueno
 
 ```bash
-python3 tools/check-i18n.py        # los 3 idiomas siguen cuadrando
+python3 tools/check-i18n.py        # es y en cuadran, tambien en los datos
 python3 tools/check-movimiento.py  # dos duraciones, una curva, bucles justificados
-node tools/preview.mjs             # portada, catalogo y comparador, 3 idiomas
+node tools/preview.mjs             # portada, ficha, comparador y manual, 2 idiomas
 node tools/preview.mjs --all       # + la pagina de cada producto
 ```
 

@@ -34,7 +34,7 @@
           <img src="${CK.foto(p)}" alt="${CK.escapar(nombre)}" data-foco="${p.foco ?? 50}" ${i > 1 ? 'loading="lazy"' : 'fetchpriority="high"'}>
         </div></div>
         <ul class="f-lecturas">${(p.stats || []).slice(0, 4).map(([v, etq]) =>
-          `<li><b>${CK.escapar(v)}</b><span>${CK.escapar(CK.L(etq))}</span></li>`).join("")}</ul>
+          `<li><b>${CK.escapar(CK.L(v))}</b><span>${CK.escapar(CK.L(etq))}</span></li>`).join("")}</ul>
         <div class="p-franja__pie">
           <div class="f-pantalla">${pantalla}</div>
           <span class="f-tecla f-tecla--placa" aria-hidden="true">${T("p2.configurar")}</span>
@@ -138,7 +138,6 @@
       `<span class="capas__t${f === 1 && i === 0 ? " capas__t--hold" : ""}"><span>${a}</span><span>${b}</span></span>`).join("")}</div>`).join("");
 
   function pintar() {
-    document.querySelectorAll("[data-t-aria]").forEach(e => e.setAttribute("aria-label", T(e.dataset.tAria)));
     filtros();
     franjas();
     formas();

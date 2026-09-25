@@ -43,14 +43,13 @@
     <a class="f-studio" href="keymap-studio/">Keymap Studio</a>
     <button type="button" class="f-pausa" data-pausa hidden></button>
     <div class="idiomas">
-      <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false" aria-label="Idioma">
+      <button class="idiomas__d" data-lang-disparador aria-haspopup="true" aria-expanded="false" aria-label="Idioma" data-t-aria="a11y.idioma">
         <span data-lang-actual>ES</span>
         <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="idiomas__m" data-lang-menu role="menu" hidden>
         <button data-lang-btn="es">Español</button>
         <button data-lang-btn="en">English</button>
-        <button data-lang-btn="fr">Français</button>
       </div>
     </div>
   </div>
@@ -61,9 +60,10 @@
 <footer class="f-pie">
   <div class="f-in f-pie__in">
     <p id="notaPrecios"></p>
-    <nav aria-label="Pie">
+    <nav aria-label="Pie" data-t-aria="a11y.pie">
       <a href="/#tienda" data-t="m.tienda">Tienda</a>
       <a href="comparar.html" data-t="d.compare">Comparar</a>
+      <a href="manual.html" data-t="man.modelos">Manuales</a>
       <a href="keymap-studio/">Keymap Studio</a>
     </nav>
     <nav class="f-pie__legal" aria-label="Legal">

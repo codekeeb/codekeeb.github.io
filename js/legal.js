@@ -39,7 +39,7 @@
      visitante en la politica de cookies. */
   function tabla() {
     const FILAS = [
-      ["ck-lang", "l.rIdioma", "l.tienda"],
+      ["ck-lang", "l.rIdioma", "l.tiendaStudio"],
       ["ck-pausa", "l.rPausa", "l.tienda"],
       ["ck.lang · ck.board · ck.symLayout · ck.ucMode", "l.rStudioAjustes", "Keymap Studio"],
       ["ck.keymap… · ck.shape… · ck.macros · ck.rgb", "l.rStudioDatos", "Keymap Studio"],

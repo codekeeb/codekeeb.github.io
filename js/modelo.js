@@ -106,7 +106,7 @@
       a.innerHTML = `${T("man.enlace")}${CK.icono("flecha", 16)}`;
     }
     $("#lecturas").innerHTML = (p.stats || []).slice(0, 4).map(([v, etq]) =>
-      `<li><b>${CK.escapar(v)}</b><span>${CK.escapar(CK.L(etq))}</span></li>`).join("");
+      `<li><b>${CK.escapar(CK.L(v))}</b><span>${CK.escapar(CK.L(etq))}</span></li>`).join("");
     const desde = CK.precioMinimo(p);
     $("#precioCab").innerHTML = desde == null ? `<b>${T("m.enEtsy")}</b>` :
       `<span class="f-pantalla__et">${niveles.length > 1 ? T("price.from") : T("m.total")}</span><b>${CK.precio(desde)}</b>`;
@@ -151,7 +151,7 @@
 
   /* Switches: ningun anuncio los trae a elegir con precio, asi que se dice
      cual monta, o con cual es compatible si esta opcion no los incluye.
-     Si data.js trae `switches: [{name:{es,en,fr}, price}]`, sale selector. */
+     Si data.js trae `switches: [{name:{es,en}, price}]`, sale selector. */
   function pasoSwitches() {
     const sw = CK.spec(p, "Switches"), incluidos = nivel && nivel.lleva[3];
     if (Array.isArray(p.switches) && p.switches.length && incluidos) {

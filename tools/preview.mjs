@@ -2,7 +2,7 @@
    CODEKEEB — previsualizacion y revision automatica
    ------------------------------------------------------------
    Levanta el sitio, lo abre en Chromium en movil y escritorio,
-   en los tres idiomas, y saca capturas. De paso avisa de:
+   en los dos idiomas, y saca capturas. De paso avisa de:
      - desbordamiento horizontal (la web se va a los lados)
      - errores de JavaScript en consola
      - imagenes o recursos que no cargan
@@ -116,7 +116,7 @@ async function main() {
   const args = process.argv.slice(2);
   const idiomas = args.includes("--lang")
     ? [args[args.indexOf("--lang") + 1]]
-    : ["es", "en", "fr"];
+    : ["es", "en"];
 
   /* Las tres paginas de la tienda. Dejaron de ser prototipos el 15 de
      septiembre: la portada es `/`, y el catalogo y el comparador cuelgan
@@ -132,6 +132,7 @@ async function main() {
     { id: "legal",     url: "/legal.html" },
     { id: "404",       url: "/404.html" },
     { id: "manual",    url: "/manual.html?id=sofle-carbon" },
+    { id: "manuales",  url: "/manual.html" },
   ];
   if (args.includes("--all")) {
     const data = await readFile(join(RAIZ, "js", "data.js"), "utf8");
@@ -258,7 +259,7 @@ async function main() {
               if (cs.display === "none" || cs.position === "absolute" || cs.position === "fixed") return false;
               /* Solo los elementos de bloque: la columna se los reparte a
                  ellos. Un boton es inline-flex y lo coloca el text-align,
-                 asi que en frances, con el texto mas largo, empieza donde
+                 asi que en el idioma con el texto mas largo empieza donde
                  le toca aunque mida mas de media region. */
               if (/^inline/.test(cs.display)) return false;
               /* Y tampoco cuenta lo que esta centrado a proposito: si el

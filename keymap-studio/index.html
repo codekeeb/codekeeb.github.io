@@ -545,7 +545,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
     <button class="btn" id="btnStudio" data-i18n="studio">Panel Studio</button>
     <button class="btn" id="btnHelp" data-i18n-title="helpBtnTitle" title="Guía de uso (F1)">?</button>
     <button class="btn" id="btnLang">EN</button>
-    <a class="iconlink" href="https://github.com/codekeeb/sofle-choc-rgb-zmk" target="_blank" rel="noopener" title="Firmware en GitHub"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    <a class="iconlink" href="https://github.com/codekeeb/sofle-choc-rgb-zmk" target="_blank" rel="noopener" data-i18n-title="ghTitle" title="Firmware en GitHub"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
   </div>
 </header>
 
@@ -710,7 +710,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
       <span id="htPart" hidden>
         <button class="btn small" id="htTap" data-i18n="htTap">tap</button>
         <button class="btn small" id="htHold" data-i18n="htHold">hold</button>
-        <button class="btn small" id="htPlain" data-i18n="htPlain" title="Quitar el hold-tap">↺</button>
+        <button class="btn small" id="htPlain" data-i18n="htPlain" data-i18n-title="htPlainTitle" title="Quitar el hold-tap">↺</button>
       </span>
       <input type="search" id="pickerSearch" data-i18n-ph="search" placeholder="Buscar keycode o behavior…">
       <button class="btn small" id="btnTrans" title="&trans">▽ trans</button>
@@ -784,7 +784,14 @@ const store={
 };
 
 /* ---------------- i18n ---------------- */
-let lang=store.get('ck.lang')||'es';
+/* El idioma es el mismo que en la tienda (clave ck-lang, js/tienda.js):
+   antes el Studio guardaba el suyo en ck.lang y quien elegia ingles en la
+   tienda lo abria en espanol. ck.lang se sigue leyendo por quien ya lo
+   tenia; sin ninguno de los dos, manda el idioma del navegador. */
+let lang=(()=>{const v=store.get('ck-lang')||store.get('ck.lang');
+  if(v==='es'||v==='en')return v;
+  const n=(navigator.languages&&navigator.languages[0])||navigator.language||'es';
+  return /^es\b/i.test(n)?'es':'en';})();
 const I18N={
 es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',disconnectShort:'Desconectar',studio:'Panel Studio',oledzoom:'OLED ×4',
   rgbfx:'Efecto RGB',bri:'Brillo',hue:'Matiz',spd:'Velocidad',rgbOn:'ON',rgbOff:'OFF',rgbLbl:'RGB',
@@ -820,7 +827,7 @@ es:{connect:'Conectar teclado',disconnect:'Desconectar',connectShort:'Conectar',
   deselTitle:'Deseleccionar (Esc)',lockTitle:'Bloqueo ZMK Studio',
   unsavedDot:'● CAMBIOS SIN GUARDAR',ozLeft:'OLED IZQUIERDA · CENTRAL',ozRight:'OLED DERECHA · PERIFÉRICO',
   cat_letras:'letras',cat_numeros:'números',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
-  htTap:'tocar',htHold:'mantener',htPlain:'quitar hold',
+  htTap:'tocar',htHold:'mantener',htPlain:'quitar hold',htPlainTitle:'Quitar el hold-tap',ghTitle:'Firmware en GitHub',encTitle:'Encoder EC11 · click = editar (giros y press) · arrastra = girar',
   htHoldBad:'En «mantener» solo caben una capa (MO) o una tecla. Usa «quitar hold» para poner otra cosa.',
   secShape:'Forma del teclado',shapeOn:'Editar posiciones',
   shapeCol:'Mover la columna entera',shapeMirror:'Reflejar en la otra mitad',
@@ -897,7 +904,7 @@ en:{connect:'Connect keyboard',disconnect:'Disconnect',connectShort:'Connect',di
   deselTitle:'Deselect (Esc)',lockTitle:'ZMK Studio lock',
   unsavedDot:'● UNSAVED CHANGES',ozLeft:'LEFT OLED · CENTRAL',ozRight:'RIGHT OLED · PERIPHERAL',
   cat_letras:'letters',cat_numeros:'numbers',cat_fn:'fn',cat_nav:'nav',cat_mods:'mods',
-  htTap:'tap',htHold:'hold',htPlain:'remove hold',
+  htTap:'tap',htHold:'hold',htPlain:'remove hold',htPlainTitle:'Remove the hold-tap',ghTitle:'Firmware on GitHub',encTitle:'EC11 encoder · click = edit (turns and press) · drag = turn',
   htHoldBad:'The hold half takes a layer (MO) or a key. Use «remove hold» to put anything else there.',
   secShape:'Keyboard shape',shapeOn:'Edit positions',
   shapeCol:'Move the whole column',shapeMirror:'Mirror on the other half',
@@ -2015,7 +2022,7 @@ function buildEnc(side,stage){
   el.style.left=(g.x+7)+'px';el.style.top=(g.y+7)+'px';
   el.style.width='96px';el.style.height='96px';
   el.innerHTML='<div class="knob"></div><div class="mark"></div><span class="ename"></span>';
-  el.title='Encoder EC11 · click = editar (giros y press) · arrastra = girar';
+  el.title=t('encTitle');
   let sy=0,acc=0,dragged=false;
   el.addEventListener('pointerdown',e=>{sy=e.clientY;acc=0;dragged=false;el.setPointerCapture(e.pointerId);});
   el.addEventListener('pointermove',e=>{if(e.buttons!==1)return;
@@ -4669,7 +4676,7 @@ function init(){
   /* Las categorías del picker y las macros se generan por JS, así que
      applyI18n() (que solo recorre data-i18n) no las alcanza: hay que
      repintarlas a mano al cambiar de idioma. */
-  $('#btnLang').onclick=()=>{lang=lang==='es'?'en':'es';store.set('ck.lang',lang);
+  $('#btnLang').onclick=()=>{lang=lang==='es'?'en':'es';store.set('ck-lang',lang);
     applyI18n();syncRgbUI();renderLayerBar();
     renderPickerCats($('#pickerCats').dataset.cur||'todo');renderMacros();
     /* La barra de modificadores y la de distribucion tambien se generan

@@ -22,7 +22,7 @@ web/
 ├── index.html          # única página (landing)
 ├── css/style.css       # sistema de diseño completo
 ├── js/
-│   ├── i18n.js         # textos en ES / EN / FR
+│   ├── i18n.js         # textos en ES / EN
 │   ├── data.js         # ★ catálogo: tienda, modelos y sabores
 │   └── main.js         # animaciones, idioma, render dinámico
 └── assets/
@@ -77,13 +77,13 @@ Añade un objeto a `CK_PRODUCTS` en `js/data.js`:
   name: "Corne",             // "available" → con botón de compra
   version: "v3 choc",
   img: "corne-hero.jpg",     // colócala en assets/img/es|en|fr/
-  desc: { es: "…", en: "…", fr: "…" },
+  desc: { es: "…", en: "…" },
   meta: ["42", "choc", "ZMK"],
   url: null                  // o URL de listing específica
 }
 ```
 
-La tarjeta aparece sola en la sección **Modelos**, en los 3 idiomas.
+La tarjeta aparece sola en la sección **Modelos**, en los 2 idiomas.
 
 ### 3. Añadir un sabor
 Añade un objeto a `CK_FLAVORS` en `js/data.js`:
@@ -93,7 +93,7 @@ Añade un objeto a `CK_FLAVORS` en `js/data.js`:
 ```
 
 ### 4. Añadir un idioma
-1. En `js/i18n.js`, duplica el bloque `fr:` como nuevo código (p. ej. `de:`) y traduce.
+1. En `js/i18n.js`, duplica el bloque `en:` como nuevo código (p. ej. `de:`) y traduce.
 2. Crea `assets/img/de/` con las mismas imágenes (mismos nombres de archivo).
 3. Añade el botón en los dos selectores de `index.html`:
    `<button class="lang__btn" data-setlang="de">DE</button>`

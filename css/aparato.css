@@ -528,7 +528,10 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 }
 @media (max-width:640px){
   .p-mando{padding-block:12px}
-  .p-nav a.p-nav__studio,.p-nav a[aria-current]{display:none}
+  /* En el movil solo cabe uno junto al logo, y en ingles "Compare all
+     five" se montaba encima. Queda Manuales: la comparativa ya esta mas
+     abajo en esta misma pagina, y Comparar sigue en el pie. */
+  .p-nav a.p-nav__studio,.p-nav a.p-nav__comparar,.p-nav a[aria-current]{display:none}
   .p-franja{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px 14px}
   .p-franja .f-lecturas li{padding:7px 6px 7px 0}
   .p-franja .f-lecturas li:nth-child(even){padding-left:8px}
@@ -553,6 +556,23 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 .m-datos div{padding:10px 22px 0 0;margin-right:22px}
 .m-datos dt{font-size:var(--t-xs);font-weight:700;letter-spacing:.02em}
 .m-datos dd{margin:0;font-weight:700}
+.m-placa__sub--largo{max-width:46ch;font-weight:600;line-height:1.35}
+/* La lista de manuales (manual.html sin modelo): una franja por modelo en
+   su color, como la portada, con el numero de capitulos a la derecha. */
+.m-lista{display:grid;gap:8px;padding-block:clamp(24px,4vw,48px) clamp(40px,6vw,72px)}
+.m-lista__fila{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:4px 18px;
+  padding:clamp(16px,2.4vw,24px) clamp(16px,2.4vw,28px);border-radius:var(--radio);background:var(--c);color:var(--ct);
+  transition:transform var(--t-tap) var(--ease)}
+.m-lista__fila b{font-family:var(--f-pantalla);font-weight:900;font-size:clamp(2rem,4.4vw,3.2rem);line-height:.85;letter-spacing:-.02em}
+.m-lista__fila > span:not(.m-lista__estado){grid-column:1;font-weight:700}
+.m-lista__estado{grid-column:2;grid-row:1 / span 2;display:inline-flex;align-items:center;gap:6px;font-size:var(--t-s);font-weight:700;white-space:nowrap}
+/* sin manual todavia: el color se queda en el borde, el relleno se apaga */
+.m-lista__fila--pend{background:var(--panel);color:var(--tinta-2);box-shadow:inset 0 0 0 2px var(--c)}
+.m-lista__fila:active{transform:scale(.99)}
+@media (max-width:520px){
+  .m-lista__fila{grid-template-columns:minmax(0,1fr)}
+  .m-lista__estado{grid-column:1;grid-row:auto;margin-top:8px}
+}
 
 .m-cuerpo{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:clamp(24px,4vw,64px);
   padding-block:clamp(32px,5vw,64px) clamp(56px,8vw,104px)}
