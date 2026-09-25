@@ -177,13 +177,17 @@ const CK_RGB = (() => {
             ultimoColor[i] = col;
             /* El resplandor sale FUERA del keycap: el `spread` negativo
                impide que el difuminado se meta hacia dentro y se coma la
-               tecla, que es lo que la volvia un cuadrado de color. */
+               tecla, que es lo que la volvia un cuadrado de color.
+               Radios de unas 2,5 veces los de antes (Ernesto, 25 sep 2026:
+               el brillo se veia poco). Van en unidades del escenario, que se
+               escala a ~0,45 en escritorio y ~0,2 en movil: 130 aqui son
+               ~58 px y ~26 px en pantalla. */
             k.el.style.setProperty("--luz", `rgb(${col})`);
             k.el.style.boxShadow =
               `inset 0 2px 0 rgba(255,255,255,.06), inset 0 -4px 7px rgba(0,0,0,.7)`
-              + `,0 20px 30px -12px rgba(${col},${(0.5 * lum).toFixed(2)})`
-              + `,0 0 26px -9px rgba(${col},${(0.72 * lum).toFixed(2)})`
-              + `,0 0 46px -16px rgba(${col},${(0.5 * lum).toFixed(2)})`;
+              + `,0 30px 70px -18px rgba(${col},${(0.6 * lum).toFixed(2)})`
+              + `,0 0 60px -10px rgba(${col},${(0.85 * lum).toFixed(2)})`
+              + `,0 0 130px -20px rgba(${col},${(0.6 * lum).toFixed(2)})`;
           });
         }
       }
