@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sofle Space Black · quick start (print)</title>
+<!-- El triptico de la caja del Sofle Choc Space Black. No es una pagina de
+     la web: se abre para imprimirlo. A4 apaisado, a doble cara (voltear por
+     el lado corto), plegado en tres hacia dentro. Lo genera
+     tools/triptico/generar.py; ver el README de al lado.
+
+     Tres cosas lo condicionan:
+     - Impresora de casa: nada a menos de 7 mm del borde de la hoja, y
+       nada de negro a sangre.
+     - El papel no se actualiza: lo que puede cambiar (el keymap entero,
+       los modos de luz) va por QR al manual, que si se actualiza. Aqui solo
+       lo que hace falta para empezar.
+     - Cada dato sale del manual (js/manuales.js), que sale del .keymap del
+       firmware, o de lo que Ernesto dice que va en la caja. -->
+<link rel="stylesheet" href="../../assets/fonts/fuentes.css">
+<style>
+  @font-face{font-family:'Space Mono';font-weight:400;src:url(../../assets/fonts/spacemono-400-latin.woff2) format('woff2')}
+  @font-face{font-family:'Space Mono';font-weight:700;src:url(../../assets/fonts/spacemono-700-latin.woff2) format('woff2')}
+
+  @page{size:A4 landscape;margin:0}
+  :root{
+    --tinta:#000;
+    --gris:#555;          /* texto secundario: sigue siendo negro al 67 %, legible en laser */
+    --regla:.2mm;
+    --f:'Schibsted Grotesk',system-ui,sans-serif;
+    --d:'Doto',monospace;
+    --m:'Space Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font:400 8.1pt/1.42 var(--f);color:var(--tinta);background:#fff;font-kerning:normal}
+  @media screen{
+    body{background:#d9dadd;padding:12mm 0;display:grid;justify-content:center;gap:12mm}
+    .hoja{box-shadow:0 2mm 8mm rgba(0,0,0,.18)}
+  }
+
+  /* ---------- la hoja y sus tres paneles ----------
+     El panel que se pliega hacia dentro mide 97 mm y no 99: si midiera lo
+     mismo que los otros, al cerrar el triptico tropezaria con el pliegue
+     y abombaria la portada. Fuera, la solapa va a la izquierda; dentro, a
+     la derecha: son la misma tira de papel por las dos caras. */
+  .hoja{width:297mm;height:210mm;background:#fff;position:relative;overflow:hidden;display:grid;
+    break-after:page}
+  .hoja:last-child{break-after:auto}
+  .fuera{grid-template-columns:97mm 100mm 100mm}
+  .dentro{grid-template-columns:100mm 100mm 97mm}
+  .panel{padding:10mm 7.5mm 9mm;display:flex;flex-direction:column;min-height:0}
+  /* Marcas de plegado: rayitas arriba y abajo, fuera del texto y dentro
+     de lo que una impresora de casa si imprime (unos 4 mm de borde). */
+  .pliegue{position:absolute;width:0;height:210mm;top:0}
+  .pliegue::before,.pliegue::after{content:"";position:absolute;left:0;width:var(--regla);height:3mm;background:#999}
+  .pliegue::before{top:4.5mm}
+  .pliegue::after{bottom:4.5mm}
+
+  /* ---------- texto ---------- */
+  h2{font-size:12.5pt;font-weight:800;letter-spacing:-.01em;line-height:1.1;
+    border-top:.5mm solid var(--tinta);padding-top:1.8mm;margin-bottom:3mm}
+  h2 + p{margin-top:-.6mm}
+  h3{font-size:8.1pt;font-weight:800;margin:5.5mm 0 1.6mm}
+  p + p{margin-top:1.6mm}
+  .suave{color:var(--gris)}
+  .etq{font-size:5.9pt;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+  strong{font-weight:800}
+  .url{font-family:var(--m);font-size:6.4pt;letter-spacing:-.01em;word-break:break-all}
+  /* una tecla: el contorno y el canto de abajo mas grueso, como un keycap
+     visto de frente */
+  kbd{display:inline-block;min-width:4.4mm;padding:0 .9mm;border:.22mm solid var(--tinta);border-bottom-width:.55mm;
+    border-radius:.9mm;font:700 6.6pt/1.55 var(--f);text-align:center;letter-spacing:.02em;vertical-align:.1mm;white-space:nowrap}
+  .mas{margin:0 .5mm;font-weight:700}
+
+  /* filas con regla, como una hoja de datos */
+  .filas{display:grid;grid-template-columns:auto 1fr;column-gap:3mm}
+  .filas > *{padding:1.6mm 0;border-bottom:var(--regla) solid var(--tinta)}
+  .filas > :nth-child(-n+2){border-top:var(--regla) solid var(--tinta)}
+  .filas dt,.filas .k{font-weight:700;white-space:nowrap}
+
+  /* pasos: numero grande en matriz de puntos, el texto a su derecha */
+  .pasos{list-style:none;counter-reset:paso;display:grid;gap:3.6mm}
+  .pasos li{counter-increment:paso;display:grid;grid-template-columns:10mm 1fr;align-items:start}
+  .pasos li::before{content:counter(paso);font:900 21pt/.8 var(--d);margin-top:.2mm}
+  .pasos b{display:block;font-weight:800;margin-bottom:.4mm}
+
+  /* ---------- portada ---------- */
+  .portada{justify-content:space-between}
+  .portada__logo{height:6mm;width:auto;align-self:flex-start;filter:grayscale(1) contrast(1.6)}
+  .portada h1{font:900 66pt/.78 var(--d);letter-spacing:-.02em;margin-left:-1mm}
+  .portada__rasgo{font-size:12.5pt;font-weight:800;letter-spacing:-.015em;margin-top:3.5mm}
+  .portada__guia{margin-top:1mm}
+  .celdas{display:grid;grid-template-columns:repeat(3,1fr);border-top:.5mm solid var(--tinta)}
+  .celdas div{padding:1.8mm 0 0}
+  .celdas div + div{padding-left:2.5mm;border-left:var(--regla) solid var(--tinta)}
+  .celdas b{display:block;font:900 15pt/1 var(--d)}
+
+  /* ---------- el Sofle dibujado (js/dibujo.js, geometria real) ---------- */
+  .dib{display:block;width:100%;height:auto;overflow:visible}
+  .dib__base{fill:none;stroke:var(--tinta);stroke-width:.55px;vector-effect:non-scaling-stroke}
+  .dib__cara{fill:none;stroke:var(--tinta);stroke-width:.35px;vector-effect:non-scaling-stroke}
+  .dib .marca .dib__base{fill:var(--tinta)}
+  .dib .marca .dib__cara{stroke:#fff}
+  .dib .marca text{fill:#fff}
+  .dib text{font:800 17px var(--f);text-anchor:middle;dominant-baseline:central;fill:var(--tinta);letter-spacing:.04em}
+  .dib .hueco{fill:none;stroke:var(--tinta);stroke-width:.55px;stroke-dasharray:2.2 1.6;vector-effect:non-scaling-stroke}
+  .dib .oled{fill:none;stroke:var(--tinta);stroke-width:.35px;vector-effect:non-scaling-stroke}
+  .dib .oled-cristal{fill:#000;opacity:.12}
+  .dib .cota{font:800 24px var(--f);letter-spacing:.08em}
+
+  /* ---------- en la caja ---------- */
+  .piezas{list-style:none;display:grid;border-top:var(--regla) solid var(--tinta)}
+  .piezas li{display:grid;grid-template-columns:22mm 1fr auto;align-items:center;column-gap:3.5mm;
+    padding:4.2mm 0;border-bottom:var(--regla) solid var(--tinta)}
+  .piezas svg{width:22mm;height:15mm;fill:none;stroke:var(--tinta);stroke-width:.9;stroke-linecap:round;stroke-linejoin:round}
+  .piezas .n{font:900 15pt/1 var(--d);white-space:nowrap}
+  .piezas b{display:block;font-weight:800}
+  .falta{margin-top:auto;padding:2.2mm 2.6mm;border:var(--regla) dashed var(--tinta);border-radius:1.2mm}
+
+  /* ---------- en linea: los QR ---------- */
+  .qrs{list-style:none;display:grid;border-top:var(--regla) solid var(--tinta)}
+  .qrs li{display:grid;grid-template-columns:28mm 1fr;column-gap:4mm;align-items:start;padding:4.2mm 0;border-bottom:var(--regla) solid var(--tinta)}
+  .qrs img{width:28mm;height:28mm;display:block;image-rendering:pixelated}
+  .qrs b{display:block;font-size:10pt;font-weight:800;margin-bottom:.6mm}
+  .qrs .url{display:block;margin-top:1.2mm;font-size:5.9pt;word-break:normal;overflow-wrap:normal;white-space:nowrap}
+
+  /* ---------- trasera ---------- */
+  .firmas{display:grid;grid-template-columns:1fr 1fr;column-gap:4mm;margin-top:3mm}
+  .firmas div{border-bottom:var(--regla) solid var(--tinta);height:9mm;display:flex;align-items:flex-start}
+  .pie{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;padding-top:3mm}
+  .pie img{height:4.4mm;width:auto;filter:grayscale(1) contrast(1.6)}
+</style>
+</head>
+<body>
+
+<!-- ============ FUERA: solapa · trasera · portada ============ -->
+<section class="hoja fuera" aria-label="Outside">
+
+  <!-- La solapa: es lo primero que se ve al abrir la portada, al lado
+       de "Getting started". Por eso aqui va lo que trae la caja. -->
+  <div class="panel">
+    <h2>In the box</h2>
+    <ul class="piezas">
+      <li>
+        <svg viewBox="0 0 60 40" aria-hidden="true">
+          <!-- las dos mitades, giradas como en la mesa: tres columnas de
+               teclas y el pulgar abajo por dentro -->
+          <g transform="rotate(8 15 18)">
+            <path d="M3 6 h21 v16 l4 7 l-6 4 l-5 -6 h-14 z"/>
+            <path d="M6 9 h4 v4 h-4 z M12 9 h4 v4 h-4 z M18 9 h4 v4 h-4 z M6 15 h4 v4 h-4 z M12 15 h4 v4 h-4 z M18 15 h4 v4 h-4 z"/>
+          </g>
+          <g transform="rotate(-8 45 18)">
+            <path d="M57 6 h-21 v16 l-4 7 l6 4 l5 -6 h14 z"/>
+            <path d="M38 9 h4 v4 h-4 z M44 9 h4 v4 h-4 z M50 9 h4 v4 h-4 z M38 15 h4 v4 h-4 z M44 15 h4 v4 h-4 z M50 15 h4 v4 h-4 z"/>
+          </g>
+        </svg>
+        <span><b>Sofle Choc Space Black</b>Left and right halves, assembled, flashed and tested.</span>
+        <span class="n">×1</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 60 40" aria-hidden="true">
+          <!-- encoder EC11: cuerpo, eje y patas -->
+          <rect x="10" y="20" width="16" height="12" rx="1.5"/><path d="M15 20 v-7 h6 v7 M18 13 v-7"/><path d="M12 32 v4 M18 32 v4 M24 32 v4"/>
+          <!-- el pomo -->
+          <circle cx="44" cy="20" r="11"/><circle cx="44" cy="20" r="4"/><path d="M44 9 v4"/>
+        </svg>
+        <span><b>Rotary encoders and knobs</b>To swap in for the key under each display. See inside.</span>
+        <span class="n">×2</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 60 40" aria-hidden="true">
+          <!-- extractor de alambre -->
+          <path d="M30 36 V22 M30 22 C18 22 14 14 14 6 M30 22 C42 22 46 14 46 6 M14 6 h4 M46 6 h-4"/>
+          <rect x="25" y="30" width="10" height="7" rx="1.5"/>
+        </svg>
+        <span><b>Keycap puller</b>Grip the keycap from two sides and pull straight up.</span>
+        <span class="n">×1</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 60 40" aria-hidden="true">
+          <!-- pegatina con la esquina levantada -->
+          <path d="M14 6 h32 v20 l-8 8 h-24 z M46 26 h-8 v8"/>
+        </svg>
+        <span><b>Sticker</b>Codekeeb, for wherever you like.</span>
+        <span class="n">×1</span>
+      </li>
+    </ul>
+    <p class="falta"><strong>Not in the box: a USB-C cable.</strong> Use one that carries data. A charge-only cable charges the keyboard but won't reach Keymap Studio or update the firmware.</p>
+  </div>
+
+  <!-- La trasera: lo que se ve con el triptico cerrado y dado la vuelta -->
+  <div class="panel">
+    <h2>Specs</h2>
+    <dl class="filas">
+      <dt>Keys</dt><dd>58, split, column-staggered</dd>
+      <dt>Switches</dt><dd>Choc low profile, hotswap</dd>
+      <dt>Connection</dt><dd>Bluetooth, 5 profiles · USB-C</dd>
+      <dt>Battery</dt><dd>2000 mAh per half</dd>
+      <dt>Displays</dt><dd>Dual OLED, custom firmware</dd>
+      <dt>Lighting</dt><dd>Per-key RGB and underglow, 10 modes</dd>
+      <dt>Encoders</dt><dd>2 slots, clickable</dd>
+      <dt>Controller</dt><dd>nice!nano v2, one per half</dd>
+      <dt>Firmware</dt><dd>ZMK, with ZMK Studio</dd>
+    </dl>
+
+    <h2 style="margin-top:6mm">Built by hand</h2>
+    <p>Every Codekeeb board is assembled, flashed and tested by hand before it ships. The core parts are socketed: swap any of them later, no soldering.</p>
+    <div class="firmas">
+      <div><span class="etq">Tested by</span></div>
+      <div><span class="etq">Date</span></div>
+    </div>
+
+    <h2 style="margin-top:6mm">Help</h2>
+    <p>Something not right? Message us on Etsy, where you bought it. Include what you pressed and what happened.</p>
+    <p class="url">etsy.com/shop/CodeKeeb</p>
+
+    <div class="pie">
+      <img src="../../assets/brand/logo-horizontal-dark@2x.png" alt="CODE/KEEB">
+      <span class="url">codekeeb.github.io</span>
+    </div>
+  </div>
+
+  <!-- La portada -->
+  <div class="panel portada">
+    <img class="portada__logo" src="../../assets/brand/logo-horizontal-dark@2x.png" alt="CODE/KEEB">
+    <div>
+      <h1>Sofle</h1>
+      <p class="portada__rasgo">Choc · Space Black</p>
+      <p class="portada__guia etq">Quick start</p>
+    </div>
+    <div id="dibPortada" aria-hidden="true"></div>
+    <div class="celdas">
+      <div><b>58</b><span class="etq">Keys</span></div>
+      <div><b>BT+5</b><span class="etq">Profiles · USB-C</span></div>
+      <div><b>ZMK</b><span class="etq">Open firmware</span></div>
+    </div>
+  </div>
+
+  <span class="pliegue" style="left:97mm"></span>
+  <span class="pliegue" style="left:197mm"></span>
+</section>
+
+<!-- ============ DENTRO: empezar · teclas · en linea ============ -->
+<section class="hoja dentro" aria-label="Inside">
+
+  <div class="panel">
+    <h2>Getting started</h2>
+    <p>Each half has its own controller and battery. The <strong>left half</strong> talks to your computer; the right half connects to the left one on its own.</p>
+    <ol class="pasos" style="margin-top:4mm">
+      <li><span><b>Charge</b>Charge both halves over USB-C, one at a time.</span></li>
+      <li><span><b>Switch on</b>Slide the power switch on each half to on.</span></li>
+      <li><span><b>Wake</b>Press any key.</span></li>
+      <li><span><b>Pick a profile</b>Hold <kbd>RAISE</kbd><span class="mas">+</span><kbd>1</kbd>. This selects Bluetooth profile 1.</span></li>
+      <li><span><b>Pair</b>On your computer, open the Bluetooth settings and connect the new keyboard that shows up.</span></li>
+      <li><span><b>Lights</b>They start off. Turn them on with <kbd>LOWER</kbd><span class="mas">+</span><kbd>R</kbd>.</span></li>
+    </ol>
+    <h3>Wired</h3>
+    <p>Plug the left half into your computer and it also types through the cable.</p>
+    <h3>Battery and sleep</h3>
+    <p>After a minute idle the lights go off; after 30 minutes it goes into deep sleep. Any key wakes it up. The lights are what use the most power.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Keys to know</h2>
+    <div id="dibCapas" aria-hidden="true"></div>
+    <p class="suave" style="margin-top:1.5mm">Hold <kbd>LOWER</kbd> or <kbd>RAISE</kbd> and the other keys change function; let go and they come back.</p>
+    <div class="filas" style="margin-top:3mm">
+      <span class="k"><kbd>RAISE</kbd><span class="mas">+</span><kbd>1</kbd><span class="mas">–</span><kbd>5</kbd></span><span>Bluetooth profile 1 to 5</span>
+      <span class="k"><kbd>RAISE</kbd><span class="mas">+</span><kbd>Esc</kbd></span><span>Clear the active profile</span>
+      <span class="k"><kbd>LOWER</kbd><span class="mas">+</span><kbd>R</kbd></span><span>Lights on or off</span>
+      <span class="k"><kbd>LOWER</kbd><span class="mas">+</span><kbd>T</kbd></span><span>Next light mode</span>
+      <span class="k"><kbd>LOWER</kbd><span class="mas">+</span><kbd>Z</kbd></span><span>Unlock for Keymap Studio</span>
+    </div>
+
+    <h2 style="margin-top:6mm">Fit the encoders</h2>
+    <ol class="pasos">
+      <li><span>Switch both halves off and unplug them.</span></li>
+      <li><span>Pull the keycap under the display with the puller, then the switch below it. Keep both.</span></li>
+      <li><span>Fit the encoder in its place and push the knob onto the shaft.</span></li>
+    </ol>
+    <div class="filas" style="margin-top:3mm">
+      <span class="k">Left</span><span>Turn: volume · Press: mute</span>
+      <span class="k">Right</span><span>Turn: scroll · Press: play / pause</span>
+    </div>
+  </div>
+
+  <!-- La solapa por dentro: queda a la derecha al abrirlo del todo -->
+  <div class="panel">
+    <h2>Online</h2>
+    <p>Paper doesn't update. These do.</p>
+    <ul class="qrs" style="margin-top:3mm">
+      <li><img src="qr/manual.svg" alt="">
+        <span><b>Manual</b>Every layer, key and light mode, kept up to date with the firmware.<span class="url">codekeeb.github.io/manual</span></span></li>
+      <li><img src="qr/studio.svg" alt="">
+        <span><b>Keymap Studio</b>Remap any key live, no flashing. Chrome or Edge on a computer, left half over USB.<span class="url">codekeeb.github.io/keymap-studio</span></span></li>
+      <li><img src="qr/firmware.svg" alt="">
+        <span><b>Firmware</b>Source code and ready-to-flash files for each half.<span class="url">github.com/codekeeb/sofle-choc-rgb-zmk</span></span></li>
+      <li><img src="qr/zmk.svg" alt="">
+        <span><b>ZMK docs</b>The open firmware it runs on.<span class="url">zmk.dev/docs</span></span></li>
+    </ul>
+  </div>
+
+  <span class="pliegue" style="left:100mm"></span>
+  <span class="pliegue" style="left:200mm"></span>
+</section>
+
+<script src="../../js/geometria.js"></script>
+<script src="../../js/dibujo.js"></script>
+<script>
+/* El Sofle con la geometria de la web. Encima, lo que dibujo.js no sabe:
+   las pantallas y el hueco del encoder, con las coordenadas de Keymap
+   Studio (keymap-studio/index.html: OLED_* y enc del Sofle). */
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const G = CK_GEO.sofle, KEY = G.KEY;
+  const OLED = [{ x: 556, y: 29 }, { x: 24, y: 29 }], OLED_W = 90, OLED_H = 212;
+  const ENC = [{ x: 551, y: 287 }, { x: 9, y: 287 }], ENC_BOX = 110;
+  const LOWER = 53, RAISE = 56;
+
+  function extras(svg, conEtiquetas) {
+    [0, 1].forEach(h => {
+      const g = svg.querySelector(`.dib__desliza--${h} > g`);
+      const o = OLED[h], e = ENC[h];
+      const cx = e.x + ENC_BOX / 2, cy = e.y + ENC_BOX / 2;
+      g.insertAdjacentHTML("beforeend",
+        `<rect class="oled" x="${o.x}" y="${o.y}" width="${OLED_W}" height="${OLED_H}" rx="6"/>
+         <rect class="oled-cristal" x="${o.x + 11}" y="${o.y + 26}" width="${OLED_W - 22}" height="${OLED_H - 52}" rx="2"/>
+         <rect class="hueco" x="${cx - KEY / 2}" y="${cy - KEY / 2}" width="${KEY}" height="${KEY}" rx="12"/>
+         <circle class="hueco" cx="${cx}" cy="${cy}" r="30"/>` +
+        (conEtiquetas ? `<text class="cota" x="${cx}" y="${cy + KEY / 2 + 22}">ENC</text>` : ""));
+    });
+  }
+
+  /* dibujo.js pinta las teclas de cada mitad en el orden de TECLAS;
+     con eso se sabe que <g> es cada posicion. */
+  function marcar(svg) {
+    const orden = [0, 1].flatMap(h => G.TECLAS.map((k, i) => [k, i]).filter(([k]) => k && k[0] === h).map(([, i]) => i));
+    const els = svg.querySelectorAll(".dib__tecla");
+    [[LOWER, "LOWER"], [RAISE, "RAISE"]].forEach(([pos, txt]) => {
+      const g = els[orden.indexOf(pos)], [, x, y, , w] = G.TECLAS[pos];
+      g.classList.add("marca");
+      g.insertAdjacentHTML("beforeend", `<text x="${x + (w || KEY) / 2}" y="${y + KEY / 2 - 3}">${txt}</text>`);
+    });
+  }
+
+  /* dibujo.js deja a cada lado el aire que la web usa para separar las
+     mitades al animarlas; en papel no se mueve nada, asi que el viewBox
+     se ajusta a lo dibujado y el teclado gana ancho. */
+  function ajustar(svg, aire) {
+    const b = svg.getBBox();
+    svg.setAttribute("viewBox", `${b.x - aire} ${b.y - aire} ${b.width + 2 * aire} ${b.height + 2 * aire}`);
+  }
+
+  const portada = CK_DIBUJO.montar(document.getElementById("dibPortada"), "sofle");
+  extras(document.querySelector("#dibPortada svg"), false);
+  ajustar(document.querySelector("#dibPortada svg"), 4);
+  CK_DIBUJO.montar(document.getElementById("dibCapas"), "sofle");
+  const capas = document.querySelector("#dibCapas svg");
+  extras(capas, true);
+  marcar(capas);
+  ajustar(capas, 4);
+})();
+</script>
+</body>
+</html>

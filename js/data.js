@@ -87,15 +87,15 @@ const CK_PRODUCTS = [
       en: "A 5.3 mm low profile Sofle, with the electronics embedded into a carbon fiber textured case."
     },
     highlights: {
-      es: ["5,3 mm de perfil, electrónica embebida en el case", "Motor RGB propio: 10 modos y degradados continuos entre mitades", "OLED dual con firmware propio: batería, capa, WPM y Bongo Cat", "300 mAh · hasta 4 días por carga con RGB apagado"],
-      en: ["5.3 mm profile, electronics embedded into the case", "Custom RGB engine: 10 modes, gradients flowing across both halves", "Dual OLED on custom firmware: battery, layer, WPM and Bongo Cat", "300 mAh · up to 4 days per charge with RGB off"]
+      es: ["5,3 mm de perfil, electrónica embebida en el case", "Motor RGB propio: 10 modos y degradados continuos entre mitades", "OLED dual con firmware propio: batería, capa, WPM y Bongo Cat", "Batería de 2000 mAh en cada mitad"],
+      en: ["5.3 mm profile, electronics embedded into the case", "Custom RGB engine: 10 modes, gradients flowing across both halves", "Dual OLED on custom firmware: battery, layer, WPM and Bongo Cat", "A 2000 mAh battery in each half"]
     },
     specs: [
       [{es:"Teclas",en:"Keys"}, "58"],
       [{es:"Perfil",en:"Profile"}, {es:"5,3 mm",en:"5.3 mm"}],
       [{es:"Switches",en:"Switches"}, {es:"Choc low profile, hotswap",en:"Choc low profile, hotswap"}],
       [{es:"Conexión",en:"Connectivity"}, {es:"Bluetooth (5 perfiles) + USB-C",en:"Bluetooth (5 profiles) + USB-C"}],
-      [{es:"Batería",en:"Battery"}, {es:"300 mAh · hasta 4 días sin RGB",en:"300 mAh · up to 4 days with RGB off"}],
+      [{es:"Batería",en:"Battery"}, {es:"2000 mAh por mitad",en:"2000 mAh per half"}],
       [{es:"Pantallas",en:"Displays"}, {es:"OLED dual, firmware propio",en:"Dual OLED, custom firmware"}],
       [{es:"Iluminación",en:"Lighting"}, {es:"RGB per-key + underglow, 10 modos",en:"Per-key RGB + underglow, 10 modes"}],
       [{es:"Encoders",en:"Encoders"}, {es:"2 rotatorios clicables",en:"2 clickable rotary"}],

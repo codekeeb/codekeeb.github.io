@@ -24,6 +24,7 @@ carencia.
 | `legal.html` · `js/legal.js` · `js/legal-textos.js` | Aviso legal, privacidad, cookies y compras, en es / en. Los datos del titular salen de `CK_TITULAR` (`js/data.js`) |
 | `404.html` · `js/no-encontrada.js` | Pagina de error con los cinco modelos. Rutas **absolutas**: GitHub Pages la sirve en cualquier ruta rota |
 | `tools/hotswap/iso.py` | Genera la isometrica de linea del hotswap de la portada (switch Choc y MX, PCB y zocalos Kailh), con las lineas ocultas quitadas, con las cotas de sus hojas de datos y el contorno de la huella de KiCad (kiswitch). **Se regenera, no se edita el SVG a mano** |
+| `tools/triptico/` | **El triptico de la caja del Sofle Space Black** (A4, en ingles, B/N, impresora de casa). `triptico.html` es la fuente y `generar.py` saca el PDF. Los datos salen del manual y de lo que Ernesto dice que lleva la caja: si cambia el keymap, cambia el papel |
 | `tools/3d/` | Reconstruccion 3D del Sofle con img2threejs, **parada en la maqueta** (ver su README). No se publica |
 | `assets/fonts/` | Las tipografias, servidas desde el sitio (licencia OFL al lado). **Nada de Google Fonts** |
 | `catalogo.html` | Solo redirige a `/#tienda`, para no romper enlaces viejos |
