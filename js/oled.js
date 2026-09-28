@@ -56,10 +56,8 @@ const CK_OLED = (() => {
   for (const n of Object.keys(IMGS)) if (/^dog_\w+_90$/.test(n)) LUNA[n] = girar(IMGS[n]);
   for (const n of Object.keys(IMGS))
     if (/^(crystal|head|spaceman|control|shift|opt|cmd)_/.test(n)) IMGS[n] = girar(IMGS[n]);
-  /* El logo se guardo sin girar; en el teclado es un widget en coordenadas
-     del panel como las demas animaciones, asi que sale en vertical (y por
-     eso cabe en 32 px). Se gira igual para ensenarlo como alli. */
-  if (IMGS.codekeeb_logo) IMGS.codekeeb_logo = girar(IMGS.codekeeb_logo);
+  /* El logo animado (codekeeb_logo_*) se guarda girado como las demas. */
+  for (const n of Object.keys(IMGS)) if (/^codekeeb_logo_/.test(n)) IMGS[n] = girar(IMGS[n]);
 
   /* --- lienzo de 68x160 --------------------------------------------- */
   const lienzo = yoff => ({ d: new Uint8Array(W * H), yoff });
