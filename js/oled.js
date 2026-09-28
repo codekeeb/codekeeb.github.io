@@ -1,10 +1,16 @@
 /* ============================================================
    CODEKEEB — las dos OLED, pixel a pixel
    ------------------------------------------------------------
-   Las nice!view del Sofle son dos pantallas de 68x160 y un bit por pixel,
-   y cada mitad ensena una cosa distinta: la izquierda el estado (conexion,
-   bateria, modificadores, perfil, capa) con una vista de velocidad
-   encima, y la derecha una animacion.
+   Cada mitad del Sofle ensena una cosa distinta: la izquierda el estado
+   (conexion, bateria, modificadores, perfil, capa) con una vista de
+   velocidad, y la derecha una animacion.
+
+   La izquierda es el panel real: un SSD1306 de 128x32 en vertical. El
+   firmware dibuja en un lienzo de 68x160 y lo gira, y de el solo se ve la
+   franja x 0..31, y 32..159; se pinta con las posiciones de su Kconfig y
+   se recorta a esa franja. Antes se dibujaba centrada en 68 px, un layout
+   que no existe en el teclado, con la luna tumbada y la grafica encima de
+   los modificadores.
 
    Antes la portada ensenaba una sola caja azulada con cuatro textos
    cambiando. Ahora son las dos pantallas de verdad, con los mapas de bits
@@ -43,6 +49,9 @@ const CK_OLED = (() => {
   }
   const BONGO = {};
   for (const n of Object.keys(IMGS)) if (n.startsWith("bongo_cat_")) BONGO[n] = girar(IMGS[n]);
+  /* La luna tambien se guarda girada (dog_*_90); sin esto salia tumbada. */
+  const LUNA = {};
+  for (const n of Object.keys(IMGS)) if (/^dog_\w+_90$/.test(n)) LUNA[n] = girar(IMGS[n]);
   for (const n of Object.keys(IMGS))
     if (/^(crystal|head|spaceman|control|shift|opt|cmd)_/.test(n)) IMGS[n] = girar(IMGS[n]);
 
@@ -55,20 +64,6 @@ const CK_OLED = (() => {
   const caja = (s, x, y, w, h, lleno) => {
     for (let r = 0; r < h; r++) for (let c = 0; c < w; c++)
       if (lleno || r === 0 || r === h - 1 || c === 0 || c === w - 1) px(s, x + c, y + r, 1); };
-  function linea(s, x0, y0, x1, y1, grueso) {
-    x0 |= 0; y0 |= 0; x1 |= 0; y1 |= 0;
-    const dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-    const dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-    let err = dx + dy;
-    for (;;) {
-      px(s, x0, y0, 1);
-      if (grueso > 1) px(s, x0 + 1, y0, 1);
-      if (x0 === x1 && y0 === y1) break;
-      const e2 = 2 * err;
-      if (e2 >= dy) { err += dy; x0 += sx; }
-      if (e2 <= dx) { err += dx; y0 += sy; }
-    }
-  }
   function texto(s, fuente, x, y, str) {
     const F = A.fonts[fuente]; let pluma = x;
     for (const ch of str) {
@@ -86,7 +81,6 @@ const CK_OLED = (() => {
     for (const ch of str) { const g = F.g[ch]; w += g ? g[4] : ((F.g[" "] && F.g[" "][4]) || 4); }
     return w;
   };
-  const centrado = (s, fuente, y, str) => texto(s, fuente, Math.max(0, (W - ancho(fuente, str)) >> 1), y, str);
 
   /* --- piezas de estado, con las medidas del firmware ---------------- */
   function bateria(s, nivel) {
@@ -96,10 +90,6 @@ const CK_OLED = (() => {
     const w = Math.round(18 * Math.max(0, Math.min(100, nivel)) / 100);
     if (w > 0) caja(s, x0 + 2, 54, w, 8, true);
   }
-  function perfiles(s, activo) {
-    const x0 = (W - 31) >> 1;
-    for (let i = 0; i < 5; i++) caja(s, x0 + i * 7, 137, 3, 3, i === activo);
-  }
   function conexion(s, perfil) {
     const num = String(perfil + 1);
     const w = IMGS.bt.w + 4 + ancho("8", num);
@@ -107,30 +97,104 @@ const CK_OLED = (() => {
     imagen(s, IMGS.bt, x0, 32);
     texto(s, "8", x0 + IMGS.bt.w + 4, 32, num);
   }
-  function modificadores(s, activos) {
-    const x0 = (W - 30) >> 1;
-    [["control", 0, 0], ["shift", 1, 0], ["opt", 0, 1], ["cmd", 1, 1]].forEach(([n, cx, cy], i) => {
-      imagen(s, IMGS[n + (activos[i] ? "_white_0" : "_0")] || IMGS[n + "_0"], x0 + cx * 16, 100 + cy * 16);
-    });
-  }
-
   /* --- las cinco vistas del OLED izquierdo --------------------------- */
   const VISTAS = ["bongo", "luna", "number", "speedometer", "graph"];
   /* El gato y la luna cambian de estado por tramos de pulsaciones por
      minuto, exactamente igual que el firmware: <5 quieto, <30 lento,
      <70 medio, y a partir de ahi rapido. */
   const tramo = w => w < 5 ? "idle" : w < 30 ? "slow" : w < 70 ? "mid" : "fast";
+  /* La luna no comparte escalon con el gato: sentada hasta 15 (luna.c). */
+  const tramoLuna = w => w < 15 ? "idle" : w < 30 ? "slow" : w < 70 ? "mid" : "fast";
   function sprite(nombre, wpm, ahora, est) {
-    const a = A.anims[nombre][tramo(wpm)];
+    const t = nombre === "luna" ? tramoLuna(wpm) : tramo(wpm);
+    const a = A.anims[nombre][t];
     if (!a || !a.f.length) return null;
-    const t = tramo(wpm);
     if (t !== est.t) { est.t = t; est.t0 = ahora; }
     const i = Math.floor((ahora - est.t0) / (a.ms / a.f.length)) % a.f.length;
-    return nombre === "bongo" ? BONGO[a.f[i]] : IMGS[a.f[i]];
+    return (nombre === "bongo" ? BONGO : LUNA)[a.f[i]];
+  }
+
+  /* --- la pantalla izquierda, como la dibuja el firmware ------------- */
+  /* Defaults de Kconfig.defconfig de codekeeb/zmk-nice-oled (selectable);
+     los mismos que usa el Keymap Studio. */
+  const FW = { BT_X: 4, BT_Y: 32, PROF_TXT_X: 25, PROF_TXT_Y: 32, PROF_X: 0, PROF_Y: 137,
+    BAT_X: 0, BAT_Y: 50, LAYER_X: 0, LAYER_Y: 146, MOD_X: 0, MOD_Y: 100,
+    GAUGE_X: -1, GAUGE_Y: 70, NEEDLE_X: 15, NEEDLE_Y: 92, NEEDLE_R: 18,
+    GRAPH_X: -1, GRAPH_Y: 65, GRAPH_W: 32, LABEL_X: 0, LABEL_Y: 70, LABEL_W: 32,
+    LUNA_X: 65, LUNA_Y: 0, BONGO_X: 64, BONGO_Y: -9 };
+  const VIS = { x: 0, y: 32, w: 32, h: 128 };
+  /* Imagen opaca, como lv_img: tambien copia los pixeles apagados. */
+  const opaca = (s, im, x, y) => { if (!im) return;
+    for (let r = 0; r < im.h; r++) for (let c = 0; c < im.w; c++) px(s, x + c, y + r, bit(im, c, r)); };
+  /* Texto como lv_canvas_draw_text: la y es el techo de la linea y el
+     glifo baja lh - base_line - alto - ofs_y. */
+  function textoFw(s, fuente, x, y, str, anchoMax) {
+    const F = A.fonts[fuente];
+    let pluma = x + (anchoMax != null ? Math.floor((anchoMax - ancho(fuente, str)) / 2) : 0);
+    for (const ch of str) {
+      const g = F.g[ch]; if (!g) { pluma += 4; continue; }
+      const [bw, bh, ox, oy, adv, b64] = g, techo = y + (F.lh - F.bl) - bh - oy;
+      if (b64) { const bin = atob(b64);
+        for (let i = 0; i < bw * bh; i++)
+          if (bin.charCodeAt(i >> 3) & (0x80 >> (i & 7))) px(s, pluma + ox + (i % bw), techo + ((i / bw) | 0), 1); }
+      pluma += adv;
+    }
+  }
+  /* Linea de trazo cuadrado entre varios puntos. */
+  function trazo(s, pts, grueso) {
+    for (let k = 1; k < pts.length; k++) {
+      const [x0, y0] = pts[k - 1], [x1, y1] = pts[k];
+      const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0), 1);
+      for (let i = 0; i <= n; i++) {
+        const x = Math.round(x0 + (x1 - x0) * i / n), y = Math.round(y0 + (y1 - y0) * i / n);
+        for (let dx = 0; dx < grueso; dx++) for (let dy = 0; dy < grueso; dy++) px(s, x + dx, y + dy, 1);
+      }
+    }
+  }
+  /* El gato y la luna son widgets aparte que el firmware coloca en
+     coordenadas del PANEL; w es el ancho de la imagen sin girar. */
+  const delPanel = (X, Y, w) => [Y, 160 - X - w];
+
+  function componerIzq(s, e) {
+    s.d.fill(0);
+    opaca(s, IMGS.bt, FW.BT_X, FW.BT_Y);
+    const bx = FW.BAT_X, by = FW.BAT_Y + 2;
+    caja(s, bx, by, 22, 12, false); caja(s, bx + 22, by + 3, 2, 6, true);
+    const bw = Math.floor(Math.min(e.bateria, 100) * 18 / 100);
+    if (bw > 0) caja(s, bx + 2, by + 2, bw, 8, true);
+    const v = VISTAS[e.vista], ultimo = e.hist[9];
+    if (v === "bongo" || v === "luna") {
+      const f = sprite(v, e.wpm, e.ahora, v === "bongo" ? e.estBongo : e.estLuna);
+      if (f) { const [x, y] = v === "bongo" ? delPanel(FW.BONGO_X, FW.BONGO_Y, f.h)
+                                            : delPanel(FW.LUNA_X, FW.LUNA_Y, f.h);
+               opaca(s, f, x, y); }
+    } else if (v === "number") {
+      textoFw(s, "16", FW.LABEL_X, FW.LABEL_Y, String(ultimo), FW.LABEL_W);
+      textoFw(s, "8", FW.LABEL_X, FW.LABEL_Y + 16, "WPM", FW.LABEL_W);
+    } else if (v === "speedometer") {
+      opaca(s, IMGS.gauge, FW.GAUGE_X, FW.GAUGE_Y);
+      const a = (225 + Math.max(0, Math.min(ultimo, 100)) / 100 * 90) * Math.PI / 180;
+      trazo(s, [[FW.NEEDLE_X + Math.trunc(5 * Math.cos(a)), FW.NEEDLE_Y + Math.trunc(5 * Math.sin(a))],
+                [FW.NEEDLE_X + Math.trunc(FW.NEEDLE_R * Math.cos(a)), FW.NEEDLE_Y + Math.trunc(FW.NEEDLE_R * Math.sin(a))]], 1);
+    } else {
+      opaca(s, IMGS.grid, FW.GRAPH_X, FW.GRAPH_Y);
+      trazo(s, e.hist.map((w, i) => [FW.GRAPH_X + 1 + Math.floor(i * (FW.GRAPH_W - 2) / 9),
+                                     FW.GRAPH_Y + 32 - Math.floor(Math.min(w, 100) * 32 / 100)]), 2);
+    }
+    textoFw(s, "8", FW.PROF_TXT_X, FW.PROF_TXT_Y, String(e.perfil + 1));
+    opaca(s, IMGS.profiles, FW.PROF_X, FW.PROF_Y);
+    caja(s, FW.PROF_X + e.perfil * 7, FW.PROF_Y, 3, 3, true);
+    /* La capa, con la mayor fuente que quepa y la linea base de la de 16:
+       con la de 16 solo caben 4 letras (layer.c). */
+    const F16 = A.fonts["16"], base = FW.LAYER_Y + F16.lh - F16.bl;
+    const f = ["16", "12", "8"].find(n => ancho(n, e.capa) <= VIS.w) || "8";
+    textoFw(s, f, FW.LAYER_X, base - (A.fonts[f].lh - A.fonts[f].bl), e.capa);
+    [["control", 0, 0], ["shift", 1, 0], ["opt", 0, 1], ["cmd", 1, 1]].forEach(([n, cx, cy], i) =>
+      opaca(s, IMGS["fw_" + n + (e.mods[i] ? "_white_0" : "_0")], FW.MOD_X + cx * 16, FW.MOD_Y + cy * 16));
   }
 
   function montar(cvIzq, cvDer) {
-    const izq = lienzo(-14), der = lienzo(-7);
+    const izq = lienzo(0), der = lienzo(-7);
     const ctxI = cvIzq.getContext("2d"), ctxD = cvDer.getContext("2d");
     /* Quieto si el sistema pide poco movimiento o el visitante ha pulsado
        pausa: entonces se pinta un solo fotograma y se para. */
@@ -144,43 +208,18 @@ const CK_OLED = (() => {
     const estBongo = { t: "", t0: 0 }, estLuna = { t: "", t0: 0 };
     let vista = 0, anim = 0, capa = 0, tVista = 0, tAnim = 0, tCapa = 0, visible = false, rid = 0;
 
-    function vistaIzquierda(ahora) {
-      const v = VISTAS[vista];
-      if (v === "bongo")  { const f = sprite("bongo", wpm, ahora, estBongo); if (f) imagen(izq, f, (W - f.w) >> 1, 70); return; }
-      if (v === "luna")   { const f = sprite("luna",  wpm, ahora, estLuna);  if (f) imagen(izq, f, (W - f.w) >> 1, 78); return; }
-      if (v === "number") { centrado(izq, "16", 84, String(Math.round(wpm))); centrado(izq, "8", 104, "WPM"); return; }
-      if (v === "speedometer") {
-        imagen(izq, IMGS.gauge, (W - IMGS.gauge.w) >> 1, 86);
-        const max = Math.max(...hist, 0) || 100;
-        const ang = (225 + Math.min(wpm, max) / max * 90) * Math.PI / 180;
-        const cx = W >> 1, cy = 96;
-        linea(izq, cx + 5 * Math.cos(ang), cy + 5 * Math.sin(ang),
-                   cx + 25 * Math.cos(ang), cy + 25 * Math.sin(ang), 1);
-        return;
-      }
-      const gr = IMGS.grid, gy = 72;
-      imagen(izq, gr, 0, gy);
-      const max = Math.max(...hist), min = Math.min(...hist), rango = (max - min) || 1;
-      const alto = (gr ? gr.h : 33) - 4, arriba = gy + 2;
-      let ax = null, ay = null;
-      for (let i = 0; i < 10; i++) {
-        const x = i * 7.4, y = arriba + alto - (hist[i] - min) * alto / rango;
-        if (ax !== null) linea(izq, ax, ay, x, y, 2);
-        ax = x; ay = y;
-      }
-    }
-
     /* El volcado: un pixel encendido es un pixel, sin suavizar. El grano
        de 1,2% imita el parpadeo real de una OLED monocroma. */
-    function volcar(s, ctx) {
-      const img = ctx.createImageData(W, H), d = img.data;
-      for (let i = 0; i < W * H; i++) {
-        let v = s.d[i] ? 232 : 0;
+    function volcar(s, ctx, ven) {
+      const v0 = ven || { x: 0, y: 0, w: W, h: H };
+      const img = ctx.createImageData(v0.w, v0.h), d = img.data;
+      for (let y = 0; y < v0.h; y++) for (let x = 0; x < v0.w; x++) {
+        let v = s.d[(y + v0.y) * W + (x + v0.x)] ? 232 : 0;
         if (v && Math.random() < 0.012) v = 0;
-        const o = i * 4; d[o] = d[o + 1] = d[o + 2] = v; d[o + 3] = 255;
+        const o = (y * v0.w + x) * 4; d[o] = d[o + 1] = d[o + 2] = v; d[o + 3] = 255;
       }
       const tmp = volcar._t || (volcar._t = document.createElement("canvas"));
-      tmp.width = W; tmp.height = H;
+      tmp.width = v0.w; tmp.height = v0.h;
       tmp.getContext("2d").putImageData(img, 0, 0);
       ctx.imageSmoothingEnabled = false;
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -199,11 +238,8 @@ const CK_OLED = (() => {
          que una cosa depende de la otra. */
       if (ahora - tCapa > 7000) { tCapa = ahora; capa = (capa + 1) % 4; }
 
-      izq.d.fill(0);
-      conexion(izq, 1); bateria(izq, 82); vistaIzquierda(ahora);
-      modificadores(izq, [0, wpm > 70, 0, 0]);
-      perfiles(izq, 1);
-      centrado(izq, "16", 146, ["BASE", "LOWER", "RAISE", "ADJUST"][capa]);
+      componerIzq(izq, { ahora, wpm, hist, vista, estBongo, estLuna, perfil: 1, bateria: 82,
+                         mods: [0, wpm > 70, 0, 0], capa: ["BASE", "LOWER", "RAISE", "ADJUST"][capa] });
 
       der.d.fill(0);
       conexion(der, 1); bateria(der, 74);
@@ -212,7 +248,7 @@ const CK_OLED = (() => {
       const f = IMGS[a.f[Math.floor((ahora - tAnim) / (a.ms / a.f.length)) % a.f.length]];
       if (f) imagen(der, f, (W - f.w) >> 1, 73);
 
-      volcar(izq, ctxI); volcar(der, ctxD);
+      volcar(izq, ctxI, VIS); volcar(der, ctxD);
       if (visible && !quieto()) rid = requestAnimationFrame(cuadro);
     }
 

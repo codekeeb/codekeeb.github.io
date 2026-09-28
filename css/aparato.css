@@ -263,6 +263,9 @@ html{scrollbar-color:var(--linea-2) var(--carcasa)}
 .oled{display:grid;justify-items:center;gap:10px}
 .oled__marco{padding:6px;border-radius:8px;background:#1b1d22}
 .oled canvas{display:block;width:clamp(84px,11vw,120px);height:auto;aspect-ratio:68/160;image-rendering:pixelated;border-radius:3px;background:#04060a}
+/* La izquierda es el panel real (128x32 en vertical): su zona activa es mas
+   estrecha que el cristal, asi que se centra sin deformarse. */
+#oledIzq{object-fit:contain}
 .oled figcaption{font-size:var(--t-xs);font-weight:600;color:#c9ccd3}
 
 /* ---------- hoja de datos ---------- */
