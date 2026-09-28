@@ -197,10 +197,11 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 .oledStage{position:absolute;z-index:2;border-radius:6px;border:1px solid #1e2126;background:#000;
   box-shadow:0 4px 14px rgba(0,0,0,.7),inset 0 0 18px rgba(120,170,255,.03)}
 .oledStage canvas{display:block;width:100%;height:100%;image-rendering:pixelated;border-radius:5px}
-/* La OLED izquierda es el panel real del Sofle (128x32 en vertical): su
-   zona activa es mas estrecha que el cristal, asi que se centra sin
-   deformarla y el resto queda como el marco negro del modulo. */
-#oledL canvas{object-fit:contain;padding:6px 0}
+/* Las dos OLED son el panel real del Sofle (128x32 en vertical): su zona
+   activa es mas estrecha que el cristal, asi que se centra sin deformarla
+   y el resto queda como el marco negro del modulo. Mismo panel, misma
+   escala en las dos. */
+#oledL canvas,#oledR canvas{object-fit:contain;padding:6px 0}
 .oledStage .otag{position:absolute;bottom:-16px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:7.5px;color:#8b9098;letter-spacing:.12em}
 
 /* ---------- capas (fila estilo Vial) ---------- */
@@ -596,7 +597,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
     <canvas id="glow"></canvas>
     <div id="keys"></div>
     <div class="oledStage" id="oledL"><canvas width="32" height="128"></canvas></div>
-    <div class="oledStage" id="oledR"><canvas width="68" height="160"></canvas></div>
+    <div class="oledStage" id="oledR"><canvas width="32" height="128"></canvas></div>
   </div>
 </div>
 
@@ -760,7 +761,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 <div id="oledZoom">
   <button class="btn ozClose" id="btnOledZoomX">✕</button>
   <div class="ozPanel"><div class="oframe"><canvas id="oledZL" width="160" height="640"></canvas></div><span class="ot" data-i18n="ozLeft">OLED IZQUIERDA · CENTRAL</span></div>
-  <div class="ozPanel"><div class="oframe"><canvas id="oledZR" width="272" height="640"></canvas></div><span class="ot" data-i18n="ozRight">OLED DERECHA · PERIFÉRICO</span></div>
+  <div class="ozPanel"><div class="oframe"><canvas id="oledZR" width="160" height="640"></canvas></div><span class="ot" data-i18n="ozRight">OLED DERECHA · PERIFÉRICO</span></div>
 </div>
 
 <!-- ======================= FOOTER ======================= -->
@@ -2162,31 +2163,20 @@ for(const [k,v] of Object.entries(IMGS))if(/^dog_\w+_90$/.test(k))IMGS.luna[k]=r
 /* animaciones periféricas (69×68 landscape) e iconos de modificadores:
    también almacenados rotados -> rotar 90° CCW como hace el driver del nice!view */
 for(const k of Object.keys(IMGS)){
-  if(/^(crystal|cat|head|spaceman|pokemon)_/.test(k)||/^(control|shift|opt|cmd)_/.test(k))
+  /* codekeeb_logo se guardo sin girar: al pasarlo por el mismo giro sale
+     en vertical, que es como lo ensena el teclado (y asi cabe en 32 px). */
+  if(/^(crystal|cat|head|spaceman|pokemon)_/.test(k)||k==='codekeeb_logo'||/^(control|shift|opt|cmd)_/.test(k))
     IMGS[k]=rotateOLED(IMGS[k]);
 }
 
 /* pantallas offscreen 68×160 */
 function makeScreen(yoff){return{data:new Uint8Array(OLED_W*OLED_H),yoff:yoff||0};}
 /* yoff centra verticalmente el contenido (izq ocupa 32-160, dcha 32-142) */
-const scrL=makeScreen(0),scrR=makeScreen(-7);   /* la izquierda se recorta a la franja visible */
+const scrL=makeScreen(0),scrR=makeScreen(0);   /* las dos se recortan a la franja visible */
 function pxSet(scr,x,y,v){y+=scr.yoff;if(x>=0&&x<OLED_W&&y>=0&&y<OLED_H)scr.data[y*OLED_W+x]=v?1:0;}
 function drawImg(scr,im,x,y){for(let r=0;r<im.h;r++)for(let c=0;c<im.w;c++)if(getBit(im,c,r))pxSet(scr,x+c,y+r,1);}
 function drawRect(scr,x,y,w,h,fill){for(let r=0;r<h;r++)for(let c=0;c<w;c++){
   if(fill||r===0||r===h-1||c===0||c===w-1)pxSet(scr,x+c,y+r,1);}}
-function drawLine(scr,x0,y0,x1,y1,thick){
-  x0|=0;y0|=0;x1|=0;y1|=0;
-  const dx=Math.abs(x1-x0),sx=x0<x1?1:-1,dy=-Math.abs(y1-y0),sy=y0<y1?1:-1;
-  let err=dx+dy;
-  for(;;){
-    pxSet(scr,x0,y0,1);
-    if(thick>1)pxSet(scr,x0+1,y0,1);
-    if(x0===x1&&y0===y1)break;
-    const e2=2*err;
-    if(e2>=dy){err+=dy;x0+=sx;}
-    if(e2<=dx){err+=dx;y0+=sy;}
-  }
-}
 function drawText(scr,font,x,y,str){
   const F=OLED_ASSETS.fonts[font];let pen=x;
   for(const ch of str){const g=F.g[ch];if(!g){pen+=F.g[' ']&&F.g[' '][4]||4;continue;}
@@ -2200,34 +2190,6 @@ function drawText(scr,font,x,y,str){
 /* ancho de un texto sin dibujarlo (para centrar) */
 function textW(font,str){const F=OLED_ASSETS.fonts[font];let w=0;
   for(const ch of str){const g=F.g[ch];w+=g?g[4]:(F.g[' ']&&F.g[' '][4]||4);}return w;}
-/* --- batería gráfica centrada: contorno 22×12, terminal 2×6, rayo --- */
-function drawBattery(scr,level,charging){
-  const tot=charging?(27+(IMGS.bolt?IMGS.bolt.w:8)):24;
-  const x0=(OLED_W-tot)>>1;
-  drawRect(scr,x0,52,22,12,false);
-  drawRect(scr,x0+22,55,2,6,true);
-  const w=Math.round(18*clamp(level,0,100)/100);
-  if(w>0)drawRect(scr,x0+2,54,w,8,true);
-  if(charging)drawImg(scr,IMGS.bolt,x0+27,50);
-}
-/* --- tira profiles 31×3 centrada, activo 3×3 en x=idx*7 --- */
-function drawProfiles(scr,active){
-  const x0=(OLED_W-31)>>1;
-  for(let i=0;i<5;i++){const x=x0+i*7;
-    if(i===active)drawRect(scr,x,137,3,3,true);
-    else drawRect(scr,x,137,3,3,false);}
-}
-/* --- grid modificadores 2×2 14×14 centrado --- */
-function drawMods(scr,mods){
-  const x0=(OLED_W-30)>>1;
-  const order=[['control','c'],['shift','s'],['opt','a'],['cmd','g']];
-  const pos=[[x0,100],[x0+16,100],[x0,116],[x0+16,116]];
-  order.forEach(([nm,key],i)=>{
-    const on=mods[key];
-    const asset=IMGS[nm+(on?'_white_0':'_0')]||IMGS[nm+'_0'];
-    drawImg(scr,asset,pos[i][0],pos[i][1]);
-  });
-}
 
 /* --- WPM real (ventana 10s) --- */
 const strokes=[];
@@ -2288,14 +2250,6 @@ function rightAnimFrame(now){
   return IMGS[a.f[f]];
 }
 
-/* --- composición de pantallas --- */
-function drawConn(scr){ /* icono BT/USB + nº de perfil, centrado */
-  if(oledState.output==='usb'){drawImg(scr,IMGS.usb,(OLED_W-IMGS.usb.w)>>1,34);return;}
-  const num=String(oledState.profile+1);
-  const w=IMGS.bt.w+4+textW('8',num);
-  const x0=(OLED_W-w)>>1;
-  drawImg(scr,IMGS.bt,x0,32);drawText(scr,'8',x0+IMGS.bt.w+4,32,num);
-}
 /* ============================================================
    OLED IZQUIERDA = pantalla central del firmware, pixel a pixel.
    El Sofle lleva un SSD1306 de 128x32: tras rotate_canvas solo se ve la
@@ -2309,7 +2263,7 @@ const FW={BT_X:4,BT_Y:32,USB_X:0,USB_Y:34,PROF_TXT_X:25,PROF_TXT_Y:32,
   PROF_X:0,PROF_Y:137,BAT_X:0,BAT_Y:50,LAYER_X:0,LAYER_Y:146,MOD_X:0,MOD_Y:100,
   GAUGE_X:-1,GAUGE_Y:70,NEEDLE_X:15,NEEDLE_Y:92,NEEDLE_R:18,
   GRAPH_X:-1,GRAPH_Y:65,GRAPH_W:32,LABEL_X:0,LABEL_Y:70,LABEL_W:32,
-  LUNA_X:65,LUNA_Y:0,BONGO_X:64,BONGO_Y:-9};
+  LUNA_X:65,LUNA_Y:0,BONGO_X:64,BONGO_Y:-9,ANIM_X:18,ANIM_Y:-18};
 const VIS_L={x:0,y:32,w:32,h:128};        /* franja visible del panel */
 /* Texto como lv_canvas_draw_text: la y es el techo de la linea y el glifo
    baja (lh - base_line - alto - ofs_y). drawText la ignoraba. */
@@ -2332,6 +2286,15 @@ function drawLineFw(scr,pts,w){
 }
 /* Imagen opaca, como lv_img: tambien copia los pixeles apagados. */
 function drawImgOpaque(scr,im,x,y){for(let r=0;r<im.h;r++)for(let c=0;c<im.w;c++)pxSet(scr,x+c,y+r,getBit(im,c,r));}
+/* Bateria grafica (battery.c, draw_battery_icon). Es la MISMA funcion en
+   las dos mitades: por eso en el teclado sale igual en ambas pantallas. */
+function drawBatteryFw(scr,level){
+  const bx=FW.BAT_X,by=FW.BAT_Y+2;
+  drawRect(scr,bx,by,22,12,false);drawRect(scr,bx+22,by+3,2,6,true);
+  const bw=Math.floor(Math.min(level,100)*18/100);
+  if(bw>0)drawRect(scr,bx+2,by+2,bw,8,true);
+  if(oledState.charging)drawImgOpaque(scr,IMGS.bolt,bx+27,by-2);
+}
 /* Luna y el gato son widgets aparte: el firmware los coloca en coordenadas
    del PANEL (X,Y); 'w' es el ancho de la imagen sin girar. */
 const panelToCanvas=(X,Y,w)=>[Y,160-X-w];
@@ -2341,12 +2304,7 @@ function composeLeft(now){
   /* salida: USB o BT + numero de perfil */
   if(oledState.output==='usb')drawImgOpaque(scrL,IMGS.usb,FW.USB_X,FW.USB_Y);
   else drawImgOpaque(scrL,IMGS.bt,FW.BT_X,FW.BT_Y);
-  /* bateria grafica (battery.c, draw_battery_icon) */
-  const bx=FW.BAT_X,by=FW.BAT_Y+2;
-  drawRect(scrL,bx,by,22,12,false);drawRect(scrL,bx+22,by+3,2,6,true);
-  const bw=Math.floor(Math.min(oledState.levelL,100)*18/100);
-  if(bw>0)drawRect(scrL,bx+2,by+2,bw,8,true);
-  if(oledState.charging)drawImgOpaque(scrL,IMGS.bolt,bx+27,by-2);
+  drawBatteryFw(scrL,oledState.levelL);
   /* vista de WPM (widgets/wpm.c y screen.c). Rango fijo de 0 a 100, que
      es el default de NICE_OLED_WIDGET_WPM_GRAPH_FIXED_RANGE. */
   const v=WPMVIEWS[wpmIdx],last=wpmHist[9];
@@ -2395,27 +2353,16 @@ function blitWin(scr,ctx,win,scale){
   ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
   ctx.drawImage(tmp,0,0,win.w,win.h,0,0,win.w*scale,win.h*scale);
 }
+/* OLED DERECHA = pantalla periferica (screen_peripheral.c), en el mismo
+   panel de 128x32. Usa las mismas funciones de conexion y bateria que la
+   central (mismas coordenadas, mismo tamano), no lleva numero de perfil,
+   y la animacion es un widget colocado en coordenadas del panel. */
 function composeRight(now){
   const d=scrR.data;d.fill(0);
-  drawConn(scrR);
-  drawBattery(scrR,oledState.levelR,oledState.charging);
-  const af=rightAnimFrame(now);if(af)drawImg(scrR,af,(OLED_W-af.w)>>1,73);
-}
-/* volcado a canvas con escala entera + grain sutil */
-function blit(scr,ctx,scale){
-  const w=OLED_W,h=OLED_H;
-  const img=ctx.createImageData(w,h);const dd=img.data;
-  for(let i=0;i<w*h;i++){
-    let v=scr.data[i]?255:0;
-    if(v&&Math.random()<0.012)v=0;              /* parpadeo/grain OLED */
-    const o=i*4;dd[o]=dd[o+1]=dd[o+2]=v?232:0;dd[o+3]=255;
-  }
-  const tmp=blit._tmp||(blit._tmp=document.createElement('canvas'));
-  tmp.width=w;tmp.height=h;
-  const tc=tmp.getContext('2d');tc.putImageData(img,0,0);
-  ctx.imageSmoothingEnabled=false;
-  ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-  ctx.drawImage(tmp,0,0,w,h,0,0,w*scale,h*scale);
+  drawImgOpaque(scrR,IMGS.bt,FW.BT_X,FW.BT_Y);
+  drawBatteryFw(scrR,oledState.levelR);
+  const af=rightAnimFrame(now);
+  if(af){const[x,y]=panelToCanvas(FW.ANIM_X,FW.ANIM_Y,af.h);drawImgOpaque(scrR,af,x,y);}
 }
 const ctxL=$('#oledL canvas').getContext('2d'),ctxR=$('#oledR canvas').getContext('2d');
 const ctxZL=$('#oledZL').getContext('2d'),ctxZR=$('#oledZR').getContext('2d');
@@ -4587,8 +4534,8 @@ function loop(now){
   lastFrame=now;
   updateWpm(now);
   composeLeft(now);composeRight(now);
-  blitWin(scrL,ctxL,VIS_L,1);blit(scrR,ctxR,1);
-  if($('#oledZoom').classList.contains('open')){blitWin(scrL,ctxZL,VIS_L,5);blit(scrR,ctxZR,4);}
+  blitWin(scrL,ctxL,VIS_L,1);blitWin(scrR,ctxR,VIS_L,1);
+  if($('#oledZoom').classList.contains('open')){blitWin(scrL,ctxZL,VIS_L,5);blitWin(scrR,ctxZR,VIS_L,5);}
   /* Sin RGB no se pinta el halo. No vale pasar null: drawRgb indexa
      cols[half], y la rama que limpia las teclas es la de brillo 0. */
   if(board().rgb)drawRgb(fxFrame());

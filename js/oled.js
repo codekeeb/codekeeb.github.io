@@ -5,10 +5,12 @@
    (conexion, bateria, modificadores, perfil, capa) con una vista de
    velocidad, y la derecha una animacion.
 
-   La izquierda es el panel real: un SSD1306 de 128x32 en vertical. El
+   Las dos son el panel real: un SSD1306 de 128x32 en vertical. El
    firmware dibuja en un lienzo de 68x160 y lo gira, y de el solo se ve la
    franja x 0..31, y 32..159; se pinta con las posiciones de su Kconfig y
-   se recorta a esa franja. Antes se dibujaba centrada en 68 px, un layout
+   se recorta a esa franja. La conexion y la bateria salen de las mismas
+   funciones en las dos mitades, asi que miden lo mismo y estan a la misma
+   altura, como en el teclado. Antes se dibujaba centrada en 68 px, un layout
    que no existe en el teclado, con la luna tumbada y la grafica encima de
    los modificadores.
 
@@ -54,49 +56,24 @@ const CK_OLED = (() => {
   for (const n of Object.keys(IMGS)) if (/^dog_\w+_90$/.test(n)) LUNA[n] = girar(IMGS[n]);
   for (const n of Object.keys(IMGS))
     if (/^(crystal|head|spaceman|control|shift|opt|cmd)_/.test(n)) IMGS[n] = girar(IMGS[n]);
+  /* El logo se guardo sin girar; en el teclado es un widget en coordenadas
+     del panel como las demas animaciones, asi que sale en vertical (y por
+     eso cabe en 32 px). Se gira igual para ensenarlo como alli. */
+  if (IMGS.codekeeb_logo) IMGS.codekeeb_logo = girar(IMGS.codekeeb_logo);
 
   /* --- lienzo de 68x160 --------------------------------------------- */
   const lienzo = yoff => ({ d: new Uint8Array(W * H), yoff });
   const px = (s, x, y, v) => { y += s.yoff;
     if (x >= 0 && x < W && y >= 0 && y < H) s.d[y * W + x] = v ? 1 : 0; };
-  const imagen = (s, im, x, y) => { if (!im) return;
-    for (let r = 0; r < im.h; r++) for (let c = 0; c < im.w; c++) if (bit(im, c, r)) px(s, x + c, y + r, 1); };
   const caja = (s, x, y, w, h, lleno) => {
     for (let r = 0; r < h; r++) for (let c = 0; c < w; c++)
       if (lleno || r === 0 || r === h - 1 || c === 0 || c === w - 1) px(s, x + c, y + r, 1); };
-  function texto(s, fuente, x, y, str) {
-    const F = A.fonts[fuente]; let pluma = x;
-    for (const ch of str) {
-      const g = F.g[ch];
-      if (!g) { pluma += (F.g[" "] && F.g[" "][4]) || 4; continue; }
-      const [bw, bh, ox, oy, adv, b64] = g;
-      if (b64) { const bin = atob(b64);
-        for (let i = 0; i < bw * bh; i++)
-          if (bin.charCodeAt(i >> 3) & (0x80 >> (i & 7))) px(s, pluma + ox + (i % bw), y + oy + ((i / bw) | 0), 1); }
-      pluma += adv;
-    }
-  }
   const ancho = (fuente, str) => {
     const F = A.fonts[fuente]; let w = 0;
     for (const ch of str) { const g = F.g[ch]; w += g ? g[4] : ((F.g[" "] && F.g[" "][4]) || 4); }
     return w;
   };
 
-  /* --- piezas de estado, con las medidas del firmware ---------------- */
-  function bateria(s, nivel) {
-    const x0 = (W - 24) >> 1;
-    caja(s, x0, 52, 22, 12, false);
-    caja(s, x0 + 22, 55, 2, 6, true);
-    const w = Math.round(18 * Math.max(0, Math.min(100, nivel)) / 100);
-    if (w > 0) caja(s, x0 + 2, 54, w, 8, true);
-  }
-  function conexion(s, perfil) {
-    const num = String(perfil + 1);
-    const w = IMGS.bt.w + 4 + ancho("8", num);
-    const x0 = (W - w) >> 1;
-    imagen(s, IMGS.bt, x0, 32);
-    texto(s, "8", x0 + IMGS.bt.w + 4, 32, num);
-  }
   /* --- las cinco vistas del OLED izquierdo --------------------------- */
   const VISTAS = ["bongo", "luna", "number", "speedometer", "graph"];
   /* El gato y la luna cambian de estado por tramos de pulsaciones por
@@ -121,7 +98,7 @@ const CK_OLED = (() => {
     BAT_X: 0, BAT_Y: 50, LAYER_X: 0, LAYER_Y: 146, MOD_X: 0, MOD_Y: 100,
     GAUGE_X: -1, GAUGE_Y: 70, NEEDLE_X: 15, NEEDLE_Y: 92, NEEDLE_R: 18,
     GRAPH_X: -1, GRAPH_Y: 65, GRAPH_W: 32, LABEL_X: 0, LABEL_Y: 70, LABEL_W: 32,
-    LUNA_X: 65, LUNA_Y: 0, BONGO_X: 64, BONGO_Y: -9 };
+    LUNA_X: 65, LUNA_Y: 0, BONGO_X: 64, BONGO_Y: -9, ANIM_X: 18, ANIM_Y: -18 };
   const VIS = { x: 0, y: 32, w: 32, h: 128 };
   /* Imagen opaca, como lv_img: tambien copia los pixeles apagados. */
   const opaca = (s, im, x, y) => { if (!im) return;
@@ -155,13 +132,25 @@ const CK_OLED = (() => {
      coordenadas del PANEL; w es el ancho de la imagen sin girar. */
   const delPanel = (X, Y, w) => [Y, 160 - X - w];
 
-  function componerIzq(s, e) {
-    s.d.fill(0);
+  /* Conexion y bateria (output.c, battery.c): las mismas en las dos. */
+  function estado(s, nivel) {
     opaca(s, IMGS.bt, FW.BT_X, FW.BT_Y);
     const bx = FW.BAT_X, by = FW.BAT_Y + 2;
     caja(s, bx, by, 22, 12, false); caja(s, bx + 22, by + 3, 2, 6, true);
-    const bw = Math.floor(Math.min(e.bateria, 100) * 18 / 100);
+    const bw = Math.floor(Math.min(nivel, 100) * 18 / 100);
     if (bw > 0) caja(s, bx + 2, by + 2, bw, 8, true);
+  }
+  /* La derecha (screen_peripheral.c): sin numero de perfil, y la animacion
+     como widget en coordenadas del panel. */
+  function componerDer(s, nivel, f) {
+    s.d.fill(0);
+    estado(s, nivel);
+    if (f) { const [x, y] = delPanel(FW.ANIM_X, FW.ANIM_Y, f.h); opaca(s, f, x, y); }
+  }
+
+  function componerIzq(s, e) {
+    s.d.fill(0);
+    estado(s, e.bateria);
     const v = VISTAS[e.vista], ultimo = e.hist[9];
     if (v === "bongo" || v === "luna") {
       const f = sprite(v, e.wpm, e.ahora, v === "bongo" ? e.estBongo : e.estLuna);
@@ -194,7 +183,7 @@ const CK_OLED = (() => {
   }
 
   function montar(cvIzq, cvDer) {
-    const izq = lienzo(0), der = lienzo(-7);
+    const izq = lienzo(0), der = lienzo(0);
     const ctxI = cvIzq.getContext("2d"), ctxD = cvDer.getContext("2d");
     /* Quieto si el sistema pide poco movimiento o el visitante ha pulsado
        pausa: entonces se pinta un solo fotograma y se para. */
@@ -241,14 +230,11 @@ const CK_OLED = (() => {
       componerIzq(izq, { ahora, wpm, hist, vista, estBongo, estLuna, perfil: 1, bateria: 82,
                          mods: [0, wpm > 70, 0, 0], capa: ["BASE", "LOWER", "RAISE", "ADJUST"][capa] });
 
-      der.d.fill(0);
-      conexion(der, 1); bateria(der, 74);
       const nombreAnim = ["crystal", "head", "spaceman", "logo"][anim];
       const a = A.anims[nombreAnim];
-      const f = IMGS[a.f[Math.floor((ahora - tAnim) / (a.ms / a.f.length)) % a.f.length]];
-      if (f) imagen(der, f, (W - f.w) >> 1, 73);
+      componerDer(der, 74, IMGS[a.f[Math.floor((ahora - tAnim) / (a.ms / a.f.length)) % a.f.length]]);
 
-      volcar(izq, ctxI, VIS); volcar(der, ctxD);
+      volcar(izq, ctxI, VIS); volcar(der, ctxD, VIS);
       if (visible && !quieto()) rid = requestAnimationFrame(cuadro);
     }
 
